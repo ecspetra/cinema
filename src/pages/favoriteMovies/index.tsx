@@ -1,9 +1,11 @@
 import MainLayout from "../../components/MainLayout";
 
-export default function FavoriteMovies() {
+const FavoriteMovies = () => {
 	return (
 		<MainLayout>
 			jh
 		</MainLayout>
 	)
 }
+
+export default FavoriteMovies
