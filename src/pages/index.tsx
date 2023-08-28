@@ -1,40 +1,51 @@
-import MainLayout from "../components/MainLayout";
-import MoviesListDefault from "../components/MoviesList/MoviesListDefault";
+import MainLayout from "../components/MainLayout"
+import MoviesListDefault from "../components/Movie/MoviesList/MoviesListDefault"
 import { NextPageContext } from 'next'
-import {useEffect, useState} from "react";
-import {LINK_TO_FETCH_DEFAULT_MOVIES, LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE} from "@/constants/links";
-import {IMovieCard} from "../../interfaces";
+import {LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE} from "@/constants/links"
+import {useEffect, useState} from "react"
 
-const Index = ({moviesFromProps}) => {
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [defaultMovies, setDefaultMovies] = useState<Array<IMovieCard>>([])
-
-	const getMoreDefaultMovies = async () => {
-		const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES + currentPage)
-		const result = await response.json()
-		setDefaultMovies(prevState => [...prevState, ...result.results])
-	}
+const Home = ({ moviesFromProps }) => {
+	const [homePageMovies, setHomePageMovies] = useState(moviesFromProps)
 
 	useEffect(() => {
-		setDefaultMovies([...moviesFromProps])
+		const fetchHomePageMovies = async () => {
+			try {
+				const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE)
+				const result = await response.json()
+				setHomePageMovies(result.results)
+			} catch (error) {
+				setHomePageMovies([])
+			}
+		}
+
+		if (!moviesFromProps) fetchHomePageMovies()
 	}, [])
 
-	useEffect(() => {
-		if (currentPage > 1) getMoreDefaultMovies()
-	}, [currentPage])
+	if (!homePageMovies.length) return <div>Loading</div>
 
 	return (
 		<MainLayout>
-			<MoviesListDefault defaultMovies={defaultMovies} />
-			<button onClick={() => setCurrentPage(prevState => prevState + 1)}>More</button>
+			<MoviesListDefault moviesFromProps={homePageMovies} />
 		</MainLayout>
 	)
 }
 
-Index.getInitialProps = async (ctx: NextPageContext) => {
-	const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE)
-	const result = await response.json()
-	return { moviesFromProps: result.results }
+export const getServerSideProps = async (ctx: NextPageContext) => {
+	try {
+		const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE)
+		const result = await response.json()
+		return {
+			props: {
+				moviesFromProps: result.results,
+			},
+		}
+	} catch (error) {
+		return {
+			props: {
+				moviesFromProps: [],
+			},
+		}
+	}
 }
 
-export default Index
+export default Home
