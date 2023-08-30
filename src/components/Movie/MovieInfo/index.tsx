@@ -11,6 +11,7 @@ import ImagesList from "@/components/ImagesList"
 import Rating from "@/components/Rating"
 import Mark from "@/components/Mark";
 import ReviewsList from "@/components/Review/ReviewsList";
+import NewReviewForm from "@/components/Review/NewReviewForm";
 
 type PropsType = {
 	movieInfo: IMovieInfo;
@@ -22,8 +23,6 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 	const test = () => {
 
 	}
-
-	console.log(movieReviews)
 
 	return (
 		<div className="flex gap-x-7 py-7">
@@ -64,9 +63,9 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 				<Mark />
 				<p className="text-base mb-6">{movieInfo.overview}</p>
 				<Button className="max-w-[200px] mb-12" onClick={test}>Add to favorites</Button>
-				<Title>Images</Title>
 				<ImagesList images={movieImages} />
 				<ReviewsList reviews={movieReviews} />
+				<NewReviewForm />
 			</div>
 		</div>
 	)

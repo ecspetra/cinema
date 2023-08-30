@@ -1,6 +1,6 @@
 import '@/app/globals.css'
 import {FC} from 'react'
-import Header from "@/app/components/Header";
+import Header from "@/app/components/Header"
 
 type PropsType = {
 	children: JSX.Element | JSX.Element[];
@@ -8,7 +8,7 @@ type PropsType = {
 
 const MainLayout: FC<PropsType> = ({ children }) => {
 	return (
-		<div className="container w-full max-w-screen-xl mx-auto p-5">
+		<div className="container w-full max-w-screen-xl mx-auto p-5 z-2 relative">
 			<Header />
 			{children}
 		</div>

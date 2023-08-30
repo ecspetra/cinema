@@ -11,7 +11,7 @@ type PropsType = {
 const Button: FC<PropsType> = ({ onClick, children, context= 'filled', className }) => {
 	const filledButtonClassNames = "w-full bg-violet-700 rounded-md hover:bg-violet-600 font-semibold p-[10px] flex justify-center items-center"
 	const emptyButtonClassNames = "w-full border-2 rounded-md hover:bg-violet-600 hover:border-transparent font-semibold p-[10px] flex justify-center items-center"
-	const textButtonClassNames = "bg-violet-700 rounded-md inline-flex w-auto p-0 bg-transparent font-semibold text-violet-500 underline hover:text-violet-400 hover:no-underline"
+	const textButtonClassNames = "rounded-md inline-flex w-auto p-0 bg-transparent text-violet-500 underline hover:text-violet-400 hover:no-underline"
 	const iconTextButtonClassNames = "w-full bg-violet-700 rounded-md"
 	const iconButtonClassNames = "w-full bg-violet-700 rounded-md"
 

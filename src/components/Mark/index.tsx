@@ -1,22 +1,22 @@
 import React, {FC, useEffect, useState} from 'react'
 import {faStar} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import Title from "@/app/components/UI/Title/Title";
+import Title from "@/app/components/UI/Title/Title"
 
 type PropsType = {
 	mark?: number;
 }
 
 const Mark: FC<PropsType> = ({ mark }) => {
-	const [markIcons, setMarkIcons] = useState([])
+	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 
 	const handleIconsHover = (iconIdx) => {
 		let hoveredIcons = []
 
 		for (let i = 1; i <= 10; i++) {
 			if (i <= iconIdx) {
-				hoveredIcons.push(<button key={i} className="text-amber-500" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={() => getEmptyMarkIcons()}><FontAwesomeIcon icon={faStar}/></button>)
-			} else hoveredIcons.push(<button key={i} className="text-amber-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={() => getEmptyMarkIcons()}><FontAwesomeIcon icon={faStar}/></button>)
+				hoveredIcons.push(<button key={i} className="text-amber-500" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>)
+			} else hoveredIcons.push(<button key={i} className="text-amber-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>)
 		}
 
 		setMarkIcons(hoveredIcons)
@@ -27,7 +27,7 @@ const Mark: FC<PropsType> = ({ mark }) => {
 
 		for (let i = 1; i <= 10; i++) {
 			setMarkIcons(prevState => [...prevState,
-				<button key={i} className="text-amber-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={() => getEmptyMarkIcons()}><FontAwesomeIcon icon={faStar}/></button>])
+				<button key={i} className="text-amber-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>])
 		}
 	}
 

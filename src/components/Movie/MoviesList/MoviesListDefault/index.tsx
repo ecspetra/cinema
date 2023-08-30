@@ -13,7 +13,7 @@ type PropsType = {
 const MoviesListDefault: FC<PropsType> = ({ moviesFromProps, linkToFetchMovies= LINK_TO_FETCH_DEFAULT_MOVIES }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [fetchedMovies, setFetchedMovies] = useState<Array<IMovieCard>>([])
-	const [moviesToRender, setMoviesToRender] = useState([])
+	const [moviesToShow, setMoviesToShow] = useState([])
 
 	const getMoreDefaultMovies = async () => {
 		const response = await fetch(linkToFetchMovies + currentPage)
@@ -29,7 +29,7 @@ const MoviesListDefault: FC<PropsType> = ({ moviesFromProps, linkToFetchMovies= 
 		if (fetchedMovies.length !== 0) {
 			fetchedMovies.map((item) => {
 				getMovieGenres(item).then((movie) => {
-					setMoviesToRender(prevState => [...prevState, movie])
+					setMoviesToShow(prevState => [...prevState, movie])
 				})
 			})
 			setFetchedMovies([])
@@ -43,7 +43,7 @@ const MoviesListDefault: FC<PropsType> = ({ moviesFromProps, linkToFetchMovies= 
 	return (
 		<>
 			<div className="grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center">
-				{moviesToRender.map((item: IMovieCard) => {
+				{moviesToShow.map((item: IMovieCard) => {
 					return <MovieCard key={item.id} movie={item}/>
 				})}
 			</div>
