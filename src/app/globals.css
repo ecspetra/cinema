@@ -19,25 +19,7 @@
 body {
   color: rgb(var(--foreground-rgb));
   background-color: #000000;
-  /*background-size: 100% auto;*/
-  /*background-position: top center;*/
-  /*background-image: url("assets/images/bg-img-2.png");*/
-  /*background-repeat: no-repeat;*/
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 300;
+  font-family: 'Manrope', sans-serif;
   position: relative;
-}
-
-body:before {
-  content: "";
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background-size: 100% auto;
-  background-position: top center;
-  background-image: url("assets/images/bg-img-2.png");
-  background-repeat: no-repeat;
+  color: #ffffff;
 }
