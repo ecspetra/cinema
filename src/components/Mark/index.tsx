@@ -16,7 +16,7 @@ const Mark: FC<PropsType> = ({ mark }) => {
 		for (let i = 1; i <= 10; i++) {
 			if (i <= iconIdx) {
 				hoveredIcons.push(<button key={i} className="text-amber-500" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>)
-			} else hoveredIcons.push(<button key={i} className="text-amber-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>)
+			} else hoveredIcons.push(<button key={i} className="text-red-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>)
 		}
 
 		setMarkIcons(hoveredIcons)
@@ -27,14 +27,14 @@ const Mark: FC<PropsType> = ({ mark }) => {
 
 		for (let i = 1; i <= 10; i++) {
 			setMarkIcons(prevState => [...prevState,
-				<button key={i} className="text-amber-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>])
+				<button key={i} className="text-red-900" onMouseEnter={() => handleIconsHover(i)} onMouseLeave={getEmptyMarkIcons}><FontAwesomeIcon icon={faStar}/></button>])
 		}
 	}
 
 	useEffect(() => {
 		const getMyMarkIcons = () => {
 			for (let i = 1; i <= 10; i++) {
-				setMarkIcons(prevState => [...prevState, i <= mark ? <FontAwesomeIcon key={i} icon={faStar} /> : <FontAwesomeIcon key={i} icon={faStar} style={{ color: 'rgb(46, 16, 101)' }} />])
+				setMarkIcons(prevState => [...prevState, i <= mark ? <FontAwesomeIcon key={i} icon={faStar} /> : <FontAwesomeIcon key={i} icon={faStar} className="text-red-900" />])
 			}
 		}
 
@@ -46,7 +46,7 @@ const Mark: FC<PropsType> = ({ mark }) => {
 	return (
 		<div className="mb-4">
 			<Title variant="h3">My mark</Title>
-			<div className="flex gap-x-1 text-violet-600">
+			<div className="flex gap-x-1">
 				{markIcons.map((item, idx) => {
 					return item
 				})}

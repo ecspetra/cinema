@@ -37,12 +37,12 @@ const ReviewsCard: FC<PropsType> = ({review}) => {
 	}
 
 	return (
-		<div className="mb-8 pb-4 px-4 border-b border-l border-slate-700">
+		<div className="mb-8 pb-4 px-4 border-b border-l border-slate-800">
 			<div className="flex mb-2">
 				<div className="flex items-center">
 					<Image className="aspect-square w-10 h-10 mr-3 rounded-md overflow-hidden" src={`https://image.tmdb.org/t/p/original${review.author_details.avatar_path}`} defaultImage={defaultUserImage} />
 					<div>
-						<Title variant="h3" className="mb-[4px]">{review.author}</Title>
+						<Title variant="h3" className="mb-2">{review.author}</Title>
 						<p className="text-xs">{formattedDate}</p>
 					</div>
 				</div>

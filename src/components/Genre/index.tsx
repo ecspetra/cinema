@@ -8,7 +8,7 @@ type PropsType = {
 
 const Genre: FC<PropsType> = ({ genre }) => {
 	return (
-		<span className="bg-indigo-950 rounded flex text-xs leading-none font-extralight p-[4px] my-0 mr-1 mb-1">{genre.name}</span>
+		<span className="bg-slate-800 rounded flex text-xs leading-none px-2 py-1 my-0 mr-1 mb-1">{genre.name}</span>
 	)
 }
 

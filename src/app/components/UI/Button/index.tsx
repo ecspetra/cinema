@@ -2,10 +2,11 @@ import React, { FC } from "react";
 import classNames from "classnames";
 
 type PropsType = {
-  onClick: React.MouseEventHandler;
+  onClick?: React.MouseEventHandler;
   children?: string | JSX.Element | JSX.Element[];
   context?: "filled" | "empty" | "icon-text" | "icon" | "text";
   className?: string;
+  type?: 'submit' | 'reset' | 'button';
 };
 
 const Button: FC<PropsType> = ({
@@ -13,6 +14,7 @@ const Button: FC<PropsType> = ({
   children,
   context = "filled",
   className,
+  type = "button"
 }) => {
   const filledButtonClassNames =
     "w-72 bg-red-600 rounded-md hover:bg-orange-500 font-semibold p-3 flex justify-center items-center";
@@ -40,9 +42,10 @@ const Button: FC<PropsType> = ({
 
   return (
     <button
+      type={type}
       className={classNames("duration-300", className, getButtonClassNames())}
       onClick={(event) => {
-        onClick(event);
+        onClick && onClick(event);
       }}
     >
       {children}

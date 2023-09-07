@@ -37,7 +37,7 @@ const ReviewsList: FC<PropsType> = ({reviews}) => {
 				<ReviewCard key={item.id} review={item} />
 			))}
 			{isShowMoreButton && (
-				<Button className="mx-auto max-w-[200px]" context="empty" onClick={handleReviewsToShow}>
+				<Button className="mx-auto" context="empty" onClick={handleReviewsToShow}>
 					{isAllReviewsShown ? 'Hide' : 'Show more'}
 				</Button>
 			)}

@@ -47,7 +47,7 @@ const MoviesListDefault: FC<PropsType> = ({ moviesFromProps, linkToFetchMovies= 
 					return <MovieCard key={item.id} movie={item}/>
 				})}
 			</div>
-			<Button className="mx-auto max-w-[200px]" context="empty" onClick={() => setCurrentPage(prevState => prevState + 1)}>Show more</Button>
+			<Button className="mx-auto" context="empty" onClick={() => setCurrentPage(prevState => prevState + 1)}>Show more</Button>
 		</>
 	)
 }
