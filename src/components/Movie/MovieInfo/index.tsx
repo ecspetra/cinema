@@ -1,21 +1,21 @@
 import React, { FC } from "react";
-import Image from "@/components/Image";
+import Image from "../../../components/Images/Image";
 import defaultMovieImage from "@/app/assets/images/default-movie-image.svg";
-import Title from "@/app/components/UI/Title/Title";
 import {
   faBolt,
   faCalendarCheck,
   faFlag,
 } from "@fortawesome/free-solid-svg-icons";
-import Button from "@/app/components/UI/Button";
-import Genre from "@/components/Genre";
+import Button from "../../../app/components/UI/Button";
+import Genre from "../../../components/Genre";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IBackdrop, IMovieInfo, IReview } from "../../../../interfaces";
-import ImagesList from "@/components/ImagesList";
-import Rating from "@/components/Rating";
-import Mark from "@/components/Mark";
-import ReviewsList from "@/components/Review/ReviewsList";
-import NewReviewForm from "@/components/Review/NewReviewForm";
+import ImagesList from "../../../components/Images/ImagesList";
+import Rating from "../../../components/Rating";
+import Mark from "../../../components/Mark";
+import ReviewsList from "../../Review/ReviewsList";
+import NewReviewForm from "../../Review/NewReviewForm";
+import Title from "../../../app/components/UI/Title/Title";
 
 type PropsType = {
   movieInfo: IMovieInfo;

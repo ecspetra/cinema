@@ -1,16 +1,18 @@
 import React, { FC, useEffect, useState } from "react";
-import { IBackdrop } from "../../../interfaces";
-import Image from "@/components/Image";
-import defaultMovieImage from "../../app/assets/images/default-movie-image.svg";
-import Button from "@/app/components/UI/Button";
-import Title from "@/app/components/UI/Title/Title";
+import { IBackdrop } from "../../../../interfaces";
+import Image from "../../../components/Images/Image";
+import defaultMovieImage from "../../../app/assets/images/default-movie-image.svg";
+import Button from "../../../app/components/UI/Button";
+import Title from "../../../app/components/UI/Title/Title";
+import ImagesSlider from "../ImagesSlider/index";
 
 type PropsType = {
   images: Array<IBackdrop>;
 };
 
 const ImagesList: FC<PropsType> = ({ images }) => {
-  const [imagesToShow, setImagesToShow] = useState([]);
+  const [imagesToShow, setImagesToShow] = useState<Array<IBackdrop>>([]);
+  const [isShowModal, setIsShowModal] = useState<boolean>(false);
   const initialImagesNumber = 12;
   const isAllImagesLoaded = imagesToShow.length > initialImagesNumber;
   const isShowMoreButton = images.length > initialImagesNumber;
@@ -43,12 +45,13 @@ const ImagesList: FC<PropsType> = ({ images }) => {
       <div className="mb-16">
         <div className="grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start">
           {imagesToShow.map((item, idx) => (
-            <Image
-              key={idx}
-              className="aspect-[215/121]"
-              src={`https://image.tmdb.org/t/p/w500${item.file_path}`}
-              defaultImage={defaultMovieImage}
-            />
+              <Button key={idx} context="image" onClick={() => setIsShowModal(true)}>
+                <Image
+                    className="aspect-[215/121]"
+                    src={`https://image.tmdb.org/t/p/w500${item.file_path}`}
+                    defaultImage={defaultMovieImage}
+                />
+              </Button>
           ))}
         </div>
         {isShowMoreButton && (
@@ -56,6 +59,7 @@ const ImagesList: FC<PropsType> = ({ images }) => {
             {buttonText}
           </Button>
         )}
+        {isShowModal && <ImagesSlider images={images} setIsShowModal={setIsShowModal} />}
       </div>
     </>
   );

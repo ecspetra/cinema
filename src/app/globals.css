@@ -23,3 +23,7 @@ body {
   position: relative;
   color: #ffffff;
 }
+
+.modal-open {
+  overflow: hidden;
+}

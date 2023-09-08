@@ -49,7 +49,7 @@ const Rating: FC<PropsType> = ({ rating, voteCount }) => {
   return (
     <div className="flex gap-x-1 text-white items-center mb-5">
       {ratingIcons.map((item) => item)}
-      <p className="text-sm font-semibold leading-none mt-[2px]">
+      <p className="text-sm font-semibold leading-none mr-2">
         {Math.ceil(rating * 10) / 10}
       </p>
       <p className="text-slate-400 text-sm leading-none mt-[2px]">
