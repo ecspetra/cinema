@@ -12,6 +12,7 @@ type PropsType = {
 
 const ImagesList: FC<PropsType> = ({ images }) => {
   const [imagesToShow, setImagesToShow] = useState<Array<IBackdrop>>([]);
+  const [initialSliderImageIdx, setInitialSliderImageIdx] = useState<number>(0);
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
   const initialImagesNumber = 12;
   const isAllImagesLoaded = imagesToShow.length > initialImagesNumber;
@@ -24,6 +25,11 @@ const ImagesList: FC<PropsType> = ({ images }) => {
       : images;
     setImagesToShow(imagesToDisplay);
   };
+
+  const handleSliderImage = (idx) => {
+    setIsShowModal(true)
+    setInitialSliderImageIdx(idx)
+  }
 
   useEffect(() => {
     const initialImages = images.slice(0, initialImagesNumber);
@@ -45,7 +51,7 @@ const ImagesList: FC<PropsType> = ({ images }) => {
       <div className="mb-16">
         <div className="grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start">
           {imagesToShow.map((item, idx) => (
-              <Button key={idx} context="image" onClick={() => setIsShowModal(true)}>
+              <Button key={idx} context="image" onClick={() => handleSliderImage(idx)}>
                 <Image
                     className="aspect-[215/121]"
                     src={`https://image.tmdb.org/t/p/w500${item.file_path}`}
@@ -59,7 +65,7 @@ const ImagesList: FC<PropsType> = ({ images }) => {
             {buttonText}
           </Button>
         )}
-        {isShowModal && <ImagesSlider images={images} setIsShowModal={setIsShowModal} />}
+        {isShowModal && <ImagesSlider images={images} initialSliderImageIdx={initialSliderImageIdx} setIsShowModal={setIsShowModal} />}
       </div>
     </>
   );

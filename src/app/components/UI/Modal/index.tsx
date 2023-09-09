@@ -39,7 +39,7 @@ const Modal: FC<ModalPropTypes> = ({ children, handleCloseModal, modalTitle, mod
 
     return (
         <Portal wrapperId="modal-root">
-            <div className="w-screen h-screen fixed inset-0 z-50 bg-slate-900 bg-opacity-90 flex justify-center items-center">
+            <div className="w-screen h-screen fixed inset-0 z-50 bg-slate-900 bg-opacity-80 flex justify-center items-center">
                 <div className={classNames('w-full max-w-xl relative', className)} ref={modalRef}>
                     <Button context="icon" className="absolute top-4 right-4" onClick={() => {handleCloseModal(false)}}>
                         <FontAwesomeIcon icon={faXmark} className="w-6 h-6" />

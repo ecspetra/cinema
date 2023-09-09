@@ -2,6 +2,7 @@ import React, {FC, useEffect, useState} from 'react'
 import {faStar} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import Title from "@/app/components/UI/Title/Title"
+import { getDatabase, ref, set } from "firebase/database";
 
 type PropsType = {
 	mark?: number;

@@ -1,22 +1,22 @@
 import { useState } from 'react';
 
-const useImagesSlider = (initialImages) => {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const useImagesSlider = (initialImages, initialIdx) => {
+    const [currentImageIdx, setCurrentImageIdx] = useState(initialIdx);
 
     const showNextImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === initialImages.length - 1 ? 0 : prevIndex + 1
+        setCurrentImageIdx((prevIdx) =>
+            prevIdx === initialImages.length - 1 ? 0 : prevIdx + 1
         );
     };
 
     const showPrevImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === 0 ? initialImages.length - 1 : prevIndex - 1
+        setCurrentImageIdx((prevIdx) =>
+            prevIdx === 0 ? initialImages.length - 1 : prevIdx - 1
         );
     };
 
     return {
-        currentImageIndex,
+        currentImageIdx,
         showNextImage,
         showPrevImage,
     };

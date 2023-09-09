@@ -10,21 +10,22 @@ import Image from "../Image/index";
 
 type PropsType = {
     images: Array<IBackdrop>;
+    initialSliderImageIdx: number;
     setIsShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ImagesSlider: FC<PropsType> = ({ images, setIsShowModal}) => {
-    const { currentImageIndex, showNextImage, showPrevImage } = useImagesSlider(images);
+const ImagesSlider: FC<PropsType> = ({ images, initialSliderImageIdx, setIsShowModal}) => {
+    const { currentImageIdx, showNextImage, showPrevImage } = useImagesSlider(images, initialSliderImageIdx);
 
     const handleCloseModal = () => {
         setIsShowModal(false);
     };
 
     return (
-        <Modal className="!max-w-5xl" handleCloseModal={handleCloseModal}>
+        <Modal className="!max-w-7xl" handleCloseModal={handleCloseModal}>
             <Image
                 className="aspect-[215/121]"
-                src={`https://image.tmdb.org/t/p/w500${images[currentImageIndex].file_path}`}
+                src={`https://image.tmdb.org/t/p/original${images[currentImageIdx].file_path}`}
                 defaultImage={defaultMovieImage}
             />
             <Button context="icon" className="absolute inset-y-1/2 -translate-y-1/2 right-4" onClick={showNextImage}>

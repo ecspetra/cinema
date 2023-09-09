@@ -23,9 +23,9 @@ const Button: FC<PropsType> = ({
   const imageButtonClassNames =
     "flex justify-center items-center";
   const textButtonClassNames =
-    "rounded-md inline-flex w-auto p-0 bg-transparent text-violet-500 underline hover:text-violet-400 hover:no-underline";
-  const iconTextButtonClassNames = "w-full bg-violet-700 rounded-md";
-  const iconButtonClassNames = "w-10 h-10 flex justify-center items-center bg-violet-700 rounded-md z-50";
+    "inline-flex text-red-500 border-b border-red-500 hover:text-orange-500 hover:border-transparent";
+  const iconTextButtonClassNames = "w-full bg-slate-800 rounded-md";
+  const iconButtonClassNames = "w-11 h-11 flex justify-center items-center bg-slate-800 hover:bg-slate-700 rounded-md z-50";
 
   const getButtonClassNames = () => {
     switch (context) {
