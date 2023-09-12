@@ -4,6 +4,7 @@ import { NextPageContext } from 'next'
 import {LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE} from "@/constants/links"
 import {useEffect, useState} from "react"
 import Title from "@/app/components/UI/Title/Title";
+import {AuthProvider} from "../context/AuthProvider";
 
 const Home = ({ moviesFromProps }) => {
 	const [homePageMovies, setHomePageMovies] = useState(moviesFromProps)
@@ -25,10 +26,10 @@ const Home = ({ moviesFromProps }) => {
 	if (!homePageMovies.length) return <div>Loading</div>
 
 	return (
-		<MainLayout>
+		<>
 			<Title className="text-7xl">Discover movies</Title>
 			<MoviesListDefault moviesFromProps={homePageMovies} />
-		</MainLayout>
+		</>
 	)
 }
 

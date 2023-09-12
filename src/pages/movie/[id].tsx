@@ -62,7 +62,7 @@ const Movie = ({ movieFromProps }) => {
 	}
 
 	return (
-		<MainLayout>
+		<>
 			<MovieInfo movieInfo={movie.movieResult} movieImages={movie.imagesResult.backdrops} movieReviews={movie.reviewsResult.results} />
 			<div>
 				<Title>Cast</Title>
@@ -72,7 +72,7 @@ const Movie = ({ movieFromProps }) => {
 				<Title>Similar movies</Title>
 				<MoviesListDefault moviesFromProps={movie.similarMoviesResult.results} linkToFetchMovies={linkToFetchSimilarMovies} />
 			</div>
-		</MainLayout>
+		</>
 	)
 }
 

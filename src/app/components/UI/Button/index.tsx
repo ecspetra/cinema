@@ -3,6 +3,8 @@ import classNames from "classnames";
 
 type PropsType = {
   onClick?: React.MouseEventHandler;
+  onMouseEnter?: React.MouseEventHandler;
+  onMouseLeave?: React.MouseEventHandler;
   children?: string | JSX.Element | JSX.Element[];
   context?: "filled" | "empty" | "image" | "icon-text" | "icon" | "text";
   className?: string;
@@ -11,6 +13,8 @@ type PropsType = {
 
 const Button: FC<PropsType> = ({
   onClick,
+  onMouseEnter,
+  onMouseLeave,
   children,
   context = "filled",
   className,
@@ -51,6 +55,8 @@ const Button: FC<PropsType> = ({
       onClick={(event) => {
         onClick && onClick(event);
       }}
+      onMouseEnter={onMouseEnter && onMouseEnter}
+      onMouseLeave={onMouseLeave && onMouseLeave}
     >
       {children}
     </button>

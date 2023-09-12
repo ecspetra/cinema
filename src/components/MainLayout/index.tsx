@@ -8,7 +8,7 @@ type PropsType = {
 
 const MainLayout: FC<PropsType> = ({ children }) => {
 	return (
-		<div className="container w-full max-w-screen-xl mx-auto p-5 z-2 relative font-light">
+		<div className="container w-full max-w-screen-xl mx-auto p-5 z-2 relative font-light min-h-screen flex flex-col">
 			<Header />
 			{children}
 		</div>

@@ -1,3 +1,5 @@
+import {User} from "firebase/auth";
+
 export interface IGenre {
 	id: number;
 	name: string;

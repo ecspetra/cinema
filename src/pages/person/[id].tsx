@@ -40,12 +40,11 @@ const Person = ({ personFromProps }) => {
   }, []);
 
   return (
-    <MainLayout>
       <div className="w-full flex gap-x-7 py-7">
         <div className="w-full max-w-[340px]">
           <Image
-            src={`https://image.tmdb.org/t/p/w440_and_h660_face${person.profile_path}`}
-            defaultImage={defaultPersonImage}
+              src={`https://image.tmdb.org/t/p/w440_and_h660_face${person.profile_path}`}
+              defaultImage={defaultPersonImage}
           />
         </div>
         <div className="w-full">
@@ -65,10 +64,10 @@ const Person = ({ personFromProps }) => {
               <span>
                 <span>{moment(person.birthday).format("MM.DD.YYYY")}</span>
                 {person.deathday && (
-                  <span>
+                    <span>
                     {" "}
-                    — Date of death:{" "}
-                    {moment(person.deathday).format("MM.DD.YYYY")}
+                      — Date of death:{" "}
+                      {moment(person.deathday).format("MM.DD.YYYY")}
                   </span>
                 )}
               </span>
@@ -84,7 +83,6 @@ const Person = ({ personFromProps }) => {
           </Button>
         </div>
       </div>
-    </MainLayout>
   );
 };
 
