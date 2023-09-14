@@ -8,6 +8,15 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "useTabs": true,
+    "semi": false,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "arrowParens": "avoid"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-brands-svg-icons": "^6.4.2",
@@ -31,7 +40,9 @@
   "devDependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
     "autoprefixer": "^10.4.14",
+    "eslint-plugin-prettier": "^5.0.0",
     "postcss": "^8.4.27",
+    "prettier": "3.0.3",
     "tailwindcss": "^3.3.3"
   }
 }

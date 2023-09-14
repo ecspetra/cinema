@@ -1,5 +1,3 @@
-import MainLayout from "@/../../components/MainLayout"
-
 const FavoriteMovies = () => {
 	return (
 	)

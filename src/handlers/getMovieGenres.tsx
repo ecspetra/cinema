@@ -1,10 +1,10 @@
-import getAllGenres from "@/handlers/getAllGenres"
+import getAllGenres from '@/handlers/getAllGenres'
 
-export const getMovieGenres = (movie) => {
-	return new Promise(async (resolve) => {
+export const getMovieGenres = movie => {
+	return new Promise(async resolve => {
 		const allGenres = await getAllGenres()
 
-		const genresNames = movie.genre_ids.map((genreId) => {
+		const genresNames = movie.genre_ids.map(genreId => {
 			const equalGenre = allGenres.find(genre => genreId === genre.id)
 			return equalGenre
 		})
@@ -15,7 +15,7 @@ export const getMovieGenres = (movie) => {
 			release_date: movie.release_date,
 			title: movie.title,
 			genre_ids: movie.genre_ids,
-			genres: genresNames
+			genres: genresNames,
 		}
 
 		resolve(movieWithGenres)

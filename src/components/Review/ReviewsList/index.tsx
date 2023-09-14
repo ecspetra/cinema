@@ -1,16 +1,17 @@
-import React, {FC, useState} from 'react'
-import {IReview} from "../../../../interfaces"
-import ReviewCard from "@/components/Review/ReviewCard"
-import Title from "@/app/components/UI/Title/Title"
-import Button from "@/app/components/UI/Button"
+import React, { FC, useState } from 'react'
+import { IReview } from '../../../../interfaces'
+import ReviewCard from '@/components/Review/ReviewCard'
+import Title from '@/app/components/UI/Title/Title'
+import Button from '@/app/components/UI/Button'
 
 type PropsType = {
-	reviews: Array<IReview>;
+	reviews: Array<IReview>
 }
 
-const ReviewsList: FC<PropsType> = ({reviews}) => {
+const ReviewsList: FC<PropsType> = ({ reviews }) => {
 	const initialReviewsLength = 3
-	const [maxReviewsLength, setMaxReviewsLength] = useState<number>(initialReviewsLength)
+	const [maxReviewsLength, setMaxReviewsLength] =
+		useState<number>(initialReviewsLength)
 	const isAllReviewsShown = reviews.length === maxReviewsLength
 	const isShowMoreButton = reviews.length > initialReviewsLength
 
@@ -20,11 +21,11 @@ const ReviewsList: FC<PropsType> = ({reviews}) => {
 			: Math.min(maxReviewsLength + initialReviewsLength, reviews.length)
 
 		setMaxReviewsLength(newMaxReviewsLength)
-	};
+	}
 
 	if (!reviews.length) {
 		return (
-			<div className="mb-16">
+			<div className='mb-16'>
 				<Title>Reviews</Title>
 				<p>No reviews yet</p>
 			</div>
@@ -33,11 +34,15 @@ const ReviewsList: FC<PropsType> = ({reviews}) => {
 
 	const renderReviews = () => (
 		<div>
-			{reviews.slice(0, maxReviewsLength).map((item) => (
+			{reviews.slice(0, maxReviewsLength).map(item => (
 				<ReviewCard key={item.id} review={item} />
 			))}
 			{isShowMoreButton && (
-				<Button className="mx-auto" context="empty" onClick={handleReviewsToShow}>
+				<Button
+					className='mx-auto'
+					context='empty'
+					onClick={handleReviewsToShow}
+				>
 					{isAllReviewsShown ? 'Hide' : 'Show more'}
 				</Button>
 			)}
@@ -45,7 +50,7 @@ const ReviewsList: FC<PropsType> = ({reviews}) => {
 	)
 
 	return (
-		<div className="mb-16">
+		<div className='mb-16'>
 			<Title>Reviews</Title>
 			{renderReviews()}
 		</div>

@@ -3,27 +3,46 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+	--foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+	:root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	}
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: #000000;
-  font-family: 'Manrope', sans-serif;
-  position: relative;
-  color: #ffffff;
+	color: rgb(var(--foreground-rgb));
+	background-color: #000000;
+	font-family: 'Manrope', sans-serif;
+	position: relative;
+	color: #ffffff;
 }
 
 .modal-open {
-  overflow: hidden;
+	overflow: hidden;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+	-webkit-text-fill-color: #ffffff;
+	color: #ffffff;
+	transition: background-color 5000s ease-in-out 0s, border-top-color .3s, border-right-color .3s, border-bottom-color .3s, border-left-color .3s;
+}
+
+input:-webkit-autofill::first-line {
+	font-family: 'Manrope', sans-serif !important;
+	font-size: 16px !important;
 }

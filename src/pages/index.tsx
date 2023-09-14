@@ -1,10 +1,8 @@
-import MainLayout from "../components/MainLayout"
-import MoviesListDefault from "../components/Movie/MoviesList/MoviesListDefault"
+import MoviesListDefault from '../components/Movie/MoviesList/MoviesListDefault'
 import { NextPageContext } from 'next'
-import {LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE} from "@/constants/links"
-import {useEffect, useState} from "react"
-import Title from "@/app/components/UI/Title/Title";
-import {AuthProvider} from "../context/AuthProvider";
+import { LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE } from '@/constants/links'
+import { useEffect, useState } from 'react'
+import Title from '@/app/components/UI/Title/Title'
 
 const Home = ({ moviesFromProps }) => {
 	const [homePageMovies, setHomePageMovies] = useState(moviesFromProps)
@@ -12,7 +10,9 @@ const Home = ({ moviesFromProps }) => {
 	useEffect(() => {
 		const fetchHomePageMovies = async () => {
 			try {
-				const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE)
+				const response = await fetch(
+					LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE
+				)
 				const result = await response.json()
 				setHomePageMovies(result.results)
 			} catch (error) {
@@ -27,7 +27,7 @@ const Home = ({ moviesFromProps }) => {
 
 	return (
 		<>
-			<Title className="text-7xl">Discover movies</Title>
+			<Title className='text-7xl'>Discover movies</Title>
 			<MoviesListDefault moviesFromProps={homePageMovies} />
 		</>
 	)
