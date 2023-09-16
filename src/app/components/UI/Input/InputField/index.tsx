@@ -1,6 +1,5 @@
-import React, { FC, useState } from 'react'
+import React, { ChangeEventHandler, FC } from 'react'
 import classNames from 'classnames'
-import { faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import Error from '@/app/components/UI/Error'
@@ -8,34 +7,28 @@ import Error from '@/app/components/UI/Error'
 type PropsType = {
 	id: string
 	label: string
-	onChange: React.Dispatch<React.SetStateAction<string>>
+	value: string
+	error: string
+	onChange: ChangeEventHandler<HTMLInputElement>
 	type?: 'image' | 'password' | 'text'
 	placeholder?: string
 	className?: string
 	icon?: IconProp
-	error?: string
 	required?: boolean
 }
 
 const InputField: FC<PropsType> = ({
 	id,
 	label,
+	value,
+	error,
 	onChange,
 	type = 'text',
 	placeholder = 'Enter your text...',
 	className,
 	icon,
-	error,
 	required,
 }) => {
-	const [value, setValue] = useState<string>('')
-
-	const handleChange = event => {
-		const newValue = event.target.value
-		setValue(newValue)
-		onChange(newValue)
-	}
-
 	return (
 		<div className='w-full'>
 			<label
@@ -55,9 +48,9 @@ const InputField: FC<PropsType> = ({
 					)}
 					<input
 						value={value}
+						onChange={onChange}
 						type={type}
 						id={id}
-						onChange={handleChange}
 						placeholder={placeholder}
 						className='w-full bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
 					/>

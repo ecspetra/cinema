@@ -6,7 +6,6 @@ import MovieInfo from '@/components/Movie/MovieInfo'
 import MoviesListDefault from '@/components/Movie/MoviesList/MoviesListDefault'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useAuth } from '@/context/AuthProvider'
 
 const Movie = ({ movieFromProps }) => {
 	const [movie, setMovie] = useState(movieFromProps)

@@ -12,86 +12,108 @@ import {
 	faUserPlus,
 } from '@fortawesome/free-solid-svg-icons'
 import Loader from '@/components/Loader'
-import Error from '@/app/components/UI/Error'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { updateErrors } from '@/handlers/updateErrors'
-
-type ErrorsState = {
-	name: string
-	email: string
-	password: string
-	general: string
-}
 
 function SignUpForm() {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [errors, setErrors] = useState<ErrorsState>({
-		name: '',
-		email: '',
-		password: '',
-		general: '',
+	const [isTouched, setIsTouched] = useState<boolean>(false)
+	const [formData, setFormData] = useState({
+		name: {
+			value: '',
+			error: '',
+		},
+		email: {
+			value: '',
+			error: '',
+		},
+		password: {
+			value: '',
+			error: '',
+		},
 	})
-	const [name, setName] = useState<string>('')
-	const [email, setEmail] = useState<string>('')
-	const [password, setPassword] = useState<string>('')
 	const router = useRouter()
-	const isEmailValid =
-		/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-	const isPasswordValid = password.length >= 8
+	const isNameValid = formData.name.value.trim() !== ''
+	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
+	const isPasswordValid = formData.password.value.length >= 8
 
-	const handleNameInput = (newValue: string) => {
-		setName(newValue)
+	const handleNameChange = event => {
+		const error =
+			event.target.value === '' ? ERROR_MESSAGES.REQUIRED_FIELD : ''
+		updateField('name', event.target.value, error)
+	}
 
-		setErrors(prevErrors => ({
-			...prevErrors,
-			name: newValue ? '' : ERROR_MESSAGES.NAME_REQUIRED,
+	const handleEmailChange = event => {
+		const error =
+			event.target.value === '' ? ERROR_MESSAGES.INVALID_EMAIL : ''
+		updateField('email', event.target.value, error)
+	}
+
+	const handlePasswordChange = event => {
+		const error =
+			event.target.value === '' ? ERROR_MESSAGES.INVALID_PASSWORD : ''
+		updateField('password', event.target.value, error)
+	}
+
+	const updateField = (
+		fieldName: string,
+		value: string,
+		error: string = ''
+	) => {
+		setFormData(prevState => ({
+			...prevState,
+			[fieldName]: { ...prevState[fieldName], value, error },
+		}))
+
+		if (!isTouched) setIsTouched(true)
+	}
+
+	const clearErrors = () => {
+		setFormData(prevState => ({
+			...prevState,
+			name: { ...prevState.name, error: '' },
+			email: { ...prevState.email, error: '' },
+			password: { ...prevState.password, error: '' },
 		}))
 	}
 
-	const handleEmailInput = (newValue: string) => {
-		setEmail(newValue)
-
-		setErrors(prevErrors => ({
-			...prevErrors,
-			email: newValue ? '' : ERROR_MESSAGES.INVALID_EMAIL,
-		}))
-	}
-
-	const handlePasswordInput = (newValue: string) => {
-		setPassword(newValue)
-
-		setErrors(prevErrors => ({
-			...prevErrors,
-			password: newValue ? '' : ERROR_MESSAGES.SHORT_PASSWORD,
-		}))
-	}
-
-	const handleSignUp = async event => {
+	const handleSignUp = async (event: React.FormEvent) => {
 		event.preventDefault()
 		setIsLoading(true)
-		setErrors({
-			name: name ? '' : ERROR_MESSAGES.NAME_REQUIRED,
-			email: isEmailValid.test(email) ? '' : ERROR_MESSAGES.INVALID_EMAIL,
-			password: isPasswordValid ? '' : ERROR_MESSAGES.SHORT_PASSWORD,
-			general: '',
-		})
 
-		if (name && isPasswordValid && isEmailValid.test(email)) {
+		const isFormValid = isNameValid && isEmailValid && isPasswordValid
+
+		if (isFormValid && isTouched) {
+			clearErrors()
 			try {
-				await signUp(email, password, name)
-				setName('')
-				setEmail('')
-				setPassword('')
+				await signUp(
+					formData.email.value,
+					formData.password.value,
+					formData.name.value
+				)
 				await router.push('/')
 			} catch (error) {
-				setErrors(prevErrors => ({
-					...prevErrors,
-					general: error.toString(),
-				}))
+				console.log(error)
 			} finally {
 				setIsLoading(false)
 			}
 		} else {
+			setFormData(prevState => ({
+				...prevState,
+				name: {
+					...prevState.name,
+					error: isNameValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
+				},
+				email: {
+					...prevState.email,
+					error: isEmailValid ? '' : ERROR_MESSAGES.INVALID_EMAIL,
+				},
+				password: {
+					...prevState.password,
+					error: isPasswordValid
+						? ''
+						: ERROR_MESSAGES.INVALID_PASSWORD,
+				},
+			}))
 			setIsLoading(false)
 		}
 	}
@@ -100,7 +122,7 @@ function SignUpForm() {
 		<div className='w-full flex flex-col justify-center items-center'>
 			<div className='max-w-md w-full'>
 				<div className='flex justify-center items-center mb-12 gap-4'>
-					<Title className='mb-0'>Sign up</Title>
+					<Title className='!mb-0'>Sign up</Title>
 					<FontAwesomeIcon
 						className='text-2xl text-red-600'
 						icon={faUserPlus}
@@ -114,37 +136,34 @@ function SignUpForm() {
 					<InputField
 						id='userName'
 						label='Name'
+						value={formData.name.value}
+						error={formData.name.error}
+						onChange={handleNameChange}
 						icon={faUser}
-						error={errors.name}
 						required
 						placeholder='Name'
-						onChange={handleNameInput}
 					/>
 					<InputField
 						id='userEmail'
 						label='Email'
+						value={formData.email.value}
+						error={formData.email.error}
+						onChange={handleEmailChange}
 						icon={faAt}
-						error={errors.email}
 						required
 						placeholder='Email'
-						onChange={handleEmailInput}
 					/>
 					<InputField
 						id='userPassword'
 						label='Password'
+						value={formData.password.value}
+						error={formData.password.error}
+						onChange={handlePasswordChange}
 						icon={faKey}
-						error={errors.password}
 						required
 						type='password'
 						placeholder='Password'
-						onChange={handlePasswordInput}
 					/>
-					{errors.general && (
-						<Error
-							className='bg-red-600/20 px-4 py-2 w-full rounded-md'
-							error={errors.general}
-						/>
-					)}
 					<Button className='mt-8 w-full relative' type='submit'>
 						{isLoading ? (
 							<span className='flex justify-center items-center'>
