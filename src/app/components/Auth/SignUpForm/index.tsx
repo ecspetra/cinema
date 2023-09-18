@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { signUp } from '@/firebase/config'
 import Title from '../../UI/Title/Title'
 import Button from '../../UI/Button/index'
@@ -13,11 +13,30 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Loader from '@/components/Loader'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
+import Error from '@/app/components/UI/Error'
+
+interface SignUpFormData {
+	name: {
+		value: string
+		error: string
+	}
+	email: {
+		value: string
+		error: string
+	}
+	password: {
+		value: string
+		error: string
+	}
+	formError: {
+		error: string
+	}
+}
 
 function SignUpForm() {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<SignUpFormData>({
 		name: {
 			value: '',
 			error: '',
@@ -30,32 +49,35 @@ function SignUpForm() {
 			value: '',
 			error: '',
 		},
+		formError: {
+			error: '',
+		},
 	})
 	const router = useRouter()
 	const isNameValid = formData.name.value.trim() !== ''
 	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
 	const isPasswordValid = formData.password.value.length >= 8
 
-	const handleNameChange = event => {
+	const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
 			event.target.value === '' ? ERROR_MESSAGES.REQUIRED_FIELD : ''
 		updateField('name', event.target.value, error)
 	}
 
-	const handleEmailChange = event => {
+	const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
 			event.target.value === '' ? ERROR_MESSAGES.INVALID_EMAIL : ''
 		updateField('email', event.target.value, error)
 	}
 
-	const handlePasswordChange = event => {
+	const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
 			event.target.value === '' ? ERROR_MESSAGES.INVALID_PASSWORD : ''
 		updateField('password', event.target.value, error)
 	}
 
 	const updateField = (
-		fieldName: string,
+		fieldName: keyof SignUpFormData,
 		value: string,
 		error: string = ''
 	) => {
@@ -67,13 +89,20 @@ function SignUpForm() {
 		if (!isTouched) setIsTouched(true)
 	}
 
-	const clearErrors = () => {
+	const updateFormError = (error: string) => {
 		setFormData(prevState => ({
 			...prevState,
-			name: { ...prevState.name, error: '' },
-			email: { ...prevState.email, error: '' },
-			password: { ...prevState.password, error: '' },
+			formError: { error },
 		}))
+	}
+
+	const clearForm = () => {
+		setFormData({
+			name: { value: '', error: '' },
+			email: { value: '', error: '' },
+			password: { value: '', error: '' },
+			formError: { error: '' },
+		})
 	}
 
 	const handleSignUp = async (event: React.FormEvent) => {
@@ -83,16 +112,17 @@ function SignUpForm() {
 		const isFormValid = isNameValid && isEmailValid && isPasswordValid
 
 		if (isFormValid && isTouched) {
-			clearErrors()
 			try {
 				await signUp(
 					formData.email.value,
 					formData.password.value,
 					formData.name.value
 				)
+				updateFormError('')
+				clearForm()
 				await router.push('/')
-			} catch (error) {
-				console.log(error)
+			} catch (error: any) {
+				updateFormError(error.toString())
 			} finally {
 				setIsLoading(false)
 			}
@@ -164,6 +194,12 @@ function SignUpForm() {
 						type='password'
 						placeholder='Password'
 					/>
+					{formData.formError.error && (
+						<Error
+							className='px-4 py-2 bg-red-600/20 w-full rounded-md'
+							error={formData.formError.error}
+						/>
+					)}
 					<Button className='mt-8 w-full relative' type='submit'>
 						{isLoading ? (
 							<span className='flex justify-center items-center'>
