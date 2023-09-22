@@ -9,13 +9,22 @@ import {
 import Button from '../../../app/components/UI/Button'
 import Genre from '../../../components/Genre'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { IBackdrop, IMovieInfo, IReview } from '../../../../interfaces'
+import {
+	IBackdrop,
+	IMovieCard,
+	IMovieInfo,
+	IReview,
+} from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
 import ReviewsList from '../../Review/ReviewsList'
 import NewReviewForm from '../../Review/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
+import { setNewFavoriteMovie } from '@/firebase/config'
+import { useAuth } from '@/context/AuthProvider'
+import { useModal } from '@/context/ModalProvider'
+import { openLoginModal } from '@/handlers/openLoginModal'
 
 type PropsType = {
 	movieInfo: IMovieInfo
@@ -24,7 +33,23 @@ type PropsType = {
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
-	const test = () => {}
+	const { currentUser } = useAuth()
+	const { showModal } = useModal()
+	const isLoggedIn = currentUser !== null
+
+	const setFavoriteMovie = (movie: IMovieCard) => {
+		if (isLoggedIn) {
+			const newMovie: IMovieCard = {
+				id: movie.id,
+				poster_path: movie.poster_path,
+				release_date: movie.release_date,
+				title: movie.title,
+				genre_ids: movie.genre_ids,
+				genres: movie.genres,
+			}
+			setNewFavoriteMovie(newMovie, currentUser.uid)
+		} else openLoginModal(showModal)
+	}
 
 	return (
 		<div className='flex gap-x-7 py-7'>
@@ -93,9 +118,12 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					rating={movieInfo.vote_average}
 					voteCount={movieInfo.vote_count}
 				/>
-				<Mark />
+				<Mark movieId={movieInfo.id} />
 				<p className='mb-6'>{movieInfo.overview}</p>
-				<Button className='mb-12' onClick={test}>
+				<Button
+					className='mb-12'
+					onClick={() => setFavoriteMovie(movieInfo)}
+				>
 					Add to favorites
 				</Button>
 				<ImagesList images={movieImages} />

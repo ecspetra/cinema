@@ -7,7 +7,9 @@ import {
 	User,
 	updateProfile,
 } from 'firebase/auth'
-import { getDatabase, ref, set } from 'firebase/database'
+import { getDatabase, ref, get, set, remove } from 'firebase/database'
+import { uuidv4 } from '@firebase/util'
+import { IMovieCard } from '../../interfaces'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -29,6 +31,8 @@ export interface AuthContextType {
 	currentUser: User | null
 }
 
+// auth handlers
+
 export const addUserToRealtimeDatabase = async (newUser: object) => {
 	const newUserRef = ref(database, `users/${newUser.uid}`)
 
@@ -41,11 +45,11 @@ export const addUserToRealtimeDatabase = async (newUser: object) => {
 	await set(newUserRef, newUserData)
 }
 
-export async function signUp(
+export const signUp = async (
 	email: string,
 	password: string,
 	displayName: string
-) {
+) => {
 	try {
 		const userCredential = await createUserWithEmailAndPassword(
 			auth,
@@ -63,7 +67,7 @@ export async function signUp(
 	}
 }
 
-export async function signIn(email: string, password: string) {
+export const signIn = async (email: string, password: string) => {
 	try {
 		await signInWithEmailAndPassword(auth, email, password)
 	} catch (error) {
@@ -71,10 +75,80 @@ export async function signIn(email: string, password: string) {
 	}
 }
 
-export async function signOutUser() {
+export const signOutUser = async () => {
 	try {
 		await signOut(auth)
 	} catch (error) {
 		throw error
 	}
+}
+
+// movie marks handlers
+
+export const setNewMarkForMovie = async (
+	movieId: number,
+	userId: string,
+	mark: number
+) => {
+	const newMarkRef = ref(database, `movieMarks/${uuidv4()}`)
+
+	const newMarkData = {
+		movieId: movieId,
+		userId: userId,
+		mark: mark,
+	}
+
+	await set(newMarkRef, newMarkData)
+}
+
+export const getMarkForMovie = async (movieId: number, userId: string) => {
+	const marksRef = ref(database, 'movieMarks')
+
+	return new Promise(async resolve => {
+		get(marksRef).then(snapshot => {
+			let response
+
+			snapshot.forEach(childSnapshot => {
+				const movieMark = {
+					key: childSnapshot.key,
+					data: childSnapshot.val(),
+				}
+
+				if (
+					movieMark.data.movieId === movieId &&
+					movieMark.data.userId === userId
+				)
+					response = movieMark
+			})
+
+			resolve(response)
+		})
+	})
+}
+
+export const deleteMarkForMovie = async (markKey: string) => {
+	const marksRef = ref(database, 'movieMarks')
+	const dbRef = ref(database, '/movieMarks/' + markKey)
+	remove(dbRef)
+}
+
+// favorite movie handlers
+
+export const setNewFavoriteMovie = async (
+	movie: IMovieCard,
+	userId: string
+) => {
+	const newFavoriteMovieRef = ref(database, `favoriteMovies/${uuidv4()}`)
+
+	const newFavoriteMovieData = {
+		id: movie.id,
+		poster_path: movie.poster_path,
+		release_date: movie.release_date,
+		title: movie.title,
+		genre_ids: movie.genre_ids,
+		genres: movie.genres,
+		userId: userId,
+	}
+
+	await set(newFavoriteMovieRef, newFavoriteMovieData)
 }

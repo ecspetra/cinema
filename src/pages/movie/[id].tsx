@@ -109,6 +109,8 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			return response.json()
 		}
 
+		const fetchMovieMark = async () => {}
+
 		const [
 			movieResult,
 			creditsResult,

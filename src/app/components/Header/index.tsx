@@ -20,9 +20,9 @@ const Header = () => {
 				<span>CinemaStreet</span>
 			</Link>
 			{isShowUserMenu && (
-				<div className='flex justify-center items-center'>
+				<div className='flex justify-center items-center gap-4'>
 					<Image
-						className='!w-11 h-11'
+						className='!w-11 h-11 rounded-full'
 						src={currentUser.photoURL}
 						defaultImage={defaultUserImage}
 					/>

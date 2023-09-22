@@ -26,7 +26,7 @@ const Button: FC<PropsType> = ({
 		'w-72 border-2 border-red-600 text-red-600 rounded-md hover:border-transparent hover:w-full hover:text-orange-500 font-semibold p-3 flex justify-center items-center'
 	const imageButtonClassNames = 'flex justify-center items-center'
 	const textButtonClassNames =
-		'inline-flex text-red-500 border-b border-red-500 hover:text-orange-500 hover:border-transparent'
+		'inline-flex text-red-500 border-b border-red-500 leading-none hover:text-orange-500 hover:border-transparent'
 	const iconTextButtonClassNames = 'w-full bg-slate-800 rounded-md'
 	const iconButtonClassNames =
 		'w-11 h-11 flex justify-center items-center bg-slate-800 hover:bg-slate-700 rounded-md z-50'

@@ -1,5 +1,3 @@
-import { User } from 'firebase/auth'
-
 export interface IGenre {
 	id: number
 	name: string
@@ -22,6 +20,7 @@ export interface IReview {
 }
 
 export interface IMovieInfo {
+	id: number
 	poster_path: string
 	title: string
 	tagline: string

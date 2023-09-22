@@ -1,14 +1,14 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useMemo, useState } from 'react'
 import { signIn } from '@/firebase/config'
 import InputField from '../../UI/Input/InputField/index'
-import Title from '../../UI/Title/Title'
 import Button from '../../UI/Button/index'
 import { useRouter } from 'next/router'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAt, faKey, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
+import { faAt, faKey } from '@fortawesome/free-solid-svg-icons'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
+import { useModal } from '@/context/ModalProvider'
+import { usePathname } from 'next/navigation'
 
 interface LoginFormData {
 	email: {
@@ -24,7 +24,7 @@ interface LoginFormData {
 	}
 }
 
-function LoginForm() {
+const LoginForm = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<LoginFormData>({
@@ -41,6 +41,9 @@ function LoginForm() {
 		},
 	})
 	const router = useRouter()
+	const pathname = usePathname()
+	const { hideModal } = useModal()
+	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
 	const isPasswordValid = formData.password.value.length > 0
 
@@ -95,7 +98,8 @@ function LoginForm() {
 				await signIn(formData.email.value, formData.password.value)
 				updateFormError('')
 				clearForm()
-				await router.push('/')
+				hideModal()
+				if (isAuthPage) await router.push('/')
 			} catch (error: any) {
 				updateFormError(error.toString())
 			} finally {
@@ -120,13 +124,6 @@ function LoginForm() {
 	return (
 		<div className='w-full flex flex-col justify-center items-center'>
 			<div className='max-w-md w-full'>
-				<div className='flex justify-center items-center mb-12 gap-4'>
-					<Title className='!mb-0'>Login</Title>
-					<FontAwesomeIcon
-						className='text-2xl text-red-600'
-						icon={faDoorOpen}
-					/>
-				</div>
 				<form
 					onSubmit={handleLogin}
 					className='flex flex-col justify-center items-center gap-4'

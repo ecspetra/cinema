@@ -1,19 +1,14 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useMemo, useState } from 'react'
 import { signUp } from '@/firebase/config'
-import Title from '../../UI/Title/Title'
 import Button from '../../UI/Button/index'
 import InputField from '../../UI/Input/InputField/index'
 import { useRouter } from 'next/router'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-	faUser,
-	faAt,
-	faKey,
-	faUserPlus,
-} from '@fortawesome/free-solid-svg-icons'
+import { faUser, faAt, faKey } from '@fortawesome/free-solid-svg-icons'
 import Loader from '@/components/Loader'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Error from '@/app/components/UI/Error'
+import { useModal } from '@/context/ModalProvider'
+import { usePathname } from 'next/navigation'
 
 interface SignUpFormData {
 	name: {
@@ -33,7 +28,7 @@ interface SignUpFormData {
 	}
 }
 
-function SignUpForm() {
+const SignUpForm = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<SignUpFormData>({
@@ -54,6 +49,9 @@ function SignUpForm() {
 		},
 	})
 	const router = useRouter()
+	const pathname = usePathname()
+	const { hideModal } = useModal()
+	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isNameValid = formData.name.value.trim() !== ''
 	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
 	const isPasswordValid = formData.password.value.length >= 8
@@ -120,7 +118,8 @@ function SignUpForm() {
 				)
 				updateFormError('')
 				clearForm()
-				await router.push('/')
+				hideModal()
+				if (isAuthPage) await router.push('/')
 			} catch (error: any) {
 				updateFormError(error.toString())
 			} finally {
@@ -151,13 +150,6 @@ function SignUpForm() {
 	return (
 		<div className='w-full flex flex-col justify-center items-center'>
 			<div className='max-w-md w-full'>
-				<div className='flex justify-center items-center mb-12 gap-4'>
-					<Title className='!mb-0'>Sign up</Title>
-					<FontAwesomeIcon
-						className='text-2xl text-red-600'
-						icon={faUserPlus}
-					/>
-				</div>
 				<form
 					onSubmit={handleSignUp}
 					autoComplete='off'

@@ -15,12 +15,10 @@ const Rating: FC<PropsType> = ({ rating, voteCount }) => {
 			const icons: JSX.Element[] = []
 
 			for (let i = 1; i <= 10; i++) {
-				if (i <= rating || i - Math.ceil(rating * 10) / 10 < 0.3) {
+				const decimalPart = (i * 10 - Math.ceil(rating * 10)) / 10
+				if (i <= rating || decimalPart < 0.3) {
 					icons.push(<FontAwesomeIcon key={i} icon={faStar} />)
-				} else if (
-					i - Math.ceil(rating * 10) / 10 >= 0.3 &&
-					i - Math.ceil(rating * 10) / 10 <= 0.7
-				) {
+				} else if (decimalPart >= 0.3 && decimalPart <= 0.7) {
 					icons.push(
 						<span
 							key={i}

@@ -17,7 +17,6 @@
 }
 
 body {
-	color: rgb(var(--foreground-rgb));
 	background-color: #000000;
 	font-family: 'Manrope', sans-serif;
 	position: relative;

@@ -16,7 +16,7 @@ const Image: FC<PropsType> = ({ src, defaultImage, className }) => {
 		<span
 			className={classNames(
 				className,
-				'relative block aspect-[2/3] w-full'
+				'relative block aspect-[2/3] w-full overflow-hidden'
 			)}
 		>
 			<img

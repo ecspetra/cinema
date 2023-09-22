@@ -5,6 +5,7 @@ import defaultMovieImage from '../../../app/assets/images/default-movie-image.sv
 import Button from '../../../app/components/UI/Button'
 import Title from '../../../app/components/UI/Title/Title'
 import ImagesSlider from '../ImagesSlider/index'
+import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
 	images: Array<IBackdrop>
@@ -14,7 +15,7 @@ const ImagesList: FC<PropsType> = ({ images }) => {
 	const [imagesToShow, setImagesToShow] = useState<Array<IBackdrop>>([])
 	const [initialSliderImageIdx, setInitialSliderImageIdx] =
 		useState<number>(0)
-	const [isShowModal, setIsShowModal] = useState<boolean>(false)
+	const { showModal } = useModal()
 	const initialImagesNumber = 12
 	const isAllImagesLoaded = imagesToShow.length > initialImagesNumber
 	const isShowMoreButton = images.length > initialImagesNumber
@@ -27,8 +28,18 @@ const ImagesList: FC<PropsType> = ({ images }) => {
 		setImagesToShow(imagesToDisplay)
 	}
 
-	const handleSliderImage = idx => {
-		setIsShowModal(true)
+	const handleSliderImage = (idx: number) => {
+		showModal({
+			modalTitle: '',
+			modalText: '',
+			modalClassName: '!max-w-7xl !p-0',
+			modalContent: (
+				<ImagesSlider
+					images={images}
+					initialSliderImageIdx={initialSliderImageIdx}
+				/>
+			),
+		})
 		setInitialSliderImageIdx(idx)
 	}
 
@@ -73,13 +84,6 @@ const ImagesList: FC<PropsType> = ({ images }) => {
 					>
 						{buttonText}
 					</Button>
-				)}
-				{isShowModal && (
-					<ImagesSlider
-						images={images}
-						initialSliderImageIdx={initialSliderImageIdx}
-						setIsShowModal={setIsShowModal}
-					/>
 				)}
 			</div>
 		</>
