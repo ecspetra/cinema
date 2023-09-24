@@ -37,7 +37,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps }) => {
 	}, [])
 
 	return (
-		<>
+		<div className='mb-16'>
 			<div className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'>
 				{persons.map((item: IPersonCard, idx) => {
 					return <PersonCard key={idx} person={item} />
@@ -52,7 +52,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps }) => {
 					{buttonText}
 				</Button>
 			)}
-		</>
+		</div>
 	)
 }
 

@@ -44,7 +44,7 @@ const MoviesListDefault: FC<PropsType> = ({
 	}, [currentPage])
 
 	return (
-		<>
+		<div className='mb-16'>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{moviesToShow.map((item: IMovieCard) => {
 					return <MovieCard key={item.id} movie={item} />
@@ -57,7 +57,7 @@ const MoviesListDefault: FC<PropsType> = ({
 			>
 				Show more
 			</Button>
-		</>
+		</div>
 	)
 }
 

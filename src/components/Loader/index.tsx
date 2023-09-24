@@ -5,9 +5,10 @@ import classNames from 'classnames'
 
 type PropsType = {
 	className?: string
+	isShowText?: boolean
 }
 
-const Loader: FC<PropsType> = ({ className }) => {
+const Loader: FC<PropsType> = ({ className, isShowText = false }) => {
 	return (
 		<span
 			className={classNames(
@@ -15,6 +16,7 @@ const Loader: FC<PropsType> = ({ className }) => {
 				className
 			)}
 		>
+			{isShowText && <span className='mr-2'>Loading</span>}
 			<FontAwesomeIcon
 				className='w-4 h-4 animate-spin'
 				icon={faCircleNotch}

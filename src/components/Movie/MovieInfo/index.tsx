@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
@@ -6,7 +6,6 @@ import {
 	faCalendarCheck,
 	faFlag,
 } from '@fortawesome/free-solid-svg-icons'
-import Button from '../../../app/components/UI/Button'
 import Genre from '../../../components/Genre'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -21,10 +20,15 @@ import Mark from '../../../components/Mark'
 import ReviewsList from '../../Review/ReviewsList'
 import NewReviewForm from '../../Review/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
-import { setNewFavoriteMovie } from '@/firebase/config'
+import {
+	removeFavoriteMovie,
+	getFavoriteMovie,
+	setNewFavoriteMovie,
+} from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
+import FavoriteButton from '@/app/components/UI/Button/FavoriteButton'
 
 type PropsType = {
 	movieInfo: IMovieInfo
@@ -33,23 +37,64 @@ type PropsType = {
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
+	const [isFavoriteMovie, setIsFavoriteMovie] = useState<boolean>(false)
+	const [isLoadingFavorite, setIsLoadingFavorite] = useState<boolean>(true)
 	const { currentUser } = useAuth()
 	const { showModal } = useModal()
 	const isLoggedIn = currentUser !== null
 
-	const setFavoriteMovie = (movie: IMovieCard) => {
+	const handleSetFavoriteMovie = (movie: IMovieInfo) => {
 		if (isLoggedIn) {
+			setIsLoadingFavorite(true)
 			const newMovie: IMovieCard = {
 				id: movie.id,
 				poster_path: movie.poster_path,
 				release_date: movie.release_date,
 				title: movie.title,
-				genre_ids: movie.genre_ids,
 				genres: movie.genres,
 			}
 			setNewFavoriteMovie(newMovie, currentUser.uid)
+				.then(() => {
+					getFavoriteMovie(movieInfo.id, currentUser?.uid)
+						.then(data => {
+							setIsFavoriteMovie(data)
+							setIsLoadingFavorite(false)
+						})
+						.catch(() => {
+							setIsLoadingFavorite(false)
+						})
+				})
+				.catch(() => {
+					setIsLoadingFavorite(false)
+				})
 		} else openLoginModal(showModal)
 	}
+
+	const handleRemoveFavoriteMovie = (movieId: number, userId: string) => {
+		setIsLoadingFavorite(true)
+		removeFavoriteMovie(movieId, userId)
+			.then(() => {
+				setIsFavoriteMovie(false)
+				setIsLoadingFavorite(false)
+			})
+			.catch(() => {
+				setIsLoadingFavorite(false)
+			})
+	}
+
+	useEffect(() => {
+		if (isLoggedIn) {
+			setIsLoadingFavorite(true)
+			getFavoriteMovie(movieInfo.id, currentUser?.uid)
+				.then(data => {
+					setIsFavoriteMovie(data)
+					setIsLoadingFavorite(false)
+				})
+				.catch(() => {
+					setIsLoadingFavorite(false)
+				})
+		}
+	}, [isLoggedIn])
 
 	return (
 		<div className='flex gap-x-7 py-7'>
@@ -120,12 +165,19 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 				/>
 				<Mark movieId={movieInfo.id} />
 				<p className='mb-6'>{movieInfo.overview}</p>
-				<Button
-					className='mb-12'
-					onClick={() => setFavoriteMovie(movieInfo)}
-				>
-					Add to favorites
-				</Button>
+				<FavoriteButton
+					isLoadingFavorite={isLoadingFavorite}
+					isFavoriteItem={isFavoriteMovie}
+					onClick={
+						isFavoriteMovie
+							? () =>
+									handleRemoveFavoriteMovie(
+										movieInfo.id,
+										currentUser?.uid
+									)
+							: () => handleSetFavoriteMovie(movieInfo)
+					}
+				/>
 				<ImagesList images={movieImages} />
 				<ReviewsList reviews={movieReviews} />
 				<NewReviewForm />

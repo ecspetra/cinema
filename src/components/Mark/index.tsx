@@ -5,12 +5,13 @@ import Title from '@/app/components/UI/Title/Title'
 import { useAuth } from '@/context/AuthProvider'
 import Button from '../../app/components/UI/Button/index'
 import {
-	deleteMarkForMovie,
+	removeMarkForMovie,
 	getMarkForMovie,
 	setNewMarkForMovie,
 } from '@/firebase/config'
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
+import Loader from '@/components/Loader'
 
 type MyMarkType = {
 	key: string
@@ -27,6 +28,7 @@ type PropsType = {
 
 const Mark: FC<PropsType> = ({ movieId }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
+	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
 	const [mark, setMark] = useState<MyMarkType | undefined>(undefined)
 	const { currentUser } = useAuth()
 	const { showModal } = useModal()
@@ -36,12 +38,23 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 	const EMPTY_MARK_COLOR = 'text-red-900'
 	const FILLED_MARK_COLOR = 'text-amber-600'
 
-	const setNewMark = (mark: number) => {
+	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
+			setIsLoadingMark(true)
 			setNewMarkForMovie(movieId, currentUser.uid, mark)
-			getMarkForMovie(movieId, currentUser?.uid).then(data => {
-				setMark(data)
-			})
+				.then(() => {
+					getMarkForMovie(movieId, currentUser?.uid)
+						.then(data => {
+							setMark(data)
+							setIsLoadingMark(false)
+						})
+						.catch(() => {
+							setIsLoadingMark(false)
+						})
+				})
+				.catch(() => {
+					setIsLoadingMark(false)
+				})
 		} else openLoginModal(showModal)
 	}
 
@@ -51,7 +64,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 				context='image'
 				key={idx}
 				className={className}
-				onClick={() => setNewMark(idx)}
+				onClick={() => handleSetNewMark(idx)}
 				onMouseEnter={() => handleIconsHover(idx)}
 				onMouseLeave={getEmptyMarkIcons}
 			>
@@ -102,10 +115,17 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 		)
 	}
 
-	const handleRemoveMyMark = (markKey: string) => {
-		deleteMarkForMovie(markKey)
-		setMark(undefined)
-		getEmptyMarkIcons()
+	const handleRemoveMyMark = (markKey: string, userId: string) => {
+		setIsLoadingMark(true)
+		removeMarkForMovie(markKey, userId)
+			.then(() => {
+				setMark(undefined)
+				getEmptyMarkIcons()
+				setIsLoadingMark(false)
+			})
+			.catch(() => {
+				setIsLoadingMark(false)
+			})
 	}
 
 	useEffect(() => {
@@ -123,32 +143,47 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 	}, [mark])
 
 	return (
-		<div className='mb-4'>
+		<div className='mb-4 relative'>
 			<Title variant='h3'>My mark</Title>
-			<div className='flex justify-start items-center gap-x-1'>
-				<div className='flex justify-start items-center gap-x-1'>
-					{markIcons.map(item => {
-						return item
-					})}
-				</div>
-				{isShowRemoveMarkButton && (
-					<>
-						<p className='text-sm font-semibold leading-none mr-2'>
-							{mark.data.mark}
+			{isLoadingMark ? (
+				<Loader
+					isShowText
+					className='!static bg-transparent !transform-none !inset-0 !inline-block'
+				/>
+			) : (
+				<>
+					<div className='flex justify-start items-center gap-x-1'>
+						<div className='flex justify-start items-center gap-x-1'>
+							{markIcons.map(item => {
+								return item
+							})}
+						</div>
+						{isShowRemoveMarkButton && (
+							<>
+								<p className='text-sm font-semibold leading-none mr-2'>
+									{mark.data.mark}
+								</p>
+								<Button
+									onClick={() =>
+										handleRemoveMyMark(
+											mark?.key,
+											currentUser?.uid
+										)
+									}
+									context='text'
+								>
+									Remove my mark
+								</Button>
+							</>
+						)}
+					</div>
+					{currentUser === null && (
+						<p className='text-slate-400 text-sm leading-none mt-2'>
+							Please login or register to be able to rate the
+							movie
 						</p>
-						<Button
-							onClick={() => handleRemoveMyMark(mark?.key)}
-							context='text'
-						>
-							Remove my mark
-						</Button>
-					</>
-				)}
-			</div>
-			{currentUser === null && (
-				<p className='text-slate-400 text-sm leading-none mt-2'>
-					Please login or register to be able to rate the movie
-				</p>
+					)}
+				</>
 			)}
 		</div>
 	)

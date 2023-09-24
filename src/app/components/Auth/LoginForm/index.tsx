@@ -155,12 +155,12 @@ const LoginForm = () => {
 							error={formData.formError.error}
 						/>
 					)}
-					<Button className='mt-8 w-full relative' type='submit'>
+					<Button className='mt-8 w-full' type='submit'>
 						{isLoading ? (
-							<span className='flex justify-center items-center'>
-								Loading{' '}
-								<Loader className='!static bg-transparent !transform-none !inset-0 ml-2' />
-							</span>
+							<Loader
+								isShowText
+								className='!static bg-transparent !transform-none !inset-0'
+							/>
 						) : (
 							'Submit'
 						)}

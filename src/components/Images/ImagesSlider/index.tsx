@@ -32,14 +32,14 @@ const ImagesSlider: FC<PropsType> = ({ images, initialSliderImageIdx }) => {
 			/>
 			<Button
 				context='icon'
-				className='absolute inset-y-1/2 -translate-y-1/2 right-4'
+				className='!absolute inset-y-1/2 -translate-y-1/2 right-4'
 				onClick={showNextImage}
 			>
 				<FontAwesomeIcon icon={faChevronRight} className='w-6 h-6' />
 			</Button>
 			<Button
 				context='icon'
-				className='absolute inset-y-1/2 -translate-y-1/2 left-4'
+				className='!absolute inset-y-1/2 -translate-y-1/2 left-4'
 				onClick={showPrevImage}
 			>
 				<FontAwesomeIcon icon={faChevronLeft} className='w-6 h-6' />

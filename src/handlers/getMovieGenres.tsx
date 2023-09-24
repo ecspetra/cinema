@@ -14,7 +14,6 @@ export const getMovieGenres = movie => {
 			poster_path: movie.poster_path,
 			release_date: movie.release_date,
 			title: movie.title,
-			genre_ids: movie.genre_ids,
 			genres: genresNames,
 		}
 

@@ -41,7 +41,7 @@ const Modal = () => {
 				>
 					<Button
 						context='icon'
-						className='absolute top-4 right-4'
+						className='!absolute top-4 right-4'
 						onClick={() => {
 							hideModal()
 						}}

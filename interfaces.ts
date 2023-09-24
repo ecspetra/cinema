@@ -39,7 +39,6 @@ export interface IMovieCard {
 	poster_path: string
 	release_date: string
 	title: string
-	genre_ids: Array<string>
 	genres: Array<IGenre>
 }
 
