@@ -4,8 +4,8 @@ import { LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE } from '@/constants/links'
 import { useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 
-const FavoriteMovies = ({ moviesFromProps }) => {
-	const [favoriteMovies, setFavoriteMovies] = useState(moviesFromProps)
+const CollectionMovies = ({ moviesFromProps }) => {
+	const [collectionMovies, setCollectionMovies] = useState(moviesFromProps)
 
 	useEffect(() => {
 		const fetchHomePageMovies = async () => {
@@ -14,21 +14,21 @@ const FavoriteMovies = ({ moviesFromProps }) => {
 					LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE
 				)
 				const result = await response.json()
-				setFavoriteMovies(result.results)
+				setCollectionMovies(result.results)
 			} catch (error) {
-				setFavoriteMovies([])
+				setCollectionMovies([])
 			}
 		}
 
 		if (!moviesFromProps) fetchHomePageMovies()
 	}, [])
 
-	if (!favoriteMovies.length) return <div>Loading</div>
+	if (!collectionMovies.length) return <div>Loading</div>
 
 	return (
 		<>
-			<Title className='text-7xl'>Favorite movies</Title>
-			<MoviesListDefault moviesFromProps={favoriteMovies} />
+			<Title className='text-7xl'>Collection movies</Title>
+			<MoviesListDefault moviesFromProps={collectionMovies} />
 		</>
 	)
 }
@@ -51,4 +51,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default FavoriteMovies
+export default CollectionMovies

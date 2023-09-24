@@ -38,7 +38,7 @@ const MovieCard: FC<PropsType> = ({ movie }) => {
 				})}
 			</div>
 			<Button className='mt-auto w-full' onClick={test}>
-				Add to favorites
+				Add to collection
 			</Button>
 		</div>
 	)

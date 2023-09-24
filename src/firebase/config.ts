@@ -135,18 +135,18 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 	})
 }
 
-// favorite movie handlers
+// collection movie handlers
 
-export const setNewFavoriteMovie = async (
+export const setNewCollectionMovie = async (
 	movie: IMovieCard,
 	userId: string
 ) => {
-	const newFavoriteMovieRef = ref(
+	const newCollectionMovieRef = ref(
 		database,
-		`users/${userId}/favoriteMovies/${movie.id}`
+		`users/${userId}/collectionMovies/${movie.id}`
 	)
 
-	const newFavoriteMovieData = {
+	const newCollectionMovieData = {
 		id: movie.id,
 		poster_path: movie.poster_path,
 		release_date: movie.release_date,
@@ -154,25 +154,31 @@ export const setNewFavoriteMovie = async (
 		genres: movie.genres,
 	}
 
-	await set(newFavoriteMovieRef, newFavoriteMovieData)
+	await set(newCollectionMovieRef, newCollectionMovieData)
 }
 
-export const getFavoriteMovie = (movieId: number, userId: string) => {
-	const movieRef = ref(database, `users/${userId}/favoriteMovies/${movieId}`)
+export const getCollectionMovie = (movieId: number, userId: string) => {
+	const movieRef = ref(
+		database,
+		`users/${userId}/collectionMovies/${movieId}`
+	)
 
 	return new Promise(async resolve => {
-		let isFavoriteMovie = false
+		let isCollectionMovie = false
 
 		get(movieRef).then(snapshot => {
-			if (snapshot.exists()) isFavoriteMovie = true
+			if (snapshot.exists()) isCollectionMovie = true
 
-			resolve(isFavoriteMovie)
+			resolve(isCollectionMovie)
 		})
 	})
 }
 
-export const removeFavoriteMovie = (movieId: number, userId: string) => {
-	const movieRef = ref(database, `users/${userId}/favoriteMovies/${movieId}`)
+export const removeCollectionMovie = (movieId: number, userId: string) => {
+	const movieRef = ref(
+		database,
+		`users/${userId}/collectionMovies/${movieId}`
+	)
 
 	return new Promise(async resolve => {
 		let isRemoved = false

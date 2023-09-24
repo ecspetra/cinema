@@ -5,34 +5,34 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type PropsType = {
-	isLoadingFavorite: boolean
-	isFavoriteItem: boolean
+	isLoadingCollection: boolean
+	isCollectionItem: boolean
 	onClick: () => void
 }
 
-const FavoriteButton: FC<PropsType> = ({
-	isLoadingFavorite,
-	isFavoriteItem,
+const CollectionButton: FC<PropsType> = ({
+	isLoadingCollection,
+	isCollectionItem,
 	onClick,
 }) => {
 	return (
 		<Button
-			context={isFavoriteItem ? 'favorite' : 'filled'}
+			context={isCollectionItem ? 'collection' : 'filled'}
 			className='mb-12'
 			onClick={onClick}
 		>
-			{isLoadingFavorite ? (
+			{isLoadingCollection ? (
 				<Loader className='!static bg-transparent !transform-none !inset-0' />
 			) : (
 				<span>
 					<FontAwesomeIcon icon={faHeart} className='mr-2' />
-					{isFavoriteItem
-						? 'Remove from favorite'
-						: 'Add to favorite'}
+					{isCollectionItem
+						? 'Remove from collection'
+						: 'Add to collection'}
 				</span>
 			)}
 		</Button>
 	)
 }
 
-export default FavoriteButton
+export default CollectionButton

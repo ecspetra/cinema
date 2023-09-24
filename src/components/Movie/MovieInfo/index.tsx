@@ -21,14 +21,14 @@ import ReviewsList from '../../Review/ReviewsList'
 import NewReviewForm from '../../Review/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
 import {
-	removeFavoriteMovie,
-	getFavoriteMovie,
-	setNewFavoriteMovie,
+	removeCollectionMovie,
+	getCollectionMovie,
+	setNewCollectionMovie,
 } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
-import FavoriteButton from '@/app/components/UI/Button/FavoriteButton'
+import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 
 type PropsType = {
 	movieInfo: IMovieInfo
@@ -37,15 +37,16 @@ type PropsType = {
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
-	const [isFavoriteMovie, setIsFavoriteMovie] = useState<boolean>(false)
-	const [isLoadingFavorite, setIsLoadingFavorite] = useState<boolean>(true)
+	const [isCollectionMovie, setIsCollectionMovie] = useState<boolean>(false)
+	const [isLoadingCollection, setIsLoadingCollection] =
+		useState<boolean>(true)
 	const { currentUser } = useAuth()
 	const { showModal } = useModal()
 	const isLoggedIn = currentUser !== null
 
-	const handleSetFavoriteMovie = (movie: IMovieInfo) => {
+	const handleSetCollectionMovie = (movie: IMovieInfo) => {
 		if (isLoggedIn) {
-			setIsLoadingFavorite(true)
+			setIsLoadingCollectione(true)
 			const newMovie: IMovieCard = {
 				id: movie.id,
 				poster_path: movie.poster_path,
@@ -53,47 +54,47 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 				title: movie.title,
 				genres: movie.genres,
 			}
-			setNewFavoriteMovie(newMovie, currentUser.uid)
+			setNewCollectionMovie(newMovie, currentUser.uid)
 				.then(() => {
-					getFavoriteMovie(movieInfo.id, currentUser?.uid)
+					getCollectionMovie(movieInfo.id, currentUser?.uid)
 						.then(data => {
-							setIsFavoriteMovie(data)
-							setIsLoadingFavorite(false)
+							setIsCollectionMovie(data)
+							setIsLoadingCollection(false)
 						})
 						.catch(() => {
-							setIsLoadingFavorite(false)
+							setIsLoadingCollection(false)
 						})
 				})
 				.catch(() => {
-					setIsLoadingFavorite(false)
+					setIsLoadingCollection(false)
 				})
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveFavoriteMovie = (movieId: number, userId: string) => {
-		setIsLoadingFavorite(true)
-		removeFavoriteMovie(movieId, userId)
+	const handleRemoveCollectionMovie = (movieId: number, userId: string) => {
+		setIsLoadingCollection(true)
+		removeCollectionMovie(movieId, userId)
 			.then(() => {
-				setIsFavoriteMovie(false)
-				setIsLoadingFavorite(false)
+				setIsCollectionMovie(false)
+				setIsLoadingCollection(false)
 			})
 			.catch(() => {
-				setIsLoadingFavorite(false)
+				setIsLoadingCollection(false)
 			})
 	}
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			setIsLoadingFavorite(true)
-			getFavoriteMovie(movieInfo.id, currentUser?.uid)
+			setIsLoadingCollection(true)
+			getCollectionMovie(movieInfo.id, currentUser?.uid)
 				.then(data => {
-					setIsFavoriteMovie(data)
-					setIsLoadingFavorite(false)
+					setIsCollectionMovie(data)
+					setIsLoadingCollection(false)
 				})
 				.catch(() => {
-					setIsLoadingFavorite(false)
+					setIsLoadingCollection(false)
 				})
-		}
+		} else setIsLoadingCollection(false)
 	}, [isLoggedIn])
 
 	return (
@@ -165,17 +166,17 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 				/>
 				<Mark movieId={movieInfo.id} />
 				<p className='mb-6'>{movieInfo.overview}</p>
-				<FavoriteButton
-					isLoadingFavorite={isLoadingFavorite}
-					isFavoriteItem={isFavoriteMovie}
+				<CollectionButton
+					isLoadingCollection={isLoadingCollection}
+					isCollectionItem={isCollectionMovie}
 					onClick={
-						isFavoriteMovie
+						isCollectionMovie
 							? () =>
-									handleRemoveFavoriteMovie(
+									handleRemoveCollectionMovie(
 										movieInfo.id,
 										currentUser?.uid
 									)
-							: () => handleSetFavoriteMovie(movieInfo)
+							: () => handleSetCollectionMovie(movieInfo)
 					}
 				/>
 				<ImagesList images={movieImages} />

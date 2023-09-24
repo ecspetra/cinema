@@ -85,7 +85,7 @@ const Person = ({ personFromProps }) => {
 				</div>
 				<p className='mb-6'>{person.biography}</p>
 				<Button className='mt-auto' onClick={test}>
-					Add to favorites
+					Add to collection
 				</Button>
 			</div>
 		</div>

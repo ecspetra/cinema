@@ -9,7 +9,7 @@ type PropsType = {
 	context?:
 		| 'filled'
 		| 'empty'
-		| 'favorite'
+		| 'collection'
 		| 'image'
 		| 'icon-text'
 		| 'icon'
@@ -31,7 +31,7 @@ const Button: FC<PropsType> = ({
 		'w-72 min-h-[48px] bg-red-600 border-2 border-transparent rounded-md hover:bg-orange-500 font-semibold p-3 flex justify-center items-center'
 	const emptyButtonClassNames =
 		'w-72 border-2 border-red-600 text-red-600 rounded-md hover:border-transparent hover:w-full hover:text-orange-500 font-semibold p-3 flex justify-center items-center'
-	const favoriteButtonClassNames =
+	const collectionButtonClassNames =
 		'w-72 min-h-[48px] border-2 border-red-600 text-red-600 rounded-md hover:border-orange-500 hover:text-orange-500 font-semibold p-3 flex justify-center items-center'
 	const imageButtonClassNames = 'flex justify-center items-center'
 	const textButtonClassNames =
@@ -46,8 +46,8 @@ const Button: FC<PropsType> = ({
 				return filledButtonClassNames
 			case 'empty':
 				return emptyButtonClassNames
-			case 'favorite':
-				return favoriteButtonClassNames
+			case 'collection':
+				return collectionButtonClassNames
 			case 'image':
 				return imageButtonClassNames
 			case 'text':

@@ -19,6 +19,9 @@ const Header = () => {
 			<Link href={`/`} as={`/`}>
 				<span>CinemaStreet</span>
 			</Link>
+			<Link href={`/collection-movies`} as={`/collection-movies`}>
+				<span>My collection</span>
+			</Link>
 			{isShowUserMenu && (
 				<div className='flex justify-center items-center gap-4'>
 					<Image
