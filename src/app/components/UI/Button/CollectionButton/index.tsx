@@ -8,17 +8,19 @@ type PropsType = {
 	isLoadingCollection: boolean
 	isCollectionItem: boolean
 	onClick: () => void
+	className?: string
 }
 
 const CollectionButton: FC<PropsType> = ({
 	isLoadingCollection,
 	isCollectionItem,
 	onClick,
+	className,
 }) => {
 	return (
 		<Button
 			context={isCollectionItem ? 'collection' : 'filled'}
-			className='mb-12'
+			className={className}
 			onClick={onClick}
 		>
 			{isLoadingCollection ? (

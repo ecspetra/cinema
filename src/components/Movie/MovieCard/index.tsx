@@ -1,18 +1,27 @@
 import { IMovieCard } from '../../../../interfaces'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
 import Image from '../../Images/Image/index'
 import Button from '../../../app/components/UI/Button/index'
 import Title from '../../../app/components/UI/Title/Title'
 import Genre from '../../Genre/index'
+import CollectionButton from '@/app/components/UI/Button/CollectionButton'
+import { useCollectionButton } from '@/hooks/useCollectionButton'
+import { useAuth } from '@/context/AuthProvider'
 
 type PropsType = {
 	movie: IMovieCard
 }
 
 const MovieCard: FC<PropsType> = ({ movie }) => {
-	const test = () => {}
+	const { currentUser } = useAuth()
+	const {
+		isLoadingCollection,
+		isCollectionMovie,
+		handleSetCollectionMovie,
+		handleRemoveCollectionMovie,
+	} = useCollectionButton(movie)
 
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
@@ -37,9 +46,20 @@ const MovieCard: FC<PropsType> = ({ movie }) => {
 					return <Genre key={idx} genre={item} />
 				})}
 			</div>
-			<Button className='mt-auto w-full' onClick={test}>
-				Add to collection
-			</Button>
+			<CollectionButton
+				className='mt-auto w-full'
+				isLoadingCollection={isLoadingCollection}
+				isCollectionItem={isCollectionMovie}
+				onClick={
+					isCollectionMovie
+						? () =>
+								handleRemoveCollectionMovie(
+									movie.id,
+									currentUser?.uid
+								)
+						: () => handleSetCollectionMovie(movie)
+				}
+			/>
 		</div>
 	)
 }

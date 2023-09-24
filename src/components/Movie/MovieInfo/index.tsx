@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
@@ -8,27 +8,16 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Genre from '../../../components/Genre'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-	IBackdrop,
-	IMovieCard,
-	IMovieInfo,
-	IReview,
-} from '../../../../interfaces'
+import { IBackdrop, IMovieInfo, IReview } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
 import ReviewsList from '../../Review/ReviewsList'
 import NewReviewForm from '../../Review/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
-import {
-	removeCollectionMovie,
-	getCollectionMovie,
-	setNewCollectionMovie,
-} from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
-import { useModal } from '@/context/ModalProvider'
-import { openLoginModal } from '@/handlers/openLoginModal'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
+import { useCollectionButton } from '@/hooks/useCollectionButton'
 
 type PropsType = {
 	movieInfo: IMovieInfo
@@ -37,65 +26,13 @@ type PropsType = {
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
-	const [isCollectionMovie, setIsCollectionMovie] = useState<boolean>(false)
-	const [isLoadingCollection, setIsLoadingCollection] =
-		useState<boolean>(true)
 	const { currentUser } = useAuth()
-	const { showModal } = useModal()
-	const isLoggedIn = currentUser !== null
-
-	const handleSetCollectionMovie = (movie: IMovieInfo) => {
-		if (isLoggedIn) {
-			setIsLoadingCollectione(true)
-			const newMovie: IMovieCard = {
-				id: movie.id,
-				poster_path: movie.poster_path,
-				release_date: movie.release_date,
-				title: movie.title,
-				genres: movie.genres,
-			}
-			setNewCollectionMovie(newMovie, currentUser.uid)
-				.then(() => {
-					getCollectionMovie(movieInfo.id, currentUser?.uid)
-						.then(data => {
-							setIsCollectionMovie(data)
-							setIsLoadingCollection(false)
-						})
-						.catch(() => {
-							setIsLoadingCollection(false)
-						})
-				})
-				.catch(() => {
-					setIsLoadingCollection(false)
-				})
-		} else openLoginModal(showModal)
-	}
-
-	const handleRemoveCollectionMovie = (movieId: number, userId: string) => {
-		setIsLoadingCollection(true)
-		removeCollectionMovie(movieId, userId)
-			.then(() => {
-				setIsCollectionMovie(false)
-				setIsLoadingCollection(false)
-			})
-			.catch(() => {
-				setIsLoadingCollection(false)
-			})
-	}
-
-	useEffect(() => {
-		if (isLoggedIn) {
-			setIsLoadingCollection(true)
-			getCollectionMovie(movieInfo.id, currentUser?.uid)
-				.then(data => {
-					setIsCollectionMovie(data)
-					setIsLoadingCollection(false)
-				})
-				.catch(() => {
-					setIsLoadingCollection(false)
-				})
-		} else setIsLoadingCollection(false)
-	}, [isLoggedIn])
+	const {
+		isLoadingCollection,
+		isCollectionMovie,
+		handleSetCollectionMovie,
+		handleRemoveCollectionMovie,
+	} = useCollectionButton(movieInfo)
 
 	return (
 		<div className='flex gap-x-7 py-7'>
@@ -167,6 +104,7 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 				<Mark movieId={movieInfo.id} />
 				<p className='mb-6'>{movieInfo.overview}</p>
 				<CollectionButton
+					className='mb-12'
 					isLoadingCollection={isLoadingCollection}
 					isCollectionItem={isCollectionMovie}
 					onClick={

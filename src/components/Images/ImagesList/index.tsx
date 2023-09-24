@@ -13,8 +13,6 @@ type PropsType = {
 
 const ImagesList: FC<PropsType> = ({ images }) => {
 	const [imagesToShow, setImagesToShow] = useState<Array<IBackdrop>>([])
-	const [initialSliderImageIdx, setInitialSliderImageIdx] =
-		useState<number>(0)
 	const { showModal } = useModal()
 	const initialImagesNumber = 12
 	const isAllImagesLoaded = imagesToShow.length > initialImagesNumber
@@ -34,13 +32,9 @@ const ImagesList: FC<PropsType> = ({ images }) => {
 			modalText: '',
 			modalClassName: '!max-w-7xl !p-0',
 			modalContent: (
-				<ImagesSlider
-					images={images}
-					initialSliderImageIdx={initialSliderImageIdx}
-				/>
+				<ImagesSlider images={images} initialSliderImageIdx={idx} />
 			),
 		})
-		setInitialSliderImageIdx(idx)
 	}
 
 	useEffect(() => {
