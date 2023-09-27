@@ -9,6 +9,10 @@ import { useMemo } from 'react'
 
 const Header = () => {
 	const { currentUser } = useAuth()
+	const userId = currentUser?.uid
+	const collectionMoviesLink = currentUser?.uid
+		? `/collection-movies?uid=${userId}`
+		: `/collection-movies`
 	const pathname = usePathname()
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && currentUser
@@ -19,7 +23,7 @@ const Header = () => {
 			<Link href={`/`} as={`/`}>
 				<span>CinemaStreet</span>
 			</Link>
-			<Link href={`/collection-movies`} as={`/collection-movies`}>
+			<Link href={collectionMoviesLink} as={collectionMoviesLink}>
 				<span>My collection</span>
 			</Link>
 			{isShowUserMenu && (

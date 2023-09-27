@@ -93,7 +93,7 @@ const Movie = ({ movieFromProps }) => {
 				<MoviePersonsList personsFromProps={movie.creditsResult.crew} />
 				<Title>Similar movies</Title>
 				<MoviesListDefault
-					moviesFromProps={movie.similarMoviesResult.results}
+					movieList={movie.similarMoviesResult.results}
 					linkToFetchMovies={linkToFetchSimilarMovies}
 				/>
 			</div>
@@ -103,7 +103,7 @@ const Movie = ({ movieFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const fetchMovieData = async queryParam => {
+		const fetchMovieData = async (queryParam: string) => {
 			const linkToFetch = `https://api.themoviedb.org/3/movie/${ctx.query.id}${queryParam}?api_key=${API_KEY}`
 			const response = await fetch(linkToFetch)
 			return response.json()

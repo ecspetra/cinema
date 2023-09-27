@@ -28,7 +28,7 @@ const Home = ({ moviesFromProps }) => {
 	return (
 		<>
 			<Title className='text-7xl'>Discover movies</Title>
-			<MoviesListDefault moviesFromProps={homePageMovies} />
+			<MoviesListDefault movieList={homePageMovies} />
 		</>
 	)
 }

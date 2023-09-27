@@ -6,12 +6,12 @@ import { getMovieGenres } from '@/handlers/getMovieGenres'
 import Button from '@/app/components/UI/Button'
 
 type PropsType = {
-	moviesFromProps: Array<IMovieCard>
+	movieList: Array<IMovieCard>
 	linkToFetchMovies?: string
 }
 
 const MoviesListDefault: FC<PropsType> = ({
-	moviesFromProps,
+	movieList,
 	linkToFetchMovies = LINK_TO_FETCH_DEFAULT_MOVIES,
 }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -25,7 +25,7 @@ const MoviesListDefault: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		setFetchedMovies([...moviesFromProps])
+		setFetchedMovies([...movieList])
 	}, [])
 
 	useEffect(() => {

@@ -7,7 +7,22 @@ import {
 	User,
 	updateProfile,
 } from 'firebase/auth'
-import { getDatabase, ref, get, set, remove } from 'firebase/database'
+import {
+	getDatabase,
+	ref,
+	get,
+	set,
+	remove,
+	orderByKey,
+	limitToFirst,
+	startAt,
+	endAt,
+	onChildAdded,
+	query,
+	orderByChild,
+	startAfter,
+	child,
+} from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import { IMovieCard } from '../../interfaces'
 
@@ -101,10 +116,10 @@ export const setNewMarkForMovie = async (
 }
 
 export const getMarkForMovie = (movieId: number, userId: string) => {
-	const marksRef = ref(database, `users/${userId}/movieMarks`)
+	const marksCollectionRef = ref(database, `users/${userId}/movieMarks`)
 
 	return new Promise(async resolve => {
-		get(marksRef).then(snapshot => {
+		get(marksCollectionRef).then(snapshot => {
 			let response
 
 			snapshot.forEach(childSnapshot => {
@@ -172,6 +187,49 @@ export const getCollectionMovie = (movieId: number, userId: string) => {
 			resolve(isCollectionMovie)
 		})
 	})
+}
+
+export const getCollectionMovies = async (
+	userId: string,
+	lastMovieId: number | null
+) => {
+	const userCollectionRef = ref(database, `users/${userId}/collectionMovies/`)
+	const moviesPerPage = 20
+	let queryRef
+
+	if (lastMovieId) {
+		queryRef = query(
+			userCollectionRef,
+			orderByKey(),
+			startAfter(lastMovieId),
+			limitToFirst(moviesPerPage + 1)
+		)
+	} else {
+		queryRef = query(
+			userCollectionRef,
+			orderByKey(),
+			limitToFirst(moviesPerPage + 1)
+		)
+	}
+
+	const snapshot = await get(queryRef)
+	const data = snapshot.val() || {}
+	const movieIds = Object.keys(data)
+	let isMoreMoviesAvailable = false
+
+	if (movieIds.length > moviesPerPage) {
+		isMoreMoviesAvailable = true
+		movieIds.pop()
+	}
+
+	const movies = await Promise.all(
+		movieIds.map(async movieId => {
+			const movieSnapshot = await get(child(userCollectionRef, movieId))
+			return movieSnapshot.val()
+		})
+	)
+
+	return { isMoreMoviesAvailable, movies }
 }
 
 export const removeCollectionMovie = (movieId: number, userId: string) => {
