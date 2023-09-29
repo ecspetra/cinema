@@ -37,7 +37,7 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 
 	return (
 		<>
-			<TopBanner image={movieImages[0]} />
+			<TopBanner imageSrc={movieImages[0].file_path} />
 			<div className='flex gap-x-7 py-7 z-10'>
 				<div className='w-full max-w-[340px]'>
 					<Image

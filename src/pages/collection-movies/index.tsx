@@ -7,6 +7,9 @@ import { openLoginModal } from '@/handlers/openLoginModal'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
 import { CURRENT_USER_COLLECTION_MOVIES_PAGE } from '@/constants/paths'
+import TopBanner from '@/components/TopBanner'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilm } from '@fortawesome/free-solid-svg-icons'
 
 const CollectionMovies = ({ moviesFromProps }) => {
 	const { showModal } = useModal()
@@ -14,16 +17,23 @@ const CollectionMovies = ({ moviesFromProps }) => {
 	if (!moviesFromProps.movies)
 		return (
 			<>
-				<Title className='text-7xl'>
-					Your favorite movies will be displayed here
-				</Title>
-				<div>
-					Please login or register to be able to create your own
-					collection
+				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
+				<div className='relative z-10'>
+					<Title className='text-7xl'>
+						Your favorite movies will be displayed here
+						<FontAwesomeIcon
+							icon={faFilm}
+							className='ml-4 text-red-600'
+						/>
+					</Title>
+					<p className='mb-8'>
+						Please login or register to be able to create your own
+						collection
+					</p>
+					<Button onClick={() => openLoginModal(showModal)}>
+						Sign In
+					</Button>
 				</div>
-				<Button onClick={() => openLoginModal(showModal)}>
-					Register
-				</Button>
 			</>
 		)
 

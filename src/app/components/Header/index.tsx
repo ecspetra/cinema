@@ -26,7 +26,7 @@ const Header = () => {
 	}
 
 	return (
-		<div className='flex justify-between items-center'>
+		<header className='flex justify-between items-center container w-full max-w-screen-xl mx-auto p-5 z-2'>
 			<Link href={`/`} as={`/`}>
 				<span>CinemaStreet</span>
 			</Link>
@@ -41,16 +41,16 @@ const Header = () => {
 						defaultImage={defaultUserImage}
 					/>
 					<Button context='text' onClick={handleSignOutUser}>
-						Logout
+						Sign Out
 					</Button>
 				</div>
 			)}
 			{isShowAuthButton && (
 				<Link href={`/auth`} as={`/auth`}>
-					<span>Auth</span>
+					<span>Sign In</span>
 				</Link>
 			)}
-		</div>
+		</header>
 	)
 }
 
