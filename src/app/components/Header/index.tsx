@@ -6,9 +6,11 @@ import Image from '@/components/Images/Image'
 import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
+import { useRouter } from 'next/router'
 
 const Header = () => {
 	const { currentUser } = useAuth()
+	const router = useRouter()
 	const userId = currentUser?.uid
 	const collectionMoviesLink = currentUser?.uid
 		? `/collection-movies?uid=${userId}`
@@ -17,6 +19,11 @@ const Header = () => {
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && currentUser
 	const isShowAuthButton = !isAuthPage && !currentUser
+
+	const handleSignOutUser = async () => {
+		await signOutUser()
+		await router.push('/collection-movies')
+	}
 
 	return (
 		<div className='flex justify-between items-center'>
@@ -33,7 +40,7 @@ const Header = () => {
 						src={currentUser.photoURL}
 						defaultImage={defaultUserImage}
 					/>
-					<Button context='text' onClick={signOutUser}>
+					<Button context='text' onClick={handleSignOutUser}>
 						Logout
 					</Button>
 				</div>

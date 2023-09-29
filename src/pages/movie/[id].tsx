@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next'
-import { API_KEY } from '@/constants/links'
+import { API_KEY } from '@/constants/linksToFetch'
 import Title from '@/app/components/UI/Title/Title'
 import MoviePersonsList from '@/components/PersonsList/MoviePersonsList'
 import MovieInfo from '@/components/Movie/MovieInfo'
@@ -87,13 +87,17 @@ const Movie = ({ movieFromProps }) => {
 				movieReviews={movie.reviewsResult.results}
 			/>
 			<div>
-				<Title>Cast</Title>
-				<MoviePersonsList personsFromProps={movie.creditsResult.cast} />
-				<Title>Crew</Title>
-				<MoviePersonsList personsFromProps={movie.creditsResult.crew} />
-				<Title>Similar movies</Title>
+				<MoviePersonsList
+					personsFromProps={movie.creditsResult.cast}
+					title='Cast'
+				/>
+				<MoviePersonsList
+					personsFromProps={movie.creditsResult.crew}
+					title='Crew'
+				/>
 				<MoviesListDefault
 					movieList={movie.similarMoviesResult.results}
+					title='Similar movies'
 					linkToFetchMovies={linkToFetchSimilarMovies}
 				/>
 			</div>

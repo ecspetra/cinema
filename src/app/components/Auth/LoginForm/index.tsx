@@ -1,14 +1,20 @@
-import React, { ChangeEvent, useMemo, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { signIn } from '@/firebase/config'
 import InputField from '../../UI/Input/InputField/index'
 import Button from '../../UI/Button/index'
-import { useRouter } from 'next/router'
 import { faAt, faKey } from '@fortawesome/free-solid-svg-icons'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { useModal } from '@/context/ModalProvider'
 import { usePathname } from 'next/navigation'
+import {
+	AUTH_PAGE,
+	COLLECTION_MOVIES_PAGE,
+	CURRENT_USER_COLLECTION_MOVIES_PAGE,
+} from '@/constants/paths'
+import { parseCookies } from '@/handlers/handleCookies'
+import { useRouter } from 'next/router'
 
 interface LoginFormData {
 	email: {
@@ -40,10 +46,9 @@ const LoginForm = () => {
 			error: '',
 		},
 	})
-	const router = useRouter()
 	const pathname = usePathname()
 	const { hideModal } = useModal()
-	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
+	const router = useRouter()
 	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
 	const isPasswordValid = formData.password.value.length > 0
 
@@ -99,7 +104,28 @@ const LoginForm = () => {
 				updateFormError('')
 				clearForm()
 				hideModal()
-				if (isAuthPage) await router.push('/')
+
+				let target
+
+				switch (true) {
+					case pathname === AUTH_PAGE:
+						target = `/`
+						break
+					case pathname === COLLECTION_MOVIES_PAGE:
+						const cookies = parseCookies()
+						const userId = cookies.uid
+						target = CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
+							'userId',
+							userId
+						)
+						break
+					default:
+						break
+				}
+
+				if (target !== null) {
+					router.push(target)
+				}
 			} catch (error: any) {
 				updateFormError(error.toString())
 			} finally {

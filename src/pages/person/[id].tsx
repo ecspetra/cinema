@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next'
-import { API_KEY } from '@/constants/links'
+import { API_KEY } from '@/constants/linksToFetch'
 import Image from '@/components/Image'
 import defaultPersonImage from '../../app/assets/images/default-person-image.svg'
 import Button from '@/app/components/UI/Button'

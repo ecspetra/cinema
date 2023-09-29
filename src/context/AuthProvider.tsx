@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { auth, AuthContextType } from '@/firebase/config'
 import { onAuthStateChanged, User } from 'firebase/auth'
+import { removeCookie, setCookie } from '@/handlers/handleCookies'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -14,12 +15,18 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
-	const [loading, setLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, user => {
+		const unsubscribe = onAuthStateChanged(auth, async user => {
 			setCurrentUser(user)
-			setLoading(false)
+			setIsLoading(false)
+
+			if (user) {
+				setCookie('uid', user.uid, { path: '/' })
+			} else {
+				removeCookie('uid', { path: '/' })
+			}
 		})
 
 		return unsubscribe
@@ -31,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<AuthContext.Provider value={value}>
-			{!loading && children}
+			{!isLoading && children}
 		</AuthContext.Provider>
 	)
 }

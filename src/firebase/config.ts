@@ -191,7 +191,7 @@ export const getCollectionMovie = (movieId: number, userId: string) => {
 
 export const getCollectionMovies = async (
 	userId: string,
-	lastMovieId: number | null
+	lastMovieId: string | null
 ) => {
 	const userCollectionRef = ref(database, `users/${userId}/collectionMovies/`)
 	const moviesPerPage = 20
