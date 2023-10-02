@@ -18,10 +18,10 @@ const MovieCard: FC<PropsType> = ({ movie }) => {
 	const { currentUser } = useAuth()
 	const {
 		isLoadingCollection,
-		isCollectionMovie,
-		handleSetCollectionMovie,
-		handleRemoveCollectionMovie,
-	} = useCollectionButton(movie)
+		isCollectionItem,
+		handleSetCollectionItem,
+		handleRemoveCollectionItem,
+	} = useCollectionButton(movie, 'movies')
 
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
@@ -49,15 +49,15 @@ const MovieCard: FC<PropsType> = ({ movie }) => {
 			<CollectionButton
 				className='mt-auto w-full'
 				isLoadingCollection={isLoadingCollection}
-				isCollectionItem={isCollectionMovie}
+				isCollectionItem={isCollectionItem}
 				onClick={
-					isCollectionMovie
+					isCollectionItem
 						? () =>
-								handleRemoveCollectionMovie(
+								handleRemoveCollectionItem(
 									movie.id,
 									currentUser?.uid
 								)
-						: () => handleSetCollectionMovie(movie)
+						: () => handleSetCollectionItem(movie)
 				}
 			/>
 		</div>

@@ -1,28 +1,30 @@
 import { NextPageContext } from 'next'
-import { API_KEY } from '@/constants/linksToFetch'
-import Title from '@/app/components/UI/Title/Title'
-import MoviePersonsList from '@/components/PersonsList/MoviePersonsList'
+import {
+	API_KEY,
+	LINK_TO_FETCH_SIMILAR_MOVIE_LIST,
+} from '@/constants/linksToFetch'
+import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
 import MovieInfo from '@/components/Movie/MovieInfo'
-import MoviesListDefault from '@/components/Movie/MoviesList/MoviesListDefault'
-import { useEffect, useState } from 'react'
+import MovieList from '@/components/Movie/MovieList'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Loader from '@/components/Loader'
+import { getResultsByPage } from '@/handlers/getResultsByPage'
+import TopBanner from '@/components/TopBanner'
 
 const Movie = ({ movieFromProps }) => {
 	const [movie, setMovie] = useState(movieFromProps)
 	const router = useRouter()
 	const linkToFetchSimilarMovies =
 		movie.movieResult &&
-		`https://api.themoviedb.org/3/movie/${movie.movieResult.id}/similar?api_key=${API_KEY}&page=`
+		LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace(
+			'{movieId}',
+			movie.movieResult.id
+		)
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setMovie([])
-
-			const fetchMovieData = async queryParam => {
-				const linkToFetch = `https://api.themoviedb.org/3/movie/${router.query.id}${queryParam}?api_key=${API_KEY}`
-				const response = await fetch(linkToFetch)
-				return await response.json()
-			}
 
 			try {
 				const fetchMovieData = async queryParam => {
@@ -44,7 +46,7 @@ const Movie = ({ movieFromProps }) => {
 					fetchMovieData('/images'),
 					fetchMovieData('/reviews'),
 					fetchMovieData('/videos'),
-					fetchMovieData('/similar'),
+					getResultsByPage(linkToFetchSimilarMovies, 1),
 				])
 
 				setMovie({
@@ -76,11 +78,12 @@ const Movie = ({ movieFromProps }) => {
 			'similarMoviesResult',
 		].every(prop => movie[prop])
 	) {
-		return <div>Loading...</div>
+		return <Loader />
 	}
 
 	return (
 		<>
+			<TopBanner imageSrc={movie.imagesResult.backdrops[0].file_path} />
 			<MovieInfo
 				movieInfo={movie.movieResult}
 				movieImages={movie.imagesResult.backdrops}
@@ -95,9 +98,12 @@ const Movie = ({ movieFromProps }) => {
 					personsFromProps={movie.creditsResult.crew}
 					title='Crew'
 				/>
-				<MoviesListDefault
+				<MovieList
 					movieList={movie.similarMoviesResult.results}
 					title='Similar movies'
+					isMoreDataAvailable={
+						movie.similarMoviesResult.isMoreDataAvailable
+					}
 					linkToFetchMovies={linkToFetchSimilarMovies}
 				/>
 			</div>
@@ -107,13 +113,13 @@ const Movie = ({ movieFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
+		const linkToFetchSimilarMovies =
+			LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace('{movieId}', ctx.query.id)
 		const fetchMovieData = async (queryParam: string) => {
 			const linkToFetch = `https://api.themoviedb.org/3/movie/${ctx.query.id}${queryParam}?api_key=${API_KEY}`
 			const response = await fetch(linkToFetch)
 			return response.json()
 		}
-
-		const fetchMovieMark = async () => {}
 
 		const [
 			movieResult,
@@ -128,7 +134,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			fetchMovieData('/images'),
 			fetchMovieData('/reviews'),
 			fetchMovieData('/videos'),
-			fetchMovieData('/similar'),
+			getResultsByPage(linkToFetchSimilarMovies, 1),
 		])
 
 		return {
@@ -146,7 +152,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				movieFromProps: [],
+				movieFromProps: {},
 			},
 		}
 	}

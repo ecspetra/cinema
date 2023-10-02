@@ -7,6 +7,10 @@ export interface IBackdrop {
 	file_path: string
 }
 
+export interface IPersonImage {
+	file_path: string
+}
+
 export interface IReviewAuthor {
 	avatar_path: string
 }
@@ -50,4 +54,16 @@ export interface IPersonCard {
 	known_for_department: string
 	character?: string
 	job?: string
+}
+
+export interface IPersonInfo {
+	id: number
+	profile_path: string
+	known_for_department: string
+	name: string
+	place_of_birth: string
+	gender: number
+	birthday: string
+	deathday: string | null
+	biography: string
 }

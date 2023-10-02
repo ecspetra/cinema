@@ -9,13 +9,13 @@ import Title from '@/app/components/UI/Title/Title'
 type PropsType = {
 	movieList: {
 		movies: Array<IMovieCard>
-		isMoreMoviesAvailable: boolean
+		isMoreDataAvailable: boolean
 	}
 	title: string
 }
 
-const CollectionMoviesList: FC<PropsType> = ({
-	movieList: { movies, isMoreMoviesAvailable },
+const CollectionMovieList: FC<PropsType> = ({
+	movieList: { movies, isMoreDataAvailable },
 	title,
 }) => {
 	const [lastMovieId, setLastMovieId] = useState<string | undefined>(
@@ -24,9 +24,8 @@ const CollectionMoviesList: FC<PropsType> = ({
 	const [moviesToShow, setMoviesToShow] = useState<Array<IMovieCard>>([
 		...movies,
 	])
-	const [isShowMoreButton, setIsShowMoreButton] = useState<boolean>(
-		isMoreMoviesAvailable
-	)
+	const [isShowMoreButton, setIsShowMoreButton] =
+		useState<boolean>(isMoreDataAvailable)
 	const { currentUser } = useAuth()
 
 	const getMoreCollectionMovies = async () => {
@@ -34,7 +33,7 @@ const CollectionMoviesList: FC<PropsType> = ({
 		result.movies.map(item => {
 			setMoviesToShow(prevState => [...prevState, item])
 		})
-		setIsShowMoreButton(result.isMoreMoviesAvailable)
+		setIsShowMoreButton(result.isMoreDataAvailable)
 	}
 
 	useEffect(() => {
@@ -75,4 +74,4 @@ const CollectionMoviesList: FC<PropsType> = ({
 	)
 }
 
-export default CollectionMoviesList
+export default CollectionMovieList

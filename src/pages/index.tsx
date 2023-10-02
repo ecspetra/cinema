@@ -1,47 +1,52 @@
-import MoviesListDefault from '../components/Movie/MoviesList/MoviesListDefault'
+import MovieList from '../components/Movie/MovieList'
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE } from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
 import { useEffect, useState } from 'react'
+import Loader from '@/components/Loader'
+import { getResultsByPage } from '@/handlers/getResultsByPage'
 
-const Home = ({ moviesFromProps }) => {
-	const [homePageMovies, setHomePageMovies] = useState(moviesFromProps)
+const Home = ({ results, isMoreDataAvailable }) => {
+	const [homePageMovies, setHomePageMovies] = useState(results)
+	const [isNextResult, setIsNextResult] = useState(isMoreDataAvailable)
 
 	useEffect(() => {
-		const fetchHomePageMovies = async () => {
-			try {
-				const response = await fetch(
-					LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE
-				)
-				const result = await response.json()
-				setHomePageMovies(result.results)
-			} catch (error) {
-				setHomePageMovies([])
-			}
+		if (!results) {
+			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
+				setHomePageMovies(data.results)
+				setIsNextResult(!!data.isMoreDataAvailable)
+			})
 		}
-
-		if (!moviesFromProps) fetchHomePageMovies()
 	}, [])
 
-	if (!homePageMovies.length) return <div>Loading</div>
+	if (!homePageMovies) return <Loader />
 
 	return (
-		<MoviesListDefault movieList={homePageMovies} title='Discover movies' />
+		<MovieList
+			movieList={homePageMovies}
+			title='Discover movies'
+			isMoreDataAvailable={isNextResult}
+		/>
 	)
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE)
-		const result = await response.json()
+		const movies = await getResultsByPage(
+			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
+			1
+		)
+
 		return {
 			props: {
-				moviesFromProps: result.results,
+				results: movies.results,
+				isMoreDataAvailable: !!movies.isMoreDataAvailable,
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				moviesFromProps: [],
+				results: [],
+				isMoreDataAvailable: false,
 			},
 		}
 	}

@@ -3,7 +3,7 @@ import defaultMovieBg from '@/app/assets/images/default-movie-bg.jpg'
 import Image from '@/components/Images/Image'
 
 type PropsType = {
-	imageSrc: string
+	imageSrc?: string
 }
 
 const TopBanner: FC<PropsType> = ({ imageSrc }) => {

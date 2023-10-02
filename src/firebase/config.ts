@@ -24,7 +24,7 @@ import {
 	child,
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
-import { IMovieCard } from '../../interfaces'
+import { IMovieCard, IPersonCard } from '../../interfaces'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -152,39 +152,57 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 
 // collection movie handlers
 
-export const setNewCollectionMovie = async (
-	movie: IMovieCard,
-	userId: string
+export const setNewCollectionItem = async (
+	item: IMovieCard | IPersonCard,
+	userId: string,
+	collection: 'movies' | 'persons'
 ) => {
-	const newCollectionMovieRef = ref(
+	const newCollectionItemRef = ref(
 		database,
-		`users/${userId}/collectionMovies/${movie.id}`
+		`users/${userId}/${
+			collection === 'movies' ? 'collectionMovies' : 'collectionPersons'
+		}/${item.id}`
 	)
+	let newCollectionItemData
 
-	const newCollectionMovieData = {
-		id: movie.id,
-		poster_path: movie.poster_path,
-		release_date: movie.release_date,
-		title: movie.title,
-		genres: movie.genres,
+	if (collection === 'movies') {
+		newCollectionItemData = {
+			id: item.id,
+			poster_path: item.poster_path,
+			release_date: item.release_date,
+			title: item.title,
+			genres: item.genres,
+		}
+	} else {
+		newCollectionItemData = {
+			id: item.id,
+			profile_path: item.profile_path,
+			name: item.name,
+		}
 	}
 
-	await set(newCollectionMovieRef, newCollectionMovieData)
+	await set(newCollectionItemRef, newCollectionItemData)
 }
 
-export const getCollectionMovie = (movieId: number, userId: string) => {
+export const getCollectionItem = (
+	itemId: number,
+	userId: string,
+	collection: 'movies' | 'persons'
+) => {
 	const movieRef = ref(
 		database,
-		`users/${userId}/collectionMovies/${movieId}`
+		`users/${userId}/${
+			collection === 'movies' ? 'collectionMovies' : 'collectionPersons'
+		}/${itemId}`
 	)
 
 	return new Promise(async resolve => {
-		let isCollectionMovie = false
+		let isCollectionItem = false
 
 		get(movieRef).then(snapshot => {
-			if (snapshot.exists()) isCollectionMovie = true
+			if (snapshot.exists()) isCollectionItem = true
 
-			resolve(isCollectionMovie)
+			resolve(isCollectionItem)
 		})
 	})
 }
@@ -215,10 +233,10 @@ export const getCollectionMovies = async (
 	const snapshot = await get(queryRef)
 	const data = snapshot.val() || {}
 	const movieIds = Object.keys(data)
-	let isMoreMoviesAvailable = false
+	let isMoreDataAvailable = false
 
 	if (movieIds.length > moviesPerPage) {
-		isMoreMoviesAvailable = true
+		isMoreDataAvailable = true
 		movieIds.pop()
 	}
 
@@ -229,19 +247,25 @@ export const getCollectionMovies = async (
 		})
 	)
 
-	return { isMoreMoviesAvailable, movies }
+	return { isMoreDataAvailable, movies }
 }
 
-export const removeCollectionMovie = (movieId: number, userId: string) => {
-	const movieRef = ref(
+export const removeCollectionItem = (
+	itemId: number,
+	userId: string,
+	collection: 'movies' | 'persons'
+) => {
+	const itemRef = ref(
 		database,
-		`users/${userId}/collectionMovies/${movieId}`
+		`users/${userId}/${
+			collection === 'movies' ? 'collectionMovies' : 'collectionPersons'
+		}/${itemId}`
 	)
 
 	return new Promise(async resolve => {
 		let isRemoved = false
 
-		remove(movieRef).then(() => {
+		remove(itemRef).then(() => {
 			isRemoved = true
 		})
 

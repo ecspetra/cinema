@@ -1,6 +1,6 @@
 import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
-import CollectionMoviesList from '@/components/Movie/MoviesList/CollectionMoviesList'
+import CollectionMovieList from '@/components/Movie/MovieList/CollectionMovieList'
 import { getCollectionMovies } from '@/firebase/config'
 import Button from '@/app/components/UI/Button'
 import { openLoginModal } from '@/handlers/openLoginModal'
@@ -11,16 +11,17 @@ import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 
-const CollectionMovies = ({ moviesFromProps }) => {
+const Collection = ({ moviesFromProps }) => {
 	const { showModal } = useModal()
 
 	if (!moviesFromProps.movies)
 		return (
 			<>
 				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
-				<div className='relative z-10'>
+				<div className='relative z-10 max-w-4xl'>
 					<Title className='text-7xl'>
-						Your favorite movies will be displayed here
+						Your favorite movies, TV shows and persons will be
+						displayed here
 						<FontAwesomeIcon
 							icon={faFilm}
 							className='ml-4 text-red-600'
@@ -38,10 +39,20 @@ const CollectionMovies = ({ moviesFromProps }) => {
 		)
 
 	return (
-		<CollectionMoviesList
-			movieList={moviesFromProps}
-			title='Collection movies'
-		/>
+		<>
+			<div>
+				<Title>Movies</Title>
+				<Button onClick={() => openLoginModal(showModal)}>All</Button>
+			</div>
+			<div>
+				<Title>Persons</Title>
+				<Button onClick={() => openLoginModal(showModal)}>All</Button>
+			</div>
+		</>
+		// <CollectionMovieList
+		// 	movieList={moviesFromProps}
+		// 	title='Collection movies'
+		// />
 	)
 }
 
@@ -64,7 +75,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		return {
 			redirect: {
 				destination: CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
-					'userId',
+					'{userId}',
 					userId
 				),
 				permanent: true,
@@ -97,4 +108,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default CollectionMovies
+export default Collection

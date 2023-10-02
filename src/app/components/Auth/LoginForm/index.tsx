@@ -115,7 +115,7 @@ const LoginForm = () => {
 						const cookies = parseCookies()
 						const userId = cookies.uid
 						target = CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
-							'userId',
+							'{userId}',
 							userId
 						)
 						break

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { IBackdrop } from '../../../../interfaces'
+import { IBackdrop, IPersonImage } from '../../../../interfaces'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Button from '../../../app/components/UI/Button'
@@ -8,10 +8,11 @@ import ImagesSlider from '../ImagesSlider/index'
 import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
-	images: Array<IBackdrop>
+	images: Array<IBackdrop> | Array<IPersonImage>
+	isPersonImages?: boolean
 }
 
-const ImagesList: FC<PropsType> = ({ images }) => {
+const ImagesList: FC<PropsType> = ({ images, isPersonImages = false }) => {
 	const [imagesToShow, setImagesToShow] = useState<Array<IBackdrop>>([])
 	const { showModal } = useModal()
 	const initialImagesNumber = 12
@@ -30,9 +31,13 @@ const ImagesList: FC<PropsType> = ({ images }) => {
 		showModal({
 			modalTitle: '',
 			modalText: '',
-			modalClassName: '!max-w-7xl !p-0',
+			modalClassName: isPersonImages ? '!p-0' : '!max-w-7xl !p-0',
 			modalContent: (
-				<ImagesSlider images={images} initialSliderImageIdx={idx} />
+				<ImagesSlider
+					images={images}
+					initialSliderImageIdx={idx}
+					isPersonImages={isPersonImages}
+				/>
 			),
 		})
 	}
@@ -63,7 +68,11 @@ const ImagesList: FC<PropsType> = ({ images }) => {
 							onClick={() => handleSliderImage(idx)}
 						>
 							<Image
-								className='aspect-[215/121]'
+								className={
+									isPersonImages
+										? 'aspect-[2/3]'
+										: 'aspect-[215/121]'
+								}
 								src={`https://image.tmdb.org/t/p/w500${item.file_path}`}
 								defaultImage={defaultMovieImage}
 							/>

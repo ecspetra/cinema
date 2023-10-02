@@ -1,30 +1,36 @@
-import MovieCard from '../../MovieCard'
-import { IMovieCard } from '../../../../../interfaces'
+import MovieCard from '../MovieCard'
+import { IMovieCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
-import { LINK_TO_FETCH_DEFAULT_MOVIES } from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
 import { getMovieGenres } from '@/handlers/getMovieGenres'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
+import { getResultsByPage } from '@/handlers/getResultsByPage'
 
 type PropsType = {
 	movieList: Array<IMovieCard>
 	title: string
+	isMoreDataAvailable: boolean
 	linkToFetchMovies?: string
 }
 
-const MoviesListDefault: FC<PropsType> = ({
+const MovieList: FC<PropsType> = ({
 	movieList,
 	title,
-	linkToFetchMovies = LINK_TO_FETCH_DEFAULT_MOVIES,
+	isMoreDataAvailable,
+	linkToFetchMovies = LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
 }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [fetchedMovies, setFetchedMovies] = useState<Array<IMovieCard>>([])
 	const [moviesToShow, setMoviesToShow] = useState([])
+	const [isShowMoreButton, setIsShowMoreButton] =
+		useState(isMoreDataAvailable)
 
 	const getMoreDefaultMovies = async () => {
-		const response = await fetch(linkToFetchMovies + currentPage)
-		const result = await response.json()
-		setFetchedMovies(prevState => [...prevState, ...result.results])
+		getResultsByPage(linkToFetchMovies, currentPage).then(data => {
+			setFetchedMovies(prevState => [...prevState, ...data.results])
+			setIsShowMoreButton(!!data.isMoreDataAvailable)
+		})
 	}
 
 	useEffect(() => {
@@ -63,15 +69,17 @@ const MoviesListDefault: FC<PropsType> = ({
 					return <MovieCard key={item.id} movie={item} />
 				})}
 			</div>
-			<Button
-				className='mx-auto'
-				context='empty'
-				onClick={() => setCurrentPage(prevState => prevState + 1)}
-			>
-				Show more
-			</Button>
+			{isShowMoreButton && (
+				<Button
+					className='mx-auto'
+					context='empty'
+					onClick={() => setCurrentPage(prevState => prevState + 1)}
+				>
+					Show more
+				</Button>
+			)}
 		</div>
 	)
 }
 
-export default MoviesListDefault
+export default MovieList

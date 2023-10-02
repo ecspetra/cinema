@@ -1,106 +1,135 @@
 import { NextPageContext } from 'next'
-import { API_KEY } from '@/constants/linksToFetch'
-import Image from '@/components/Image'
-import defaultPersonImage from '../../app/assets/images/default-person-image.svg'
-import Button from '@/app/components/UI/Button'
-import Title from '@/app/components/UI/Title/Title'
-import { getPersonGender } from '@/handlers/getPersonGender'
 import {
-	faCalendarCheck,
-	faFlag,
-	faUser,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import moment from 'moment'
-import { useEffect, useState } from 'react'
+	LINK_TO_FETCH_CURRENT_PERSON,
+	LINK_TO_FETCH_CURRENT_PERSON_IMAGES,
+	LINK_TO_FETCH_MOVIES_WITH_PERSONS,
+} from '@/constants/linksToFetch'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import PersonInfo from '@/components/Person/PersonInfo'
+import MovieList from '@/components/Movie/MovieList'
+import { getResultsByPage } from '@/handlers/getResultsByPage'
+import Loader from '@/components/Loader'
+import TopBanner from '@/components/TopBanner'
 
 const Person = ({ personFromProps }) => {
-	const [person, setPerson] = useState(personFromProps)
+	const [person, setPerson] = useState(personFromProps.personInfo)
+	const [images, setImages] = useState(personFromProps.personImages)
+	const [movies, setMovies] = useState(
+		personFromProps.moviesWithPerson.results
+	)
 	const router = useRouter()
-	const gender = getPersonGender(person)
-
-	const test = () => {}
+	const linkToFetchMoviesWithCurrentPerson =
+		LINK_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', router.query.id)
 
 	useEffect(() => {
 		const fetchPerson = async () => {
-			try {
-				const linkToFetch = `https://api.themoviedb.org/3/person/${router.query.id}?api_key=${API_KEY}`
+			const getPersonInfo = async () => {
+				const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON.replace(
+					'{personId}',
+					router.query.id
+				)
 				const response = await fetch(linkToFetch)
 				const result = await response.json()
 
-				setPerson(result)
+				return result
+			}
+
+			const getPersonImages = async () => {
+				const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON_IMAGES.replace(
+					'{personId}',
+					router.query.id
+				)
+				const response = await fetch(linkToFetch)
+				const result = await response.json()
+
+				return result
+			}
+
+			try {
+				const personInfo = await getPersonInfo()
+				const personImages = await getPersonImages()
+				const moviesWithPerson = await getResultsByPage(
+					linkToFetchMoviesWithCurrentPerson,
+					1
+				)
+
+				setPerson(personInfo)
+				setImages(personImages.profiles)
+				setMovies(moviesWithPerson)
 			} catch (error) {
 				setPerson(null)
+				setImages([])
+				setMovies([])
 			}
 		}
 
 		if (!personFromProps) fetchPerson()
 	}, [])
 
+	if (!person) {
+		return <Loader />
+	}
+
 	return (
-		<div className='w-full flex gap-x-7 py-7'>
-			<div className='w-full max-w-[340px]'>
-				<Image
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${person.profile_path}`}
-					defaultImage={defaultPersonImage}
-				/>
-			</div>
-			<div className='w-full'>
-				<Title className='text-7xl'>{person.name}</Title>
-				<Title variant='h2' className='mb-5 text-slate-400'>
-					{person.known_for_department}
-				</Title>
-				<div className='mb-5'>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
-						<span className='mr-1.5'>Place of birth:</span>
-						<span>{person.place_of_birth}</span>
-					</div>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon
-							className='mr-1.5'
-							icon={faCalendarCheck}
-						/>
-						<span className='mr-1.5'>Date of birth:</span>
-						<span>
-							<span>
-								{moment(person.birthday).format('MM.DD.YYYY')}
-							</span>
-							{person.deathday && (
-								<span>
-									{' '}
-									— Date of death:{' '}
-									{moment(person.deathday).format(
-										'MM.DD.YYYY'
-									)}
-								</span>
-							)}
-						</span>
-					</div>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon className='mr-1.5' icon={faUser} />
-						<span className='mr-1.5'>Gender: {gender}</span>
-					</div>
-				</div>
-				<p className='mb-6'>{person.biography}</p>
-				<Button className='mt-auto' onClick={test}>
-					Add to collection
-				</Button>
-			</div>
-		</div>
+		<>
+			<TopBanner />
+			<PersonInfo personInfo={person} personImages={images} />
+			<MovieList
+				movieList={movies}
+				title={`Movies with ${person.name}`}
+				isMoreDataAvailable={
+					personFromProps.moviesWithPerson.isMoreDataAvailable
+				}
+				linkToFetchMovies={linkToFetchMoviesWithCurrentPerson}
+			/>
+		</>
 	)
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	try {
-		const linkToFetch = `https://api.themoviedb.org/3/person/${ctx.query.id}?api_key=${API_KEY}`
+	const getPersonInfo = async () => {
+		const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON.replace(
+			'{personId}',
+			ctx.query.id
+		)
 		const response = await fetch(linkToFetch)
 		const result = await response.json()
 
+		return result
+	}
+
+	const getPersonImages = async () => {
+		const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON_IMAGES.replace(
+			'{personId}',
+			ctx.query.id
+		)
+		const response = await fetch(linkToFetch)
+		const result = await response.json()
+
+		return result
+	}
+
+	try {
+		const linkToFetchMoviesWithCurrentPerson =
+			LINK_TO_FETCH_MOVIES_WITH_PERSONS.replace(
+				'{personId}',
+				ctx.query.id
+			)
+		const personInfo = await getPersonInfo()
+		const personImages = await getPersonImages()
+		const moviesWithPerson = await getResultsByPage(
+			linkToFetchMoviesWithCurrentPerson,
+			1
+		)
+
 		return {
 			props: {
-				personFromProps: result,
+				personFromProps: {
+					personInfo,
+					personImages: personImages.profiles,
+					moviesWithPerson,
+				},
 			},
 		}
 	} catch (error) {

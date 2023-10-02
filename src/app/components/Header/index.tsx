@@ -13,8 +13,8 @@ const Header = () => {
 	const router = useRouter()
 	const userId = currentUser?.uid
 	const collectionMoviesLink = currentUser?.uid
-		? `/collection-movies?uid=${userId}`
-		: `/collection-movies`
+		? `/collection?uid=${userId}`
+		: `/collection`
 	const pathname = usePathname()
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && currentUser
@@ -22,7 +22,7 @@ const Header = () => {
 
 	const handleSignOutUser = async () => {
 		await signOutUser()
-		await router.push('/collection-movies')
+		await router.push('/collection')
 	}
 
 	return (
