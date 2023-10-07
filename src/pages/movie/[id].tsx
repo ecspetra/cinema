@@ -78,7 +78,7 @@ const Movie = ({ movieFromProps }) => {
 			'similarMoviesResult',
 		].every(prop => movie[prop])
 	) {
-		return <Loader />
+		return <Loader className='bg-transparent' />
 	}
 
 	return (

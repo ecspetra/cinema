@@ -30,6 +30,7 @@ const TopBanner: FC<PropsType> = ({ imageSrc }) => {
 					className='aspect-[215/121] inset-x-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4'
 					src={`https://image.tmdb.org/t/p/original${imageSrc}`}
 					defaultImage={defaultMovieBg}
+					loaderClassName='bg-transparent'
 				/>
 			</div>
 		</div>

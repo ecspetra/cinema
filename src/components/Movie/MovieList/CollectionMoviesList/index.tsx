@@ -2,7 +2,7 @@ import MovieCard from '../../MovieCard'
 import { IMovieCard } from '../../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
-import { getCollectionMovies } from '@/firebase/config'
+import { getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 
@@ -29,8 +29,13 @@ const CollectionMovieList: FC<PropsType> = ({
 	const { currentUser } = useAuth()
 
 	const getMoreCollectionMovies = async () => {
-		const result = await getCollectionMovies(currentUser?.uid, lastMovieId)
-		result.movies.map(item => {
+		const result = await getCollectionItemsList(
+			currentUser?.uid,
+			'movies',
+			20,
+			lastMovieId
+		)
+		result.items.map(item => {
 			setMoviesToShow(prevState => [...prevState, item])
 		})
 		setIsShowMoreButton(result.isMoreDataAvailable)

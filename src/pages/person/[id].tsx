@@ -68,7 +68,7 @@ const Person = ({ personFromProps }) => {
 	}, [])
 
 	if (!person) {
-		return <Loader />
+		return <Loader className='bg-transparent' />
 	}
 
 	return (

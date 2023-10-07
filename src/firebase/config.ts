@@ -46,6 +46,8 @@ export interface AuthContextType {
 	currentUser: User | null
 }
 
+export const USER_COLLECTIONS = ['movies', 'persons', 'reviews', 'replies']
+
 // auth handlers
 
 export const addUserToRealtimeDatabase = async (newUser: object) => {
@@ -150,19 +152,15 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 	})
 }
 
-// collection movie handlers
+// collection handlers
 
 export const setNewCollectionItem = async (
 	item: IMovieCard | IPersonCard,
 	userId: string,
-	collection: 'movies' | 'persons'
+	collection: (typeof USER_COLLECTIONS)[number]
 ) => {
-	const newCollectionItemRef = ref(
-		database,
-		`users/${userId}/${
-			collection === 'movies' ? 'collectionMovies' : 'collectionPersons'
-		}/${item.id}`
-	)
+	const collectionPath = `users/${userId}/${collection}/${item.id}`
+	const newCollectionItemRef = ref(database, collectionPath)
 	let newCollectionItemData
 
 	if (collection === 'movies') {
@@ -187,19 +185,15 @@ export const setNewCollectionItem = async (
 export const getCollectionItem = (
 	itemId: number,
 	userId: string,
-	collection: 'movies' | 'persons'
+	collection: (typeof USER_COLLECTIONS)[number]
 ) => {
-	const movieRef = ref(
-		database,
-		`users/${userId}/${
-			collection === 'movies' ? 'collectionMovies' : 'collectionPersons'
-		}/${itemId}`
-	)
+	const collectionPath = `users/${userId}/${collection}/${itemId}`
+	const itemRef = ref(database, collectionPath)
 
 	return new Promise(async resolve => {
 		let isCollectionItem = false
 
-		get(movieRef).then(snapshot => {
+		get(itemRef).then(snapshot => {
 			if (snapshot.exists()) isCollectionItem = true
 
 			resolve(isCollectionItem)
@@ -207,60 +201,13 @@ export const getCollectionItem = (
 	})
 }
 
-export const getCollectionMovies = async (
-	userId: string,
-	lastMovieId: string | null
-) => {
-	const userCollectionRef = ref(database, `users/${userId}/collectionMovies/`)
-	const moviesPerPage = 20
-	let queryRef
-
-	if (lastMovieId) {
-		queryRef = query(
-			userCollectionRef,
-			orderByKey(),
-			startAfter(lastMovieId),
-			limitToFirst(moviesPerPage + 1)
-		)
-	} else {
-		queryRef = query(
-			userCollectionRef,
-			orderByKey(),
-			limitToFirst(moviesPerPage + 1)
-		)
-	}
-
-	const snapshot = await get(queryRef)
-	const data = snapshot.val() || {}
-	const movieIds = Object.keys(data)
-	let isMoreDataAvailable = false
-
-	if (movieIds.length > moviesPerPage) {
-		isMoreDataAvailable = true
-		movieIds.pop()
-	}
-
-	const movies = await Promise.all(
-		movieIds.map(async movieId => {
-			const movieSnapshot = await get(child(userCollectionRef, movieId))
-			return movieSnapshot.val()
-		})
-	)
-
-	return { isMoreDataAvailable, movies }
-}
-
 export const removeCollectionItem = (
 	itemId: number,
 	userId: string,
-	collection: 'movies' | 'persons'
+	collection: (typeof USER_COLLECTIONS)[number]
 ) => {
-	const itemRef = ref(
-		database,
-		`users/${userId}/${
-			collection === 'movies' ? 'collectionMovies' : 'collectionPersons'
-		}/${itemId}`
-	)
+	const collectionPath = `users/${userId}/${collection}/${itemId}`
+	const itemRef = ref(database, collectionPath)
 
 	return new Promise(async resolve => {
 		let isRemoved = false
@@ -271,4 +218,49 @@ export const removeCollectionItem = (
 
 		resolve(isRemoved)
 	})
+}
+
+export const getCollectionItemsList = async (
+	userId: string,
+	collection: (typeof USER_COLLECTIONS)[number],
+	itemsPerPage: number,
+	lastItemId: string | null
+) => {
+	const collectionPath = `users/${userId}/${collection}/`
+	const userCollectionRef = ref(database, collectionPath)
+	let paginationQuery
+
+	if (lastItemId) {
+		paginationQuery = query(
+			userCollectionRef,
+			orderByKey(),
+			startAfter(lastItemId),
+			limitToFirst(itemsPerPage + 1)
+		)
+	} else {
+		paginationQuery = query(
+			userCollectionRef,
+			orderByKey(),
+			limitToFirst(itemsPerPage + 1)
+		)
+	}
+
+	const snapshot = await get(paginationQuery)
+	const data = snapshot.val() || {}
+	const itemIds = Object.keys(data)
+	let isMoreDataAvailable = false
+
+	if (itemIds.length > itemsPerPage) {
+		isMoreDataAvailable = true
+		itemIds.pop()
+	}
+
+	const items = await Promise.all(
+		itemIds.map(async itemId => {
+			const itemSnapshot = await get(child(userCollectionRef, itemId))
+			return itemSnapshot.val()
+		})
+	)
+
+	return { isMoreDataAvailable, items }
 }
