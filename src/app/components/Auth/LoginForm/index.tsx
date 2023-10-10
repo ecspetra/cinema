@@ -12,6 +12,7 @@ import {
 	AUTH_PAGE,
 	COLLECTION_MOVIES_PAGE,
 	CURRENT_USER_COLLECTION_MOVIES_PAGE,
+	CURRENT_USER_COLLECTION_PAGE,
 } from '@/constants/paths'
 import { parseCookies } from '@/handlers/handleCookies'
 import { useRouter } from 'next/router'
@@ -114,7 +115,7 @@ const LoginForm = () => {
 					case pathname === COLLECTION_MOVIES_PAGE:
 						const cookies = parseCookies()
 						const userId = cookies.uid
-						target = CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
+						target = CURRENT_USER_COLLECTION_PAGE.replace(
 							'{userId}',
 							userId
 						)

@@ -52,7 +52,7 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 	return (
 		<div className='flex gap-x-7 py-7 z-10 mb-16'>
 			<div className='w-full max-w-[340px]'>
-				<div className='sticky top-8'>
+				<div className='sticky top-28'>
 					<Image
 						src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 						defaultImage={defaultMovieImage}

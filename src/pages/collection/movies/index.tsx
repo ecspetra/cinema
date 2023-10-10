@@ -1,14 +1,15 @@
 import { NextPageContext } from 'next'
 import { parseCookies } from '@/handlers/handleCookies'
 import {
-	CURRENT_USER_COLLECTION_MOVIES_PAGE,
 	CURRENT_USER_COLLECTION_PAGE,
+	COLLECTION_PAGE_TOP_BANNER_IMAGE,
 } from '@/constants/paths'
 import { getCollectionItemsList } from '@/firebase/config'
 import CollectionMovieList from '@/components/Movie/MovieList/CollectionMoviesList'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
+import TopBanner from '@/components/TopBanner'
 
 const CollectionMovies = ({ results }) => {
 	const [movies, setMovies] = useState(results)
@@ -26,15 +27,6 @@ const CollectionMovies = ({ results }) => {
 				(!userId && userIdFromUrl)
 			) {
 				await router.push('/404')
-			}
-
-			if (userId && !userIdFromUrl) {
-				await router.push(
-					CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
-						'{userId}',
-						userId
-					)
-				)
 			}
 
 			if (!userId) {
@@ -64,7 +56,12 @@ const CollectionMovies = ({ results }) => {
 		if (!results) getCollection()
 	}, [])
 
-	return <CollectionMovieList movieList={movies} title='Collection movies' />
+	return (
+		<>
+			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
+			<CollectionMovieList movieList={movies} title='Collection movies' />
+		</>
+	)
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
@@ -79,18 +76,6 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	) {
 		return {
 			notFound: true,
-		}
-	}
-
-	if (userId && !userIdFromUrl) {
-		return {
-			redirect: {
-				destination: CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
-					'{userId}',
-					userId
-				),
-				permanent: true,
-			},
 		}
 	}
 

@@ -26,30 +26,32 @@ const Header = () => {
 	}
 
 	return (
-		<header className='flex justify-between items-center container w-full max-w-screen-xl mx-auto p-5 z-2'>
-			<Link href={`/`} as={`/`}>
-				<span>CinemaStreet</span>
-			</Link>
-			<Link href={collectionMoviesLink} as={collectionMoviesLink}>
-				<span>My collection</span>
-			</Link>
-			{isShowUserMenu && (
-				<div className='flex justify-center items-center gap-4'>
-					<Image
-						className='!w-11 h-11 rounded-full'
-						src={currentUser.photoURL}
-						defaultImage={defaultUserImage}
-					/>
-					<Button context='text' onClick={handleSignOutUser}>
-						Sign Out
-					</Button>
-				</div>
-			)}
-			{isShowAuthButton && (
-				<Link href={`/auth`} as={`/auth`}>
-					<span>Sign In</span>
+		<header className='fixed top-0 left-0 w-full z-50 bg-black'>
+			<div className='max-w-screen-xl flex justify-between items-center mx-auto p-5'>
+				<Link href={`/`} as={`/`}>
+					<span>CinemaStreet</span>
 				</Link>
-			)}
+				<Link href={collectionMoviesLink} as={collectionMoviesLink}>
+					<span>My collection</span>
+				</Link>
+				{isShowUserMenu && (
+					<div className='flex justify-center items-center gap-4'>
+						<Image
+							className='!w-11 h-11 rounded-full'
+							src={currentUser.photoURL}
+							defaultImage={defaultUserImage}
+						/>
+						<Button context='text' onClick={handleSignOutUser}>
+							Sign Out
+						</Button>
+					</div>
+				)}
+				{isShowAuthButton && (
+					<Link href={`/auth`} as={`/auth`}>
+						<span>Sign In</span>
+					</Link>
+				)}
+			</div>
 		</header>
 	)
 }

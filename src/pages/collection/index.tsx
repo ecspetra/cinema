@@ -5,7 +5,10 @@ import Button from '@/app/components/UI/Button'
 import { openLoginModal } from '@/handlers/openLoginModal'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
-import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
+import {
+	CURRENT_USER_COLLECTION_PAGE,
+	COLLECTION_PAGE_TOP_BANNER_IMAGE,
+} from '@/constants/paths'
 import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
@@ -97,7 +100,7 @@ const Collection = ({ results }) => {
 
 	return (
 		<>
-			<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
+			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<div className='relative z-10'>
 				<CollectionWrap
 					title='Movies'
