@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { IReview } from '../../../../interfaces'
+import { IReviewCard } from '../../../../interfaces'
 import Image from '../../../components/Images/Image'
 import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import Button from '../../../app/components/UI/Button'
@@ -8,7 +8,7 @@ import moment from 'moment'
 import classNames from 'classnames'
 
 type PropsType = {
-	review: IReview
+	review: IReviewCard
 }
 
 const ReviewsCard: FC<PropsType> = ({ review }) => {

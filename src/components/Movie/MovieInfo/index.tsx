@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Genre from '../../../components/Genre'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { IBackdrop, IMovieInfo, IReview } from '../../../../interfaces'
+import { IBackdrop, IMovieInfo, IReviewCard } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
@@ -22,7 +22,7 @@ import { useCollectionButton } from '@/hooks/useCollectionButton'
 type PropsType = {
 	movieInfo: IMovieInfo
 	movieImages: Array<IBackdrop>
-	movieReviews: Array<IReview>
+	movieReviews: Array<IReviewCard>
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
@@ -50,12 +50,14 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 	} = movieInfo
 
 	return (
-		<div className='flex gap-x-7 py-7 z-10'>
+		<div className='flex gap-x-7 py-7 z-10 mb-16'>
 			<div className='w-full max-w-[340px]'>
-				<Image
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
-					defaultImage={defaultMovieImage}
-				/>
+				<div className='sticky top-8'>
+					<Image
+						src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
+						defaultImage={defaultMovieImage}
+					/>
+				</div>
 			</div>
 			<div className='w-full'>
 				<Title className='text-7xl'>{title}</Title>

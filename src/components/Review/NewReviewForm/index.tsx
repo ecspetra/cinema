@@ -15,7 +15,7 @@ const NewReviewForm = () => {
 	}
 
 	return (
-		<div className='mb-16'>
+		<>
 			<Title>Leave your review</Title>
 			<form onSubmit={handleSubmit}>
 				<Textarea onChange={handleTextareaChange} />
@@ -23,7 +23,7 @@ const NewReviewForm = () => {
 					Submit review
 				</Button>
 			</form>
-		</div>
+		</>
 	)
 }
 

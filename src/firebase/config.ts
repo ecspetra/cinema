@@ -15,16 +15,15 @@ import {
 	remove,
 	orderByKey,
 	limitToFirst,
-	startAt,
-	endAt,
-	onChildAdded,
 	query,
-	orderByChild,
 	startAfter,
 	child,
+	DataSnapshot,
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
-import { IMovieCard, IPersonCard } from '../../interfaces'
+import { IMovieCard, IPersonCard, IReviewCard } from '../../interfaces'
+import { onValue } from '@firebase/database'
+import React from 'react'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -157,13 +156,13 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 export const setNewCollectionItem = async (
 	item: IMovieCard | IPersonCard,
 	userId: string,
-	collection: (typeof USER_COLLECTIONS)[number]
+	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
-	const collectionPath = `users/${userId}/${collection}/${item.id}`
+	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
 	const newCollectionItemRef = ref(database, collectionPath)
 	let newCollectionItemData
 
-	if (collection === 'movies') {
+	if (collectionName === 'movies') {
 		newCollectionItemData = {
 			id: item.id,
 			poster_path: item.poster_path,
@@ -185,9 +184,9 @@ export const setNewCollectionItem = async (
 export const getCollectionItem = (
 	itemId: number,
 	userId: string,
-	collection: (typeof USER_COLLECTIONS)[number]
+	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
-	const collectionPath = `users/${userId}/${collection}/${itemId}`
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
 	return new Promise(async resolve => {
@@ -204,9 +203,9 @@ export const getCollectionItem = (
 export const removeCollectionItem = (
 	itemId: number,
 	userId: string,
-	collection: (typeof USER_COLLECTIONS)[number]
+	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
-	const collectionPath = `users/${userId}/${collection}/${itemId}`
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
 	return new Promise(async resolve => {
@@ -222,11 +221,11 @@ export const removeCollectionItem = (
 
 export const getCollectionItemsList = async (
 	userId: string,
-	collection: (typeof USER_COLLECTIONS)[number],
+	collectionName: (typeof USER_COLLECTIONS)[number],
 	itemsPerPage: number,
 	lastItemId: string | null
 ) => {
-	const collectionPath = `users/${userId}/${collection}/`
+	const collectionPath = `users/${userId}/${collectionName}/`
 	const userCollectionRef = ref(database, collectionPath)
 	let paginationQuery
 
@@ -263,4 +262,44 @@ export const getCollectionItemsList = async (
 	)
 
 	return { isMoreDataAvailable, items }
+}
+
+export const collectionListener = (
+	userId: string,
+	collectionName: (typeof USER_COLLECTIONS)[number],
+	loadedItems: Array<any>,
+	setItems: ([]) => void,
+	setIsMoreDataAvailable: (arg: boolean) => void
+) => {
+	const collectionRef = ref(database, `users/${userId}/${collectionName}`)
+	const itemsPerPage = 20
+
+	const onDataChange = (snapshot: DataSnapshot) => {
+		const data = snapshot.val()
+		const itemsFromDB = data ? Object.values(data) : []
+		const totalItemsLength = itemsFromDB.length
+		const loadedItemsLength = loadedItems.length
+
+		const newItems = itemsFromDB.filter(item =>
+			loadedItems.some(existingItem => existingItem.id === item.id)
+		)
+
+		if (!loadedItemsLength) {
+			itemsFromDB.map((item, idx) => {
+				if (idx < itemsPerPage) {
+					setItems(prevState => [...prevState, item])
+				}
+			})
+			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+		} else {
+			setItems(newItems)
+			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+		}
+	}
+
+	const unsubscribe = onValue(collectionRef, onDataChange)
+
+	return () => {
+		unsubscribe()
+	}
 }

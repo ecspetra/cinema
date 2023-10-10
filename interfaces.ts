@@ -15,7 +15,7 @@ export interface IReviewAuthor {
 	avatar_path: string
 }
 
-export interface IReview {
+export interface IReviewCard {
 	author: string
 	id: string
 	content: string
@@ -43,7 +43,7 @@ export interface IMovieCard {
 	poster_path: string
 	release_date: string
 	title: string
-	genres: Array<IGenre>
+	genres?: Array<IGenre>
 }
 
 export interface IPersonCard {

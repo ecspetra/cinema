@@ -146,10 +146,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 		<div className='mb-4 relative'>
 			<Title variant='h3'>My mark</Title>
 			{isLoadingMark ? (
-				<Loader
-					isShowText
-					className='!static bg-transparent !transform-none !inset-0 !inline-block'
-				/>
+				<Loader isShowText type='static' className='!inline-block' />
 			) : (
 				<>
 					<div className='flex justify-start items-center gap-x-1'>

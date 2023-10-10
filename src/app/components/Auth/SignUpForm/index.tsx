@@ -196,7 +196,7 @@ const SignUpForm = () => {
 						{isLoading ? (
 							<span className='flex justify-center items-center'>
 								Loading{' '}
-								<Loader className='!static bg-transparent !transform-none !inset-0 ml-2' />
+								<Loader type='static' className='ml-2' />
 							</span>
 						) : (
 							'Submit'

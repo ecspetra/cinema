@@ -15,9 +15,7 @@ import TopBanner from '@/components/TopBanner'
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(personFromProps.personInfo)
 	const [images, setImages] = useState(personFromProps.personImages)
-	const [movies, setMovies] = useState(
-		personFromProps.moviesWithPerson.results
-	)
+	const [movies, setMovies] = useState(personFromProps.moviesWithPerson.items)
 	const router = useRouter()
 	const linkToFetchMoviesWithCurrentPerson =
 		LINK_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', router.query.id)

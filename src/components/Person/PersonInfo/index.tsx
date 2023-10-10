@@ -43,12 +43,14 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 	const genderInString = getPersonGender(gender)
 
 	return (
-		<div className='flex gap-x-7 py-7 z-10'>
+		<div className='flex gap-x-7 py-7 z-10 mb-16'>
 			<div className='w-full max-w-[340px]'>
-				<Image
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${profile_path}`}
-					defaultImage={defaultMovieImage}
-				/>
+				<div className='sticky top-8'>
+					<Image
+						src={`https://image.tmdb.org/t/p/w440_and_h660_face${profile_path}`}
+						defaultImage={defaultMovieImage}
+					/>
+				</div>
 			</div>
 			<div className='w-full'>
 				<Title className='text-7xl'>{name}</Title>
@@ -98,7 +100,11 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 							: () => handleSetCollectionItem(personInfo)
 					}
 				/>
-				<ImagesList images={personImages} isPersonImages />
+				<ImagesList
+					images={personImages}
+					isPersonImages
+					className='!mb-0'
+				/>
 			</div>
 		</div>
 	)

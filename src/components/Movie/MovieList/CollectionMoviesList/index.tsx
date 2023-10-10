@@ -2,35 +2,39 @@ import MovieCard from '../../MovieCard'
 import { IMovieCard } from '../../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
-import { getCollectionItemsList } from '@/firebase/config'
+import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
+import Loader from '@/components/Loader'
 
 type PropsType = {
 	movieList: {
-		movies: Array<IMovieCard>
+		items: Array<IMovieCard>
 		isMoreDataAvailable: boolean
 	}
 	title: string
 }
 
 const CollectionMovieList: FC<PropsType> = ({
-	movieList: { movies, isMoreDataAvailable },
+	movieList: { items, isMoreDataAvailable },
 	title,
 }) => {
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [lastMovieId, setLastMovieId] = useState<string | undefined>(
 		undefined
 	)
 	const [moviesToShow, setMoviesToShow] = useState<Array<IMovieCard>>([
-		...movies,
+		...items,
 	])
 	const [isShowMoreButton, setIsShowMoreButton] =
 		useState<boolean>(isMoreDataAvailable)
 	const { currentUser } = useAuth()
+	const userId = currentUser?.uid
 
 	const getMoreCollectionMovies = async () => {
+		setIsLoading(true)
 		const result = await getCollectionItemsList(
-			currentUser?.uid,
+			userId,
 			'movies',
 			20,
 			lastMovieId
@@ -39,7 +43,22 @@ const CollectionMovieList: FC<PropsType> = ({
 			setMoviesToShow(prevState => [...prevState, item])
 		})
 		setIsShowMoreButton(result.isMoreDataAvailable)
+		setIsLoading(false)
 	}
+
+	useEffect(() => {
+		const unsubscribe = collectionListener(
+			userId,
+			'movies',
+			moviesToShow,
+			setMoviesToShow,
+			setIsShowMoreButton
+		)
+
+		return () => {
+			unsubscribe()
+		}
+	}, [moviesToShow])
 
 	useEffect(() => {
 		if (lastMovieId) getMoreCollectionMovies()
@@ -62,6 +81,7 @@ const CollectionMovieList: FC<PropsType> = ({
 					return <MovieCard key={item.id} movie={item} />
 				})}
 			</div>
+			{isLoading && <Loader type='static' />}
 			{isShowMoreButton && (
 				<Button
 					className='mx-auto'

@@ -6,6 +6,7 @@ import { getMovieGenres } from '@/handlers/getMovieGenres'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
+import Loader from '@/components/Loader'
 
 type PropsType = {
 	movieList: Array<IMovieCard>
@@ -20,22 +21,23 @@ const MovieList: FC<PropsType> = ({
 	isMoreDataAvailable,
 	linkToFetchMovies = LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
 }) => {
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [fetchedMovies, setFetchedMovies] = useState<Array<IMovieCard>>([])
+	const [fetchedMovies, setFetchedMovies] = useState<Array<IMovieCard>>([
+		...movieList,
+	])
 	const [moviesToShow, setMoviesToShow] = useState([])
 	const [isShowMoreButton, setIsShowMoreButton] =
 		useState(isMoreDataAvailable)
 
 	const getMoreDefaultMovies = async () => {
+		setIsLoading(true)
 		getResultsByPage(linkToFetchMovies, currentPage).then(data => {
-			setFetchedMovies(prevState => [...prevState, ...data.results])
+			setFetchedMovies(prevState => [...prevState, ...data.items])
 			setIsShowMoreButton(!!data.isMoreDataAvailable)
+			setIsLoading(false)
 		})
 	}
-
-	useEffect(() => {
-		setFetchedMovies([...movieList])
-	}, [])
 
 	useEffect(() => {
 		if (fetchedMovies.length !== 0) {
@@ -69,6 +71,7 @@ const MovieList: FC<PropsType> = ({
 					return <MovieCard key={item.id} movie={item} />
 				})}
 			</div>
+			{isLoading && <Loader type='static' />}
 			{isShowMoreButton && (
 				<Button
 					className='mx-auto'

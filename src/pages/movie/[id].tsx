@@ -99,7 +99,7 @@ const Movie = ({ movieFromProps }) => {
 					title='Crew'
 				/>
 				<MovieList
-					movieList={movie.similarMoviesResult.results}
+					movieList={movie.similarMoviesResult.items}
 					title='Similar movies'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable

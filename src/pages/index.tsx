@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 
-const Home = ({ results, isMoreDataAvailable }) => {
-	const [homePageMovies, setHomePageMovies] = useState(results)
+const Home = ({ items, isMoreDataAvailable }) => {
+	const [homePageMovies, setHomePageMovies] = useState(items)
 	const [isNextResult, setIsNextResult] = useState(isMoreDataAvailable)
 
 	useEffect(() => {
-		if (!results) {
+		if (!items) {
 			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
-				setHomePageMovies(data.results)
+				setHomePageMovies(data.items)
 				setIsNextResult(!!data.isMoreDataAvailable)
 			})
 		}
@@ -38,14 +38,14 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 
 		return {
 			props: {
-				results: movies.results,
+				items: movies.items,
 				isMoreDataAvailable: !!movies.isMoreDataAvailable,
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				results: [],
+				items: [],
 				isMoreDataAvailable: false,
 			},
 		}

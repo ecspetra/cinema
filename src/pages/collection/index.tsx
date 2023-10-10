@@ -5,7 +5,7 @@ import Button from '@/app/components/UI/Button'
 import { openLoginModal } from '@/handlers/openLoginModal'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
-import { CURRENT_USER_COLLECTION_MOVIES_PAGE } from '@/constants/paths'
+import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
 import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
@@ -15,39 +15,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 const Collection = ({ results }) => {
-	const [movies, setMovies] = useState(results.collectionMovies.items)
-	const [persons, setPersons] = useState(results.collectionPersons.items)
-	const [moviesToShow, setMoviesToShow] = useState({
-		itemsToShow: [],
-		isShowMoreButton: false,
-	})
-	const [personsToShow, setPersonsToShow] = useState({
-		itemsToShow: [],
-		isShowMoreButton: false,
-	})
+	const [movies, setMovies] = useState(results.collectionMovies)
+	const [persons, setPersons] = useState(results.collectionPersons)
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { currentUser } = useAuth()
 	const userId = currentUser?.uid
-
-	const getCollectionItemsToShow = (collection, setItemsToShow) => {
-		let itemsToShow = []
-		let isShowMoreButton = false
-
-		if (!collection.length) {
-			itemsToShow = []
-			isShowMoreButton = false
-		} else if (collection.length < 5) {
-			itemsToShow = collection.slice(0, collection.length)
-		} else {
-			itemsToShow = collection.slice(0, 4)
-		}
-
-		setItemsToShow({
-			itemsToShow: itemsToShow,
-			isShowMoreButton: isShowMoreButton,
-		})
-	}
 
 	useEffect(() => {
 		const getCollection = async () => {
@@ -63,10 +36,7 @@ const Collection = ({ results }) => {
 
 			if (userId && !userIdFromUrl) {
 				await router.push(
-					CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
-						'{userId}',
-						userId
-					)
+					CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
 				)
 			}
 
@@ -100,11 +70,6 @@ const Collection = ({ results }) => {
 		if (!results) getCollection()
 	}, [])
 
-	useEffect(() => {
-		getCollectionItemsToShow(movies, setMoviesToShow)
-		getCollectionItemsToShow(persons, setPersonsToShow)
-	}, [movies, persons])
-
 	if (!results.collectionMovies) {
 		return (
 			<>
@@ -133,18 +98,18 @@ const Collection = ({ results }) => {
 	return (
 		<>
 			<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
-			<div className='relative z-10 max-w-4xl'>
+			<div className='relative z-10'>
 				<CollectionWrap
 					title='Movies'
 					type='movies'
-					collection={moviesToShow.itemsToShow}
-					isShowMoreButton={moviesToShow.isShowMoreButton}
+					items={movies.items}
+					isMoreDataAvailable={movies.isMoreDataAvailable}
 				/>
 				<CollectionWrap
 					title='Persons'
 					type='persons'
-					collection={personsToShow.itemsToShow}
-					isShowMoreButton={personsToShow.isShowMoreButton}
+					items={persons.items}
+					isMoreDataAvailable={persons.isMoreDataAvailable}
 				/>
 			</div>
 		</>
@@ -169,7 +134,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	if (userId && !userIdFromUrl) {
 		return {
 			redirect: {
-				destination: CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
+				destination: CURRENT_USER_COLLECTION_PAGE.replace(
 					'{userId}',
 					userId
 				),

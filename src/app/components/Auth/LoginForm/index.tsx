@@ -183,10 +183,7 @@ const LoginForm = () => {
 					)}
 					<Button className='mt-8 w-full' type='submit'>
 						{isLoading ? (
-							<Loader
-								isShowText
-								className='!static bg-transparent !transform-none !inset-0'
-							/>
+							<Loader isShowText type='static' />
 						) : (
 							'Submit'
 						)}

@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react'
-import { IReview } from '../../../../interfaces'
+import { IReviewCard } from '../../../../interfaces'
 import ReviewCard from '@/components/Review/ReviewCard'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 
 type PropsType = {
-	reviews: Array<IReview>
+	reviews: Array<IReviewCard>
 }
 
 const ReviewsList: FC<PropsType> = ({ reviews }) => {

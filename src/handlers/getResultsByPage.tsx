@@ -8,12 +8,12 @@ export const getResultsByPage = async (link, page) => {
 		const nextResult = await nextResponse.json()
 
 		return {
-			results: result.results,
+			items: result.results,
 			isMoreDataAvailable: !!nextResult.results.length,
 		}
 	} catch (error) {
 		return {
-			moviesFromProps: [],
+			items: [],
 			isMoreDataAvailable: false,
 		}
 	}
