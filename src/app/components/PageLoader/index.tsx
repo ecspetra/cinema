@@ -28,7 +28,10 @@ const PageLoader = ({ children }) => {
 		<div className='relative'>
 			{isLoading && (
 				<div className='absolute w-screen h-screen z-50 flex justify-center items-center'>
-					<Loader className='bg-transparent' />
+					<Loader
+						className='w-12 h-12 rounded-full text-red-600 bg-white'
+						isPageLoader
+					/>
 				</div>
 			)}
 			{children}

@@ -7,12 +7,14 @@ type PropsType = {
 	className?: string
 	isShowText?: boolean
 	type?: 'absolute' | 'static'
+	isPageLoader?: boolean
 }
 
 const Loader: FC<PropsType> = ({
 	className,
 	isShowText = false,
 	type = 'absolute',
+	isPageLoader,
 }) => {
 	return (
 		<span
@@ -25,7 +27,10 @@ const Loader: FC<PropsType> = ({
 		>
 			{isShowText && <span className='mr-2'>Loading</span>}
 			<FontAwesomeIcon
-				className='w-4 h-4 animate-spin'
+				className={classNames(
+					'w-4 h-4 animate-spin',
+					isPageLoader && 'w-8 h-8'
+				)}
 				icon={faCircleNotch}
 			/>
 		</span>
