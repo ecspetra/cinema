@@ -5,7 +5,7 @@ import {
 	COLLECTION_PAGE_TOP_BANNER_IMAGE,
 } from '@/constants/paths'
 import { getCollectionItemsList } from '@/firebase/config'
-import CollectionMovieList from '@/components/Movie/MovieList/CollectionMoviesList'
+import CollectionItemsList from '../../../components/Collection/CollectionItemsList'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
@@ -59,7 +59,11 @@ const CollectionMovies = ({ results }) => {
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
-			<CollectionMovieList movieList={movies} title='Collection movies' />
+			<CollectionItemsList
+				collectionName='movies'
+				itemsList={movies}
+				title='Movies from your collection'
+			/>
 		</>
 	)
 }

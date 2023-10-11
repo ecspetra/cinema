@@ -5,12 +5,12 @@ import {
 } from '@/constants/linksToFetch'
 import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
 import MovieInfo from '@/components/Movie/MovieInfo'
-import MovieList from '@/components/Movie/MovieList'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
+import ItemsList from '@/components/List/ItemsList'
 
 const Movie = ({ movieFromProps }) => {
 	const [movie, setMovie] = useState(movieFromProps)
@@ -98,13 +98,14 @@ const Movie = ({ movieFromProps }) => {
 					personsFromProps={movie.creditsResult.crew}
 					title='Crew'
 				/>
-				<MovieList
-					movieList={movie.similarMoviesResult.items}
+				<ItemsList
+					itemsList={movie.similarMoviesResult.items}
+					listName='movies'
 					title='Similar movies'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}
-					linkToFetchMovies={linkToFetchSimilarMovies}
+					linkToFetchItems={linkToFetchSimilarMovies}
 				/>
 			</div>
 		</>

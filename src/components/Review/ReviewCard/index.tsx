@@ -44,7 +44,7 @@ const ReviewsCard: FC<PropsType> = ({ review }) => {
 	}
 
 	return (
-		<div className='mb-8 pb-4 px-4 border-b border-l border-slate-800'>
+		<div className='mb-4 p-4 bg-slate-900'>
 			<div className='flex mb-2'>
 				<div className='flex items-center'>
 					<Image

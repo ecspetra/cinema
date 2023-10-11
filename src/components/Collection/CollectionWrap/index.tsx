@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import { USER_COLLECTIONS } from '@/firebase/config'
-import { IMovieCard, IPersonCard } from '../../../interfaces'
+import { IMovieCard, IPersonCard } from '../../../../interfaces'
 import MovieCard from '@/components/Movie/MovieCard'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
@@ -26,7 +26,7 @@ const CollectionWrap: FC<PropsType> = ({
 
 	if (!items.length) {
 		return (
-			<div className='mb-16 bg-black p-4'>
+			<div className='mb-16'>
 				<Title>{title}</Title>
 				<p>
 					This collection is empty. Please add some items in this
@@ -49,7 +49,11 @@ const CollectionWrap: FC<PropsType> = ({
 								key={idx}
 							/>
 						) : (
-							<PersonCard person={item} key={idx} />
+							<PersonCard
+								person={item}
+								key={idx}
+								isShowButton={false}
+							/>
 						)
 					}
 				})}

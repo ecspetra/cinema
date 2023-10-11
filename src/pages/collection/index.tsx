@@ -13,7 +13,7 @@ import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '@/context/AuthProvider'
-import CollectionWrap from '@/components/CollectionWrap'
+import CollectionWrap from '../../components/Collection/CollectionWrap'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 

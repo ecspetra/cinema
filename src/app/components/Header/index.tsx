@@ -34,6 +34,9 @@ const Header = () => {
 				<Link href={collectionMoviesLink} as={collectionMoviesLink}>
 					<span>My collection</span>
 				</Link>
+				<Link href={'/persons'} as={'/persons'}>
+					<span>Persons</span>
+				</Link>
 				{isShowUserMenu && (
 					<div className='flex justify-center items-center gap-4'>
 						<Image

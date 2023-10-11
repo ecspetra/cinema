@@ -1,42 +1,39 @@
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_PERSON_LIST } from '@/constants/linksToFetch'
 import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
-import ItemsList from '../components/List/ItemsList'
+import ItemsList from '@/components/List/ItemsList'
 
-const Home = ({ items, isMoreDataAvailable }) => {
-	const [homePageMovies, setHomePageMovies] = useState(items)
+const Persons = ({ items, isMoreDataAvailable }) => {
+	const [persons, setPersons] = useState(items)
 	const [isNextResult, setIsNextResult] = useState(isMoreDataAvailable)
 
 	useEffect(() => {
 		if (!items) {
-			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
-				setHomePageMovies(data.items)
+			getResultsByPage(LINK_TO_FETCH_PERSON_LIST, 1).then(data => {
+				setPersons(data.items)
 				setIsNextResult(!!data.isMoreDataAvailable)
 			})
 		}
 	}, [])
 
-	if (!homePageMovies) return <Loader />
+	if (!persons) return <Loader />
 
 	return (
 		<ItemsList
-			itemsList={homePageMovies}
-			listName='movies'
-			title='Discover movies'
+			itemsList={persons}
+			listName='persons'
+			title='Discover persons'
 			isMoreDataAvailable={isNextResult}
-			linkToFetchItems={LINK_TO_FETCH_DEFAULT_MOVIE_LIST}
+			linkToFetchItems={LINK_TO_FETCH_PERSON_LIST}
 		/>
 	)
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const results = await getResultsByPage(
-			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
-			1
-		)
+		const results = await getResultsByPage(LINK_TO_FETCH_PERSON_LIST, 1)
 
 		return {
 			props: {
@@ -54,4 +51,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default Home
+export default Persons

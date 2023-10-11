@@ -7,10 +7,10 @@ import {
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PersonInfo from '@/components/Person/PersonInfo'
-import MovieList from '@/components/Movie/MovieList'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
+import ItemsList from '@/components/List/ItemsList'
 
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(personFromProps.personInfo)
@@ -73,13 +73,14 @@ const Person = ({ personFromProps }) => {
 		<>
 			<TopBanner />
 			<PersonInfo personInfo={person} personImages={images} />
-			<MovieList
-				movieList={movies}
+			<ItemsList
+				itemsList={movies}
+				listName='movies'
 				title={`Movies with ${person.name}`}
 				isMoreDataAvailable={
 					personFromProps.moviesWithPerson.isMoreDataAvailable
 				}
-				linkToFetchMovies={linkToFetchMoviesWithCurrentPerson}
+				linkToFetchItems={linkToFetchMoviesWithCurrentPerson}
 			/>
 		</>
 	)
