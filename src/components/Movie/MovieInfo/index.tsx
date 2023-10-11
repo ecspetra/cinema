@@ -8,7 +8,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Genre from '../../../components/Genre'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { IBackdrop, IMovieInfo, IReviewCard } from '../../../../interfaces'
+import {
+	IBackdrop,
+	IMovieInfo,
+	IReviewCard,
+	IReviewCardFromDB,
+} from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
@@ -22,11 +27,12 @@ import { useCollectionButton } from '@/hooks/useCollectionButton'
 type PropsType = {
 	movieInfo: IMovieInfo
 	movieImages: Array<IBackdrop>
-	movieReviews: Array<IReviewCard>
+	movieReviews: Array<IReviewCard | IReviewCardFromDB>
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 	const { currentUser } = useAuth()
+	const userId = currentUser?.uid
 	const {
 		isLoadingCollection,
 		isCollectionItem,
@@ -121,17 +127,13 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () =>
-									handleRemoveCollectionItem(
-										id,
-										currentUser?.uid
-									)
+							? () => handleRemoveCollectionItem(id, userId)
 							: () => handleSetCollectionItem(movieInfo)
 					}
 				/>
 				<ImagesList images={movieImages} />
 				<ReviewsList reviews={movieReviews} />
-				<NewReviewForm />
+				<NewReviewForm movieId={id} userId={userId} />
 			</div>
 		</div>
 	)

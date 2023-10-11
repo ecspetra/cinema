@@ -11,16 +11,18 @@ export interface IPersonImage {
 	file_path: string
 }
 
-export interface IReviewAuthor {
-	avatar_path: string
-}
-
 export interface IReviewCard {
 	author: string
 	id: string
 	content: string
 	created_at: string
-	author_details: IReviewAuthor
+	avatar_path: string
+}
+
+export interface IReviewCardFromDB {
+	id: string
+	content: string
+	created_at: string
 }
 
 export interface IMovieInfo {

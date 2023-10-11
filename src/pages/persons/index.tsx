@@ -6,8 +6,8 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import ItemsList from '@/components/List/ItemsList'
 
 const Persons = ({ items, isMoreDataAvailable }) => {
-	const [persons, setPersons] = useState(items)
-	const [isNextResult, setIsNextResult] = useState(isMoreDataAvailable)
+	const [persons, setPersons] = useState([])
+	const [isNextResult, setIsNextResult] = useState(false)
 
 	useEffect(() => {
 		if (!items) {
@@ -18,7 +18,12 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 		}
 	}, [])
 
-	if (!persons) return <Loader />
+	useEffect(() => {
+		setPersons(items)
+		setIsNextResult(isMoreDataAvailable)
+	}, [items, isMoreDataAvailable])
+
+	if (!persons.length) return <Loader />
 
 	return (
 		<ItemsList

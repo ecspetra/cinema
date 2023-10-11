@@ -10,35 +10,35 @@ type PropsType = {
 }
 
 const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
-	const [persons, setPersons] = useState([])
-	const initialPersonsNumber = 8
-	const isAllPersonsLoaded = persons.length > initialPersonsNumber
-	const isShowMoreButton = personsFromProps.length > initialPersonsNumber
-	const buttonText = isAllPersonsLoaded ? 'Show less' : 'Show all'
+	const [personsToShow, setPersonsToShow] = useState([])
+	const initialItemsLength = 8
+	const isMoreDataAvailable = personsToShow.length > initialItemsLength
+	const isShowMoreButton = personsFromProps.length > initialItemsLength
+	const buttonText = isMoreDataAvailable ? 'Show less' : 'Show all'
 
 	const getPersons = () => {
-		if (isAllPersonsLoaded) {
-			setPersons([])
+		if (isMoreDataAvailable) {
+			setPersonsToShow([])
 			personsFromProps.map((item, idx) => {
-				if (idx < initialPersonsNumber)
-					setPersons(prevState => [...prevState, item])
+				if (idx < initialItemsLength)
+					setPersonsToShow(prevState => [...prevState, item])
 			})
 		} else {
 			personsFromProps.map((item, idx) => {
-				if (idx >= initialPersonsNumber)
-					setPersons(prevState => [...prevState, item])
+				if (idx >= initialItemsLength)
+					setPersonsToShow(prevState => [...prevState, item])
 			})
 		}
 	}
 
 	useEffect(() => {
 		personsFromProps.map((item, idx) => {
-			if (idx < initialPersonsNumber)
-				setPersons(prevState => [...prevState, item])
+			if (idx < initialItemsLength)
+				setPersonsToShow(prevState => [...prevState, item])
 		})
 	}, [])
 
-	if (!persons.length) {
+	if (!personsToShow.length) {
 		return (
 			<div className='mb-16'>
 				<Title>{title}</Title>
@@ -51,7 +51,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 		<div className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'>
-				{persons.map((item: IPersonCard, idx) => {
+				{personsToShow.map((item: IPersonCard, idx) => {
 					return (
 						<PersonCard
 							key={idx}

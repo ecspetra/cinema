@@ -19,18 +19,18 @@ const ImagesList: FC<PropsType> = ({
 	isPersonImages = false,
 	className,
 }) => {
-	const [imagesToShow, setImagesToShow] = useState<Array<IBackdrop>>([])
+	const [itemsToShow, setItemsToShow] = useState<Array<IBackdrop>>([])
 	const { showModal } = useModal()
-	const initialImagesNumber = 12
-	const isAllImagesLoaded = imagesToShow.length > initialImagesNumber
-	const isShowMoreButton = images.length > initialImagesNumber
-	const buttonText = isAllImagesLoaded ? 'Show less' : 'Show all'
+	const initialItemsLength = 12
+	const isMoreDataAvailable = itemsToShow.length > initialItemsLength
+	const isShowMoreButton = images.length > initialItemsLength
+	const buttonText = isMoreDataAvailable ? 'Show less' : 'Show all'
 
 	const getImages = () => {
-		const imagesToDisplay = isAllImagesLoaded
-			? images.slice(0, initialImagesNumber)
+		const newImages = isMoreDataAvailable
+			? images.slice(0, initialItemsLength)
 			: images
-		setImagesToShow(imagesToDisplay)
+		setItemsToShow(newImages)
 	}
 
 	const handleSliderImage = (idx: number) => {
@@ -49,8 +49,8 @@ const ImagesList: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		const initialImages = images.slice(0, initialImagesNumber)
-		setImagesToShow(initialImages)
+		const initialItems = images.slice(0, initialItemsLength)
+		setItemsToShow(initialItems)
 	}, [images])
 
 	if (!images.length) {
@@ -66,7 +66,7 @@ const ImagesList: FC<PropsType> = ({
 		<div className={classNames('mb-16', className)}>
 			<Title>Images</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start'>
-				{imagesToShow.map((item, idx) => (
+				{itemsToShow.map((item, idx) => (
 					<Button
 						key={idx}
 						context='image'

@@ -11,12 +11,13 @@ import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
+import { getDBReviewsList } from '@/firebase/config'
 
 const Movie = ({ movieFromProps }) => {
-	const [movie, setMovie] = useState(movieFromProps)
+	const [movie, setMovie] = useState(null)
 	const router = useRouter()
 	const linkToFetchSimilarMovies =
-		movie.movieResult &&
+		movie &&
 		LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace(
 			'{movieId}',
 			movie.movieResult.id
@@ -24,7 +25,7 @@ const Movie = ({ movieFromProps }) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			setMovie([])
+			setMovie(null)
 
 			try {
 				const fetchMovieData = async queryParam => {
@@ -33,12 +34,21 @@ const Movie = ({ movieFromProps }) => {
 					return response.json()
 				}
 
+				const getMovieReviews = async () => {
+					const collectionReviews = await getDBReviewsList(
+						router.query.id
+					)
+
+					return collectionReviews
+				}
+
 				const [
 					movieResult,
 					creditsResult,
 					imagesResult,
 					reviewsResult,
 					videosResult,
+					reviewsFromDB,
 					similarMoviesResult,
 				] = await Promise.all([
 					fetchMovieData(''),
@@ -46,8 +56,11 @@ const Movie = ({ movieFromProps }) => {
 					fetchMovieData('/images'),
 					fetchMovieData('/reviews'),
 					fetchMovieData('/videos'),
+					getMovieReviews(),
 					getResultsByPage(linkToFetchSimilarMovies, 1),
 				])
+
+				const reviews = [...reviewsResult.results, ...reviewsFromDB]
 
 				setMovie({
 					movieResult,
@@ -55,10 +68,11 @@ const Movie = ({ movieFromProps }) => {
 					imagesResult,
 					reviewsResult,
 					videosResult,
+					reviews,
 					similarMoviesResult,
 				})
 			} catch (error) {
-				setMovie([])
+				setMovie(null)
 			}
 		}
 
@@ -66,6 +80,10 @@ const Movie = ({ movieFromProps }) => {
 			fetchData()
 		}
 	}, [router.query.id])
+
+	useEffect(() => {
+		setMovie(movieFromProps)
+	}, [movieFromProps])
 
 	if (
 		!movie ||
@@ -87,7 +105,7 @@ const Movie = ({ movieFromProps }) => {
 			<MovieInfo
 				movieInfo={movie.movieResult}
 				movieImages={movie.imagesResult.backdrops}
-				movieReviews={movie.reviewsResult.results}
+				movieReviews={movie.reviews}
 			/>
 			<div>
 				<MoviePersonsList
@@ -122,12 +140,18 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			return response.json()
 		}
 
+		const getMovieReviews = async () => {
+			const collectionReviews = await getDBReviewsList(ctx.query.id)
+			return collectionReviews
+		}
+
 		const [
 			movieResult,
 			creditsResult,
 			imagesResult,
 			reviewsResult,
 			videosResult,
+			reviewsFromDB,
 			similarMoviesResult,
 		] = await Promise.all([
 			fetchMovieData(''),
@@ -135,8 +159,11 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			fetchMovieData('/images'),
 			fetchMovieData('/reviews'),
 			fetchMovieData('/videos'),
+			getMovieReviews(),
 			getResultsByPage(linkToFetchSimilarMovies, 1),
 		])
+
+		const reviews = [...reviewsResult.results, ...reviewsFromDB]
 
 		return {
 			props: {
@@ -146,6 +173,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 					imagesResult,
 					reviewsResult,
 					videosResult,
+					reviews,
 					similarMoviesResult,
 				},
 			},

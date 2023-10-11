@@ -13,9 +13,9 @@ import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
 
 const Person = ({ personFromProps }) => {
-	const [person, setPerson] = useState(personFromProps.personInfo)
-	const [images, setImages] = useState(personFromProps.personImages)
-	const [movies, setMovies] = useState(personFromProps.moviesWithPerson.items)
+	const [person, setPerson] = useState(null)
+	const [images, setImages] = useState([])
+	const [movies, setMovies] = useState([])
 	const router = useRouter()
 	const linkToFetchMoviesWithCurrentPerson =
 		LINK_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', router.query.id)
@@ -64,6 +64,12 @@ const Person = ({ personFromProps }) => {
 
 		if (!personFromProps) fetchPerson()
 	}, [])
+
+	useEffect(() => {
+		setPerson(personFromProps.personInfo)
+		setImages(personFromProps.personImages)
+		setMovies(personFromProps.moviesWithPerson.items)
+	}, [personFromProps])
 
 	if (!person) {
 		return <Loader className='bg-transparent' />

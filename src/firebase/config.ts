@@ -21,9 +21,8 @@ import {
 	DataSnapshot,
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
-import { IMovieCard, IPersonCard, IReviewCard } from '../../interfaces'
+import { IMovieCard, IPersonCard, IReviewCardFromDB } from '../../interfaces'
 import { onValue } from '@firebase/database'
-import React from 'react'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -160,25 +159,8 @@ export const setNewCollectionItem = async (
 ) => {
 	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
 	const newCollectionItemRef = ref(database, collectionPath)
-	let newCollectionItemData
 
-	if (collectionName === 'movies') {
-		newCollectionItemData = {
-			id: item.id,
-			poster_path: item.poster_path,
-			release_date: item.release_date,
-			title: item.title,
-			genres: item.genres,
-		}
-	} else {
-		newCollectionItemData = {
-			id: item.id,
-			profile_path: item.profile_path,
-			name: item.name,
-		}
-	}
-
-	await set(newCollectionItemRef, newCollectionItemData)
+	await set(newCollectionItemRef, item)
 }
 
 export const getCollectionItem = (
@@ -272,6 +254,80 @@ export const collectionListener = (
 	setIsMoreDataAvailable: (arg: boolean) => void
 ) => {
 	const collectionRef = ref(database, `users/${userId}/${collectionName}`)
+	const itemsPerPage = 20
+
+	const onDataChange = (snapshot: DataSnapshot) => {
+		const data = snapshot.val()
+		const itemsFromDB = data ? Object.values(data) : []
+		const totalItemsLength = itemsFromDB.length
+		const loadedItemsLength = loadedItems.length
+
+		const newItems = itemsFromDB.filter(item =>
+			loadedItems.some(existingItem => existingItem.id === item.id)
+		)
+
+		if (!loadedItemsLength) {
+			itemsFromDB.map((item, idx) => {
+				if (idx < itemsPerPage) {
+					setItems(prevState => [...prevState, item])
+				}
+			})
+			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+		} else {
+			setItems(newItems)
+			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+		}
+	}
+
+	const unsubscribe = onValue(collectionRef, onDataChange)
+
+	return () => {
+		unsubscribe()
+	}
+}
+
+// review handlers
+
+export const setNewReviewItem = async (
+	item: IReviewCardFromDB,
+	userId: string,
+	movieId: number
+) => {
+	const collectionPath = `users/${userId}/reviews/${item.id}`
+	const generalCollectionPath = `movies/${movieId}/reviews/${item.id}`
+	const newCollectionItemRef = ref(database, collectionPath)
+	const newGeneralCollectionItemRef = ref(database, generalCollectionPath)
+
+	await set(newCollectionItemRef, item)
+	await set(newGeneralCollectionItemRef, item)
+}
+
+export const getDBReviewsList = async (movieId: number) => {
+	const collectionPath = `movies/${movieId}/reviews/`
+	const reviewsCollectionRef = ref(database, collectionPath)
+
+	try {
+		const snapshot = await get(reviewsCollectionRef)
+
+		if (snapshot.exists()) {
+			const data = snapshot.val()
+			const reviews = Object.values(data)
+			return reviews
+		} else {
+			return []
+		}
+	} catch (error) {
+		return []
+	}
+}
+
+export const reviewsListener = (
+	userId: string,
+	loadedItems: Array<any>,
+	setItems: ([]) => void,
+	setIsMoreDataAvailable: (arg: boolean) => void
+) => {
+	const collectionRef = ref(database, `users/${userId}/reviews`)
 	const itemsPerPage = 20
 
 	const onDataChange = (snapshot: DataSnapshot) => {

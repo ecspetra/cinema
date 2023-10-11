@@ -10,7 +10,7 @@ import { useModal } from '@/context/ModalProvider'
 import { usePathname } from 'next/navigation'
 import {
 	AUTH_PAGE,
-	COLLECTION_MOVIES_PAGE,
+	COLLECTION_PAGE,
 	CURRENT_USER_COLLECTION_MOVIES_PAGE,
 	CURRENT_USER_COLLECTION_PAGE,
 } from '@/constants/paths'
@@ -112,7 +112,7 @@ const LoginForm = () => {
 					case pathname === AUTH_PAGE:
 						target = `/`
 						break
-					case pathname === COLLECTION_MOVIES_PAGE:
+					case pathname === COLLECTION_PAGE:
 						const cookies = parseCookies()
 						const userId = cookies.uid
 						target = CURRENT_USER_COLLECTION_PAGE.replace(

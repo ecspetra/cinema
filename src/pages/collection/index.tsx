@@ -18,16 +18,20 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 const Collection = ({ results }) => {
-	const [movies, setMovies] = useState(results.collectionMovies)
-	const [persons, setPersons] = useState(results.collectionPersons)
+	const [movies, setMovies] = useState(null)
+	const [persons, setPersons] = useState(null)
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { currentUser } = useAuth()
 	const userId = currentUser?.uid
 
 	useEffect(() => {
+		setMovies(results.collectionMovies)
+		setPersons(results.collectionPersons)
+	}, [results])
+
+	useEffect(() => {
 		const getCollection = async () => {
-			const startAtValue = null
 			const userIdFromUrl = router.query.uid || null
 
 			if (
@@ -53,13 +57,13 @@ const Collection = ({ results }) => {
 					userIdFromUrl,
 					'movies',
 					6,
-					startAtValue
+					null
 				)
 				const collectionPersons = await getCollectionItemsList(
 					userIdFromUrl,
 					'persons',
 					6,
-					startAtValue
+					null
 				)
 
 				setMovies(collectionMovies.items)
@@ -73,7 +77,7 @@ const Collection = ({ results }) => {
 		if (!results) getCollection()
 	}, [])
 
-	if (!results.collectionMovies) {
+	if (!movies && !persons) {
 		return (
 			<>
 				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
@@ -120,7 +124,6 @@ const Collection = ({ results }) => {
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	const startAtValue = null
 	const userIdFromUrl = ctx.query.uid || null
 	const cookies = parseCookies(ctx.req)
 	const userId = cookies.uid
@@ -159,13 +162,13 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			userIdFromUrl,
 			'movies',
 			6,
-			startAtValue
+			null
 		)
 		const collectionPersons = await getCollectionItemsList(
 			userIdFromUrl,
 			'persons',
 			6,
-			startAtValue
+			null
 		)
 
 		return {

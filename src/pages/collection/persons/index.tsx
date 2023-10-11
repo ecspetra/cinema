@@ -12,14 +12,13 @@ import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
 
 const CollectionPersons = ({ results }) => {
-	const [persons, setPersons] = useState(results)
+	const [persons, setPersons] = useState(null)
 	const router = useRouter()
 	const { currentUser } = useAuth()
 	const userId = currentUser?.uid
 
 	useEffect(() => {
 		const getCollection = async () => {
-			const startAtValue = null
 			const userIdFromUrl = router.query.uid || null
 
 			if (
@@ -38,7 +37,7 @@ const CollectionPersons = ({ results }) => {
 					userIdFromUrl,
 					'persons',
 					20,
-					startAtValue
+					null
 				)
 
 				if (!collectionPersons.items.length) {
@@ -56,6 +55,10 @@ const CollectionPersons = ({ results }) => {
 		if (!results) getCollection()
 	}, [])
 
+	useEffect(() => {
+		setPersons(results)
+	}, [results])
+
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
@@ -69,7 +72,6 @@ const CollectionPersons = ({ results }) => {
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	const startAtValue = null
 	const userIdFromUrl = ctx.query.uid || null
 	const cookies = parseCookies(ctx.req)
 	const userId = cookies.uid
@@ -96,7 +98,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			userIdFromUrl,
 			'persons',
 			20,
-			startAtValue
+			null
 		)
 
 		if (!result.items.length) {

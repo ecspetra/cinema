@@ -7,22 +7,25 @@ import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
+import { COLLECTION_PAGE } from '@/constants/paths'
 
 const Header = () => {
 	const { currentUser } = useAuth()
 	const router = useRouter()
+	const pathname = usePathname()
 	const userId = currentUser?.uid
 	const collectionMoviesLink = currentUser?.uid
 		? `/collection?uid=${userId}`
 		: `/collection`
-	const pathname = usePathname()
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && currentUser
 	const isShowAuthButton = !isAuthPage && !currentUser
 
 	const handleSignOutUser = async () => {
 		await signOutUser()
-		await router.push('/collection')
+		if (pathname.startsWith(COLLECTION_PAGE)) {
+			await router.push('/collection')
+		}
 	}
 
 	return (
