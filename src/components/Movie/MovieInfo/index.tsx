@@ -132,7 +132,7 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					}
 				/>
 				<ImagesList images={movieImages} />
-				<ReviewsList reviews={movieReviews} />
+				<ReviewsList movieId={id} reviews={movieReviews} />
 				<NewReviewForm movieId={id} userId={userId} />
 			</div>
 		</div>

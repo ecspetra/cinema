@@ -23,6 +23,7 @@ export interface IReviewCardFromDB {
 	id: string
 	content: string
 	created_at: string
+	authorId: string
 }
 
 export interface IMovieInfo {

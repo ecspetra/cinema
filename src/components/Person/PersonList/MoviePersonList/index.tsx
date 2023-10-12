@@ -10,23 +10,23 @@ type PropsType = {
 }
 
 const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
-	const [personsToShow, setPersonsToShow] = useState([])
+	const [itemsToShow, setItemsToShow] = useState([])
 	const initialItemsLength = 8
-	const isMoreDataAvailable = personsToShow.length > initialItemsLength
+	const isMoreDataAvailable = itemsToShow.length > initialItemsLength
 	const isShowMoreButton = personsFromProps.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show less' : 'Show all'
 
 	const getPersons = () => {
 		if (isMoreDataAvailable) {
-			setPersonsToShow([])
+			setItemsToShow([])
 			personsFromProps.map((item, idx) => {
 				if (idx < initialItemsLength)
-					setPersonsToShow(prevState => [...prevState, item])
+					setItemsToShow(prevState => [...prevState, item])
 			})
 		} else {
 			personsFromProps.map((item, idx) => {
 				if (idx >= initialItemsLength)
-					setPersonsToShow(prevState => [...prevState, item])
+					setItemsToShow(prevState => [...prevState, item])
 			})
 		}
 	}
@@ -34,11 +34,11 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 	useEffect(() => {
 		personsFromProps.map((item, idx) => {
 			if (idx < initialItemsLength)
-				setPersonsToShow(prevState => [...prevState, item])
+				setItemsToShow(prevState => [...prevState, item])
 		})
 	}, [])
 
-	if (!personsToShow.length) {
+	if (!itemsToShow.length) {
 		return (
 			<div className='mb-16'>
 				<Title>{title}</Title>
@@ -51,7 +51,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 		<div className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'>
-				{personsToShow.map((item: IPersonCard, idx) => {
+				{itemsToShow.map((item: IPersonCard, idx) => {
 					return (
 						<PersonCard
 							key={idx}

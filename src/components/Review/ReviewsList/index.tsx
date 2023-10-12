@@ -3,64 +3,72 @@ import { IReviewCard, IReviewCardFromDB } from '../../../../interfaces'
 import ReviewCard from '@/components/Review/ReviewCard'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import { getDBReviewsList, reviewsListener } from '@/firebase/config'
+import { reviewsListener } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
-import Loader from '@/components/Loader'
 
 type PropsType = {
+	movieId: number
 	reviews: Array<IReviewCard | IReviewCardFromDB>
 }
 
-const ReviewsList: FC<PropsType> = ({ reviews }) => {
+const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 	const { currentUser } = useAuth()
 	const userId = currentUser?.uid
 	const initialItemsLength = 3
-	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
 	const [itemsToShow, setItemsToShow] = useState(reviews)
 	const [itemsFromDB, setItemsFromDB] = useState([])
-	const isMoreDataAvailable = itemsToShow.length > initialItemsLength
-	const isShowMoreButton = reviews.length > initialItemsLength
+	const [defaultItems, setDefaultItems] = useState([])
+	const isMoreDataAvailable = maxReviewsLength < itemsToShow.length
+	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
 
-	const getReviews = () => {
-		setIsLoading(true)
+	const handleReviewsToShowLength = () => {
 		const newMaxReviewsLength = isMoreDataAvailable
-			? Math.min(maxReviewsLength + initialItemsLength, reviews.length)
+			? Math.min(
+					maxReviewsLength + initialItemsLength,
+					itemsToShow.length
+			  )
 			: initialItemsLength
-
 		setMaxReviewsLength(newMaxReviewsLength)
-		setIsLoading(false)
 	}
 
-	// useEffect(() => {
-	// 	if (userId) {
-	// 		const unsubscribe = reviewsListener(
-	// 			userId,
-	// 			'reviews',
-	// 			itemsFromDB,
-	// 			setItemsToShow,
-	// 			setIsShowMoreButton
-	// 		)
-	//
-	// 		return () => {
-	// 			unsubscribe()
-	// 		}
-	// 	}
-	// }, [itemsToShow])
-
-	console.log(itemsToShow)
+	const defineReviewSrc = () => {
+		reviews.map(item => {
+			if (item.authorId) {
+				setItemsFromDB(prevState => [...prevState, item])
+			} else {
+				setDefaultItems(prevState => [...prevState, item])
+			}
+		})
+	}
 
 	useEffect(() => {
 		if (userId) {
-			itemsToShow.map(item => {
-				if (!item.author) {
-					setItemsFromDB(prevState => [...prevState, item])
-				}
-			})
+			setItemsToShow([...itemsFromDB, ...defaultItems])
 		}
-	}, [itemsToShow])
+	}, [itemsFromDB, defaultItems, userId])
+
+	useEffect(() => {
+		if (userId) {
+			const unsubscribe = reviewsListener(
+				movieId,
+				itemsFromDB,
+				setItemsFromDB
+			)
+
+			return () => {
+				unsubscribe()
+			}
+		}
+	}, [itemsToShow, userId])
+
+	useEffect(() => {
+		if (userId) {
+			defineReviewSrc()
+		}
+	}, [userId])
 
 	if (!reviews.length) {
 		return (
@@ -74,14 +82,18 @@ const ReviewsList: FC<PropsType> = ({ reviews }) => {
 	const renderReviews = () => (
 		<div>
 			{itemsToShow.slice(0, maxReviewsLength).map(item => (
-				<ReviewCard key={item.id} review={item} />
+				<ReviewCard
+					key={item.id}
+					review={item}
+					movieId={movieId}
+					userId={userId}
+				/>
 			))}
-			{isLoading && <Loader type='static' />}
 			{isShowMoreButton && (
 				<Button
 					className='mx-auto'
 					context='empty'
-					onClick={getReviews}
+					onClick={handleReviewsToShowLength}
 				>
 					{buttonText}
 				</Button>

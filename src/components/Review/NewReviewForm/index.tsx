@@ -32,7 +32,7 @@ const NewReviewForm: FC<PropsType> = ({ movieId, userId }) => {
 				setError('')
 
 				const newItem = {
-					userId: userId,
+					authorId: userId,
 					id: uuidv4(),
 					content: textareaValue,
 					created_at: moment().format(),
@@ -42,7 +42,8 @@ const NewReviewForm: FC<PropsType> = ({ movieId, userId }) => {
 					await setNewReviewItem(newItem, userId, movieId)
 					setTextareaValue('')
 				} catch (error) {
-					setError(error.toString)
+					console.log(error)
+					// setError(error)
 				}
 			} else openLoginModal(showModal)
 		} else {

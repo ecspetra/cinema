@@ -19,6 +19,8 @@ import {
 	startAfter,
 	child,
 	DataSnapshot,
+	onChildAdded,
+	onChildRemoved,
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import { IMovieCard, IPersonCard, IReviewCardFromDB } from '../../interfaces'
@@ -302,6 +304,30 @@ export const setNewReviewItem = async (
 	await set(newGeneralCollectionItemRef, item)
 }
 
+export const removeReviewItem = (
+	itemId: number,
+	movieId: number,
+	userId: string
+) => {
+	const collectionPath = `users/${userId}/reviews/${itemId}`
+	const generalCollectionPath = `movies/${movieId}/reviews/${itemId}`
+
+	const itemRef = ref(database, collectionPath)
+	const generalCollectionItemRef = ref(database, generalCollectionPath)
+
+	return new Promise(async resolve => {
+		let isRemoved = false
+
+		remove(itemRef).then(() => {
+			remove(generalCollectionItemRef).then(() => {
+				isRemoved = true
+			})
+		})
+
+		resolve(isRemoved)
+	})
+}
+
 export const getDBReviewsList = async (movieId: number) => {
 	const collectionPath = `movies/${movieId}/reviews/`
 	const reviewsCollectionRef = ref(database, collectionPath)
@@ -321,41 +347,58 @@ export const getDBReviewsList = async (movieId: number) => {
 	}
 }
 
+// export const reviewsListener = (
+// 	userId: string,
+// 	defaultItems: Array<any>,
+// 	loadedItems: Array<any>,
+// 	setItems: ([]) => void
+// ) => {
+// 	const collectionRef = ref(database, `users/${userId}/reviews`)
+//
+// 	const onDataChange = (snapshot: DataSnapshot) => {
+// 		const data = snapshot.val()
+// 		const itemsFromDB = data ? Object.values(data) : []
+//
+// 		const newItems = itemsFromDB.filter(item =>
+// 			loadedItems.some(existingItem => existingItem.id === item.id)
+// 		)
+//
+// 		setItems([...defaultItems, ...newItems])
+// 	}
+//
+// 	const unsubscribe = onValue(collectionRef, onDataChange)
+//
+// 	return () => {
+// 		unsubscribe()
+// 	}
+// }
+
 export const reviewsListener = (
-	userId: string,
+	movieId: number,
 	loadedItems: Array<any>,
-	setItems: ([]) => void,
-	setIsMoreDataAvailable: (arg: boolean) => void
+	setItems: ([]) => void
 ) => {
-	const collectionRef = ref(database, `users/${userId}/reviews`)
-	const itemsPerPage = 20
+	const collectionRef = ref(database, `movies/${movieId}/reviews/`)
 
-	const onDataChange = (snapshot: DataSnapshot) => {
-		const data = snapshot.val()
-		const itemsFromDB = data ? Object.values(data) : []
-		const totalItemsLength = itemsFromDB.length
-		const loadedItemsLength = loadedItems.length
-
-		const newItems = itemsFromDB.filter(item =>
-			loadedItems.some(existingItem => existingItem.id === item.id)
-		)
-
-		if (!loadedItemsLength) {
-			itemsFromDB.map((item, idx) => {
-				if (idx < itemsPerPage) {
-					setItems(prevState => [...prevState, item])
-				}
-			})
-			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
-		} else {
-			setItems(newItems)
-			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+	const onAdded = (childSnapshot: DataSnapshot) => {
+		const newItem = childSnapshot.val()
+		if (!loadedItems.some(existingItem => existingItem.id === newItem.id)) {
+			setItems(prevItems => [newItem, ...prevItems])
 		}
 	}
 
-	const unsubscribe = onValue(collectionRef, onDataChange)
+	const onRemoved = (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+		setItems(prevItems =>
+			prevItems.filter(item => item.id !== removedItem.id)
+		)
+	}
+
+	const unsubscribeAdded = onChildAdded(collectionRef, onAdded)
+	const unsubscribeRemoved = onChildRemoved(collectionRef, onRemoved)
 
 	return () => {
-		unsubscribe()
+		unsubscribeAdded()
+		unsubscribeRemoved()
 	}
 }
