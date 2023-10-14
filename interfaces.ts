@@ -27,6 +27,7 @@ export interface IReviewCardFromDB {
 }
 
 export interface IReplyCard {
+	replyTo: string
 	reviewId: string
 	id: string
 	content: string

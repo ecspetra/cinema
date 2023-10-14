@@ -8,16 +8,15 @@ import moment from 'moment'
 import classNames from 'classnames'
 import { getUserAvatar, removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewsList/ReviewCard/ReviewActions'
-import { useAuth } from '@/context/AuthProvider'
 
 type PropsType = {
+	movieId: number
+	userId: string
 	reply: IReplyCard
 }
 
-const ReplyCard: FC<PropsType> = ({ reply }) => {
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
-	const { reviewId, content, id, created_at, authorId } = reply
+const ReplyCard: FC<PropsType> = ({ movieId, userId, reply }) => {
+	const { reviewId, content, id, created_at, authorId, replyTo } = reply
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [authorInfo, setAuthorInfo] = useState({
 		photoURL: '',
@@ -35,7 +34,7 @@ const ReplyCard: FC<PropsType> = ({ reply }) => {
 		isLongReviewContent && !isContentOpen && isTruncateReview
 	const isCurrentUserItem = userId === authorId
 
-	const handleReviewContent = () => {
+	const handleReplyContent = () => {
 		setIsContentOpen(!isContentOpen)
 	}
 
@@ -90,29 +89,32 @@ const ReplyCard: FC<PropsType> = ({ reply }) => {
 							isShowTruncateDots && 'line-clamp-2'
 						)}
 					>
+						{replyTo}
 						{content}
 					</p>
 				</div>
 				{isLongReviewContent && (
-					<Button
-						context='text'
-						onClick={() => handleReviewContent()}
-					>
+					<Button context='text' onClick={() => handleReplyContent()}>
 						{isContentOpen ? 'Hide' : 'Show more'}
 					</Button>
 				)}
 			</div>
-			{/*<ReviewActions*/}
-			{/*	reviewId={id}*/}
-			{/*	movieId={movieId}*/}
-			{/*	userId={userId}*/}
-			{/*	onReply={'onReply'}*/}
-			{/*/>*/}
-			{/*{isCurrentUserItem && (*/}
-			{/*	<Button onClick={() => removeReviewItem(id, movieId, userId)}>*/}
-			{/*		Delete*/}
-			{/*	</Button>*/}
-			{/*)}*/}
+			<ReviewActions
+				reviewId={id}
+				movieId={movieId}
+				userId={userId}
+				onReply={'test'}
+				collectionName='replies'
+			/>
+			{isCurrentUserItem && (
+				<Button
+					onClick={() =>
+						removeReviewItem(id, movieId, userId, 'replies')
+					}
+				>
+					Delete
+				</Button>
+			)}
 		</div>
 	)
 }

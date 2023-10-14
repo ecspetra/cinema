@@ -5,10 +5,12 @@ import { reviewsListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/RepliesList/ReplyCard'
 
 type PropsType = {
+	movieId: number
+	userId: string
 	replies: Array<IReplyCard>
 }
 
-const ReviewsList: FC<PropsType> = ({ replies }) => {
+const ReviewsList: FC<PropsType> = ({ movieId, userId, replies }) => {
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
@@ -35,8 +37,9 @@ const ReviewsList: FC<PropsType> = ({ replies }) => {
 	// 	if (userId) {
 	// 		const unsubscribe = reviewsListener(
 	// 			movieId,
-	// 			itemsFromDB,
-	// 			setItemsFromDB
+	// 			itemsToShow,
+	// 			setItemsToShow,
+	// 			'replies'
 	// 		)
 	//
 	// 		return () => {
@@ -48,7 +51,12 @@ const ReviewsList: FC<PropsType> = ({ replies }) => {
 	return (
 		<div className='mt-4'>
 			{itemsToShow.slice(0, maxReviewsLength).map(item => (
-				<ReplyCard key={item.id} reply={item} />
+				<ReplyCard
+					key={item.id}
+					reply={item}
+					userId={userId}
+					movieId={movieId}
+				/>
 			))}
 			{isShowMoreButton && (
 				<Button

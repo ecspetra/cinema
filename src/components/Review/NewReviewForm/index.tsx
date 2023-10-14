@@ -14,6 +14,7 @@ type PropsType = {
 	movieId: number
 	userId: string
 	reviewId?: string
+	replyTo?: string
 	isReply?: boolean
 	onClose?: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -22,6 +23,7 @@ const NewReviewForm: FC<PropsType> = ({
 	movieId,
 	userId,
 	reviewId,
+	replyTo,
 	isReply = false,
 	onClose,
 }) => {
@@ -46,6 +48,7 @@ const NewReviewForm: FC<PropsType> = ({
 
 				if (isReply) {
 					newItem = {
+						replyTo: replyTo,
 						reviewId: reviewId,
 						id: uuidv4(),
 						content: textareaValue,

@@ -14,6 +14,7 @@ type PropsType = {
 	movieId: number
 	userId: string
 	onReply: React.Dispatch<React.SetStateAction<boolean>>
+	collectionName: 'reviews' | 'replies'
 }
 
 const ReviewActions: FC<PropsType> = ({
@@ -21,6 +22,7 @@ const ReviewActions: FC<PropsType> = ({
 	movieId,
 	userId,
 	onReply,
+	collectionName,
 }) => {
 	const { showModal } = useModal()
 	const [reactions, setReactions] = useState({
@@ -73,7 +75,7 @@ const ReviewActions: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		getReviewReactions(reviewId, movieId, 'reviews').then(data => {
+		getReviewReactions(reviewId, movieId, collectionName).then(data => {
 			setReactions({
 				likes: data.likes,
 				dislikes: data.dislikes,
@@ -86,7 +88,7 @@ const ReviewActions: FC<PropsType> = ({
 			const unsubscribe = reviewReactionsListener(
 				reviewId,
 				movieId,
-				'reviews',
+				collectionName,
 				setReactions
 			)
 
@@ -101,22 +103,24 @@ const ReviewActions: FC<PropsType> = ({
 			<ReviewActionButton
 				title='Like'
 				action='like'
-				onClick={() => handleReaction('like', 'reviews')}
+				onClick={() => handleReaction('like', collectionName)}
 				counter={reactions.likes.length}
 				isCurrentUserReaction={isCurrentUserLike}
 			/>
 			<ReviewActionButton
 				title='Dislike'
 				action='dislike'
-				onClick={() => handleReaction('dislike', 'reviews')}
+				onClick={() => handleReaction('dislike', collectionName)}
 				counter={reactions.dislikes.length}
 				isCurrentUserReaction={isCurrentUserDislike}
 			/>
-			<ReviewActionButton
-				title='Reply'
-				action='reply'
-				onClick={handleReply}
-			/>
+			{onReply && (
+				<ReviewActionButton
+					title='Reply'
+					action='reply'
+					onClick={handleReply}
+				/>
+			)}
 		</div>
 	)
 }

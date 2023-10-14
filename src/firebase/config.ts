@@ -330,13 +330,14 @@ export const setNewReviewItem = async (
 	await set(newGeneralCollectionItemRef, item)
 }
 
-export const removeReviewItem = (
-	itemId: number,
+export const removeReviewItem = async (
+	itemId: string,
 	movieId: number,
-	userId: string
+	userId: string,
+	collectionName: 'reviews' | 'replies'
 ) => {
-	const collectionPath = `users/${userId}/reviews/${itemId}`
-	const generalCollectionPath = `movies/${movieId}/reviews/${itemId}`
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
+	const generalCollectionPath = `movies/${movieId}/${collectionName}/${itemId}`
 
 	const itemRef = ref(database, collectionPath)
 	const generalCollectionItemRef = ref(database, generalCollectionPath)
@@ -344,39 +345,83 @@ export const removeReviewItem = (
 	return new Promise(async resolve => {
 		let isRemoved = false
 
-		remove(itemRef).then(() => {
-			remove(generalCollectionItemRef).then(() => {
-				isRemoved = true
-			})
-		})
+		if (collectionName === 'reviews') {
+			const repliesCollectionPath = `users/${userId}/replies/`
+			const repliesGeneralCollectionPath = `movies/${movieId}/replies/`
 
+			const repliesCollectionRef = ref(database, repliesCollectionPath)
+			const repliesGeneralCollectionRef = ref(
+				database,
+				repliesGeneralCollectionPath
+			)
+
+			const removeReviewRepliesInUserCollection = async () => {
+				const snapshot = await get(repliesCollectionRef)
+
+				if (snapshot.exists()) {
+					snapshot.forEach(childSnapshot => {
+						const reply = childSnapshot.val()
+						if (reply.reviewId === itemId) {
+							const replyPath = `users/${userId}/replies/${childSnapshot.key}`
+							const replyRef = ref(database, replyPath)
+							remove(replyRef)
+						}
+					})
+				}
+			}
+
+			const removeReviewRepliesInGeneralCollection = async () => {
+				const snapshot = await get(repliesGeneralCollectionRef)
+
+				if (snapshot.exists()) {
+					snapshot.forEach(childSnapshot => {
+						const reply = childSnapshot.val()
+						if (reply.reviewId === itemId) {
+							const replyPath = `movies/${movieId}/replies/${childSnapshot.key}`
+							const replyRef = ref(database, replyPath)
+							remove(replyRef)
+						}
+					})
+				}
+			}
+
+			await removeReviewRepliesInUserCollection()
+			await removeReviewRepliesInGeneralCollection()
+		}
+
+		remove(itemRef).then(() => {
+			remove(generalCollectionItemRef)
+				.then(() =>
+					removeAllReactions(userId, itemId, movieId, collectionName)
+				)
+				.then(() => {
+					isRemoved = true
+				})
+		})
 		resolve(isRemoved)
 	})
 }
 
-export const removeReplyItem = (
-	itemId: number,
-	reviewId: string,
-	movieId: number,
-	userId: string
-) => {
-	const collectionPath = `users/${userId}/reviews/${reviewId}/replies/${itemId}`
-	const generalCollectionPath = `movies/${movieId}/reviews/${reviewId}/replies/${itemId}`
+export const getDBRepliesList = async (movieId: number, reviewId: string) => {
+	const collectionPath = `movies/${movieId}/replies/`
+	const repliesCollectionRef = ref(database, collectionPath)
+	try {
+		const snapshot = await get(repliesCollectionRef)
+		const replies = []
 
-	const itemRef = ref(database, collectionPath)
-	const generalCollectionItemRef = ref(database, generalCollectionPath)
-
-	return new Promise(async resolve => {
-		let isRemoved = false
-
-		remove(itemRef).then(() => {
-			remove(generalCollectionItemRef).then(() => {
-				isRemoved = true
+		if (snapshot.exists()) {
+			snapshot.forEach(childSnapshot => {
+				const reply = childSnapshot.val()
+				if (reply.reviewId === reviewId) {
+					replies.push(reply)
+				}
 			})
-		})
+		}
 
-		resolve(isRemoved)
-	})
+		return replies
+	} catch (error) {
+		return []
+	}
 }
 
 export const getDBReviewsList = async (
@@ -404,9 +449,10 @@ export const getDBReviewsList = async (
 export const reviewsListener = (
 	movieId: number,
 	loadedItems: Array<any>,
-	setItems: ([]) => void
+	setItems: ([]) => void,
+	collectionName: 'reviews' | 'replies'
 ) => {
-	const collectionRef = ref(database, `movies/${movieId}/reviews/`)
+	const collectionRef = ref(database, `movies/${movieId}/${collectionName}/`)
 
 	const onAdded = (childSnapshot: DataSnapshot) => {
 		const newItem = childSnapshot.val()
@@ -473,6 +519,31 @@ export const removeReviewReaction = (
 	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${reviewId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${itemId}`
+
+	const itemRef = ref(database, collectionPath)
+	const generalCollectionItemRef = ref(database, generalCollectionPath)
+
+	return new Promise(async resolve => {
+		let isRemoved = false
+
+		remove(itemRef).then(() => {
+			remove(generalCollectionItemRef).then(() => {
+				isRemoved = true
+			})
+		})
+
+		resolve(isRemoved)
+	})
+}
+
+export const removeAllReactions = (
+	userId: string,
+	itemId: string,
+	movieId: number,
+	collectionName: 'reviews' | 'replies'
+) => {
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
+	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}`
 
 	const itemRef = ref(database, collectionPath)
 	const generalCollectionItemRef = ref(database, generalCollectionPath)

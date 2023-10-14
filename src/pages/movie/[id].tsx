@@ -36,8 +36,7 @@ const Movie = ({ movieFromProps }) => {
 
 				const getMovieReviews = async () => {
 					const collectionReviews = await getDBReviewsList(
-						router.query.id,
-						'reviews'
+						router.query.id
 					)
 
 					return collectionReviews
@@ -142,10 +141,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		}
 
 		const getMovieReviews = async () => {
-			const collectionReviews = await getDBReviewsList(
-				ctx.query.id,
-				'reviews'
-			)
+			const collectionReviews = await getDBReviewsList(ctx.query.id)
 			return collectionReviews
 		}
 

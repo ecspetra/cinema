@@ -55,7 +55,8 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 			const unsubscribe = reviewsListener(
 				movieId,
 				itemsFromDB,
-				setItemsFromDB
+				setItemsFromDB,
+				'reviews'
 			)
 
 			return () => {

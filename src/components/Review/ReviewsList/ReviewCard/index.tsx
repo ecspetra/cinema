@@ -10,7 +10,11 @@ import Button from '../../../../app/components/UI/Button'
 import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
-import { getDBReviewsList, removeReviewItem } from '@/firebase/config'
+import {
+	getDBRepliesList,
+	getUserAvatar,
+	removeReviewItem,
+} from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewsList/ReviewCard/ReviewActions'
 import NewReviewForm from '@/components/Review/NewReviewForm'
 import RepliesList from '@/components/Review/RepliesList'
@@ -24,6 +28,10 @@ type PropsType = {
 const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	const { content, id, author, created_at, avatar_path, authorId } = review
 	const [replies, setReplies] = useState<Array<IReplyCard>>([])
+	const [authorInfo, setAuthorInfo] = useState({
+		photoURL: '',
+		displayName: '',
+	})
 	const [isShowReplyForm, setIsShowReplyForm] = useState<boolean>(false)
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [isItemFromDB, setIsItemFromDB] = useState<boolean>(false)
@@ -38,12 +46,7 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	const isShowTruncateDots =
 		isLongReviewContent && !isContentOpen && isTruncateReview
 	const isCurrentUserItem = userId === authorId && isItemFromDB
-
-	const getAuthorDetails = () => {
-		if (isItemFromDB) {
-		} else {
-		}
-	}
+	const isShowReplyList = replies.length > 0
 
 	const handleReviewContent = () => {
 		setIsContentOpen(!isContentOpen)
@@ -66,10 +69,21 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 			setIsItemFromDB(true)
 		}
 
-		getDBReviewsList(movieId, 'replies').then(data => {
+		getDBRepliesList(movieId, id).then(data => {
 			setReplies(data)
 		})
 	}, [])
+
+	useEffect(() => {
+		if (isItemFromDB) {
+			getUserAvatar(authorId).then(data => {
+				setAuthorInfo({
+					photoURL: data.photoURL,
+					displayName: data.displayName,
+				})
+			})
+		}
+	}, [isItemFromDB])
 
 	return (
 		<div className='mb-4 p-4 bg-slate-900'>
@@ -77,12 +91,16 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 				<div className='flex items-center'>
 					<Image
 						className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
-						src={`https://image.tmdb.org/t/p/original${avatar_path}`}
+						src={
+							isItemFromDB
+								? authorInfo.photoURL
+								: `https://image.tmdb.org/t/p/original${avatar_path}`
+						}
 						defaultImage={defaultUserImage}
 					/>
 					<div>
 						<Title variant='h3' className='mb-2'>
-							{author}
+							{isItemFromDB ? authorInfo.displayName : author}
 						</Title>
 						<p className='text-xs'>{formattedDate}</p>
 					</div>
@@ -118,18 +136,30 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 				movieId={movieId}
 				userId={userId}
 				onReply={setIsShowReplyForm}
+				collectionName='reviews'
 			/>
 			{isCurrentUserItem && (
-				<Button onClick={() => removeReviewItem(id, movieId, userId)}>
+				<Button
+					onClick={() =>
+						removeReviewItem(id, movieId, userId, 'reviews')
+					}
+				>
 					Delete
 				</Button>
 			)}
-			{replies && <RepliesList replies={replies} />}
+			{isShowReplyList && (
+				<RepliesList
+					movieId={movieId}
+					userId={userId}
+					replies={replies}
+				/>
+			)}
 			{isShowReplyForm && (
 				<NewReviewForm
 					movieId={movieId}
 					userId={userId}
 					reviewId={id}
+					replyTo={isItemFromDB ? authorInfo.displayName : author}
 					onClose={setIsShowReplyForm}
 					isReply
 				/>
