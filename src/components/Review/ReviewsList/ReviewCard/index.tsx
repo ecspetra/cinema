@@ -37,12 +37,16 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	)
 	const isShowTruncateDots =
 		isLongReviewContent && !isContentOpen && isTruncateReview
-	const isCurrentUserItem = userId && isItemFromDB
+	const isCurrentUserItem = userId === authorId && isItemFromDB
 
 	const getAuthorDetails = () => {
 		if (isItemFromDB) {
 		} else {
 		}
+	}
+
+	const handleReviewContent = () => {
+		setIsContentOpen(!isContentOpen)
 	}
 
 	useEffect(() => {
@@ -66,10 +70,6 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 			setReplies(data)
 		})
 	}, [])
-
-	const handleReviewContent = () => {
-		setIsContentOpen(!isContentOpen)
-	}
 
 	return (
 		<div className='mb-4 p-4 bg-slate-900'>

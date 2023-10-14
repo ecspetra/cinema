@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import { IReplyCard } from '../../../../interfaces'
-import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 import { reviewsListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/RepliesList/ReplyCard'

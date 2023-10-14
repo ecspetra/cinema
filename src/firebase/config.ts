@@ -59,9 +59,12 @@ export const addUserToRealtimeDatabase = async (newUser: object) => {
 	const newUserRef = ref(database, `users/${newUser.uid}`)
 
 	const newUserData = {
-		id: newUser.uid,
-		email: newUser.email,
-		photoURL: newUser.photoURL,
+		info: {
+			displayName: newUser.displayName,
+			id: newUser.uid,
+			email: newUser.email,
+			photoURL: newUser.photoURL,
+		},
 	}
 
 	await set(newUserRef, newUserData)
@@ -154,6 +157,23 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 		})
 
 		resolve(isRemoved)
+	})
+}
+
+// user handlers
+
+export const getUserAvatar = (userId: string) => {
+	const infoPath = `users/${userId}/info/`
+	const itemRef = ref(database, infoPath)
+
+	return new Promise(async resolve => {
+		get(itemRef).then(snapshot => {
+			let userInfo = {}
+			if (snapshot.exists()) {
+				userInfo = snapshot.val()
+			}
+			resolve(userInfo)
+		})
 	})
 }
 

@@ -6,7 +6,7 @@ import Button from '../../../../app/components/UI/Button'
 import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
-import { removeReviewItem } from '@/firebase/config'
+import { getUserAvatar, removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewsList/ReviewCard/ReviewActions'
 import { useAuth } from '@/context/AuthProvider'
 
@@ -19,7 +19,10 @@ const ReplyCard: FC<PropsType> = ({ reply }) => {
 	const userId = currentUser?.uid
 	const { reviewId, content, id, created_at, authorId } = reply
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
-	const [isItemFromDB, setIsItemFromDB] = useState<boolean>(false)
+	const [authorInfo, setAuthorInfo] = useState({
+		photoURL: '',
+		displayName: '',
+	})
 	const [isTruncateReview, setIsTruncateReview] = useState<boolean>(false)
 	const [contentHeight, setContentHeight] = useState<number>(0)
 	const contentRef = useRef<HTMLDivElement | null>(null)
@@ -30,9 +33,11 @@ const ReplyCard: FC<PropsType> = ({ reply }) => {
 	)
 	const isShowTruncateDots =
 		isLongReviewContent && !isContentOpen && isTruncateReview
-	const isCurrentUserItem = userId && isItemFromDB
+	const isCurrentUserItem = userId === authorId
 
-	const getAuthorDetails = () => {}
+	const handleReviewContent = () => {
+		setIsContentOpen(!isContentOpen)
+	}
 
 	useEffect(() => {
 		if (contentRef.current) {
@@ -47,31 +52,30 @@ const ReplyCard: FC<PropsType> = ({ reply }) => {
 	}, [isContentOpen])
 
 	useEffect(() => {
-		if (authorId) {
-			setIsItemFromDB(true)
-		}
+		getUserAvatar(authorId).then(data => {
+			setAuthorInfo({
+				photoURL: data.photoURL,
+				displayName: data.displayName,
+			})
+		})
 	}, [])
-
-	const handleReviewContent = () => {
-		setIsContentOpen(!isContentOpen)
-	}
 
 	return (
 		<div className='mb-4 p-4 bg-slate-800'>
 			<div className='flex mb-2'>
-				{/*<div className='flex items-center'>*/}
-				{/*	<Image*/}
-				{/*		className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'*/}
-				{/*		src={`https://image.tmdb.org/t/p/original${avatar_path}`}*/}
-				{/*		defaultImage={defaultUserImage}*/}
-				{/*	/>*/}
-				{/*	<div>*/}
-				{/*		<Title variant='h3' className='mb-2'>*/}
-				{/*			{author}*/}
-				{/*		</Title>*/}
-				{/*		<p className='text-xs'>{formattedDate}</p>*/}
-				{/*	</div>*/}
-				{/*</div>*/}
+				<div className='flex items-center'>
+					<Image
+						className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
+						src={authorInfo.photoURL}
+						defaultImage={defaultUserImage}
+					/>
+					<div>
+						<Title variant='h3' className='mb-2'>
+							{authorInfo.displayName}
+						</Title>
+						<p className='text-xs'>{formattedDate}</p>
+					</div>
+				</div>
 			</div>
 			<div className='mb-4'>
 				<div
