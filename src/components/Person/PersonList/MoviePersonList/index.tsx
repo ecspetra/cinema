@@ -1,6 +1,6 @@
 import { IPersonCard } from '../../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
-import PersonCard from '../../PersonCard'
+import PersonCard from '../PersonCard'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 

@@ -23,7 +23,12 @@ import {
 	onChildRemoved,
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
-import { IMovieCard, IPersonCard, IReviewCardFromDB } from '../../interfaces'
+import {
+	IMovieCard,
+	IPersonCard,
+	IReplyCard,
+	IReviewCardFromDB,
+} from '../../interfaces'
 import { onValue } from '@firebase/database'
 
 const firebaseConfig = {
@@ -291,12 +296,13 @@ export const collectionListener = (
 // review handlers
 
 export const setNewReviewItem = async (
-	item: IReviewCardFromDB,
+	item: IReviewCardFromDB | IReplyCard,
 	userId: string,
-	movieId: number
+	movieId: number,
+	collectionName: 'reviews' | 'replies'
 ) => {
-	const collectionPath = `users/${userId}/reviews/${item.id}`
-	const generalCollectionPath = `movies/${movieId}/reviews/${item.id}`
+	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
+	const generalCollectionPath = `movies/${movieId}/${collectionName}/${item.id}`
 	const newCollectionItemRef = ref(database, collectionPath)
 	const newGeneralCollectionItemRef = ref(database, generalCollectionPath)
 
@@ -328,8 +334,36 @@ export const removeReviewItem = (
 	})
 }
 
-export const getDBReviewsList = async (movieId: number) => {
-	const collectionPath = `movies/${movieId}/reviews/`
+export const removeReplyItem = (
+	itemId: number,
+	reviewId: string,
+	movieId: number,
+	userId: string
+) => {
+	const collectionPath = `users/${userId}/reviews/${reviewId}/replies/${itemId}`
+	const generalCollectionPath = `movies/${movieId}/reviews/${reviewId}/replies/${itemId}`
+
+	const itemRef = ref(database, collectionPath)
+	const generalCollectionItemRef = ref(database, generalCollectionPath)
+
+	return new Promise(async resolve => {
+		let isRemoved = false
+
+		remove(itemRef).then(() => {
+			remove(generalCollectionItemRef).then(() => {
+				isRemoved = true
+			})
+		})
+
+		resolve(isRemoved)
+	})
+}
+
+export const getDBReviewsList = async (
+	movieId: number,
+	collectionName: 'reviews' | 'replies'
+) => {
+	const collectionPath = `movies/${movieId}/${collectionName}/`
 	const reviewsCollectionRef = ref(database, collectionPath)
 
 	try {
@@ -337,8 +371,8 @@ export const getDBReviewsList = async (movieId: number) => {
 
 		if (snapshot.exists()) {
 			const data = snapshot.val()
-			const reviews = Object.values(data)
-			return reviews
+			const result = Object.values(data)
+			return result
 		} else {
 			return []
 		}
@@ -346,32 +380,6 @@ export const getDBReviewsList = async (movieId: number) => {
 		return []
 	}
 }
-
-// export const reviewsListener = (
-// 	userId: string,
-// 	defaultItems: Array<any>,
-// 	loadedItems: Array<any>,
-// 	setItems: ([]) => void
-// ) => {
-// 	const collectionRef = ref(database, `users/${userId}/reviews`)
-//
-// 	const onDataChange = (snapshot: DataSnapshot) => {
-// 		const data = snapshot.val()
-// 		const itemsFromDB = data ? Object.values(data) : []
-//
-// 		const newItems = itemsFromDB.filter(item =>
-// 			loadedItems.some(existingItem => existingItem.id === item.id)
-// 		)
-//
-// 		setItems([...defaultItems, ...newItems])
-// 	}
-//
-// 	const unsubscribe = onValue(collectionRef, onDataChange)
-//
-// 	return () => {
-// 		unsubscribe()
-// 	}
-// }
 
 export const reviewsListener = (
 	movieId: number,
@@ -401,4 +409,175 @@ export const reviewsListener = (
 		unsubscribeAdded()
 		unsubscribeRemoved()
 	}
+}
+
+export const setNewReviewReaction = async (
+	userId: string,
+	itemId: string,
+	movieId: number,
+	collectionName: 'reviews' | 'replies',
+	action: 'like' | 'dislike'
+) => {
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}/${
+		action === 'like' ? 'likes' : 'dislikes'
+	}/${userId}`
+	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}/${
+		action === 'like' ? 'likes' : 'dislikes'
+	}/${userId}`
+
+	const itemRef = ref(database, collectionPath)
+	const generalCollectionItemRef = ref(database, generalCollectionPath)
+
+	await set(itemRef, itemId)
+	await set(generalCollectionItemRef, itemId)
+	await removeReviewReaction(
+		userId,
+		itemId,
+		movieId,
+		collectionName,
+		action === 'like' ? 'dislike' : 'like'
+	)
+}
+
+export const removeReviewReaction = (
+	userId: string,
+	reviewId: string,
+	movieId: number,
+	collectionName: 'reviews' | 'replies',
+	action: 'like' | 'dislike'
+) => {
+	const itemId = userId
+	const collectionPath = `users/${userId}/${collectionName}/${reviewId}/${
+		action === 'like' ? 'likes' : 'dislikes'
+	}/${itemId}`
+	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${reviewId}/${
+		action === 'like' ? 'likes' : 'dislikes'
+	}/${itemId}`
+
+	const itemRef = ref(database, collectionPath)
+	const generalCollectionItemRef = ref(database, generalCollectionPath)
+
+	return new Promise(async resolve => {
+		let isRemoved = false
+
+		remove(itemRef).then(() => {
+			remove(generalCollectionItemRef).then(() => {
+				isRemoved = true
+			})
+		})
+
+		resolve(isRemoved)
+	})
+}
+
+export const reviewReactionsListener = (
+	reviewId: string,
+	movieId: number,
+	collectionName: 'reviews' | 'replies',
+	setItems: ({ likes: [], dislikes: [] }) => void
+) => {
+	const likesCollectionRef = ref(
+		database,
+		`reviewsReactions/${movieId}/${collectionName}/${reviewId}/likes`
+	)
+	const dislikesCollectionRef = ref(
+		database,
+		`reviewsReactions/${movieId}/${collectionName}/${reviewId}/dislikes`
+	)
+
+	const likes = []
+	const dislikes = []
+
+	const unsubscribeLikes = onValue(
+		likesCollectionRef,
+		(snapshot: DataSnapshot) => {
+			likes.length = 0
+			snapshot.forEach(childSnapshot => {
+				likes.push({
+					key: childSnapshot.key,
+					data: childSnapshot.val(),
+				})
+			})
+			setItems(prevState => ({
+				likes: likes,
+				dislikes: prevState.dislikes,
+			}))
+		}
+	)
+
+	const unsubscribeDislikes = onValue(
+		dislikesCollectionRef,
+		(snapshot: DataSnapshot) => {
+			dislikes.length = 0
+			snapshot.forEach(childSnapshot => {
+				dislikes.push({
+					key: childSnapshot.key,
+					data: childSnapshot.val(),
+				})
+			})
+			setItems(prevState => ({
+				likes: prevState.likes,
+				dislikes: dislikes,
+			}))
+		}
+	)
+
+	return () => {
+		unsubscribeLikes()
+		unsubscribeDislikes()
+	}
+}
+
+export const getReviewReactions = async (
+	itemId: string,
+	movieId: number,
+	collectionName: 'reviews' | 'replies'
+) => {
+	const likesCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}/likes/`
+	const dislikesCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}/dislikes/`
+	const likesCollectionRef = ref(database, likesCollectionPath)
+	const dislikesCollectionRef = ref(database, dislikesCollectionPath)
+
+	const getItemLikes = () => {
+		return new Promise(async resolve => {
+			get(likesCollectionRef).then(snapshot => {
+				let response = []
+
+				snapshot.forEach(childSnapshot => {
+					const like = {
+						key: childSnapshot.key,
+						data: childSnapshot.val(),
+					}
+
+					response.push(like)
+				})
+
+				resolve(response)
+			})
+		})
+	}
+
+	const getItemDislikes = () => {
+		return new Promise(async resolve => {
+			get(dislikesCollectionRef).then(snapshot => {
+				let response = []
+
+				snapshot.forEach(childSnapshot => {
+					const dislike = {
+						key: childSnapshot.key,
+						data: childSnapshot.val(),
+					}
+
+					response.push(dislike)
+				})
+
+				resolve(response)
+			})
+		})
+	}
+
+	const likes = await getItemLikes()
+	const dislikes = await getItemDislikes()
+
+	return { likes, dislikes }
 }

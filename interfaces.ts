@@ -26,6 +26,14 @@ export interface IReviewCardFromDB {
 	authorId: string
 }
 
+export interface IReplyCard {
+	reviewId: string
+	id: string
+	content: string
+	created_at: string
+	authorId: string
+}
+
 export interface IMovieInfo {
 	id: number
 	poster_path: string

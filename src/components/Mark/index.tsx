@@ -36,7 +36,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 	const isShowRemoveMarkButton = mark && currentUser !== null
 	const MAX_MARK = 10
 	const EMPTY_MARK_COLOR = 'text-red-900'
-	const FILLED_MARK_COLOR = 'text-amber-600'
+	const FILLED_MARK_COLOR = 'text-amber-400'
 
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {

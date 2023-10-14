@@ -6,7 +6,7 @@ import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
-import PersonCard from '@/components/Person/PersonCard'
+import PersonCard from '../../Person/PersonList/PersonCard'
 
 type PropsType = {
 	collectionName: 'movies' | 'persons'

@@ -6,7 +6,7 @@ import { IMovieCard, IPersonCard } from '../../../../interfaces'
 import MovieCard from '@/components/Movie/MovieCard'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
-import PersonCard from '@/components/Person/PersonCard'
+import PersonCard from '../../Person/PersonList/PersonCard'
 
 type PropsType = {
 	title: string

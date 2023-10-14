@@ -8,16 +8,27 @@ import moment from 'moment'
 import { openLoginModal } from '@/handlers/openLoginModal'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
+import { IReplyCard, IReviewCardFromDB } from '../../../../interfaces'
 
 type PropsType = {
 	movieId: number
 	userId: string
+	reviewId?: string
+	isReply?: boolean
+	onClose?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NewReviewForm: FC<PropsType> = ({ movieId, userId }) => {
+const NewReviewForm: FC<PropsType> = ({
+	movieId,
+	userId,
+	reviewId,
+	isReply = false,
+	onClose,
+}) => {
 	const [textareaValue, setTextareaValue] = useState<string>('')
 	const [error, setError] = useState<string>('')
 	const { showModal } = useModal()
+	const buttonText = isReply ? 'Submit reply' : 'Submit review'
 
 	const handleTextareaChange = newValue => {
 		setTextareaValue(newValue)
@@ -31,20 +42,34 @@ const NewReviewForm: FC<PropsType> = ({ movieId, userId }) => {
 			if (userId) {
 				setError('')
 
-				const newItem = {
-					authorId: userId,
-					id: uuidv4(),
-					content: textareaValue,
-					created_at: moment().format(),
+				let newItem: IReviewCardFromDB | IReplyCard
+
+				if (isReply) {
+					newItem = {
+						reviewId: reviewId,
+						id: uuidv4(),
+						content: textareaValue,
+						created_at: moment().format(),
+						authorId: userId,
+					}
+				} else {
+					newItem = {
+						id: uuidv4(),
+						content: textareaValue,
+						created_at: moment().format(),
+						authorId: userId,
+					}
 				}
 
-				try {
-					await setNewReviewItem(newItem, userId, movieId)
-					setTextareaValue('')
-				} catch (error) {
-					console.log(error)
-					// setError(error)
-				}
+				await setNewReviewItem(
+					newItem,
+					userId,
+					movieId,
+					isReply ? 'replies' : 'reviews'
+				)
+				setTextareaValue('')
+
+				if (isReply) onClose(false)
 			} else openLoginModal(showModal)
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
@@ -53,16 +78,31 @@ const NewReviewForm: FC<PropsType> = ({ movieId, userId }) => {
 
 	return (
 		<>
-			<Title>Leave your review</Title>
+			{isReply ? (
+				<Title variant='h3' className='mt-8'>
+					Leave your reply
+				</Title>
+			) : (
+				<Title>Leave your review</Title>
+			)}
 			<form onSubmit={handleSubmit}>
 				<Textarea
 					onChange={handleTextareaChange}
 					value={textareaValue}
 					error={error}
 				/>
-				<Button type='submit' className='mt-8'>
-					Submit review
-				</Button>
+				<div className='mt-8 flex justify-start items-center'>
+					<Button type='submit'>{buttonText}</Button>
+					{isReply && (
+						<Button
+							context='filledDark'
+							className='ml-2'
+							onClick={() => onClose(false)}
+						>
+							Cancel
+						</Button>
+					)}
+				</div>
 			</form>
 		</>
 	)

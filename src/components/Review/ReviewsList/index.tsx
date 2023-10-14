@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { IReviewCard, IReviewCardFromDB } from '../../../../interfaces'
-import ReviewCard from '@/components/Review/ReviewCard'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 import { reviewsListener } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
+import ReviewCard from '@/components/Review/ReviewsList/ReviewCard'
 
 type PropsType = {
 	movieId: number
@@ -24,7 +24,7 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
 
-	const handleReviewsToShowLength = () => {
+	const handleItemsToShowLength = () => {
 		const newMaxReviewsLength = isMoreDataAvailable
 			? Math.min(
 					maxReviewsLength + initialItemsLength,
@@ -93,7 +93,7 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 				<Button
 					className='mx-auto'
 					context='empty'
-					onClick={handleReviewsToShowLength}
+					onClick={handleItemsToShowLength}
 				>
 					{buttonText}
 				</Button>

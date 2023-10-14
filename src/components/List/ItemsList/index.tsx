@@ -6,7 +6,7 @@ import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
-import PersonCard from '@/components/Person/PersonCard'
+import PersonCard from '../../Person/PersonList/PersonCard'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>

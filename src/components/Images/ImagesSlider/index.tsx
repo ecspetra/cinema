@@ -8,9 +8,7 @@ import Button from '../../../app/components/UI/Button/index'
 import { IBackdrop } from '../../../../interfaces'
 import useImagesSlider from '../../../hooks/useImagesSlider'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
-import Modal from '../../../app/components/UI/Modal/index'
 import Image from '../Image/index'
-import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
 	images: Array<IBackdrop>
