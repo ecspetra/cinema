@@ -13,10 +13,10 @@ type PropsType = {
 	movieId: number
 	userId: string
 	reply: IReplyCard
-	onFormOpen: React.Dispatch<React.SetStateAction<boolean>>
+	onReply: (userName: string) => void
 }
 
-const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onFormOpen }) => {
+const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 	const { reviewId, content, id, created_at, authorId, replyTo } = reply
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [authorInfo, setAuthorInfo] = useState({
@@ -105,7 +105,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onFormOpen }) => {
 				movieId={movieId}
 				userId={userId}
 				collectionName='replies'
-				onFormOpen={onFormOpen}
+				onReply={() => onReply(authorInfo.displayName)}
 			/>
 			{isCurrentUserItem && (
 				<Button

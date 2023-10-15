@@ -9,7 +9,7 @@ type PropsType = {
 	userId: string
 	reviewId: string
 	replies: Array<IReplyCard>
-	onFormOpen: React.Dispatch<React.SetStateAction<boolean>>
+	onReply: (userName: string) => void
 }
 
 const RepliesList: FC<PropsType> = ({
@@ -17,7 +17,7 @@ const RepliesList: FC<PropsType> = ({
 	userId,
 	reviewId,
 	replies,
-	onFormOpen,
+	onReply,
 }) => {
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
@@ -66,7 +66,7 @@ const RepliesList: FC<PropsType> = ({
 					reply={item}
 					userId={userId}
 					movieId={movieId}
-					onFormOpen={onFormOpen}
+					onReply={onReply}
 				/>
 			))}
 			{isShowMoreButton && (

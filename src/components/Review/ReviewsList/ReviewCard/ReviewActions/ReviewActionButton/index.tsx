@@ -7,7 +7,7 @@ import classNames from 'classnames'
 type PropsType = {
 	title: string
 	action: 'like' | 'dislike' | 'reply'
-	onClick: () => void
+	onClick: (arg: any) => void
 	counter?: number
 	isCurrentUserReaction?: boolean
 }

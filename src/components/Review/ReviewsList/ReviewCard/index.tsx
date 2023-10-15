@@ -36,6 +36,9 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [isItemFromDB, setIsItemFromDB] = useState<boolean>(false)
 	const [isTruncateReview, setIsTruncateReview] = useState<boolean>(false)
+	const [replyTo, setReplyTo] = useState<string>(
+		isItemFromDB ? authorInfo.displayName : author
+	)
 	const [contentHeight, setContentHeight] = useState<number>(0)
 	const contentRef = useRef<HTMLDivElement | null>(null)
 	const isLongReviewContent = useMemo(() => content.length > 400, [content])
@@ -46,6 +49,17 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	const isShowTruncateDots =
 		isLongReviewContent && !isContentOpen && isTruncateReview
 	const isCurrentUserItem = userId === authorId && isItemFromDB
+
+	const handleFormClose = () => {
+		setReplyTo(isItemFromDB ? authorInfo.displayName : author)
+		setIsShowReplyForm(false)
+	}
+
+	const handleReplyTo = (userName: string) => {
+		console.log(userName)
+		setIsShowReplyForm(true)
+		setReplyTo(userName)
+	}
 
 	const handleReviewContent = () => {
 		setIsContentOpen(!isContentOpen)
@@ -134,7 +148,7 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 				reviewId={id}
 				movieId={movieId}
 				userId={userId}
-				onFormOpen={setIsShowReplyForm}
+				onReply={setIsShowReplyForm}
 				collectionName='reviews'
 			/>
 			{isCurrentUserItem && (
@@ -151,15 +165,15 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 				userId={userId}
 				reviewId={id}
 				replies={replies}
-				onFormOpen={setIsShowReplyForm}
+				onReply={handleReplyTo}
 			/>
 			{isShowReplyForm && (
 				<NewReviewForm
 					movieId={movieId}
 					userId={userId}
 					reviewId={id}
-					replyTo={isItemFromDB ? authorInfo.displayName : author}
-					onFormClose={setIsShowReplyForm}
+					replyTo={replyTo}
+					onFormClose={handleFormClose}
 					isReply
 				/>
 			)}
