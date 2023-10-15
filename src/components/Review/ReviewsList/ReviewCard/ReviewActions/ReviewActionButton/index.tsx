@@ -21,7 +21,7 @@ const ReviewActionButton: FC<PropsType> = ({
 }) => {
 	const buttonIcon = action === 'like'
 
-	const iconClassNames = 'mr-2 text-lg'
+	const iconClassNames = 'mr-1'
 
 	const getButtonIcon = () => {
 		switch (action) {
@@ -61,7 +61,7 @@ const ReviewActionButton: FC<PropsType> = ({
 			>
 				{getButtonIcon()}
 				{title}
-				<span className='ml-2'>{counter}</span>
+				<span className='ml-1'>{counter}</span>
 			</Button>
 		</>
 	)

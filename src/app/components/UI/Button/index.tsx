@@ -40,9 +40,9 @@ const Button: FC<PropsType> = ({
 	const textButtonClassNames =
 		'inline-flex text-red-500 border-b border-red-500 font-semibold hover:text-amber-400 hover:border-transparent'
 	const iconTextButtonClassNames =
-		'rounded-md py-2 px-3 bg-slate-600/50 font-semibold hover:bg-amber-900/50 hover:text-amber-400 flex justify-start items-center'
+		'rounded-md p-2 bg-slate-600/50 font-semibold text-sm hover:bg-amber-900/50 hover:text-amber-400 flex justify-start items-center'
 	const iconButtonClassNames =
-		'w-11 h-11 flex justify-center items-center bg-slate-800 hover:bg-slate-700 rounded-md z-50'
+		'w-11 h-11 flex justify-center items-center bg-slate-600/50 hover:bg-slate-700 rounded-md z-50'
 
 	const getButtonClassNames = () => {
 		switch (context) {

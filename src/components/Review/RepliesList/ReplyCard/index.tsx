@@ -9,6 +9,9 @@ import classNames from 'classnames'
 import { getUserAvatar, removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewsList/ReviewCard/ReviewActions'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
+import Dropdown from '@/app/components/UI/Dropdown'
+import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 type PropsType = {
 	movieId: number
@@ -69,11 +72,22 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 	}, [userId])
 
 	return (
-		<div className='mb-4 p-4 bg-slate-800'>
+		<div className='mb-4 p-4 bg-slate-800 relative last:mb-0'>
 			{isCurrentUserItem && (
-				<div>
-					<Button onClick={() => setIsShowEditForm(true)} />
-				</div>
+				<Dropdown>
+					<DropdownItem
+						label='Edit'
+						icon={faPenToSquare}
+						onClick={() => setIsShowEditForm(true)}
+					/>
+					<DropdownItem
+						label='Delete'
+						icon={faTrash}
+						onClick={() =>
+							removeReviewItem(id, movieId, userId, 'replies')
+						}
+					/>
+				</Dropdown>
 			)}
 			<div className='flex mb-2'>
 				<div className='flex items-center'>
@@ -90,7 +104,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 					</div>
 				</div>
 			</div>
-			<div className='mb-4'>
+			<div>
 				{isShowEditForm ? (
 					<EditReviewForm
 						item={reply}
@@ -100,32 +114,34 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 					/>
 				) : (
 					<>
-						<div
-							style={{
-								maxHeight: isContentOpen
-									? contentHeight
-									: '3rem',
-							}}
-							ref={contentRef}
-							className='overflow-hidden transition-[max-height] duration-500'
-						>
-							<p
-								className={classNames(
-									isShowTruncateDots && 'line-clamp-2'
-								)}
+						<div className='mb-4'>
+							<div
+								style={{
+									maxHeight: isContentOpen
+										? contentHeight
+										: '3rem',
+								}}
+								ref={contentRef}
+								className='overflow-hidden transition-[max-height] duration-500'
 							>
-								<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
-								{content}
-							</p>
+								<p
+									className={classNames(
+										isShowTruncateDots && 'line-clamp-2'
+									)}
+								>
+									<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
+									{content}
+								</p>
+							</div>
+							{isLongReviewContent && (
+								<Button
+									context='text'
+									onClick={() => handleReplyContent()}
+								>
+									{isContentOpen ? 'Hide' : 'Show more'}
+								</Button>
+							)}
 						</div>
-						{isLongReviewContent && (
-							<Button
-								context='text'
-								onClick={() => handleReplyContent()}
-							>
-								{isContentOpen ? 'Hide' : 'Show more'}
-							</Button>
-						)}
 						<ReviewActions
 							reviewId={id}
 							movieId={movieId}
@@ -133,20 +149,6 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 							collectionName='replies'
 							onReply={() => onReply(authorInfo.displayName)}
 						/>
-						{isCurrentUserItem && (
-							<Button
-								onClick={() =>
-									removeReviewItem(
-										id,
-										movieId,
-										userId,
-										'replies'
-									)
-								}
-							>
-								Delete
-							</Button>
-						)}
 					</>
 				)}
 			</div>

@@ -97,7 +97,7 @@ const ReviewActions: FC<PropsType> = ({
 	}, [reactions, userId])
 
 	return (
-		<div className='border-t border-slate-600 pt-4 flex justify-start items-center'>
+		<div className='flex justify-start items-center'>
 			<ReviewActionButton
 				title='Like'
 				action='like'
