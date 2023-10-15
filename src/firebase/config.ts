@@ -21,6 +21,8 @@ import {
 	DataSnapshot,
 	onChildAdded,
 	onChildRemoved,
+	update,
+	onChildChanged,
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import {
@@ -330,6 +332,28 @@ export const setNewReviewItem = async (
 	await set(newGeneralCollectionItemRef, item)
 }
 
+export const updateReviewItem = async (
+	item: IReviewCardFromDB | IReplyCard,
+	userId: string,
+	movieId: number,
+	collectionName: 'reviews' | 'replies'
+) => {
+	const itemId = item.id
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
+	const generalCollectionPath = `movies/${movieId}/${collectionName}/${itemId}`
+	const itemRef = ref(database, collectionPath)
+	const generalItemRef = ref(database, generalCollectionPath)
+	const itemSnapshot = await get(itemRef)
+
+	if (itemSnapshot.exists()) {
+		await update(itemRef, item)
+		await update(generalItemRef, item)
+		return true
+	} else {
+		return false
+	}
+}
+
 export const removeReviewItem = async (
 	itemId: string,
 	movieId: number,
@@ -467,12 +491,28 @@ export const reviewsListener = (
 		)
 	}
 
+	const onReviewChanged = (childSnapshot: DataSnapshot) => {
+		const updatedItem = childSnapshot.val()
+		setItems(prevItems => {
+			const updatedIndex = prevItems.findIndex(
+				item => item.id === updatedItem.id
+			)
+			if (updatedIndex !== -1) {
+				prevItems[updatedIndex] = updatedItem
+				return [...prevItems]
+			}
+			return prevItems
+		})
+	}
+
 	const unsubscribeReviewAdded = onChildAdded(reviewsRef, onReviewAdded)
 	const unsubscribeReviewRemoved = onChildRemoved(reviewsRef, onReviewRemoved)
+	const unsubscribeReviewChanged = onChildChanged(reviewsRef, onReviewChanged)
 
 	return () => {
 		unsubscribeReviewAdded()
 		unsubscribeReviewRemoved()
+		unsubscribeReviewChanged()
 	}
 }
 
@@ -501,12 +541,28 @@ export const repliesListener = (
 		)
 	}
 
+	const onReplyChanged = (childSnapshot: DataSnapshot) => {
+		const updatedItem = childSnapshot.val()
+		setItems(prevItems => {
+			const updatedIndex = prevItems.findIndex(
+				item => item.id === updatedItem.id
+			)
+			if (updatedIndex !== -1) {
+				prevItems[updatedIndex] = updatedItem
+				return [...prevItems]
+			}
+			return prevItems
+		})
+	}
+
 	const unsubscribeReplyAdded = onChildAdded(repliesRef, onReplyAdded)
 	const unsubscribeReplyRemoved = onChildRemoved(repliesRef, onReplyRemoved)
+	const unsubscribeReplyChanged = onChildChanged(repliesRef, onReplyChanged)
 
 	return () => {
 		unsubscribeReplyAdded()
 		unsubscribeReplyRemoved()
+		unsubscribeReplyChanged()
 	}
 }
 

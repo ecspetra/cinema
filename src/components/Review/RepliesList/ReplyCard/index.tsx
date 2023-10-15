@@ -8,6 +8,7 @@ import moment from 'moment'
 import classNames from 'classnames'
 import { getUserAvatar, removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewsList/ReviewCard/ReviewActions'
+import EditReviewForm from '@/components/Review/Form/EditReviewForm'
 
 type PropsType = {
 	movieId: number
@@ -18,6 +19,7 @@ type PropsType = {
 
 const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 	const { reviewId, content, id, created_at, authorId, replyTo } = reply
+	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [authorInfo, setAuthorInfo] = useState({
 		photoURL: '',
@@ -60,8 +62,19 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 		})
 	}, [])
 
+	useEffect(() => {
+		if (!userId) {
+			setIsShowEditForm(false)
+		}
+	}, [userId])
+
 	return (
 		<div className='mb-4 p-4 bg-slate-800'>
+			{isCurrentUserItem && (
+				<div>
+					<Button onClick={() => setIsShowEditForm(true)} />
+				</div>
+			)}
 			<div className='flex mb-2'>
 				<div className='flex items-center'>
 					<Image
@@ -78,44 +91,65 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 				</div>
 			</div>
 			<div className='mb-4'>
-				<div
-					style={{
-						maxHeight: isContentOpen ? contentHeight : '3rem',
-					}}
-					ref={contentRef}
-					className='overflow-hidden transition-[max-height] duration-500'
-				>
-					<p
-						className={classNames(
-							isShowTruncateDots && 'line-clamp-2'
+				{isShowEditForm ? (
+					<EditReviewForm
+						item={reply}
+						movieId={movieId}
+						onFormClose={setIsShowEditForm}
+						isReply
+					/>
+				) : (
+					<>
+						<div
+							style={{
+								maxHeight: isContentOpen
+									? contentHeight
+									: '3rem',
+							}}
+							ref={contentRef}
+							className='overflow-hidden transition-[max-height] duration-500'
+						>
+							<p
+								className={classNames(
+									isShowTruncateDots && 'line-clamp-2'
+								)}
+							>
+								<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
+								{content}
+							</p>
+						</div>
+						{isLongReviewContent && (
+							<Button
+								context='text'
+								onClick={() => handleReplyContent()}
+							>
+								{isContentOpen ? 'Hide' : 'Show more'}
+							</Button>
 						)}
-					>
-						<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
-						{content}
-					</p>
-				</div>
-				{isLongReviewContent && (
-					<Button context='text' onClick={() => handleReplyContent()}>
-						{isContentOpen ? 'Hide' : 'Show more'}
-					</Button>
+						<ReviewActions
+							reviewId={id}
+							movieId={movieId}
+							userId={userId}
+							collectionName='replies'
+							onReply={() => onReply(authorInfo.displayName)}
+						/>
+						{isCurrentUserItem && (
+							<Button
+								onClick={() =>
+									removeReviewItem(
+										id,
+										movieId,
+										userId,
+										'replies'
+									)
+								}
+							>
+								Delete
+							</Button>
+						)}
+					</>
 				)}
 			</div>
-			<ReviewActions
-				reviewId={id}
-				movieId={movieId}
-				userId={userId}
-				collectionName='replies'
-				onReply={() => onReply(authorInfo.displayName)}
-			/>
-			{isCurrentUserItem && (
-				<Button
-					onClick={() =>
-						removeReviewItem(id, movieId, userId, 'replies')
-					}
-				>
-					Delete
-				</Button>
-			)}
 		</div>
 	)
 }
