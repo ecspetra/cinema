@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import {
 	IReplyCard,
 	IReviewCard,
@@ -19,6 +19,9 @@ import ReviewActions from '@/components/Review/ReviewsList/ReviewCard/ReviewActi
 import NewReviewForm from '../../Form/NewReviewForm'
 import RepliesList from '@/components/Review/RepliesList'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
+import Dropdown from '@/app/components/UI/Dropdown'
+import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 type PropsType = {
 	movieId: number
@@ -106,11 +109,22 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	}, [isItemFromDB])
 
 	return (
-		<div className='mb-4 p-4 bg-slate-900'>
+		<div className='mb-4 p-4 bg-slate-900 relative'>
 			{isCurrentUserItem && (
-				<div>
-					<Button onClick={() => setIsShowEditForm(true)} />
-				</div>
+				<Dropdown>
+					<DropdownItem
+						label='Edit'
+						icon={faPenToSquare}
+						onClick={() => setIsShowEditForm(true)}
+					/>
+					<DropdownItem
+						label='Delete'
+						icon={faTrash}
+						onClick={() =>
+							removeReviewItem(id, movieId, userId, 'reviews')
+						}
+					/>
+				</Dropdown>
 			)}
 			<div className='flex mb-2'>
 				<div className='flex items-center'>
@@ -174,20 +188,6 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 							onReply={setIsShowReplyForm}
 							collectionName='reviews'
 						/>
-						{isCurrentUserItem && (
-							<Button
-								onClick={() =>
-									removeReviewItem(
-										id,
-										movieId,
-										userId,
-										'reviews'
-									)
-								}
-							>
-								Delete
-							</Button>
-						)}
 						<RepliesList
 							movieId={movieId}
 							userId={userId}
