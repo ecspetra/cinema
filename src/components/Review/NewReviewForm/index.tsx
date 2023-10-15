@@ -16,7 +16,7 @@ type PropsType = {
 	reviewId?: string
 	replyTo?: string
 	isReply?: boolean
-	onClose?: React.Dispatch<React.SetStateAction<boolean>>
+	onFormClose?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const NewReviewForm: FC<PropsType> = ({
@@ -25,7 +25,7 @@ const NewReviewForm: FC<PropsType> = ({
 	reviewId,
 	replyTo,
 	isReply = false,
-	onClose,
+	onFormClose,
 }) => {
 	const [textareaValue, setTextareaValue] = useState<string>('')
 	const [error, setError] = useState<string>('')
@@ -72,7 +72,7 @@ const NewReviewForm: FC<PropsType> = ({
 				)
 				setTextareaValue('')
 
-				if (isReply) onClose(false)
+				if (isReply) onFormClose(false)
 			} else openLoginModal(showModal)
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
@@ -100,7 +100,7 @@ const NewReviewForm: FC<PropsType> = ({
 						<Button
 							context='filledDark'
 							className='ml-2'
-							onClick={() => onClose(false)}
+							onClick={() => onFormClose(false)}
 						>
 							Cancel
 						</Button>

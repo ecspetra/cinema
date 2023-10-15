@@ -13,7 +13,7 @@ type PropsType = {
 	reviewId: string
 	movieId: number
 	userId: string
-	onReply: React.Dispatch<React.SetStateAction<boolean>>
+	onFormOpen: React.Dispatch<React.SetStateAction<boolean>>
 	collectionName: 'reviews' | 'replies'
 }
 
@@ -21,7 +21,7 @@ const ReviewActions: FC<PropsType> = ({
 	reviewId,
 	movieId,
 	userId,
-	onReply,
+	onFormOpen,
 	collectionName,
 }) => {
 	const { showModal } = useModal()
@@ -37,7 +37,7 @@ const ReviewActions: FC<PropsType> = ({
 		reactions.dislikes.some(item => item.key === userId)
 
 	const handleReply = () => {
-		onReply(true)
+		onFormOpen(true)
 	}
 
 	const handleReaction = async (
@@ -114,13 +114,11 @@ const ReviewActions: FC<PropsType> = ({
 				counter={reactions.dislikes.length}
 				isCurrentUserReaction={isCurrentUserDislike}
 			/>
-			{onReply && (
-				<ReviewActionButton
-					title='Reply'
-					action='reply'
-					onClick={handleReply}
-				/>
-			)}
+			<ReviewActionButton
+				title='Reply'
+				action='reply'
+				onClick={handleReply}
+			/>
 		</div>
 	)
 }

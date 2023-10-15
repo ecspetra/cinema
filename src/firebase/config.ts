@@ -483,7 +483,7 @@ export const repliesListener = (
 	setItems: ([]) => void
 ) => {
 	const repliesRef = ref(database, `movies/${movieId}/replies/`)
-	console.log(loadedItems)
+
 	const onReplyAdded = (childSnapshot: DataSnapshot) => {
 		const newItem = childSnapshot.val()
 		if (

@@ -134,7 +134,7 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 				reviewId={id}
 				movieId={movieId}
 				userId={userId}
-				onReply={setIsShowReplyForm}
+				onFormOpen={setIsShowReplyForm}
 				collectionName='reviews'
 			/>
 			{isCurrentUserItem && (
@@ -151,6 +151,7 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 				userId={userId}
 				reviewId={id}
 				replies={replies}
+				onFormOpen={setIsShowReplyForm}
 			/>
 			{isShowReplyForm && (
 				<NewReviewForm
@@ -158,7 +159,7 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 					userId={userId}
 					reviewId={id}
 					replyTo={isItemFromDB ? authorInfo.displayName : author}
-					onClose={setIsShowReplyForm}
+					onFormClose={setIsShowReplyForm}
 					isReply
 				/>
 			)}

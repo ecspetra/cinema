@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { IReplyCard } from '../../../../../interfaces'
 import Image from '../../../Images/Image'
 import defaultUserImage from '../../../../app/assets/images/default-user-image.svg'
@@ -13,9 +13,10 @@ type PropsType = {
 	movieId: number
 	userId: string
 	reply: IReplyCard
+	onFormOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ReplyCard: FC<PropsType> = ({ movieId, userId, reply }) => {
+const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onFormOpen }) => {
 	const { reviewId, content, id, created_at, authorId, replyTo } = reply
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [authorInfo, setAuthorInfo] = useState({
@@ -103,8 +104,8 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply }) => {
 				reviewId={id}
 				movieId={movieId}
 				userId={userId}
-				onReply={'test'}
 				collectionName='replies'
+				onFormOpen={onFormOpen}
 			/>
 			{isCurrentUserItem && (
 				<Button
