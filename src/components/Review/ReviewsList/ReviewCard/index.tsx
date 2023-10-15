@@ -46,7 +46,6 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 	const isShowTruncateDots =
 		isLongReviewContent && !isContentOpen && isTruncateReview
 	const isCurrentUserItem = userId === authorId && isItemFromDB
-	const isShowReplyList = replies.length > 0
 
 	const handleReviewContent = () => {
 		setIsContentOpen(!isContentOpen)
@@ -147,13 +146,12 @@ const ReviewsCard: FC<PropsType> = ({ movieId, userId, review }) => {
 					Delete
 				</Button>
 			)}
-			{isShowReplyList && (
-				<RepliesList
-					movieId={movieId}
-					userId={userId}
-					replies={replies}
-				/>
-			)}
+			<RepliesList
+				movieId={movieId}
+				userId={userId}
+				reviewId={id}
+				replies={replies}
+			/>
 			{isShowReplyForm && (
 				<NewReviewForm
 					movieId={movieId}

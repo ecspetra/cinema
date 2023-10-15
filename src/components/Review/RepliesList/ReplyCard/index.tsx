@@ -89,7 +89,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply }) => {
 							isShowTruncateDots && 'line-clamp-2'
 						)}
 					>
-						{replyTo}
+						<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
 						{content}
 					</p>
 				</div>

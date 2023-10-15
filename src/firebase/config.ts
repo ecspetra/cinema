@@ -448,32 +448,65 @@ export const getDBReviewsList = async (
 
 export const reviewsListener = (
 	movieId: number,
-	loadedItems: Array<any>,
-	setItems: ([]) => void,
-	collectionName: 'reviews' | 'replies'
+	loadedItems: Array<IReviewCardFromDB>,
+	setItems: ([]) => void
 ) => {
-	const collectionRef = ref(database, `movies/${movieId}/${collectionName}/`)
+	const reviewsRef = ref(database, `movies/${movieId}/reviews/`)
 
-	const onAdded = (childSnapshot: DataSnapshot) => {
+	const onReviewAdded = (childSnapshot: DataSnapshot) => {
 		const newItem = childSnapshot.val()
 		if (!loadedItems.some(existingItem => existingItem.id === newItem.id)) {
 			setItems(prevItems => [newItem, ...prevItems])
 		}
 	}
 
-	const onRemoved = (childSnapshot: DataSnapshot) => {
+	const onReviewRemoved = (childSnapshot: DataSnapshot) => {
 		const removedItem = childSnapshot.val()
 		setItems(prevItems =>
 			prevItems.filter(item => item.id !== removedItem.id)
 		)
 	}
 
-	const unsubscribeAdded = onChildAdded(collectionRef, onAdded)
-	const unsubscribeRemoved = onChildRemoved(collectionRef, onRemoved)
+	const unsubscribeReviewAdded = onChildAdded(reviewsRef, onReviewAdded)
+	const unsubscribeReviewRemoved = onChildRemoved(reviewsRef, onReviewRemoved)
 
 	return () => {
-		unsubscribeAdded()
-		unsubscribeRemoved()
+		unsubscribeReviewAdded()
+		unsubscribeReviewRemoved()
+	}
+}
+
+export const repliesListener = (
+	movieId: number,
+	reviewId: string,
+	loadedItems: Array<IReplyCard>,
+	setItems: ([]) => void
+) => {
+	const repliesRef = ref(database, `movies/${movieId}/replies/`)
+	console.log(loadedItems)
+	const onReplyAdded = (childSnapshot: DataSnapshot) => {
+		const newItem = childSnapshot.val()
+		if (
+			!loadedItems.some(existingItem => existingItem.id === newItem.id) &&
+			newItem.reviewId === reviewId
+		) {
+			setItems(prevItems => [newItem, ...prevItems])
+		}
+	}
+
+	const onReplyRemoved = (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+		setItems(prevItems =>
+			prevItems.filter(item => item.id !== removedItem.id)
+		)
+	}
+
+	const unsubscribeReplyAdded = onChildAdded(repliesRef, onReplyAdded)
+	const unsubscribeReplyRemoved = onChildRemoved(repliesRef, onReplyRemoved)
+
+	return () => {
+		unsubscribeReplyAdded()
+		unsubscribeReplyRemoved()
 	}
 }
 

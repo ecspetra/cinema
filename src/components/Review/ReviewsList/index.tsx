@@ -55,8 +55,7 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 			const unsubscribe = reviewsListener(
 				movieId,
 				itemsFromDB,
-				setItemsFromDB,
-				'reviews'
+				setItemsFromDB
 			)
 
 			return () => {
@@ -71,7 +70,7 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 		}
 	}, [userId])
 
-	if (!reviews.length) {
+	if (!itemsToShow.length) {
 		return (
 			<div className='mb-16'>
 				<Title>Reviews</Title>

@@ -1,16 +1,17 @@
 import React, { FC, useEffect, useState } from 'react'
 import { IReplyCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
-import { reviewsListener } from '@/firebase/config'
+import { repliesListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/RepliesList/ReplyCard'
 
 type PropsType = {
 	movieId: number
 	userId: string
+	reviewId: string
 	replies: Array<IReplyCard>
 }
 
-const ReviewsList: FC<PropsType> = ({ movieId, userId, replies }) => {
+const RepliesList: FC<PropsType> = ({ movieId, userId, reviewId, replies }) => {
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
@@ -33,20 +34,22 @@ const ReviewsList: FC<PropsType> = ({ movieId, userId, replies }) => {
 		setItemsToShow(replies)
 	}, [replies])
 
-	// useEffect(() => {
-	// 	if (userId) {
-	// 		const unsubscribe = reviewsListener(
-	// 			movieId,
-	// 			itemsToShow,
-	// 			setItemsToShow,
-	// 			'replies'
-	// 		)
-	//
-	// 		return () => {
-	// 			unsubscribe()
-	// 		}
-	// 	}
-	// }, [itemsToShow, userId])
+	useEffect(() => {
+		if (userId) {
+			const unsubscribe = repliesListener(
+				movieId,
+				reviewId,
+				replies,
+				setItemsToShow
+			)
+
+			return () => {
+				unsubscribe()
+			}
+		}
+	}, [replies, userId, movieId, reviewId])
+
+	if (!itemsToShow.length) return null
 
 	return (
 		<div className='mt-4'>
@@ -71,4 +74,4 @@ const ReviewsList: FC<PropsType> = ({ movieId, userId, replies }) => {
 	)
 }
 
-export default ReviewsList
+export default RepliesList
