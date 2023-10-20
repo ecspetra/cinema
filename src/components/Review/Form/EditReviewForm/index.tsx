@@ -39,6 +39,7 @@ const EditReviewForm: FC<PropsType> = ({
 
 			if (isReply) {
 				newItem = {
+					movieId: movieId,
 					replyTo: item.replyTo,
 					reviewId: item.reviewId,
 					id: item.id,
@@ -48,6 +49,7 @@ const EditReviewForm: FC<PropsType> = ({
 				}
 			} else {
 				newItem = {
+					movieId: movieId,
 					id: item.id,
 					content: textareaValue,
 					created_at: item.created_at,

@@ -48,6 +48,7 @@ const NewReviewForm: FC<PropsType> = ({
 
 				if (isReply) {
 					newItem = {
+						movieId: movieId,
 						replyTo: replyTo,
 						reviewId: reviewId,
 						id: uuidv4(),
@@ -57,6 +58,7 @@ const NewReviewForm: FC<PropsType> = ({
 					}
 				} else {
 					newItem = {
+						movieId: movieId,
 						id: uuidv4(),
 						content: textareaValue,
 						created_at: moment().format(),
@@ -83,7 +85,7 @@ const NewReviewForm: FC<PropsType> = ({
 		<>
 			{isReply ? (
 				<Title variant='h3' className='mt-8'>
-					Leave your reply
+					{`Leave your reply to ${replyTo}`}
 				</Title>
 			) : (
 				<Title>Leave your review</Title>

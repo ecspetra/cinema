@@ -14,18 +14,22 @@ import ItemsList from '@/components/List/ItemsList'
 import { getDBReviewsList } from '@/firebase/config'
 
 const Movie = ({ movieFromProps }) => {
-	const [movie, setMovie] = useState(null)
 	const router = useRouter()
-	const linkToFetchSimilarMovies =
-		movie &&
-		LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace(
-			'{movieId}',
-			movie.movieResult.id
-		)
+	const [movie, setMovie] = useState(null)
+	const [linkToFetchSimilarMovies, setLinkToFetchSimilarMovies] = useState(
+		LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace('{movieId}', router.query.id)
+	)
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setMovie(null)
+
+			setLinkToFetchSimilarMovies(
+				LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace(
+					'{movieId}',
+					router.query.id
+				)
+			)
 
 			try {
 				const fetchMovieData = async queryParam => {
@@ -36,7 +40,8 @@ const Movie = ({ movieFromProps }) => {
 
 				const getMovieReviews = async () => {
 					const collectionReviews = await getDBReviewsList(
-						router.query.id
+						router.query.id,
+						'reviews'
 					)
 
 					return collectionReviews
@@ -76,7 +81,7 @@ const Movie = ({ movieFromProps }) => {
 			}
 		}
 
-		if (router.query.id) {
+		if (!movieFromProps) {
 			fetchData()
 		}
 	}, [router.query.id])
@@ -101,7 +106,7 @@ const Movie = ({ movieFromProps }) => {
 
 	return (
 		<>
-			<TopBanner imageSrc={movie.imagesResult.backdrops[0].file_path} />
+			<TopBanner imageSrc={movie.imagesResult.backdrops[0]?.file_path} />
 			<MovieInfo
 				movieInfo={movie.movieResult}
 				movieImages={movie.imagesResult.backdrops}
@@ -141,7 +146,10 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		}
 
 		const getMovieReviews = async () => {
-			const collectionReviews = await getDBReviewsList(ctx.query.id)
+			const collectionReviews = await getDBReviewsList(
+				ctx.query.id,
+				'reviews'
+			)
 			return collectionReviews
 		}
 

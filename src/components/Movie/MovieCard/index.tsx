@@ -35,12 +35,17 @@ const MovieCard: FC<PropsType> = ({ movie, isShowButton = true }) => {
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 					defaultImage={defaultMovieImage}
 				/>
-				<Title
-					className='relative z-10'
-					variant='h3'
-				>{`${title} (${new Date(release_date)
-					.getFullYear()
-					.toString()})`}</Title>
+				<Title className='relative z-10' variant='h3'>
+					{title}
+					{release_date && (
+						<span className='ml-1'>
+							{release_date &&
+								`(${new Date(release_date)
+									.getFullYear()
+									.toString()})`}
+						</span>
+					)}
+				</Title>
 			</Link>
 			{isShowGenres && (
 				<div className='flex flex-wrap mb-2 relative z-10'>

@@ -4,14 +4,22 @@ import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 import { reviewsListener } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
-import ReviewCard from '@/components/Review/ReviewsList/ReviewCard'
+import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
+import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
-	movieId: number
 	reviews: Array<IReviewCard | IReviewCardFromDB>
+	movieId?: number
+	isCollectionList?: boolean
+	isShowTitle?: boolean
 }
 
-const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
+const ReviewList: FC<PropsType> = ({
+	reviews,
+	movieId,
+	isCollectionList = false,
+	isShowTitle = true,
+}) => {
 	const { currentUser } = useAuth()
 	const userId = currentUser?.uid
 	const initialItemsLength = 3
@@ -53,16 +61,17 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 	useEffect(() => {
 		if (userId) {
 			const unsubscribe = reviewsListener(
-				movieId,
+				isCollectionList ? userId : movieId,
 				itemsFromDB,
-				setItemsFromDB
+				setItemsFromDB,
+				isCollectionList ? 'users' : 'movies'
 			)
 
 			return () => {
 				unsubscribe()
 			}
 		}
-	}, [itemsToShow, userId])
+	}, [itemsFromDB, userId])
 
 	useEffect(() => {
 		if (userId) {
@@ -72,10 +81,14 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 
 	if (!itemsToShow.length) {
 		return (
-			<div className='mb-16'>
-				<Title>Reviews</Title>
-				<p>No reviews yet</p>
-			</div>
+			<EmptyList
+				title='Reviews'
+				text={
+					isCollectionList
+						? `This collection is empty. Please add some items in this collection before you can see it here`
+						: undefined
+				}
+			/>
 		)
 	}
 
@@ -85,8 +98,8 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 				<ReviewCard
 					key={item.id}
 					review={item}
-					movieId={movieId}
-					userId={userId}
+					defaultCardMovieId={movieId}
+					isLinkToMovie={isCollectionList}
 				/>
 			))}
 			{isShowMoreButton && (
@@ -103,10 +116,10 @@ const ReviewsList: FC<PropsType> = ({ movieId, reviews }) => {
 
 	return (
 		<div className='mb-16'>
-			<Title>Reviews</Title>
+			{isShowTitle && <Title>Reviews</Title>}
 			{renderReviews()}
 		</div>
 	)
 }
 
-export default ReviewsList
+export default ReviewList

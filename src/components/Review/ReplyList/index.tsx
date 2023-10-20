@@ -2,7 +2,8 @@ import React, { FC, useEffect, useState } from 'react'
 import { IReplyCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
 import { repliesListener } from '@/firebase/config'
-import ReplyCard from '@/components/Review/RepliesList/ReplyCard'
+import ReplyCard from '@/components/Review/ReplyList/ReplyCard'
+import { TransitionGroup } from 'react-transition-group'
 
 type PropsType = {
 	movieId: number
@@ -12,7 +13,7 @@ type PropsType = {
 	onReply: (userName: string) => void
 }
 
-const RepliesList: FC<PropsType> = ({
+const ReplyList: FC<PropsType> = ({
 	movieId,
 	userId,
 	reviewId,
@@ -82,4 +83,4 @@ const RepliesList: FC<PropsType> = ({
 	)
 }
 
-export default RepliesList
+export default ReplyList

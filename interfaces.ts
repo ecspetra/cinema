@@ -20,6 +20,7 @@ export interface IReviewCard {
 }
 
 export interface IReviewCardFromDB {
+	movieId: number
 	id: string
 	content: string
 	created_at: string
@@ -27,6 +28,7 @@ export interface IReviewCardFromDB {
 }
 
 export interface IReplyCard {
+	movieId: number
 	replyTo: string
 	reviewId: string
 	id: string

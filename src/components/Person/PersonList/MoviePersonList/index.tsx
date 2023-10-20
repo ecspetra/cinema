@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from 'react'
 import PersonCard from '../PersonCard'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
+import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
 	personsFromProps: Array<IPersonCard>
@@ -32,19 +33,15 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 	}
 
 	useEffect(() => {
+		setItemsToShow([])
 		personsFromProps.map((item, idx) => {
 			if (idx < initialItemsLength)
 				setItemsToShow(prevState => [...prevState, item])
 		})
-	}, [])
+	}, [personsFromProps])
 
 	if (!itemsToShow.length) {
-		return (
-			<div className='mb-16'>
-				<Title>{title}</Title>
-				<p>No persons yet</p>
-			</div>
-		)
+		return <EmptyList title={title} />
 	}
 
 	return (

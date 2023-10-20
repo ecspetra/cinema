@@ -7,6 +7,7 @@ import Title from '../../../app/components/UI/Title/Title'
 import ImagesSlider from '../ImagesSlider/index'
 import { useModal } from '@/context/ModalProvider'
 import classNames from 'classnames'
+import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
 	images: Array<IBackdrop> | Array<IPersonImage>
@@ -54,12 +55,7 @@ const ImagesList: FC<PropsType> = ({
 	}, [images])
 
 	if (!images.length) {
-		return (
-			<div className='mb-16'>
-				<Title>Images</Title>
-				<p>No images yet</p>
-			</div>
-		)
+		return <EmptyList title='Images' />
 	}
 
 	return (

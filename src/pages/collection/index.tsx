@@ -20,6 +20,7 @@ import { useRouter } from 'next/router'
 const Collection = ({ results }) => {
 	const [movies, setMovies] = useState(null)
 	const [persons, setPersons] = useState(null)
+	const [reviews, setReviews] = useState(null)
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { currentUser } = useAuth()
@@ -28,6 +29,7 @@ const Collection = ({ results }) => {
 	useEffect(() => {
 		setMovies(results.collectionMovies)
 		setPersons(results.collectionPersons)
+		setReviews(results.collectionReviews)
 	}, [results])
 
 	useEffect(() => {
@@ -50,6 +52,7 @@ const Collection = ({ results }) => {
 			if (!userId) {
 				setMovies(null)
 				setPersons(null)
+				setReviews(null)
 			}
 
 			try {
@@ -66,18 +69,27 @@ const Collection = ({ results }) => {
 					null
 				)
 
-				setMovies(collectionMovies.items)
-				setPersons(collectionPersons.items)
+				const collectionReviews = await getCollectionItemsList(
+					userIdFromUrl,
+					'reviews',
+					6,
+					null
+				)
+
+				setMovies(collectionMovies)
+				setPersons(collectionPersons)
+				setReviews(collectionReviews)
 			} catch (error) {
 				setMovies(null)
 				setPersons(null)
+				setReviews(null)
 			}
 		}
 
 		if (!results) getCollection()
 	}, [])
 
-	if (!movies && !persons) {
+	if (!movies && !persons && !reviews) {
 		return (
 			<>
 				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
@@ -117,6 +129,12 @@ const Collection = ({ results }) => {
 					type='persons'
 					items={persons.items}
 					isMoreDataAvailable={persons.isMoreDataAvailable}
+				/>
+				<CollectionWrap
+					title='Reviews'
+					type='reviews'
+					items={reviews.items}
+					isMoreDataAvailable={reviews.isMoreDataAvailable}
 				/>
 			</div>
 		</>
@@ -170,12 +188,19 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			6,
 			null
 		)
+		const collectionReviews = await getCollectionItemsList(
+			userIdFromUrl,
+			'reviews',
+			6,
+			null
+		)
 
 		return {
 			props: {
 				results: {
 					collectionMovies,
 					collectionPersons,
+					collectionReviews,
 				},
 			},
 		}

@@ -471,11 +471,15 @@ export const getDBReviewsList = async (
 }
 
 export const reviewsListener = (
-	movieId: number,
+	collectionId: number | string,
 	loadedItems: Array<IReviewCardFromDB>,
-	setItems: ([]) => void
+	setItems: ([]) => void,
+	collectionName: 'movies' | 'users'
 ) => {
-	const reviewsRef = ref(database, `movies/${movieId}/reviews/`)
+	let reviewsRef
+	if (collectionName === 'users') {
+		reviewsRef = ref(database, `users/${collectionId}/reviews/`)
+	} else reviewsRef = ref(database, `movies/${collectionId}/reviews/`)
 
 	const onReviewAdded = (childSnapshot: DataSnapshot) => {
 		const newItem = childSnapshot.val()

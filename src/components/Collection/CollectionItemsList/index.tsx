@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
 import PersonCard from '../../Person/PersonList/PersonCard'
+import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
 	collectionName: 'movies' | 'persons'
@@ -66,12 +67,7 @@ const CollectionItemsList: FC<PropsType> = ({
 	}, [lastItemId])
 
 	if (!itemsToShow.length) {
-		return (
-			<div className='mb-16'>
-				<Title>{title}</Title>
-				<p>No items yet</p>
-			</div>
-		)
+		return <EmptyList title={title} />
 	}
 
 	return (

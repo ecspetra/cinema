@@ -17,7 +17,7 @@ import {
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
-import ReviewsList from '../../Review/ReviewsList'
+import ReviewsList from '../../Review/ReviewList'
 import NewReviewForm from '../../Review/Form/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
 import { useAuth } from '@/context/AuthProvider'
@@ -79,44 +79,54 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					})}
 				</div>
 				<div className='mb-5'>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon
-							className='mr-1.5'
-							icon={faCalendarCheck}
-						/>
-						<span className='mr-1.5'>Release date:</span>
-						{new Intl.DateTimeFormat('en-GB', {
-							month: 'long',
-							day: '2-digit',
-							year: 'numeric',
-						}).format(new Date(release_date))}
-					</div>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
-						<span className='mr-1.5'>Production countries:</span>
-						{production_countries.map((item, idx) => {
-							return (
-								<span className='mr-1' key={item.name}>
-									{idx === production_countries.length - 1
-										? item.name
-										: item.name + ','}
-								</span>
-							)
-						})}
-					</div>
-					<div className='flex items-center text-sm flex-wrap'>
-						<FontAwesomeIcon className='mr-1.5' icon={faBolt} />
-						<span className='mr-1.5'>Production companies:</span>
-						{production_companies.map((item, idx) => {
-							return (
-								<span className='mr-1' key={item.name}>
-									{idx === production_companies.length - 1
-										? item.name
-										: item.name + ','}
-								</span>
-							)
-						})}
-					</div>
+					{release_date && (
+						<div className='flex items-center text-sm'>
+							<FontAwesomeIcon
+								className='mr-1.5'
+								icon={faCalendarCheck}
+							/>
+							<span className='mr-1.5'>Release date:</span>
+							{new Intl.DateTimeFormat('en-GB', {
+								month: 'long',
+								day: '2-digit',
+								year: 'numeric',
+							}).format(new Date(release_date))}
+						</div>
+					)}
+					{production_countries.length > 0 && (
+						<div className='flex items-center text-sm'>
+							<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
+							<span className='mr-1.5'>
+								Production countries:
+							</span>
+							{production_countries.map((item, idx) => {
+								return (
+									<span className='mr-1' key={item.name}>
+										{idx === production_countries.length - 1
+											? item.name
+											: item.name + ','}
+									</span>
+								)
+							})}
+						</div>
+					)}
+					{production_companies.length > 0 && (
+						<div className='flex items-center text-sm flex-wrap'>
+							<FontAwesomeIcon className='mr-1.5' icon={faBolt} />
+							<span className='mr-1.5'>
+								Production companies:
+							</span>
+							{production_companies.map((item, idx) => {
+								return (
+									<span className='mr-1' key={item.name}>
+										{idx === production_companies.length - 1
+											? item.name
+											: item.name + ','}
+									</span>
+								)
+							})}
+						</div>
+					)}
 				</div>
 				<Rating rating={vote_average} voteCount={vote_count} />
 				<Mark movieId={id} />

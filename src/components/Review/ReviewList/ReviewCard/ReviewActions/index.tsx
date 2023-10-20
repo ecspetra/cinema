@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import ReviewActionButton from '@/components/Review/ReviewsList/ReviewCard/ReviewActions/ReviewActionButton'
+import ReviewActionButton from '@/components/Review/ReviewList/ReviewCard/ReviewActions/ReviewActionButton'
 import {
 	getReviewReactions,
 	removeReviewReaction,
@@ -97,7 +97,7 @@ const ReviewActions: FC<PropsType> = ({
 	}, [reactions, userId])
 
 	return (
-		<div className='flex justify-start items-center'>
+		<div className='flex justify-start items-center mt-auto'>
 			<ReviewActionButton
 				title='Like'
 				action='like'
