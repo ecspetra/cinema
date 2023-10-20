@@ -12,7 +12,7 @@ const AuthForm = () => {
 	return (
 		<div className='h-full flex flex-1 flex-col justify-center items-center'>
 			<div className='flex justify-center items-center mb-12 gap-4'>
-				<Title className='!mb-0'>
+				<Title className='!mb-0 after:hidden !pb-0'>
 					{isShowSignUp ? 'Sign up' : 'Login'}
 				</Title>
 				<FontAwesomeIcon

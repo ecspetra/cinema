@@ -1,37 +1,52 @@
 import { useState, useEffect } from 'react'
 import {
-	getCollectionMovie,
-	removeCollectionMovie,
-	setNewCollectionMovie,
+	getCollectionItem,
+	removeCollectionItem,
+	setNewCollectionItem,
 } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
-import { IMovieCard } from '../../interfaces'
+import { IMovieCard, IPersonCard } from '../../interfaces'
 
-export const useCollectionButton = (movieInfo: IMovieCard) => {
-	const [isCollectionMovie, setIsCollectionMovie] = useState<boolean>(false)
+export const useCollectionButton = (
+	itemInfo: IMovieCard | IPersonCard,
+	collection: 'movies' | 'persons'
+) => {
+	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
 	const { currentUser } = useAuth()
+	const userId = currentUser?.uid
 	const { showModal } = useModal()
 	const isLoggedIn = currentUser !== null
 
-	const handleSetCollectionMovie = (movie: IMovieCard) => {
+	const handleSetCollectionItem = (item: IMovieCard | IPersonCard) => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			const newMovie: IMovieCard = {
-				id: movie.id,
-				poster_path: movie.poster_path,
-				release_date: movie.release_date,
-				title: movie.title,
-				genres: movie.genres,
+			let newItem: IMovieCard | IPersonCard = {}
+
+			if (collection === 'movies') {
+				newItem = {
+					id: item.id,
+					poster_path: item.poster_path,
+					release_date: item.release_date,
+					title: item.title,
+					genres: item.genres,
+				}
+			} else {
+				newItem = {
+					id: item.id,
+					profile_path: item.profile_path,
+					name: item.name,
+				}
 			}
-			setNewCollectionMovie(newMovie, currentUser.uid)
+
+			setNewCollectionItem(newItem, userId, collection)
 				.then(() => {
-					getCollectionMovie(movieInfo.id, currentUser?.uid)
+					getCollectionItem(itemInfo.id, userId, collection)
 						.then(data => {
-							setIsCollectionMovie(data)
+							setIsCollectionItem(data)
 							setIsLoadingCollection(false)
 						})
 						.catch(() => {
@@ -44,11 +59,11 @@ export const useCollectionButton = (movieInfo: IMovieCard) => {
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveCollectionMovie = (movieId: number, userId: string) => {
+	const handleRemoveCollectionItem = (itemId: number, userId: string) => {
 		setIsLoadingCollection(true)
-		removeCollectionMovie(movieId, userId)
+		removeCollectionItem(itemId, userId, collection)
 			.then(() => {
-				setIsCollectionMovie(false)
+				setIsCollectionItem(false)
 				setIsLoadingCollection(false)
 			})
 			.catch(() => {
@@ -59,9 +74,9 @@ export const useCollectionButton = (movieInfo: IMovieCard) => {
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			getCollectionMovie(movieInfo.id, currentUser?.uid)
+			getCollectionItem(itemInfo.id, userId, collection)
 				.then(data => {
-					setIsCollectionMovie(data)
+					setIsCollectionItem(data)
 					setIsLoadingCollection(false)
 				})
 				.catch(() => {
@@ -72,8 +87,8 @@ export const useCollectionButton = (movieInfo: IMovieCard) => {
 
 	return {
 		isLoadingCollection,
-		isCollectionMovie,
-		handleSetCollectionMovie,
-		handleRemoveCollectionMovie,
+		isCollectionItem,
+		handleSetCollectionItem,
+		handleRemoveCollectionItem,
 	}
 }

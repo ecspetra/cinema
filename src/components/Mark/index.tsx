@@ -36,7 +36,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 	const isShowRemoveMarkButton = mark && currentUser !== null
 	const MAX_MARK = 10
 	const EMPTY_MARK_COLOR = 'text-red-900'
-	const FILLED_MARK_COLOR = 'text-amber-600'
+	const FILLED_MARK_COLOR = 'text-amber-400'
 
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
@@ -146,10 +146,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 		<div className='mb-4 relative'>
 			<Title variant='h3'>My mark</Title>
 			{isLoadingMark ? (
-				<Loader
-					isShowText
-					className='!static bg-transparent !transform-none !inset-0 !inline-block'
-				/>
+				<Loader isShowText type='static' className='!inline-block' />
 			) : (
 				<>
 					<div className='flex justify-start items-center gap-x-1'>

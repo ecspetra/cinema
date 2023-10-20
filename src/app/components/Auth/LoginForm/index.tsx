@@ -10,8 +10,9 @@ import { useModal } from '@/context/ModalProvider'
 import { usePathname } from 'next/navigation'
 import {
 	AUTH_PAGE,
-	COLLECTION_MOVIES_PAGE,
+	COLLECTION_PAGE,
 	CURRENT_USER_COLLECTION_MOVIES_PAGE,
+	CURRENT_USER_COLLECTION_PAGE,
 } from '@/constants/paths'
 import { parseCookies } from '@/handlers/handleCookies'
 import { useRouter } from 'next/router'
@@ -111,11 +112,11 @@ const LoginForm = () => {
 					case pathname === AUTH_PAGE:
 						target = `/`
 						break
-					case pathname === COLLECTION_MOVIES_PAGE:
+					case pathname === COLLECTION_PAGE:
 						const cookies = parseCookies()
 						const userId = cookies.uid
-						target = CURRENT_USER_COLLECTION_MOVIES_PAGE.replace(
-							'userId',
+						target = CURRENT_USER_COLLECTION_PAGE.replace(
+							'{userId}',
 							userId
 						)
 						break
@@ -183,10 +184,7 @@ const LoginForm = () => {
 					)}
 					<Button className='mt-8 w-full' type='submit'>
 						{isLoading ? (
-							<Loader
-								isShowText
-								className='!static bg-transparent !transform-none !inset-0'
-							/>
+							<Loader isShowText type='static' />
 						) : (
 							'Submit'
 						)}

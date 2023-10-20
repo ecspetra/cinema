@@ -24,7 +24,7 @@ const CollectionButton: FC<PropsType> = ({
 			onClick={onClick}
 		>
 			{isLoadingCollection ? (
-				<Loader className='!static bg-transparent !transform-none !inset-0' />
+				<Loader type='static' />
 			) : (
 				<span>
 					<FontAwesomeIcon icon={faHeart} className='mr-2' />

@@ -1,47 +1,59 @@
-import MoviesListDefault from '../components/Movie/MoviesList/MoviesListDefault'
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE } from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
 import { useEffect, useState } from 'react'
+import Loader from '@/components/Loader'
+import { getResultsByPage } from '@/handlers/getResultsByPage'
+import ItemsList from '../components/List/ItemsList'
 
-const Home = ({ moviesFromProps }) => {
-	const [homePageMovies, setHomePageMovies] = useState(moviesFromProps)
+const Home = ({ items, isMoreDataAvailable }) => {
+	const [homePageMovies, setHomePageMovies] = useState([])
+	const [isNextResult, setIsNextResult] = useState(false)
 
 	useEffect(() => {
-		const fetchHomePageMovies = async () => {
-			try {
-				const response = await fetch(
-					LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE
-				)
-				const result = await response.json()
-				setHomePageMovies(result.results)
-			} catch (error) {
-				setHomePageMovies([])
-			}
+		if (!items) {
+			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
+				setHomePageMovies(data.items)
+				setIsNextResult(!!data.isMoreDataAvailable)
+			})
 		}
-
-		if (!moviesFromProps) fetchHomePageMovies()
 	}, [])
 
-	if (!homePageMovies.length) return <div>Loading</div>
+	useEffect(() => {
+		setHomePageMovies(items)
+		setIsNextResult(isMoreDataAvailable)
+	}, [items, isMoreDataAvailable])
+
+	if (!homePageMovies.length) return <Loader />
 
 	return (
-		<MoviesListDefault movieList={homePageMovies} title='Discover movies' />
+		<ItemsList
+			itemsList={homePageMovies}
+			listName='movies'
+			title='Discover movies'
+			isMoreDataAvailable={isNextResult}
+			linkToFetchItems={LINK_TO_FETCH_DEFAULT_MOVIE_LIST}
+		/>
 	)
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const response = await fetch(LINK_TO_FETCH_DEFAULT_MOVIES_FIRST_PAGE)
-		const result = await response.json()
+		const results = await getResultsByPage(
+			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
+			1
+		)
+
 		return {
 			props: {
-				moviesFromProps: result.results,
+				items: results.items,
+				isMoreDataAvailable: !!results.isMoreDataAvailable,
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				moviesFromProps: [],
+				items: [],
+				isMoreDataAvailable: false,
 			},
 		}
 	}

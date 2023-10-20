@@ -7,16 +7,34 @@ export interface IBackdrop {
 	file_path: string
 }
 
-export interface IReviewAuthor {
-	avatar_path: string
+export interface IPersonImage {
+	file_path: string
 }
 
-export interface IReview {
+export interface IReviewCard {
 	author: string
 	id: string
 	content: string
 	created_at: string
-	author_details: IReviewAuthor
+	avatar_path: string
+}
+
+export interface IReviewCardFromDB {
+	movieId: number
+	id: string
+	content: string
+	created_at: string
+	authorId: string
+}
+
+export interface IReplyCard {
+	movieId: number
+	replyTo: string
+	reviewId: string
+	id: string
+	content: string
+	created_at: string
+	authorId: string
 }
 
 export interface IMovieInfo {
@@ -39,7 +57,7 @@ export interface IMovieCard {
 	poster_path: string
 	release_date: string
 	title: string
-	genres: Array<IGenre>
+	genres?: Array<IGenre>
 }
 
 export interface IPersonCard {
@@ -50,4 +68,16 @@ export interface IPersonCard {
 	known_for_department: string
 	character?: string
 	job?: string
+}
+
+export interface IPersonInfo {
+	id: number
+	profile_path: string
+	known_for_department: string
+	name: string
+	place_of_birth: string
+	gender: number
+	birthday: string
+	deathday: string | null
+	biography: string
 }

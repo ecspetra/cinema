@@ -7,9 +7,15 @@ type PropsType = {
 	src: string
 	defaultImage: JSX.Element
 	className?: string
+	loaderClassName?: string
 }
 
-const Image: FC<PropsType> = ({ src, defaultImage, className }) => {
+const Image: FC<PropsType> = ({
+	src,
+	defaultImage,
+	className,
+	loaderClassName,
+}) => {
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	return (
@@ -28,7 +34,7 @@ const Image: FC<PropsType> = ({ src, defaultImage, className }) => {
 				alt='image'
 				className='block object-cover w-full h-full'
 			/>
-			{isLoading && <Loader />}
+			{isLoading && <Loader className={loaderClassName} />}
 		</span>
 	)
 }

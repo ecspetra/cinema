@@ -46,3 +46,16 @@ input:-webkit-autofill::first-line {
 	font-family: 'Manrope', sans-serif !important;
 	font-size: 16px !important;
 }
+
+.fade-enter {
+	@apply opacity-0;
+}
+.fade-enter-active {
+	@apply opacity-100 transition-opacity duration-500 ease-[ease-in];
+}
+.fade-exit {
+	@apply opacity-100;
+}
+.fade-exit-active {
+	@apply opacity-0 translate-x-40 transition-all duration-500 ease-[ease-in];
+}
