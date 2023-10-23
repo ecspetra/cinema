@@ -34,7 +34,7 @@ const Modal = () => {
 			<div className='w-screen h-screen fixed inset-0 z-50 bg-black/70 flex justify-center items-center backdrop-blur'>
 				<div
 					className={classNames(
-						'w-full max-w-lg relative p-12 bg-slate-900',
+						'w-full max-w-lg relative p-12 bg-gray-900',
 						modalClassName
 					)}
 					ref={modalRef}

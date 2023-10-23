@@ -29,7 +29,7 @@ const Rating: FC<PropsType> = ({ rating, voteCount }) => {
 								icon={faStarHalf}
 							/>
 							<FontAwesomeIcon
-								className='absolute top-0 right-0 text-slate-800 -scale-x-100'
+								className='absolute top-0 right-0 text-gray-800 -scale-x-100'
 								icon={faStarHalf}
 							/>
 						</span>
@@ -37,7 +37,7 @@ const Rating: FC<PropsType> = ({ rating, voteCount }) => {
 				} else {
 					icons.push(
 						<FontAwesomeIcon
-							className='text-slate-800'
+							className='text-gray-800'
 							key={i}
 							icon={faStar}
 						/>
@@ -57,7 +57,7 @@ const Rating: FC<PropsType> = ({ rating, voteCount }) => {
 			<p className='text-sm font-semibold leading-none mr-2'>
 				{Math.ceil(rating * 10) / 10}
 			</p>
-			<p className='text-slate-400 text-sm leading-none mt-[2px]'>
+			<p className='text-gray-400 text-sm leading-none mt-[2px]'>
 				{voteCount} voted
 			</p>
 		</div>

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 type PropsType = {
 	label: string
 	icon: IconDefinition
-	onClick: () => void
+	onClick: (event) => void
 	closeDropdown?: () => void
 }
 
@@ -16,8 +16,8 @@ const DropdownItem: FC<PropsType> = ({
 	onClick,
 	closeDropdown,
 }) => {
-	const handleClick = () => {
-		onClick()
+	const handleClick = event => {
+		onClick(event)
 		if (closeDropdown) {
 			closeDropdown()
 		}

@@ -2,6 +2,7 @@ import React, { FC, ReactNode, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { CSSTransition } from 'react-transition-group'
 
 type PropsType = {
 	children: ReactNode
@@ -10,7 +11,7 @@ type PropsType = {
 const Dropdown: FC<PropsType> = ({ children }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
-	const toggleDropdown = () => {
+	const toggleDropdown = event => {
 		setIsOpen(!isOpen)
 	}
 
@@ -37,13 +38,18 @@ const Dropdown: FC<PropsType> = ({ children }) => {
 					className='w-6 h-6'
 				/>
 			</Button>
-			{isOpen && (
+			<CSSTransition
+				in={isOpen}
+				timeout={300}
+				classNames='dropdown'
+				unmountOnExit
+			>
 				<div className='w-52 relative right-0 pt-14'>
-					<ul className='w-full p-2 rounded-md bg-slate-600'>
+					<ul className='w-full p-2 rounded-md bg-gray-600'>
 						{childrenWithProps}
 					</ul>
 				</div>
-			)}
+			</CSSTransition>
 		</div>
 	)
 }

@@ -175,7 +175,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 						)}
 					</div>
 					{currentUser === null && (
-						<p className='text-slate-400 text-sm leading-none mt-2'>
+						<p className='text-gray-400 text-sm leading-none mt-2'>
 							Please login or register to be able to rate the
 							movie
 						</p>

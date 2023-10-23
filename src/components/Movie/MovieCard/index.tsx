@@ -31,7 +31,7 @@ const MovieCard: FC<PropsType> = ({ movie, isShowButton = true }) => {
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link href='/movie/[id]' as={`/movie/${id}`} className='group'>
 				<Image
-					className='duration-300 mb-4 group-hover:shadow-red-700/70 group-hover:shadow-2xl'
+					className='duration-300 mb-4 group-hover:shadow-red-700/30 group-hover:shadow-2xl'
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 					defaultImage={defaultMovieImage}
 				/>

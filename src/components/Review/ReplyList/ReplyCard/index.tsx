@@ -84,7 +84,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 			classNames='fade'
 			unmountOnExit
 		>
-			<div className='mb-4 p-4 bg-slate-800 relative last:mb-0'>
+			<div className='mb-4 p-4 bg-gray-800 border border-gray-500 relative last:mb-0'>
 				{isCurrentUserItem && (
 					<Dropdown>
 						<DropdownItem

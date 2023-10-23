@@ -68,7 +68,7 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 			<div className='w-full'>
 				<Title className='text-7xl after:hidden pb-0'>{title}</Title>
 				{tagline && (
-					<Title variant='h2' className='text-slate-400'>
+					<Title variant='h2' className='text-gray-400'>
 						{tagline}
 					</Title>
 				)}
