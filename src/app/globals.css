@@ -60,8 +60,6 @@ input:-webkit-autofill::first-line {
 	@apply opacity-0 translate-x-40 transition-all duration-500 ease-[ease-in];
 }
 
-
-
 .dropdown-enter {
 	@apply opacity-0 -translate-y-3;
 }
