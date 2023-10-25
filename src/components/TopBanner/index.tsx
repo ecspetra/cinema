@@ -23,15 +23,21 @@ const TopBanner: FC<PropsType> = ({ imageSrc }) => {
 		}
 	}, [])
 
+	const imageKey = imageSrc || 'default'
+	const imageComponent = (
+		<Image
+			key={imageKey}
+			className='aspect-[215/121] inset-x-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4'
+			src={`https://image.tmdb.org/t/p/original${imageSrc}`}
+			defaultImage={defaultMovieBg}
+			loaderClassName='bg-transparent'
+		/>
+	)
+
 	return (
 		<div className='w-screen h-[600px] -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-black overflow-hidden'>
 			<div style={{ transform: `translateY(${translateY}px)` }}>
-				<Image
-					className='aspect-[215/121] inset-x-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4'
-					src={`https://image.tmdb.org/t/p/original${imageSrc}`}
-					defaultImage={defaultMovieBg}
-					loaderClassName='bg-transparent'
-				/>
+				{imageComponent}
 			</div>
 		</div>
 	)

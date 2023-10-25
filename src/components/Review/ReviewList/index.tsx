@@ -10,6 +10,7 @@ import {
 import { useAuth } from '@/context/AuthProvider'
 import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
 import EmptyList from '@/components/List/EmptyList'
+import useScrollToTop from '@/hooks/useScrollToTop'
 
 type PropsType = {
 	reviews: Array<IReviewCard | IReviewCardFromDB>
@@ -26,6 +27,7 @@ const ReviewList: FC<PropsType> = ({
 }) => {
 	const { currentUser } = useAuth()
 	const userId = currentUser?.uid
+	const { ref, scrollToTop } = useScrollToTop(100)
 	const initialItemsLength = 3
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
@@ -37,13 +39,22 @@ const ReviewList: FC<PropsType> = ({
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
 
 	const handleItemsToShowLength = () => {
+		if (!isMoreDataAvailable) scrollToTop()
+
 		const newMaxReviewsLength = isMoreDataAvailable
 			? Math.min(
 					maxReviewsLength + initialItemsLength,
 					itemsToShow.length
 			  )
 			: initialItemsLength
-		setMaxReviewsLength(newMaxReviewsLength)
+
+		if (isMoreDataAvailable) {
+			setMaxReviewsLength(newMaxReviewsLength)
+		} else {
+			setTimeout(() => {
+				setMaxReviewsLength(newMaxReviewsLength)
+			}, 600)
+		}
 	}
 
 	const defineReviewSrc = () => {
@@ -113,7 +124,7 @@ const ReviewList: FC<PropsType> = ({
 	}
 
 	return (
-		<div className='mb-16'>
+		<div ref={ref} className='mb-16'>
 			{isShowTitle && <Title>Reviews</Title>}
 			<div>
 				{itemsToShow.slice(0, maxReviewsLength).map(item => (

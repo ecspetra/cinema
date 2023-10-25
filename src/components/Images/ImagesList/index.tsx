@@ -8,6 +8,7 @@ import ImagesSlider from '../ImagesSlider/index'
 import { useModal } from '@/context/ModalProvider'
 import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
+import useScrollToTop from '@/hooks/useScrollToTop'
 
 type PropsType = {
 	images: Array<IBackdrop> | Array<IPersonImage>
@@ -22,16 +23,26 @@ const ImagesList: FC<PropsType> = ({
 }) => {
 	const [itemsToShow, setItemsToShow] = useState<Array<IBackdrop>>([])
 	const { showModal } = useModal()
+	const { ref, scrollToTop } = useScrollToTop(100)
 	const initialItemsLength = 12
-	const isMoreDataAvailable = itemsToShow.length > initialItemsLength
+	const isAllDataVisible = itemsToShow.length > initialItemsLength
 	const isShowMoreButton = images.length > initialItemsLength
-	const buttonText = isMoreDataAvailable ? 'Show less' : 'Show all'
+	const buttonText = isAllDataVisible ? 'Show less' : 'Show all'
 
 	const getImages = () => {
-		const newImages = isMoreDataAvailable
+		if (isAllDataVisible) scrollToTop()
+
+		const newImages = isAllDataVisible
 			? images.slice(0, initialItemsLength)
 			: images
-		setItemsToShow(newImages)
+
+		if (isAllDataVisible) {
+			setTimeout(() => {
+				setItemsToShow(newImages)
+			}, 600)
+		} else {
+			setItemsToShow(newImages)
+		}
 	}
 
 	const handleSliderImage = (idx: number) => {
@@ -59,7 +70,7 @@ const ImagesList: FC<PropsType> = ({
 	}
 
 	return (
-		<div className={classNames('mb-16', className)}>
+		<div ref={ref} className={classNames('mb-16', className)}>
 			<Title>Images</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start'>
 				{itemsToShow.map((item, idx) => (
