@@ -16,6 +16,7 @@ import { useAuth } from '@/context/AuthProvider'
 import CollectionWrap from '../../components/Collection/CollectionWrap'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
 
 const Collection = ({ results }) => {
 	const [movies, setMovies] = useState(null)
@@ -29,12 +30,13 @@ const Collection = ({ results }) => {
 	useEffect(() => {
 		setMovies(results.collectionMovies)
 		setPersons(results.collectionPersons)
-		setReviews(results.collectionReviews)
+		setReviews(results.allCollectionReviews)
 	}, [results])
 
 	useEffect(() => {
 		const getCollection = async () => {
 			const userIdFromUrl = router.query.uid || null
+			let allCollectionReviews = []
 
 			if (
 				(userId && userIdFromUrl && userId !== userIdFromUrl) ||
@@ -68,17 +70,30 @@ const Collection = ({ results }) => {
 					6,
 					null
 				)
-
 				const collectionReviews = await getCollectionItemsList(
 					userIdFromUrl,
 					'reviews',
-					6,
+					10,
+					null
+				)
+				const collectionReplies = await getCollectionItemsList(
+					userIdFromUrl,
+					'replies',
+					10,
 					null
 				)
 
+				const reviewsWithUserReplies =
+					await getCollectionReviewsWithRepliesList(collectionReplies)
+
+				allCollectionReviews = [
+					...collectionReviews.items,
+					...reviewsWithUserReplies,
+				]
+
 				setMovies(collectionMovies)
 				setPersons(collectionPersons)
-				setReviews(collectionReviews)
+				setReviews(allCollectionReviews)
 			} catch (error) {
 				setMovies(null)
 				setPersons(null)
@@ -133,8 +148,8 @@ const Collection = ({ results }) => {
 				<CollectionWrap
 					title='Reviews'
 					type='reviews'
-					items={reviews.items}
-					isMoreDataAvailable={reviews.isMoreDataAvailable}
+					items={reviews}
+					isMoreDataAvailable={false}
 				/>
 			</div>
 		</>
@@ -145,6 +160,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	const userIdFromUrl = ctx.query.uid || null
 	const cookies = parseCookies(ctx.req)
 	const userId = cookies.uid
+	let allCollectionReviews = []
 
 	if (
 		(userId && userIdFromUrl && userId !== userIdFromUrl) ||
@@ -191,16 +207,30 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		const collectionReviews = await getCollectionItemsList(
 			userIdFromUrl,
 			'reviews',
-			6,
+			10,
 			null
 		)
+		const collectionReplies = await getCollectionItemsList(
+			userIdFromUrl,
+			'replies',
+			10,
+			null
+		)
+
+		const reviewsWithUserReplies =
+			await getCollectionReviewsWithRepliesList(collectionReplies)
+
+		allCollectionReviews = [
+			...collectionReviews.items,
+			...reviewsWithUserReplies,
+		]
 
 		return {
 			props: {
 				results: {
 					collectionMovies,
 					collectionPersons,
-					collectionReviews,
+					allCollectionReviews,
 				},
 			},
 		}

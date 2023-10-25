@@ -570,6 +570,27 @@ export const repliesListener = (
 	}
 }
 
+export const collectionRepliesListener = (
+	userId: string,
+	setItems: ([]) => void
+) => {
+	const repliesRef = ref(database, `users/${userId}/replies/`)
+
+	const onReplyRemoved = (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+
+		setItems(prevItems =>
+			prevItems.filter(item => item.id !== removedItem.reviewId)
+		)
+	}
+
+	const unsubscribeReplyRemoved = onChildRemoved(repliesRef, onReplyRemoved)
+
+	return () => {
+		unsubscribeReplyRemoved()
+	}
+}
+
 export const setNewReviewReaction = async (
 	userId: string,
 	itemId: string,

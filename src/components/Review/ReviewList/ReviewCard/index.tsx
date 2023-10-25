@@ -48,6 +48,7 @@ const ReviewCard: FC<PropsType> = ({
 		photoURL: '',
 		displayName: '',
 	})
+	// const [isLastReplyRemoved, setIsLastReplyRemoved] = useState<boolean>(false)
 	const [moviePoster, setMoviePoster] = useState<string>('')
 	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
@@ -59,6 +60,8 @@ const ReviewCard: FC<PropsType> = ({
 	const [contentHeight, setContentHeight] = useState<number>(0)
 	const contentRef = useRef<HTMLDivElement | null>(null)
 	const isLongReviewContent = useMemo(() => content.length > 400, [content])
+	// const isCollectionReviewWithoutReplies =
+	// 	isLinkToMovie && isLastReplyRemoved && !authorId
 	const formattedDate = useMemo(
 		() => moment(created_at).format('MMM Do YY'),
 		[created_at]
@@ -178,6 +181,7 @@ const ReviewCard: FC<PropsType> = ({
 								reviewId={id}
 								replies={replies}
 								onReply={handleReplyTo}
+								// onLastReplyRemoved={setIsLastReplyRemoved}
 							/>
 							{isShowReplyForm && (
 								<NewReviewForm
@@ -250,6 +254,10 @@ const ReviewCard: FC<PropsType> = ({
 			setIsMounted(true)
 		}
 	}, [isItemFromDB, authorId])
+
+	// if (isCollectionReviewWithoutReplies) {
+	// 	return null
+	// }
 
 	return (
 		<CSSTransition

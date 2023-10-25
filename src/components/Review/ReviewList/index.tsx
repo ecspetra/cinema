@@ -2,7 +2,11 @@ import React, { FC, useEffect, useState } from 'react'
 import { IReviewCard, IReviewCardFromDB } from '../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import { reviewsListener } from '@/firebase/config'
+import {
+	collectionRepliesListener,
+	repliesListener,
+	reviewsListener,
+} from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
 import EmptyList from '@/components/List/EmptyList'
@@ -43,20 +47,29 @@ const ReviewList: FC<PropsType> = ({
 	}
 
 	const defineReviewSrc = () => {
-		reviews.map(item => {
+		const itemsFromDB = []
+		const defaultItems = []
+
+		reviews.forEach(item => {
 			if (item.authorId) {
-				setItemsFromDB(prevState => [...prevState, item])
+				itemsFromDB.push(item)
 			} else {
-				setDefaultItems(prevState => [...prevState, item])
+				defaultItems.push(item)
 			}
 		})
+
+		setItemsFromDB(itemsFromDB)
+		setDefaultItems(defaultItems)
 	}
 
 	useEffect(() => {
-		if (userId) {
-			setItemsToShow([...itemsFromDB, ...defaultItems])
-		}
-	}, [itemsFromDB, defaultItems, userId])
+		defineReviewSrc()
+	}, [reviews])
+
+	useEffect(() => {
+		const newItemsToShow = [...itemsFromDB, ...defaultItems]
+		setItemsToShow(newItemsToShow)
+	}, [itemsFromDB, defaultItems])
 
 	useEffect(() => {
 		if (userId) {
@@ -74,8 +87,15 @@ const ReviewList: FC<PropsType> = ({
 	}, [itemsFromDB, userId])
 
 	useEffect(() => {
-		if (userId) {
-			defineReviewSrc()
+		if (isCollectionList) {
+			const unsubscribe = collectionRepliesListener(
+				userId,
+				setItemsToShow
+			)
+
+			return () => {
+				unsubscribe()
+			}
 		}
 	}, [userId])
 
@@ -92,32 +112,28 @@ const ReviewList: FC<PropsType> = ({
 		)
 	}
 
-	const renderReviews = () => (
-		<div>
-			{itemsToShow.slice(0, maxReviewsLength).map(item => (
-				<ReviewCard
-					key={item.id}
-					review={item}
-					defaultCardMovieId={movieId}
-					isLinkToMovie={isCollectionList}
-				/>
-			))}
-			{isShowMoreButton && (
-				<Button
-					className='mx-auto'
-					context='empty'
-					onClick={handleItemsToShowLength}
-				>
-					{buttonText}
-				</Button>
-			)}
-		</div>
-	)
-
 	return (
 		<div className='mb-16'>
 			{isShowTitle && <Title>Reviews</Title>}
-			{renderReviews()}
+			<div>
+				{itemsToShow.slice(0, maxReviewsLength).map(item => (
+					<ReviewCard
+						key={item.id}
+						review={item}
+						defaultCardMovieId={movieId}
+						isLinkToMovie={isCollectionList}
+					/>
+				))}
+				{isShowMoreButton && (
+					<Button
+						className='mx-auto'
+						context='empty'
+						onClick={handleItemsToShowLength}
+					>
+						{buttonText}
+					</Button>
+				)}
+			</div>
 		</div>
 	)
 }
