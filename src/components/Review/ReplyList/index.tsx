@@ -11,7 +11,6 @@ type PropsType = {
 	reviewId: string
 	replies: Array<IReplyCard>
 	onReply: (userName: string) => void
-	// onLastReplyRemoved: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ReplyList: FC<PropsType> = ({
@@ -20,13 +19,11 @@ const ReplyList: FC<PropsType> = ({
 	reviewId,
 	replies,
 	onReply,
-	// onLastReplyRemoved,
 }) => {
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
 	const [itemsToShow, setItemsToShow] = useState<Array<IReplyCard>>([])
-	// const [isFirstRender, setIsFirstRender] = useState<boolean>(true)
 	const isMoreDataAvailable = maxReviewsLength < itemsToShow.length
 	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
@@ -44,18 +41,6 @@ const ReplyList: FC<PropsType> = ({
 	useEffect(() => {
 		setItemsToShow(replies)
 	}, [replies])
-
-	// useEffect(() => {
-	// 	if (itemsToShow.length > 0 && isFirstRender) {
-	// 		setIsFirstRender(false)
-	// 	}
-	// }, [itemsToShow])
-
-	// useEffect(() => {
-	// 	if (!itemsToShow.length && !isFirstRender) {
-	// 		onLastReplyRemoved(true)
-	// 	}
-	// }, [itemsToShow])
 
 	useEffect(() => {
 		if (userId) {

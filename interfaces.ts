@@ -11,6 +11,11 @@ export interface IPersonImage {
 	file_path: string
 }
 
+export interface IMark {
+	mark: number
+	movieId: number
+}
+
 export interface IReviewCard {
 	author: string
 	id: string

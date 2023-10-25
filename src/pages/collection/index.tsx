@@ -21,7 +21,8 @@ import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionRev
 const Collection = ({ results }) => {
 	const [movies, setMovies] = useState(null)
 	const [persons, setPersons] = useState(null)
-	const [reviews, setReviews] = useState(null)
+	const [reviews, setReviews] = useState([])
+	const [marks, setMarks] = useState([])
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { currentUser } = useAuth()
@@ -31,6 +32,7 @@ const Collection = ({ results }) => {
 		setMovies(results.collectionMovies)
 		setPersons(results.collectionPersons)
 		setReviews(results.allCollectionReviews)
+		setMarks(results.collectionMarks)
 	}, [results])
 
 	useEffect(() => {
@@ -54,7 +56,8 @@ const Collection = ({ results }) => {
 			if (!userId) {
 				setMovies(null)
 				setPersons(null)
-				setReviews(null)
+				setReviews([])
+				setMarks([])
 			}
 
 			try {
@@ -73,13 +76,19 @@ const Collection = ({ results }) => {
 				const collectionReviews = await getCollectionItemsList(
 					userIdFromUrl,
 					'reviews',
-					10,
+					null,
 					null
 				)
 				const collectionReplies = await getCollectionItemsList(
 					userIdFromUrl,
 					'replies',
-					10,
+					null,
+					null
+				)
+				const collectionMarks = await getCollectionItemsList(
+					userIdFromUrl,
+					'movieMarks',
+					null,
 					null
 				)
 
@@ -94,17 +103,19 @@ const Collection = ({ results }) => {
 				setMovies(collectionMovies)
 				setPersons(collectionPersons)
 				setReviews(allCollectionReviews)
+				setMarks(collectionMarks)
 			} catch (error) {
 				setMovies(null)
 				setPersons(null)
-				setReviews(null)
+				setReviews([])
+				setMarks([])
 			}
 		}
 
 		if (!results) getCollection()
 	}, [])
 
-	if (!movies && !persons && !reviews) {
+	if (!userId) {
 		return (
 			<>
 				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
@@ -136,19 +147,29 @@ const Collection = ({ results }) => {
 				<CollectionWrap
 					title='Movies'
 					type='movies'
-					items={movies.items}
-					isMoreDataAvailable={movies.isMoreDataAvailable}
+					items={movies ? movies.items : []}
+					isMoreDataAvailable={
+						movies ? movies.isMoreDataAvailable : false
+					}
 				/>
 				<CollectionWrap
 					title='Persons'
 					type='persons'
-					items={persons.items}
-					isMoreDataAvailable={persons.isMoreDataAvailable}
+					items={persons ? persons.items : []}
+					isMoreDataAvailable={
+						persons ? persons.isMoreDataAvailable : false
+					}
+				/>
+				<CollectionWrap
+					title='Marks'
+					type='marks'
+					items={marks ? marks : []}
+					isMoreDataAvailable={false}
 				/>
 				<CollectionWrap
 					title='Reviews'
 					type='reviews'
-					items={reviews}
+					items={reviews ? reviews : []}
 					isMoreDataAvailable={false}
 				/>
 			</div>
@@ -207,13 +228,19 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		const collectionReviews = await getCollectionItemsList(
 			userIdFromUrl,
 			'reviews',
-			10,
+			null,
 			null
 		)
 		const collectionReplies = await getCollectionItemsList(
 			userIdFromUrl,
 			'replies',
-			10,
+			null,
+			null
+		)
+		const collectionMarks = await getCollectionItemsList(
+			userIdFromUrl,
+			'movieMarks',
+			null,
 			null
 		)
 
@@ -231,6 +258,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 					collectionMovies,
 					collectionPersons,
 					allCollectionReviews,
+					collectionMarks: collectionMarks.items,
 				},
 			},
 		}

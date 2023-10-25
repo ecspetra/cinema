@@ -23,10 +23,9 @@ import Dropdown from '@/app/components/UI/Dropdown'
 import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
-import { getMoviePoster } from '@/handlers/getMoviePoster'
-import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import { useAuth } from '@/context/AuthProvider'
 import Link from 'next/link'
+import MovieCardSmall from '@/components/Movie/MovieCard/MovieCardSmall'
 
 type PropsType = {
 	defaultCardMovieId: number
@@ -48,8 +47,6 @@ const ReviewCard: FC<PropsType> = ({
 		photoURL: '',
 		displayName: '',
 	})
-	// const [isLastReplyRemoved, setIsLastReplyRemoved] = useState<boolean>(false)
-	const [moviePoster, setMoviePoster] = useState<string>('')
 	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
 	const [isShowReplyForm, setIsShowReplyForm] = useState<boolean>(false)
@@ -60,8 +57,6 @@ const ReviewCard: FC<PropsType> = ({
 	const [contentHeight, setContentHeight] = useState<number>(0)
 	const contentRef = useRef<HTMLDivElement | null>(null)
 	const isLongReviewContent = useMemo(() => content.length > 400, [content])
-	// const isCollectionReviewWithoutReplies =
-	// 	isLinkToMovie && isLastReplyRemoved && !authorId
 	const formattedDate = useMemo(
 		() => moment(created_at).format('MMM Do YY'),
 		[created_at]
@@ -90,7 +85,7 @@ const ReviewCard: FC<PropsType> = ({
 	}
 
 	const reviewContent = (
-		<div className='mb-4 p-4 bg-gray-900 relative flex duration-300 group-hover:bg-gray-800'>
+		<div className='mb-4 p-4 gap-4 bg-gray-900 relative flex duration-300 group-hover:bg-gray-800'>
 			{isCurrentUserItem && (
 				<Dropdown>
 					<DropdownItem
@@ -105,13 +100,7 @@ const ReviewCard: FC<PropsType> = ({
 					/>
 				</Dropdown>
 			)}
-			{isLinkToMovie && (
-				<Image
-					className='!w-24 max-h-36 mr-4 flex-none'
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${moviePoster}`}
-					defaultImage={defaultMovieImage}
-				/>
-			)}
+			{isLinkToMovie && <MovieCardSmall movieId={movieId} />}
 			<div className='w-full'>
 				<div className='flex mb-2 max-w-[calc(100%-54px)]'>
 					<div className='flex items-center'>
@@ -181,7 +170,6 @@ const ReviewCard: FC<PropsType> = ({
 								reviewId={id}
 								replies={replies}
 								onReply={handleReplyTo}
-								// onLastReplyRemoved={setIsLastReplyRemoved}
 							/>
 							{isShowReplyForm && (
 								<NewReviewForm
@@ -216,12 +204,6 @@ const ReviewCard: FC<PropsType> = ({
 		getDBRepliesList(movieId, id).then(data => {
 			setReplies(data)
 		})
-
-		if (isLinkToMovie) {
-			getMoviePoster(movieId).then(data => {
-				setMoviePoster(data)
-			})
-		}
 	}, [])
 
 	useEffect(() => {
@@ -254,10 +236,6 @@ const ReviewCard: FC<PropsType> = ({
 			setIsMounted(true)
 		}
 	}, [isItemFromDB, authorId])
-
-	// if (isCollectionReviewWithoutReplies) {
-	// 	return null
-	// }
 
 	return (
 		<CSSTransition

@@ -12,12 +12,12 @@ import {
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
 import Loader from '@/components/Loader'
+import { IMark } from '../../../interfaces'
 
 type MyMarkType = {
 	key: string
 	data: {
-		mark: number
-		movieId: number
+		mark: IMark
 		userId: string
 	}
 }
