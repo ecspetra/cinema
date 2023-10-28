@@ -14,8 +14,7 @@ import TopBanner from '@/components/TopBanner'
 const CollectionMovies = ({ results }) => {
 	const [movies, setMovies] = useState(null)
 	const router = useRouter()
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 
 	useEffect(() => {
 		const getCollection = async () => {

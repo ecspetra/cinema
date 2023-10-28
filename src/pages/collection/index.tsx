@@ -25,8 +25,7 @@ const Collection = ({ results }) => {
 	const [marks, setMarks] = useState([])
 	const { showModal } = useModal()
 	const router = useRouter()
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 
 	useEffect(() => {
 		setMovies(results.collectionMovies)
@@ -125,7 +124,7 @@ const Collection = ({ results }) => {
 						displayed here
 						<FontAwesomeIcon
 							icon={faFilm}
-							className='ml-4 text-red-600'
+							className='ml-4 text-amber-600'
 						/>
 					</Title>
 					<p className='mb-8'>

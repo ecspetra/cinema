@@ -50,7 +50,9 @@ const auth = getAuth(app)
 export { auth }
 
 export interface AuthContextType {
-	currentUser: User | null
+	isLoggedIn: boolean
+	userId: string
+	photoURL: string
 }
 
 export const USER_COLLECTIONS = [

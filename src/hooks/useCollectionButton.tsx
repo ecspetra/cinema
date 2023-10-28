@@ -16,10 +16,8 @@ export const useCollectionButton = (
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId, isLoggedIn } = useAuth()
 	const { showModal } = useModal()
-	const isLoggedIn = currentUser !== null
 
 	const handleSetCollectionItem = (item: IMovieCard | IPersonCard) => {
 		if (isLoggedIn) {

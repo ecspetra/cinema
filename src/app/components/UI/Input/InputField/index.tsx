@@ -43,7 +43,7 @@ const InputField: FC<PropsType> = ({
 				className={classNames(
 					'w-full bg-transparent pt-2 px-4 pb-4 border border-gray-800 hover:border-white focus-within:border-white duration-300 block',
 					className,
-					error && '!border-red-600'
+					error && '!border-amber-600'
 				)}
 			>
 				<span className='text-xs text-gray-500 font-semibold'>

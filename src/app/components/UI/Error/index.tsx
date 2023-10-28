@@ -13,7 +13,7 @@ const Error: FC<PropsType> = ({ error, className }) => {
 	return (
 		<span
 			className={classNames(
-				'text-sm text-red-600 font-semibold',
+				'text-sm text-amber-600 font-semibold',
 				className
 			)}
 		>

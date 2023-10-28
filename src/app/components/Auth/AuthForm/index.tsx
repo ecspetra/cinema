@@ -16,7 +16,7 @@ const AuthForm = () => {
 					{isShowSignUp ? 'Sign up' : 'Login'}
 				</Title>
 				<FontAwesomeIcon
-					className='text-2xl text-red-600'
+					className='text-2xl text-amber-600'
 					icon={isShowSignUp ? faUserPlus : faDoorOpen}
 				/>
 			</div>

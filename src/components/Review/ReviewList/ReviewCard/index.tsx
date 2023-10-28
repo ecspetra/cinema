@@ -38,8 +38,7 @@ const ReviewCard: FC<PropsType> = ({
 	review,
 	isLinkToMovie = false,
 }) => {
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 	const { content, id, author, created_at, avatar_path, authorId, movieId } =
 		review
 	const [replies, setReplies] = useState<Array<IReplyCard>>([])

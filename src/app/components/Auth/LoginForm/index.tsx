@@ -178,7 +178,7 @@ const LoginForm = () => {
 					/>
 					{formData.formError.error && (
 						<Error
-							className='px-4 py-2 bg-red-600/20 w-full rounded-md'
+							className='px-4 py-2 bg-amber-600/20 w-full rounded-md'
 							error={formData.formError.error}
 						/>
 					)}

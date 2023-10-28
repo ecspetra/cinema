@@ -33,8 +33,7 @@ const CollectionWrap: FC<PropsType> = ({
 	items,
 	isMoreDataAvailable,
 }) => {
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 	const maxListLength = 4
 
 	if (!items.length) {

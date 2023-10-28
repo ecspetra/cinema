@@ -31,8 +31,7 @@ type PropsType = {
 }
 
 const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 	const {
 		isLoadingCollection,
 		isCollectionItem,

@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from 'react'
 import defaultMovieImage from '../../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
 import Image from '../../../Images/Image/index'
-import { useAuth } from '@/context/AuthProvider'
 import { getMoviePoster } from '@/handlers/getMoviePoster'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -30,7 +29,7 @@ const MovieCardSmall: FC<PropsType> = ({
 	const movieCard = (
 		<>
 			<Image
-				className='duration-300 mb-4 group-hover:shadow-red-700/30 group-hover:shadow-2xl'
+				className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
 				src={`https://image.tmdb.org/t/p/w440_and_h660_face${moviePoster}`}
 				defaultImage={defaultMovieImage}
 			/>

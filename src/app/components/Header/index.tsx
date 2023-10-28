@@ -10,16 +10,15 @@ import { useRouter } from 'next/router'
 import { COLLECTION_PAGE } from '@/constants/paths'
 
 const Header = () => {
-	const { currentUser } = useAuth()
+	const { userId, photoURL, isLoggedIn } = useAuth()
 	const router = useRouter()
 	const pathname = usePathname()
-	const userId = currentUser?.uid
-	const collectionMoviesLink = currentUser?.uid
+	const collectionMoviesLink = userId
 		? `/collection?uid=${userId}`
 		: `/collection`
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
-	const isShowUserMenu = !isAuthPage && currentUser
-	const isShowAuthButton = !isAuthPage && !currentUser
+	const isShowUserMenu = !isAuthPage && isLoggedIn
+	const isShowAuthButton = !isAuthPage && !isLoggedIn
 
 	const handleSignOutUser = async () => {
 		await signOutUser()
@@ -44,7 +43,7 @@ const Header = () => {
 					<div className='flex justify-center items-center gap-4'>
 						<Image
 							className='!w-11 h-11 rounded-full'
-							src={currentUser.photoURL}
+							src={photoURL}
 							defaultImage={defaultUserImage}
 						/>
 						<Button context='text' onClick={handleSignOutUser}>

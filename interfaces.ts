@@ -11,6 +11,14 @@ export interface IPersonImage {
 	file_path: string
 }
 
+export interface IMarkFromDB {
+	key: string
+	data: {
+		movieMark: IMark
+		userId: string
+	}
+}
+
 export interface IMark {
 	mark: number
 	movieId: number

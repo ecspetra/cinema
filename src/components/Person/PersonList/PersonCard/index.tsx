@@ -2,7 +2,6 @@ import { IPersonCard } from '../../../../../interfaces'
 import React, { FC } from 'react'
 import defaultPersonImage from '../../../../app/assets/images/default-person-image.svg'
 import Image from '../../../Images/Image'
-import Button from '../../../../app/components/UI/Button'
 import Link from 'next/link'
 import Title from '../../../../app/components/UI/Title/Title'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
@@ -20,8 +19,7 @@ const PersonCard: FC<PropsType> = ({
 	isShowButton = true,
 	isShowRole = false,
 }) => {
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 	const {
 		isLoadingCollection,
 		isCollectionItem,
@@ -39,7 +37,7 @@ const PersonCard: FC<PropsType> = ({
 				className='group text-sm'
 			>
 				<Image
-					className='duration-300 mb-4 group-hover:shadow-red-700/30 group-hover:shadow-2xl'
+					className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${profile_path}`}
 					defaultImage={defaultPersonImage}
 				/>
