@@ -11,7 +11,7 @@ const Title: FC<PropsType> = ({ variant = 'h1', children, className }) => {
 	return variant === 'h1' ? (
 		<h1
 			className={classNames(
-				'relative text-4xl font-bold leading-tight mb-4 after:w-16 after:absolute after:bottom-0 after:left-0 after:h-1 after:bg-red-600 pb-4',
+				'relative text-4xl font-bold leading-tight mb-4 after:w-16 after:absolute after:bottom-0 after:left-0 after:h-1 after:bg-amber-600 pb-4',
 				className
 			)}
 		>

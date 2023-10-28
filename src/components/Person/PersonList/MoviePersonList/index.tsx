@@ -4,6 +4,7 @@ import PersonCard from '../PersonCard'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
+import useScrollToTop from '@/hooks/useScrollToTop'
 
 type PropsType = {
 	personsFromProps: Array<IPersonCard>
@@ -12,18 +13,23 @@ type PropsType = {
 
 const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 	const [itemsToShow, setItemsToShow] = useState([])
+	const { ref, scrollToTop } = useScrollToTop(100)
 	const initialItemsLength = 8
-	const isMoreDataAvailable = itemsToShow.length > initialItemsLength
+	const isAllDataVisible = itemsToShow.length > initialItemsLength
 	const isShowMoreButton = personsFromProps.length > initialItemsLength
-	const buttonText = isMoreDataAvailable ? 'Show less' : 'Show all'
+	const buttonText = isAllDataVisible ? 'Show less' : 'Show all'
 
 	const getPersons = () => {
-		if (isMoreDataAvailable) {
-			setItemsToShow([])
-			personsFromProps.map((item, idx) => {
-				if (idx < initialItemsLength)
-					setItemsToShow(prevState => [...prevState, item])
-			})
+		if (isAllDataVisible) {
+			scrollToTop()
+
+			setTimeout(() => {
+				setItemsToShow([])
+				personsFromProps.map((item, idx) => {
+					if (idx < initialItemsLength)
+						setItemsToShow(prevState => [...prevState, item])
+				})
+			}, 600)
 		} else {
 			personsFromProps.map((item, idx) => {
 				if (idx >= initialItemsLength)
@@ -45,7 +51,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 	}
 
 	return (
-		<div className='mb-16'>
+		<div ref={ref} className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'>
 				{itemsToShow.map((item: IPersonCard, idx) => {

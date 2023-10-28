@@ -27,10 +27,12 @@ const Textarea: FC<PropsType> = ({
 			<textarea
 				value={value}
 				onChange={handleChange}
+				onClick={event => event.preventDefault()}
 				rows={6}
 				className={classNames(
-					'w-full bg-transparent p-4 border border-slate-800 hover:border-white duration-300 resize-none outline-none block',
-					className
+					'w-full bg-transparent p-4 border border-gray-500 hover:border-white duration-300 resize-none outline-none block',
+					className,
+					error && '!border-amber-600'
 				)}
 				placeholder={placeholder}
 			/>

@@ -21,7 +21,7 @@ const Loader: FC<PropsType> = ({
 			className={classNames(
 				'w-full h-full flex justify-center items-center',
 				type === 'absolute' &&
-					'absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900',
+					'absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900',
 				className
 			)}
 		>

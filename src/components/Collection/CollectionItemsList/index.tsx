@@ -30,8 +30,7 @@ const CollectionItemsList: FC<PropsType> = ({
 	>([...items])
 	const [isShowMoreButton, setIsShowMoreButton] =
 		useState<boolean>(isMoreDataAvailable)
-	const { currentUser } = useAuth()
-	const userId = currentUser?.uid
+	const { userId } = useAuth()
 
 	const getMoreCollectionItems = async () => {
 		setIsLoading(true)

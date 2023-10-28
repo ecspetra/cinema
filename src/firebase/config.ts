@@ -50,10 +50,18 @@ const auth = getAuth(app)
 export { auth }
 
 export interface AuthContextType {
-	currentUser: User | null
+	isLoggedIn: boolean
+	userId: string
+	photoURL: string
 }
 
-export const USER_COLLECTIONS = ['movies', 'persons', 'reviews', 'replies']
+export const USER_COLLECTIONS = [
+	'movies',
+	'persons',
+	'reviews',
+	'replies',
+	'marks',
+]
 
 // auth handlers
 
@@ -233,7 +241,7 @@ export const removeCollectionItem = (
 export const getCollectionItemsList = async (
 	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number],
-	itemsPerPage: number,
+	itemsPerPage: number | null,
 	lastItemId: string | null
 ) => {
 	const collectionPath = `users/${userId}/${collectionName}/`
@@ -241,18 +249,30 @@ export const getCollectionItemsList = async (
 	let paginationQuery
 
 	if (lastItemId) {
-		paginationQuery = query(
-			userCollectionRef,
-			orderByKey(),
-			startAfter(lastItemId),
-			limitToFirst(itemsPerPage + 1)
-		)
+		if (itemsPerPage !== null) {
+			paginationQuery = query(
+				userCollectionRef,
+				orderByKey(),
+				startAfter(lastItemId),
+				limitToFirst(itemsPerPage + 1)
+			)
+		} else {
+			paginationQuery = query(
+				userCollectionRef,
+				orderByKey(),
+				startAfter(lastItemId)
+			)
+		}
 	} else {
-		paginationQuery = query(
-			userCollectionRef,
-			orderByKey(),
-			limitToFirst(itemsPerPage + 1)
-		)
+		if (itemsPerPage !== null) {
+			paginationQuery = query(
+				userCollectionRef,
+				orderByKey(),
+				limitToFirst(itemsPerPage + 1)
+			)
+		} else {
+			paginationQuery = query(userCollectionRef, orderByKey())
+		}
 	}
 
 	const snapshot = await get(paginationQuery)
@@ -260,7 +280,7 @@ export const getCollectionItemsList = async (
 	const itemIds = Object.keys(data)
 	let isMoreDataAvailable = false
 
-	if (itemIds.length > itemsPerPage) {
+	if (itemsPerPage !== null && itemIds.length > itemsPerPage) {
 		isMoreDataAvailable = true
 		itemIds.pop()
 	}
@@ -271,6 +291,7 @@ export const getCollectionItemsList = async (
 			return itemSnapshot.val()
 		})
 	)
+	console.log(snapshot)
 
 	return { isMoreDataAvailable, items }
 }
@@ -567,6 +588,27 @@ export const repliesListener = (
 		unsubscribeReplyAdded()
 		unsubscribeReplyRemoved()
 		unsubscribeReplyChanged()
+	}
+}
+
+export const collectionRepliesListener = (
+	userId: string,
+	setItems: ([]) => void
+) => {
+	const repliesRef = ref(database, `users/${userId}/replies/`)
+
+	const onReplyRemoved = (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+
+		setItems(prevItems =>
+			prevItems.filter(item => item.id !== removedItem.reviewId)
+		)
+	}
+
+	const unsubscribeReplyRemoved = onChildRemoved(repliesRef, onReplyRemoved)
+
+	return () => {
+		unsubscribeReplyRemoved()
 	}
 }
 

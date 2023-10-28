@@ -16,6 +16,9 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
+	const isLoggedIn = currentUser !== null
+	const userId = currentUser?.uid
+	const photoURL = currentUser?.photoURL
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async user => {
@@ -33,7 +36,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [])
 
 	const value: AuthContextType = {
-		currentUser,
+		isLoggedIn,
+		userId,
+		photoURL,
 	}
 
 	return (

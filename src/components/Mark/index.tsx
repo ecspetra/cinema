@@ -12,15 +12,7 @@ import {
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
 import Loader from '@/components/Loader'
-
-type MyMarkType = {
-	key: string
-	data: {
-		mark: number
-		movieId: number
-		userId: string
-	}
-}
+import { IMarkFromDB } from '../../../interfaces'
 
 type PropsType = {
 	movieId: number
@@ -29,23 +21,22 @@ type PropsType = {
 const Mark: FC<PropsType> = ({ movieId }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
-	const [mark, setMark] = useState<MyMarkType | undefined>(undefined)
-	const { currentUser } = useAuth()
+	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
+	const { userId, isLoggedIn } = useAuth()
 	const { showModal } = useModal()
-	const isLoggedIn = currentUser !== null
-	const isShowRemoveMarkButton = mark && currentUser !== null
+	const isShowRemoveMarkButton = markData && userId
 	const MAX_MARK = 10
-	const EMPTY_MARK_COLOR = 'text-red-900'
+	const EMPTY_MARK_COLOR = 'text-amber-900'
 	const FILLED_MARK_COLOR = 'text-amber-400'
 
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
 			setIsLoadingMark(true)
-			setNewMarkForMovie(movieId, currentUser.uid, mark)
+			setNewMarkForMovie(movieId, userId, mark)
 				.then(() => {
-					getMarkForMovie(movieId, currentUser?.uid)
+					getMarkForMovie(movieId, userId)
 						.then(data => {
-							setMark(data)
+							setMarkData(data)
 							setIsLoadingMark(false)
 						})
 						.catch(() => {
@@ -100,7 +91,9 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 				...prevState,
 				createStarIcon(
 					i,
-					i <= mark.data.mark ? FILLED_MARK_COLOR : EMPTY_MARK_COLOR
+					i <= markData.data.mark
+						? FILLED_MARK_COLOR
+						: EMPTY_MARK_COLOR
 				),
 			])
 		}
@@ -119,7 +112,7 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 		setIsLoadingMark(true)
 		removeMarkForMovie(markKey, userId)
 			.then(() => {
-				setMark(undefined)
+				setMarkData(null)
 				getEmptyMarkIcons()
 				setIsLoadingMark(false)
 			})
@@ -130,17 +123,17 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(movieId, currentUser?.uid).then(data => {
-				setMark(data)
+			getMarkForMovie(movieId, userId).then(data => {
+				setMarkData(data)
 			})
 		} else getEmptyMarkIcons()
-	}, [currentUser])
+	}, [userId])
 
 	useEffect(() => {
-		if (mark) {
+		if (markData) {
 			getMarkIcons()
 		} else getEmptyMarkIcons()
-	}, [mark])
+	}, [markData])
 
 	return (
 		<div className='mb-4 relative'>
@@ -158,13 +151,13 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 						{isShowRemoveMarkButton && (
 							<>
 								<p className='text-sm font-semibold leading-none mr-2'>
-									{mark.data.mark}
+									{markData.data.mark}
 								</p>
 								<Button
 									onClick={() =>
 										handleRemoveMyMark(
-											mark?.key,
-											currentUser?.uid
+											markData?.key,
+											userId
 										)
 									}
 									context='text'
@@ -174,8 +167,8 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 							</>
 						)}
 					</div>
-					{currentUser === null && (
-						<p className='text-slate-400 text-sm leading-none mt-2'>
+					{!userId && (
+						<p className='text-gray-400 text-sm leading-none mt-2'>
 							Please login or register to be able to rate the
 							movie
 						</p>

@@ -22,7 +22,7 @@ type PropsType = {
 }
 
 const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
-	const { currentUser } = useAuth()
+	const { userId } = useAuth()
 	const {
 		isLoadingCollection,
 		isCollectionItem,
@@ -54,7 +54,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 			</div>
 			<div className='w-full'>
 				<Title className='text-7xl after:hidden pb-0'>{name}</Title>
-				<Title variant='h2' className='text-slate-400'>
+				<Title variant='h2' className='text-gray-400'>
 					{known_for_department}
 				</Title>
 				<div className='mb-5'>
@@ -92,11 +92,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () =>
-									handleRemoveCollectionItem(
-										id,
-										currentUser?.uid
-									)
+							? () => handleRemoveCollectionItem(id, userId)
 							: () => handleSetCollectionItem(personInfo)
 					}
 				/>

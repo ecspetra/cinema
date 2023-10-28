@@ -41,12 +41,12 @@ const InputField: FC<PropsType> = ({
 			<label
 				htmlFor={id}
 				className={classNames(
-					'w-full bg-transparent pt-2 px-4 pb-4 border border-slate-800 hover:border-white focus-within:border-white duration-300 block',
+					'w-full bg-transparent pt-2 px-4 pb-4 border border-gray-800 hover:border-white focus-within:border-white duration-300 block',
 					className,
-					error && '!border-red-600'
+					error && '!border-amber-600'
 				)}
 			>
-				<span className='text-xs text-slate-500 font-semibold'>
+				<span className='text-xs text-gray-500 font-semibold'>
 					{`${label}${required && ' *'}`}
 				</span>
 				<span className='flex justify-between items-center'>

@@ -90,14 +90,14 @@ const NewReviewForm: FC<PropsType> = ({
 			) : (
 				<Title>Leave your review</Title>
 			)}
-			<form onSubmit={handleSubmit}>
+			<form>
 				<Textarea
 					onChange={handleTextareaChange}
 					value={textareaValue}
 					error={error}
 				/>
 				<div className='mt-8 flex justify-start items-center'>
-					<Button type='submit'>{buttonText}</Button>
+					<Button onClick={handleSubmit}>{buttonText}</Button>
 					{isReply && (
 						<Button
 							context='filledDark'

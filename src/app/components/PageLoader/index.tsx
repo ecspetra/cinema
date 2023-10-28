@@ -27,9 +27,9 @@ const PageLoader = ({ children }) => {
 	return (
 		<div className='relative'>
 			{isLoading && (
-				<div className='absolute w-screen h-screen z-50 flex justify-center items-center'>
+				<div className='fixed w-screen h-screen z-50 flex justify-center items-center'>
 					<Loader
-						className='w-12 h-12 rounded-full text-red-600 bg-white'
+						className='!w-12 !h-12 rounded-full text-amber-600 bg-white'
 						isPageLoader
 					/>
 				</div>

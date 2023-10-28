@@ -39,6 +39,7 @@ const ReviewActions: FC<PropsType> = ({
 		reactions.dislikes.some(item => item.key === userId)
 
 	const handleReaction = async (
+		event,
 		reactionType: 'like' | 'dislike',
 		collectionName: 'reviews' | 'replies'
 	) => {
@@ -101,14 +102,16 @@ const ReviewActions: FC<PropsType> = ({
 			<ReviewActionButton
 				title='Like'
 				action='like'
-				onClick={() => handleReaction('like', collectionName)}
+				onClick={event => handleReaction(event, 'like', collectionName)}
 				counter={reactions.likes.length}
 				isCurrentUserReaction={isCurrentUserLike}
 			/>
 			<ReviewActionButton
 				title='Dislike'
 				action='dislike'
-				onClick={() => handleReaction('dislike', collectionName)}
+				onClick={event =>
+					handleReaction(event, 'dislike', collectionName)
+				}
 				counter={reactions.dislikes.length}
 				isCurrentUserReaction={isCurrentUserDislike}
 			/>

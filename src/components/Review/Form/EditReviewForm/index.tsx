@@ -21,7 +21,6 @@ const EditReviewForm: FC<PropsType> = ({
 }) => {
 	const [textareaValue, setTextareaValue] = useState<string>(item.content)
 	const [error, setError] = useState<string>('')
-	const { showModal } = useModal()
 	const buttonText = isReply ? 'Update reply' : 'Update review'
 
 	const handleTextareaChange = newValue => {
@@ -72,15 +71,14 @@ const EditReviewForm: FC<PropsType> = ({
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form>
 			<Textarea
 				onChange={handleTextareaChange}
 				value={textareaValue}
 				error={error}
-				className='border-slate-600'
 			/>
 			<div className='mt-8 flex justify-start items-center'>
-				<Button type='submit'>{buttonText}</Button>
+				<Button onClick={handleSubmit}>{buttonText}</Button>
 				<Button
 					context='filledDark'
 					className='ml-2'
