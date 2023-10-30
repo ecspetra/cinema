@@ -13,7 +13,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 		if (!items) {
 			getResultsByPage(LINK_TO_FETCH_PERSON_LIST, 1).then(data => {
 				setPersons(data.items)
-				setIsNextResult(!!data.isMoreDataAvailable)
+				setIsNextResult(data.isMoreDataAvailable)
 			})
 		}
 	}, [])

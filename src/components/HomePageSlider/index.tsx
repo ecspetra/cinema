@@ -1,11 +1,12 @@
 import { FC, useEffect, useState } from 'react'
-import { IBackdrop, IMovieCard } from '../../../interfaces'
+import { IMovieCard } from '../../../interfaces'
 import HomePageSliderItemsList from '@/components/HomePageSlider/HomePageSliderItemsList'
 import Image from '@/components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import TopBanner from '@/components/TopBanner'
 import { fetchMovieData } from '@/handlers/fetchMovieData'
 import Title from '@/app/components/UI/Title/Title'
+import ReactPlayer from 'react-player'
 
 type PropsType = {
 	movies: Array<IMovieCard>
@@ -16,10 +17,15 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 		movies.items[0]
 	)
 	const [imageSrc, setImageSrc] = useState<string>('')
+	const [videoSrc, setVideoSrc] = useState<string>('')
 
 	const getSelectedItemImageSrc = async () => {
 		const images = await fetchMovieData(selectedItem.id, '/images')
-		setImageSrc(images.backdrops[0].file_path)
+		const videos = await fetchMovieData(selectedItem.id, '/videos')
+		setImageSrc(
+			images.backdrops.length ? images.backdrops[0].file_path : ''
+		)
+		setVideoSrc(videos.results.length ? videos.results[0].key : '')
 	}
 
 	useEffect(() => {
@@ -33,15 +39,25 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 				className='-mb-72 after:h-full'
 			/>
 			<Title>Upcoming movies</Title>
-			<div className='flex justify-between items-stretch max-h-[500px] gap-4 mb-16'>
-				<Image
-					src={`https://image.tmdb.org/t/p/original${imageSrc}`}
-					defaultImage={defaultMovieImage}
-					className='aspect-[215/121]'
-				/>
+			<div className='flex justify-between items-stretch max-h-[500px] gap-4 mb-16 z-10'>
+				{videoSrc ? (
+					<ReactPlayer
+						url={`https://www.youtube.com/watch?v=${videoSrc}`}
+						controls={true}
+						width={'100%'}
+						style={{ minHeight: `500px` }}
+					/>
+				) : (
+					<Image
+						src={`https://image.tmdb.org/t/p/original${imageSrc}`}
+						defaultImage={defaultMovieImage}
+						className='aspect-[215/121]'
+					/>
+				)}
 				<HomePageSliderItemsList
 					itemsList={movies.items}
 					isMoreDataAvailable={movies.isMoreDataAvailable}
+					selectedItemId={selectedItem.id}
 					onSelectItem={setSelectedItem}
 				/>
 			</div>

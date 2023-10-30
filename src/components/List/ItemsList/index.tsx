@@ -46,7 +46,7 @@ const ItemsList: FC<PropsType> = ({
 		getResultsByPage(linkToFetchItems, currentPage)
 			.then(data => {
 				setFetchedItems(data.items)
-				setIsShowMoreButton(!!data.isMoreDataAvailable)
+				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
 			.then(() => {
 				setIsLoading(false)

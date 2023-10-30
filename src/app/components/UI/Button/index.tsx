@@ -45,7 +45,7 @@ const Button: FC<PropsType> = ({
 	const iconButtonClassNames =
 		'w-11 h-11 flex justify-center items-center bg-gray-700 hover:bg-gray-600 rounded-md z-50'
 	const listItemButtonClassNames =
-		'w-full p-2 flex justify-start items-center hover:bg-amber-900/50 hover:text-amber-400 rounded-md leading-normal'
+		'w-full p-2 flex justify-start items-center hover:bg-amber-500 hover:text-black rounded-md leading-normal'
 
 	const getButtonClassNames = () => {
 		switch (context) {
