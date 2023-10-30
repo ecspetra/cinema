@@ -41,7 +41,7 @@ const ItemsList: FC<PropsType> = ({
 		setFetchedItems([])
 	}
 
-	const getMoreDefaultMovies = async () => {
+	const getMoreItems = async () => {
 		setIsLoading(true)
 		getResultsByPage(linkToFetchItems, currentPage)
 			.then(data => {
@@ -61,7 +61,7 @@ const ItemsList: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		if (currentPage > 1) getMoreDefaultMovies()
+		if (currentPage > 1) getMoreItems()
 	}, [currentPage])
 
 	useEffect(() => {

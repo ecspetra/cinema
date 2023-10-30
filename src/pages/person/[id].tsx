@@ -1,7 +1,6 @@
 import { NextPageContext } from 'next'
 import {
-	LINK_TO_FETCH_CURRENT_PERSON,
-	LINK_TO_FETCH_CURRENT_PERSON_IMAGES,
+	LINK_TO_FETCH_PERSON,
 	LINK_TO_FETCH_MOVIES_WITH_PERSONS,
 } from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
@@ -11,6 +10,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
+import { fetchPersonData } from '@/handlers/fetchPersonData'
 
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(null)
@@ -23,24 +23,12 @@ const Person = ({ personFromProps }) => {
 	useEffect(() => {
 		const fetchPerson = async () => {
 			const getPersonInfo = async () => {
-				const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON.replace(
-					'{personId}',
-					router.query.id
-				)
-				const response = await fetch(linkToFetch)
-				const result = await response.json()
-
+				const result = await fetchPersonData(router.query.id, '')
 				return result
 			}
 
 			const getPersonImages = async () => {
-				const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON_IMAGES.replace(
-					'{personId}',
-					router.query.id
-				)
-				const response = await fetch(linkToFetch)
-				const result = await response.json()
-
+				const result = await fetchPersonData(router.query.id, '/images')
 				return result
 			}
 
@@ -94,24 +82,12 @@ const Person = ({ personFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const getPersonInfo = async () => {
-		const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON.replace(
-			'{personId}',
-			ctx.query.id
-		)
-		const response = await fetch(linkToFetch)
-		const result = await response.json()
-
+		const result = await fetchPersonData(ctx.query.id, '')
 		return result
 	}
 
 	const getPersonImages = async () => {
-		const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON_IMAGES.replace(
-			'{personId}',
-			ctx.query.id
-		)
-		const response = await fetch(linkToFetch)
-		const result = await response.json()
-
+		const result = await fetchPersonData(ctx.query.id, '/images')
 		return result
 	}
 

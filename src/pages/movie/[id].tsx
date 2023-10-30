@@ -12,6 +12,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
 import { getDBReviewsList } from '@/firebase/config'
+import { fetchMovieData } from '@/handlers/fetchMovieData'
 
 const Movie = ({ movieFromProps }) => {
 	const router = useRouter()
@@ -32,12 +33,6 @@ const Movie = ({ movieFromProps }) => {
 			)
 
 			try {
-				const fetchMovieData = async queryParam => {
-					const linkToFetch = `https://api.themoviedb.org/3/movie/${router.query.id}${queryParam}?api_key=${API_KEY}`
-					const response = await fetch(linkToFetch)
-					return response.json()
-				}
-
 				const getMovieReviews = async () => {
 					const collectionReviews = await getDBReviewsList(
 						router.query.id,
@@ -56,11 +51,11 @@ const Movie = ({ movieFromProps }) => {
 					reviewsFromDB,
 					similarMoviesResult,
 				] = await Promise.all([
-					fetchMovieData(''),
-					fetchMovieData('/credits'),
-					fetchMovieData('/images'),
-					fetchMovieData('/reviews'),
-					fetchMovieData('/videos'),
+					fetchMovieData(router.query.id, ''),
+					fetchMovieData(router.query.id, '/credits'),
+					fetchMovieData(router.query.id, '/images'),
+					fetchMovieData(router.query.id, '/reviews'),
+					fetchMovieData(router.query.id, '/videos'),
 					getMovieReviews(),
 					getResultsByPage(linkToFetchSimilarMovies, 1),
 				])
@@ -139,11 +134,6 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
 		const linkToFetchSimilarMovies =
 			LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace('{movieId}', ctx.query.id)
-		const fetchMovieData = async (queryParam: string) => {
-			const linkToFetch = `https://api.themoviedb.org/3/movie/${ctx.query.id}${queryParam}?api_key=${API_KEY}`
-			const response = await fetch(linkToFetch)
-			return response.json()
-		}
 
 		const getMovieReviews = async () => {
 			const collectionReviews = await getDBReviewsList(
@@ -162,11 +152,11 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			reviewsFromDB,
 			similarMoviesResult,
 		] = await Promise.all([
-			fetchMovieData(''),
-			fetchMovieData('/credits'),
-			fetchMovieData('/images'),
-			fetchMovieData('/reviews'),
-			fetchMovieData('/videos'),
+			fetchMovieData(ctx.query.id, ''),
+			fetchMovieData(ctx.query.id, '/credits'),
+			fetchMovieData(ctx.query.id, '/images'),
+			fetchMovieData(ctx.query.id, '/reviews'),
+			fetchMovieData(ctx.query.id, '/videos'),
 			getMovieReviews(),
 			getResultsByPage(linkToFetchSimilarMovies, 1),
 		])

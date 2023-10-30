@@ -1,12 +1,14 @@
 import React, { FC, useState, useEffect } from 'react'
 import defaultMovieBg from '@/app/assets/images/default-movie-bg.jpg'
 import Image from '@/components/Images/Image'
+import classNames from 'classnames'
 
 type PropsType = {
 	imageSrc?: string
+	className?: string
 }
 
-const TopBanner: FC<PropsType> = ({ imageSrc }) => {
+const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
 	const [scrollY, setScrollY] = useState<number>(0)
 	const parallaxFactor = 0.5
 	const translateY = scrollY * parallaxFactor
@@ -35,7 +37,12 @@ const TopBanner: FC<PropsType> = ({ imageSrc }) => {
 	)
 
 	return (
-		<div className='w-screen h-[600px] -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-black overflow-hidden'>
+		<div
+			className={classNames(
+				'w-screen h-[600px] -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-black overflow-hidden',
+				className
+			)}
+		>
 			<div style={{ transform: `translateY(${translateY}px)` }}>
 				{imageComponent}
 			</div>

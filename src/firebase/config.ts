@@ -291,7 +291,6 @@ export const getCollectionItemsList = async (
 			return itemSnapshot.val()
 		})
 	)
-	console.log(snapshot)
 
 	return { isMoreDataAvailable, items }
 }
