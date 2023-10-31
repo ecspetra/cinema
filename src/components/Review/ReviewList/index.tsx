@@ -57,8 +57,8 @@ const ReviewList: FC<PropsType> = ({
 	}
 
 	const defineReviewSrc = () => {
-		const itemsFromDB = []
-		const defaultItems = []
+		const itemsFromDB: IReviewCardFromDB[] = []
+		const defaultItems: IReviewCard[] = []
 
 		reviews.forEach(item => {
 			if (item.authorId) {

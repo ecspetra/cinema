@@ -40,10 +40,10 @@ const CollectionWrap: FC<PropsType> = ({
 		switch (type) {
 			case 'reviews':
 				return (
-					<ReviewsCollectionWrap
-						type={type}
-						items={items}
-						isMoreDataAvailable={isMoreDataAvailable}
+					<ReviewList
+						reviews={items}
+						isShowTitle={false}
+						isCollectionList
 					/>
 				)
 			case 'marks':
