@@ -9,18 +9,15 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import ItemsList from '../components/List/ItemsList'
 import HomePageSlider from '@/components/HomePageSlider'
 
-const Home = ({ defaultMovies, upcomingMovies }) => {
+const Home = ({ results }) => {
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
 	const [upcomingMovieList, setUpcomingMovieList] = useState(null)
 
 	useEffect(() => {
-		if (!defaultMovies) {
+		if (!results) {
 			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
 				setDefaultMovieList(data)
 			})
-		}
-
-		if (!upcomingMovies) {
 			getResultsByPage(LINK_TO_FETCH_UPCOMING_MOVIE_LIST, 1).then(
 				data => {
 					setUpcomingMovieList(data)
@@ -30,9 +27,9 @@ const Home = ({ defaultMovies, upcomingMovies }) => {
 	}, [])
 
 	useEffect(() => {
-		setDefaultMovieList(defaultMovies)
-		setUpcomingMovieList(upcomingMovies)
-	}, [defaultMovies, upcomingMovies])
+		setDefaultMovieList(results.defaultMovies)
+		setUpcomingMovieList(results.upcomingMovies)
+	}, [results])
 
 	if (!defaultMovieList || !upcomingMovieList) return <Loader />
 
@@ -41,7 +38,7 @@ const Home = ({ defaultMovies, upcomingMovies }) => {
 			<HomePageSlider movies={upcomingMovieList} />
 			<ItemsList
 				itemsList={defaultMovieList.items}
-				listName='movies'
+				listName='movie'
 				title='Discover movies'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
 				linkToFetchItems={LINK_TO_FETCH_DEFAULT_MOVIE_LIST}
@@ -52,27 +49,28 @@ const Home = ({ defaultMovies, upcomingMovies }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const defaultMovieList = await getResultsByPage(
+		const defaultMovies = await getResultsByPage(
 			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
 			1
 		)
 
-		const upcomingMovieList = await getResultsByPage(
+		const upcomingMovies = await getResultsByPage(
 			LINK_TO_FETCH_UPCOMING_MOVIE_LIST,
 			1
 		)
 
 		return {
 			props: {
-				defaultMovieList: defaultMovieList,
-				upcomingMovieList: upcomingMovieList,
+				results: {
+					defaultMovies,
+					upcomingMovies,
+				},
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				defaultMovieList: null,
-				upcomingMovieList: null,
+				results: {},
 			},
 		}
 	}

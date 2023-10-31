@@ -9,13 +9,13 @@ import { useAuth } from '@/context/AuthProvider'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 
 type PropsType = {
-	person: IPersonCard
+	item: IPersonCard
 	isShowButton?: boolean
 	isShowRole?: boolean
 }
 
 const PersonCard: FC<PropsType> = ({
-	person,
+	item,
 	isShowButton = true,
 	isShowRole = false,
 }) => {
@@ -25,15 +25,15 @@ const PersonCard: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		handleRemoveCollectionItem,
-	} = useCollectionButton(person, 'persons')
+	} = useCollectionButton(item, 'persons')
 
-	const { id, job, name, character, profile_path } = person
+	const { id, job, name, character, profile_path } = item
 
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
-				href={`/person/[id]`}
-				as={`/person/${id}`}
+				href={`persons/person/[id]`}
+				as={`persons/person/${id}`}
 				className='group text-sm'
 			>
 				<Image
@@ -56,7 +56,7 @@ const PersonCard: FC<PropsType> = ({
 					onClick={
 						isCollectionItem
 							? () => handleRemoveCollectionItem(id, userId)
-							: () => handleSetCollectionItem(person)
+							: () => handleSetCollectionItem(item)
 					}
 				/>
 			)}

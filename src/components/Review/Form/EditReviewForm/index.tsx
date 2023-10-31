@@ -34,10 +34,10 @@ const EditReviewForm: FC<PropsType> = ({
 		if (textareaValue.trim() !== '') {
 			setError('')
 
-			let newItem: IReviewCardFromDB | IReplyCard
+			let updatedItem: IReviewCardFromDB | IReplyCard
 
 			if (isReply) {
-				newItem = {
+				updatedItem = {
 					movieId: movieId,
 					replyTo: item.replyTo,
 					reviewId: item.reviewId,
@@ -45,19 +45,21 @@ const EditReviewForm: FC<PropsType> = ({
 					content: textareaValue,
 					created_at: item.created_at,
 					authorId: item.authorId,
+					isTVShow: item.isTVShow,
 				}
 			} else {
-				newItem = {
+				updatedItem = {
 					movieId: movieId,
 					id: item.id,
 					content: textareaValue,
 					created_at: item.created_at,
 					authorId: item.authorId,
+					isTVShow: item.isTVShow,
 				}
 			}
 
 			await updateReviewItem(
-				newItem,
+				updatedItem,
 				item.authorId,
 				movieId,
 				isReply ? 'replies' : 'reviews'

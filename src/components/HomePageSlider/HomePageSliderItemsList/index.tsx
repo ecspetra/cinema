@@ -25,12 +25,12 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isMoreItemsAvailable, setIsMoreItemsAvailable] =
 		useState<boolean>(isMoreDataAvailable)
-	const [currentPage, setCurrentPage] = useState<number>(22)
+	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [itemsToShow, setItemsToShow] = useState([])
 	const [fetchedItems, setFetchedItems] = useState([])
 
 	const getItems = async () => {
-		getMovieGenres(fetchedItems)
+		getMovieGenres(fetchedItems, 'movie')
 			.then(data => {
 				setItemsToShow(prevState => [...prevState, ...data])
 			})

@@ -8,20 +8,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 
 type PropsType = {
-	movieId: number
+	itemId: number
+	isTVShow: boolean
 	mark?: number
 	isLinkToMovie?: boolean
 }
 
 const MovieCardSmall: FC<PropsType> = ({
-	movieId,
+	itemId,
+	isTVShow,
 	mark,
 	isLinkToMovie = false,
 }) => {
 	const [moviePoster, setMoviePoster] = useState<string>('')
 
 	useEffect(() => {
-		getMoviePoster(movieId).then(data => {
+		getMoviePoster(itemId, isTVShow).then(data => {
 			setMoviePoster(data)
 		})
 	}, [])
@@ -46,8 +48,16 @@ const MovieCardSmall: FC<PropsType> = ({
 		<div className={classNames(!mark && 'w-24 h-36', 'flex-none')}>
 			{isLinkToMovie ? (
 				<Link
-					href='/movie/[id]'
-					as={`/movie/${movieId}`}
+					href={
+						isTVShow
+							? '/tv-shows/tv-show/[id]'
+							: '/movies/movie/[id]'
+					}
+					as={
+						isTVShow
+							? `/tv-shows/tv-show/${itemId}`
+							: `/movies/movie/${itemId}`
+					}
 					className='group'
 				>
 					{movieCard}

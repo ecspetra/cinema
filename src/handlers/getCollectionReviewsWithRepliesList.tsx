@@ -6,7 +6,7 @@ export const getCollectionReviewsWithRepliesList = collectionReplies => {
 		const addedReviewIds = new Set()
 
 		const fetchMovieReviews = async (movieId: number, reviewId: string) => {
-			const result = await fetchMovieData(movieId, '/reviews')
+			const result = await fetchMovieData('movie', movieId, '/reviews')
 			const fetchedReview = result.results.find(
 				item => item.id === reviewId
 			)

@@ -1,11 +1,11 @@
 import { useRef } from 'react'
 
 function useScrollToTop(offset = 0) {
-	const scrollRef = useRef<HTMLDivElement | null>(null)
+	const listRef = useRef<HTMLDivElement | null>(null)
 
 	const scrollToTop = () => {
-		if (scrollRef.current) {
-			const scrollPosition = scrollRef.current.getBoundingClientRect().top
+		if (listRef.current) {
+			const scrollPosition = listRef.current.getBoundingClientRect().top
 			window.scrollTo({
 				top: window.pageYOffset + scrollPosition - offset,
 				behavior: 'smooth',
@@ -14,7 +14,7 @@ function useScrollToTop(offset = 0) {
 	}
 
 	return {
-		ref: scrollRef,
+		listRef,
 		scrollToTop,
 	}
 }

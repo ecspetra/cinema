@@ -39,8 +39,16 @@ const ReviewCard: FC<PropsType> = ({
 	isLinkToMovie = false,
 }) => {
 	const { userId } = useAuth()
-	const { content, id, author, created_at, avatar_path, authorId, movieId } =
-		review
+	const {
+		content,
+		id,
+		author,
+		created_at,
+		avatar_path,
+		authorId,
+		movieId,
+		isTVShow,
+	} = review
 	const [replies, setReplies] = useState<Array<IReplyCard>>([])
 	const [authorInfo, setAuthorInfo] = useState({
 		photoURL: '',
@@ -99,7 +107,9 @@ const ReviewCard: FC<PropsType> = ({
 					/>
 				</Dropdown>
 			)}
-			{isLinkToMovie && <MovieCardSmall movieId={movieId} />}
+			{isLinkToMovie && (
+				<MovieCardSmall itemId={movieId} isTVShow={isTVShow} />
+			)}
 			<div className='w-full'>
 				<div className='flex mb-2 max-w-[calc(100%-54px)]'>
 					<div className='flex items-center'>
@@ -173,6 +183,7 @@ const ReviewCard: FC<PropsType> = ({
 							{isShowReplyForm && (
 								<NewReviewForm
 									movieId={defaultCardMovieId ?? movieId}
+									isTVShow={isTVShow}
 									userId={userId}
 									reviewId={id}
 									replyTo={replyTo}
@@ -245,7 +256,7 @@ const ReviewCard: FC<PropsType> = ({
 		>
 			{isLinkToMovie ? (
 				<Link
-					href='/movie/[id]'
+					href='/movies/movie/[id]'
 					as={`/movie/${movieId}`}
 					className='group'
 				>

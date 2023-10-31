@@ -7,11 +7,11 @@ import {
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/openLoginModal'
-import { IMovieCard, IPersonCard } from '../../interfaces'
+import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
 
 export const useCollectionButton = (
 	itemInfo: IMovieCard | IPersonCard,
-	collection: 'movies' | 'persons'
+	collection: 'movies' | 'tv-shows' | 'persons'
 ) => {
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
@@ -22,7 +22,7 @@ export const useCollectionButton = (
 	const handleSetCollectionItem = (item: IMovieCard | IPersonCard) => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			let newItem: IMovieCard | IPersonCard = {}
+			let newItem: IMovieCard | ITVShowCard | IPersonCard = {}
 
 			if (collection === 'movies') {
 				newItem = {
@@ -30,6 +30,14 @@ export const useCollectionButton = (
 					poster_path: item.poster_path,
 					release_date: item.release_date,
 					title: item.title,
+					genres: item.genres,
+				}
+			} else if (collection === 'tv-shows') {
+				newItem = {
+					id: item.id,
+					poster_path: item.poster_path,
+					first_air_date: item.first_air_date,
+					name: item.name,
 					genres: item.genres,
 				}
 			} else {

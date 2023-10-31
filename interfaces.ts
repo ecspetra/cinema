@@ -22,6 +22,7 @@ export interface IMarkFromDB {
 export interface IMark {
 	mark: number
 	movieId: number
+	isTVShow: boolean
 }
 
 export interface IReviewCard {
@@ -38,6 +39,7 @@ export interface IReviewCardFromDB {
 	content: string
 	created_at: string
 	authorId: string
+	isTVShow: boolean
 }
 
 export interface IReplyCard {
@@ -48,6 +50,7 @@ export interface IReplyCard {
 	content: string
 	created_at: string
 	authorId: string
+	isTVShow: boolean
 }
 
 export interface IMovieInfo {
@@ -65,11 +68,34 @@ export interface IMovieInfo {
 	adult?: boolean
 }
 
+export interface ITVShowInfo {
+	id: number
+	poster_path: string
+	name: string
+	tagline: string
+	genres: Array<IGenre>
+	first_air_date: string
+	production_countries: Array<object>
+	production_companies: Array<object>
+	overview: string
+	vote_average: number
+	vote_count: number
+	adult?: boolean
+}
+
 export interface IMovieCard {
 	id: number
 	poster_path: string
 	release_date: string
 	title: string
+	genres?: Array<IGenre>
+}
+
+export interface ITVShowCard {
+	id: number
+	poster_path: string
+	first_air_date: string
+	name: string
 	genres?: Array<IGenre>
 }
 

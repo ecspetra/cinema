@@ -1,4 +1,4 @@
-import { IMovieCard } from '../../../../interfaces'
+import { IMovieCard, ITVShowCard } from '../../../../interfaces'
 import React, { FC } from 'react'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
@@ -9,45 +9,68 @@ import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import { useAuth } from '@/context/AuthProvider'
 import MarkSmall from '@/components/Mark/MarkSmall'
+import moment from 'moment'
 
 type PropsType = {
-	movie: IMovieCard
+	item: IMovieCard | ITVShowCard
 	isShowButton?: boolean
+	isTVShow?: boolean
 }
 
-const MovieCard: FC<PropsType> = ({ movie, isShowButton = true }) => {
+const MovieCard: FC<PropsType> = ({
+	item,
+	isShowButton = true,
+	isTVShow = false,
+}) => {
 	const { userId } = useAuth()
 	const {
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
 		handleRemoveCollectionItem,
-	} = useCollectionButton(movie, 'movies')
+	} = useCollectionButton(item, 'movies')
 
-	const { id, genres, poster_path, release_date, title } = movie
+	const {
+		id,
+		genres,
+		poster_path,
+		first_air_date,
+		name,
+		release_date,
+		title,
+	} = item
 	const isShowGenres = genres?.length > 0
 
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
-				href='/movie/[id]'
-				as={`/movie/${id}`}
+				href={
+					isTVShow ? '/tv-shows/tv-show/[id]' : '/movies/movie/[id]'
+				}
+				as={
+					isTVShow ? `/tv-shows/tv-show/${id}` : `/movies/movie/${id}`
+				}
 				className='group relative'
 			>
-				<MarkSmall movieId={id} className='absolute -right-3 -top-3' />
+				<MarkSmall
+					movieId={id}
+					movieTitle={title ? title : name}
+					className='absolute -right-3 -top-3'
+				/>
 				<Image
 					className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 					defaultImage={defaultMovieImage}
 				/>
 				<Title className='relative z-10' variant='h3'>
-					{title}
-					{release_date && (
+					{title ? title : name}
+					{(release_date || first_air_date) && (
 						<span className='ml-1'>
-							{release_date &&
-								`(${new Date(release_date)
-									.getFullYear()
-									.toString()})`}
+							(
+							{moment(
+								release_date ? release_date : first_air_date
+							).format('YYYY')}
+							)
 						</span>
 					)}
 				</Title>
@@ -66,8 +89,8 @@ const MovieCard: FC<PropsType> = ({ movie, isShowButton = true }) => {
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(movie.id, userId)
-							: () => handleSetCollectionItem(movie)
+							? () => handleRemoveCollectionItem(item.id, userId)
+							: () => handleSetCollectionItem(item)
 					}
 				/>
 			)}

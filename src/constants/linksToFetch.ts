@@ -1,9 +1,11 @@
 export const API_KEY = '1fdbb7205b3bf878ede960ab5c9bc7ce'
-export const LINK_TO_FETCH_MOVIE = `https://api.themoviedb.org/3/movie/{movieId}{queryParam}?api_key=${API_KEY}`
+export const BREADCRUMBS_LINK_TO_FETCH = `https://api.themoviedb.org/3/{queryParam}/{itemId}?api_key=${API_KEY}`
+export const LINK_TO_FETCH_MOVIE_DATA = `https://api.themoviedb.org/3/{listName}/{itemId}{queryParam}?api_key=${API_KEY}`
 export const LINK_TO_FETCH_DEFAULT_MOVIE_LIST = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page={currentPage}`
 export const LINK_TO_FETCH_UPCOMING_MOVIE_LIST = `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&page={currentPage}`
-export const LINK_TO_FETCH_SIMILAR_MOVIE_LIST = `https://api.themoviedb.org/3/movie/{movieId}/similar?api_key=${API_KEY}&page={currentPage}`
-export const LINK_TO_FETCH_ALL_GENRES = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`
+export const LINK_TO_FETCH_SIMILAR_LIST = `https://api.themoviedb.org/3/{listName}/{itemId}/similar?api_key=${API_KEY}&page={currentPage}`
+export const LINK_TO_FETCH_TV_SHOWS_LIST = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&page={currentPage}`
+export const LINK_TO_FETCH_ALL_GENRES = `https://api.themoviedb.org/3/genre/{queryParam}/list?api_key=${API_KEY}`
 export const LINK_TO_FETCH_PERSON = `https://api.themoviedb.org/3/person/{personId}{queryParam}?api_key=${API_KEY}`
-export const LINK_TO_FETCH_PERSON_LIST = `https://api.themoviedb.org/3/person/popular/?api_key=${API_KEY}&page={currentPage}`
+export const LINK_TO_FETCH_PERSON_LIST = `https://api.themoviedb.org/3/person/popular?api_key=${API_KEY}&page={currentPage}`
 export const LINK_TO_FETCH_MOVIES_WITH_PERSONS = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_people={personId}&page={currentPage}`

@@ -20,12 +20,17 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 	const [videoSrc, setVideoSrc] = useState<string>('')
 
 	const getSelectedItemImageSrc = async () => {
-		const images = await fetchMovieData(selectedItem.id, '/images')
-		const videos = await fetchMovieData(selectedItem.id, '/videos')
+		const images = await fetchMovieData('movie', selectedItem.id, '/images')
+		const videos = await fetchMovieData('movie', selectedItem.id, '/videos')
+		const movieTeaser =
+			videos.results.length &&
+			videos.results.find(
+				item => item.type === 'Teaser' || item.type === 'Trailer'
+			)
 		setImageSrc(
 			images.backdrops.length ? images.backdrops[0].file_path : ''
 		)
-		setVideoSrc(videos.results.length ? videos.results[0].key : '')
+		setVideoSrc(movieTeaser ? movieTeaser.key : '')
 	}
 
 	useEffect(() => {

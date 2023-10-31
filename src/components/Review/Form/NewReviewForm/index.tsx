@@ -13,6 +13,7 @@ import { IReplyCard, IReviewCardFromDB } from '../../../../../interfaces'
 type PropsType = {
 	movieId: number
 	userId: string
+	isTVShow: boolean
 	reviewId?: string
 	replyTo?: string
 	isReply?: boolean
@@ -22,6 +23,7 @@ type PropsType = {
 const NewReviewForm: FC<PropsType> = ({
 	movieId,
 	userId,
+	isTVShow = false,
 	reviewId,
 	replyTo,
 	isReply = false,
@@ -55,6 +57,7 @@ const NewReviewForm: FC<PropsType> = ({
 						content: textareaValue,
 						created_at: moment().format(),
 						authorId: userId,
+						isTVShow: isTVShow,
 					}
 				} else {
 					newItem = {
@@ -63,6 +66,7 @@ const NewReviewForm: FC<PropsType> = ({
 						content: textareaValue,
 						created_at: moment().format(),
 						authorId: userId,
+						isTVShow: isTVShow,
 					}
 				}
 

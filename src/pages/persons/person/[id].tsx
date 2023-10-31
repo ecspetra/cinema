@@ -69,7 +69,7 @@ const Person = ({ personFromProps }) => {
 			<PersonInfo personInfo={person} personImages={images} />
 			<ItemsList
 				itemsList={movies}
-				listName='movies'
+				listName='movie'
 				title={`Movies with ${person.name}`}
 				isMoreDataAvailable={
 					personFromProps.moviesWithPerson.isMoreDataAvailable

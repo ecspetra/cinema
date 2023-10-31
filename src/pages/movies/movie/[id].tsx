@@ -1,10 +1,7 @@
 import { NextPageContext } from 'next'
-import {
-	API_KEY,
-	LINK_TO_FETCH_SIMILAR_MOVIE_LIST,
-} from '@/constants/linksToFetch'
-import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
-import MovieInfo from '@/components/Movie/MovieInfo'
+import { LINK_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
+import MoviePersonsList from '../../../components/Person/PersonList/MoviePersonList'
+import MovieInfo from '../../../components/Movie/MovieInfo'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
@@ -18,18 +15,26 @@ const Movie = ({ movieFromProps }) => {
 	const router = useRouter()
 	const [movie, setMovie] = useState(null)
 	const [linkToFetchSimilarMovies, setLinkToFetchSimilarMovies] = useState(
-		LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace('{movieId}', router.query.id)
+		LINK_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
+			'{listName}',
+			'movie'
+		)
 	)
+	const movieTeaser =
+		movie &&
+		movie.videosResult.results.find(
+			item => item.type === 'Teaser' || item.type === 'Trailer'
+		)
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setMovie(null)
 
 			setLinkToFetchSimilarMovies(
-				LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace(
-					'{movieId}',
+				LINK_TO_FETCH_SIMILAR_LIST.replace(
+					'{itemId}',
 					router.query.id
-				)
+				).replace('{listName}', 'movie')
 			)
 
 			try {
@@ -43,7 +48,7 @@ const Movie = ({ movieFromProps }) => {
 				}
 
 				const [
-					movieResult,
+					basicInfoResult,
 					creditsResult,
 					imagesResult,
 					reviewsResult,
@@ -51,11 +56,11 @@ const Movie = ({ movieFromProps }) => {
 					reviewsFromDB,
 					similarMoviesResult,
 				] = await Promise.all([
-					fetchMovieData(router.query.id, ''),
-					fetchMovieData(router.query.id, '/credits'),
-					fetchMovieData(router.query.id, '/images'),
-					fetchMovieData(router.query.id, '/reviews'),
-					fetchMovieData(router.query.id, '/videos'),
+					fetchMovieData('movie', router.query.id, ''),
+					fetchMovieData('movie', router.query.id, '/credits'),
+					fetchMovieData('movie', router.query.id, '/images'),
+					fetchMovieData('movie', router.query.id, '/reviews'),
+					fetchMovieData('movie', router.query.id, '/videos'),
 					getMovieReviews(),
 					getResultsByPage(linkToFetchSimilarMovies, 1),
 				])
@@ -63,7 +68,7 @@ const Movie = ({ movieFromProps }) => {
 				const reviews = [...reviewsResult.results, ...reviewsFromDB]
 
 				setMovie({
-					movieResult,
+					basicInfoResult,
 					creditsResult,
 					imagesResult,
 					reviewsResult,
@@ -88,7 +93,7 @@ const Movie = ({ movieFromProps }) => {
 	if (
 		!movie ||
 		![
-			'movieResult',
+			'basicInfoResult',
 			'creditsResult',
 			'imagesResult',
 			'reviewsResult',
@@ -103,9 +108,10 @@ const Movie = ({ movieFromProps }) => {
 		<>
 			<TopBanner imageSrc={movie.imagesResult.backdrops[0]?.file_path} />
 			<MovieInfo
-				movieInfo={movie.movieResult}
+				basicInfo={movie.basicInfoResult}
 				movieImages={movie.imagesResult.backdrops}
 				movieReviews={movie.reviews}
+				movieVideo={movieTeaser?.key}
 			/>
 			<div>
 				<MoviePersonsList
@@ -118,7 +124,7 @@ const Movie = ({ movieFromProps }) => {
 				/>
 				<ItemsList
 					itemsList={movie.similarMoviesResult.items}
-					listName='movies'
+					listName='movie'
 					title='Similar movies'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
@@ -132,8 +138,10 @@ const Movie = ({ movieFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const linkToFetchSimilarMovies =
-			LINK_TO_FETCH_SIMILAR_MOVIE_LIST.replace('{movieId}', ctx.query.id)
+		const linkToFetchSimilarMovies = LINK_TO_FETCH_SIMILAR_LIST.replace(
+			'{itemId}',
+			ctx.query.id
+		).replace('{listName}', 'movie')
 
 		const getMovieReviews = async () => {
 			const collectionReviews = await getDBReviewsList(
@@ -144,7 +152,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		}
 
 		const [
-			movieResult,
+			basicInfoResult,
 			creditsResult,
 			imagesResult,
 			reviewsResult,
@@ -152,11 +160,11 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			reviewsFromDB,
 			similarMoviesResult,
 		] = await Promise.all([
-			fetchMovieData(ctx.query.id, ''),
-			fetchMovieData(ctx.query.id, '/credits'),
-			fetchMovieData(ctx.query.id, '/images'),
-			fetchMovieData(ctx.query.id, '/reviews'),
-			fetchMovieData(ctx.query.id, '/videos'),
+			fetchMovieData('movie', ctx.query.id, ''),
+			fetchMovieData('movie', ctx.query.id, '/credits'),
+			fetchMovieData('movie', ctx.query.id, '/images'),
+			fetchMovieData('movie', ctx.query.id, '/reviews'),
+			fetchMovieData('movie', ctx.query.id, '/videos'),
 			getMovieReviews(),
 			getResultsByPage(linkToFetchSimilarMovies, 1),
 		])
@@ -166,7 +174,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		return {
 			props: {
 				movieFromProps: {
-					movieResult,
+					basicInfoResult,
 					creditsResult,
 					imagesResult,
 					reviewsResult,

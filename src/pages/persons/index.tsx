@@ -43,7 +43,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		return {
 			props: {
 				items: results.items,
-				isMoreDataAvailable: !!results.isMoreDataAvailable,
+				isMoreDataAvailable: results.isMoreDataAvailable,
 			},
 		}
 	} catch (error) {

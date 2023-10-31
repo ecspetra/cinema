@@ -57,6 +57,7 @@ export interface AuthContextType {
 
 export const USER_COLLECTIONS = [
 	'movies',
+	'tv-shows',
 	'persons',
 	'reviews',
 	'replies',
@@ -120,22 +121,20 @@ export const signOutUser = async () => {
 
 // movie marks handlers
 
-export const setNewMarkForMovie = async (
-	movieId: number,
-	userId: string,
-	mark: number
-) => {
+export const setNewMarkForMovie = async (markData: object, userId: string) => {
 	const newMarkRef = ref(database, `users/${userId}/movieMarks/${uuidv4()}`)
 
 	const newMarkData = {
-		movieId: movieId,
-		mark: mark,
+		movieId: markData.movieId,
+		movieTitle: markData.movieTitle,
+		mark: markData.mark,
+		isTVShow: markData.isTVShow,
 	}
 
 	await set(newMarkRef, newMarkData)
 }
 
-export const getMarkForMovie = (movieId: number, userId: string) => {
+export const getMarkForMovie = (markData: object, userId: string) => {
 	const marksCollectionRef = ref(database, `users/${userId}/movieMarks`)
 
 	return new Promise(async resolve => {
@@ -148,7 +147,11 @@ export const getMarkForMovie = (movieId: number, userId: string) => {
 					data: childSnapshot.val(),
 				}
 
-				if (movieMark.data.movieId === movieId) response = movieMark
+				if (
+					movieMark.data.movieId === markData.movieId &&
+					movieMark.data.movieTitle === markData.movieTitle
+				)
+					response = movieMark
 			})
 
 			resolve(response)
