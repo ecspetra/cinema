@@ -5,16 +5,20 @@ import {
 	COLLECTION_PAGE_TOP_BANNER_IMAGE,
 } from '@/constants/paths'
 import { getCollectionItemsList } from '@/firebase/config'
-import CollectionItemsList from '../../../components/Collection/CollectionItemsList'
+import CollectionItemsList from '../../components/Collection/CollectionItemsList'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
 
-const CollectionPersons = ({ results }) => {
-	const [persons, setPersons] = useState(null)
+const CollectionType = ({ results }) => {
+	const [itemsList, setItemsList] = useState(null)
 	const router = useRouter()
 	const { userId } = useAuth()
+	const listTitle =
+		router.query.type === 'movie'
+			? 'Movies from your collection'
+			: 'Persons from your collection'
 
 	useEffect(() => {
 		const getCollection = async () => {
@@ -28,26 +32,26 @@ const CollectionPersons = ({ results }) => {
 			}
 
 			if (!userId) {
-				setPersons(null)
+				setItemsList(null)
 			}
 
 			try {
-				const collectionPersons = await getCollectionItemsList(
+				const collectionItems = await getCollectionItemsList(
 					userIdFromUrl,
 					router.query.type,
 					20,
 					null
 				)
 
-				if (!collectionPersons.items.length) {
+				if (!collectionItems.items.length) {
 					await router.push(
 						CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
 					)
 				} else {
-					setPersons(collectionPersons)
+					setItemsList(collectionItems)
 				}
 			} catch (error) {
-				setPersons(null)
+				setItemsList(null)
 			}
 		}
 
@@ -55,19 +59,19 @@ const CollectionPersons = ({ results }) => {
 	}, [])
 
 	useEffect(() => {
-		setPersons(results)
+		setItemsList(results)
 	}, [results])
 
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<CollectionItemsList
-				collectionName='person'
-				items={persons ? persons.items : []}
+				collectionName={router.query.type}
+				items={itemsList ? itemsList.items : []}
 				isMoreDataAvailable={
-					persons ? persons.isMoreDataAvailable : false
+					itemsList ? itemsList.isMoreDataAvailable : false
 				}
-				title='Persons from your collection'
+				title={listTitle}
 			/>
 		</>
 	)
@@ -129,4 +133,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default CollectionPersons
+export default CollectionType

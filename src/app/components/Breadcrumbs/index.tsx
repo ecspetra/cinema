@@ -33,8 +33,9 @@ const Breadcrumbs = () => {
 				} else {
 					let itemName = ''
 
-					if (segment.startsWith('collection')) {
-						itemName = 'collection'
+					if (segment.includes('?uid')) {
+						const parts = segment.split('?uid')
+						itemName = parts[0]
 					} else itemName = segment
 
 					const itemNameCapitalized =
