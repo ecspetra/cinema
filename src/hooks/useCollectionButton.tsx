@@ -11,7 +11,7 @@ import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
 
 export const useCollectionButton = (
 	itemInfo: IMovieCard | IPersonCard,
-	collection: 'movies' | 'tv-shows' | 'persons'
+	collection: 'movie' | 'tv' | 'person'
 ) => {
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
@@ -24,7 +24,7 @@ export const useCollectionButton = (
 			setIsLoadingCollection(true)
 			let newItem: IMovieCard | ITVShowCard | IPersonCard = {}
 
-			if (collection === 'movies') {
+			if (collection === 'movie') {
 				newItem = {
 					id: item.id,
 					poster_path: item.poster_path,
@@ -32,7 +32,7 @@ export const useCollectionButton = (
 					title: item.title,
 					genres: item.genres,
 				}
-			} else if (collection === 'tv-shows') {
+			} else if (collection === 'tv') {
 				newItem = {
 					id: item.id,
 					poster_path: item.poster_path,

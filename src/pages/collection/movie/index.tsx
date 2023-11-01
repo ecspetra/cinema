@@ -11,8 +11,8 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
 
-const CollectionPersons = ({ results }) => {
-	const [persons, setPersons] = useState(null)
+const CollectionMovies = ({ results }) => {
+	const [movies, setMovies] = useState(null)
 	const router = useRouter()
 	const { userId } = useAuth()
 
@@ -28,26 +28,26 @@ const CollectionPersons = ({ results }) => {
 			}
 
 			if (!userId) {
-				setPersons(null)
+				setMovies(null)
 			}
 
 			try {
-				const collectionPersons = await getCollectionItemsList(
+				const collectionMovies = await getCollectionItemsList(
 					userIdFromUrl,
-					'persons',
+					'movie',
 					20,
 					null
 				)
 
-				if (!collectionPersons.items.length) {
+				if (!collectionMovies.items.length) {
 					await router.push(
 						CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
 					)
 				} else {
-					setPersons(collectionPersons)
+					setMovies(collectionMovies)
 				}
 			} catch (error) {
-				setPersons(null)
+				setMovies(null)
 			}
 		}
 
@@ -55,16 +55,19 @@ const CollectionPersons = ({ results }) => {
 	}, [])
 
 	useEffect(() => {
-		setPersons(results)
+		setMovies(results)
 	}, [results])
 
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<CollectionItemsList
-				collectionName='persons'
-				itemsList={persons}
-				title='Persons from your collection'
+				collectionName='movie'
+				items={movies ? movies.items : []}
+				isMoreDataAvailable={
+					movies ? movies.isMoreDataAvailable : false
+				}
+				title='Movies from your collection'
 			/>
 		</>
 	)
@@ -95,7 +98,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
 		const result = await getCollectionItemsList(
 			userIdFromUrl,
-			'persons',
+			'movie',
 			20,
 			null
 		)
@@ -126,4 +129,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default CollectionPersons
+export default CollectionMovies

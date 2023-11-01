@@ -11,8 +11,8 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
 
-const CollectionMovies = ({ results }) => {
-	const [movies, setMovies] = useState(null)
+const CollectionPersons = ({ results }) => {
+	const [persons, setPersons] = useState(null)
 	const router = useRouter()
 	const { userId } = useAuth()
 
@@ -28,26 +28,26 @@ const CollectionMovies = ({ results }) => {
 			}
 
 			if (!userId) {
-				setMovies(null)
+				setPersons(null)
 			}
 
 			try {
-				const collectionMovies = await getCollectionItemsList(
+				const collectionPersons = await getCollectionItemsList(
 					userIdFromUrl,
-					'movies',
+					router.query.type,
 					20,
 					null
 				)
 
-				if (!collectionMovies.items.length) {
+				if (!collectionPersons.items.length) {
 					await router.push(
 						CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
 					)
 				} else {
-					setMovies(collectionMovies)
+					setPersons(collectionPersons)
 				}
 			} catch (error) {
-				setMovies(null)
+				setPersons(null)
 			}
 		}
 
@@ -55,16 +55,19 @@ const CollectionMovies = ({ results }) => {
 	}, [])
 
 	useEffect(() => {
-		setMovies(results)
+		setPersons(results)
 	}, [results])
 
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<CollectionItemsList
-				collectionName='movies'
-				itemsList={movies}
-				title='Movies from your collection'
+				collectionName='person'
+				items={persons ? persons.items : []}
+				isMoreDataAvailable={
+					persons ? persons.isMoreDataAvailable : false
+				}
+				title='Persons from your collection'
 			/>
 		</>
 	)
@@ -95,7 +98,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
 		const result = await getCollectionItemsList(
 			userIdFromUrl,
-			'movies',
+			ctx.query.type,
 			20,
 			null
 		)
@@ -126,4 +129,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default CollectionMovies
+export default CollectionPersons

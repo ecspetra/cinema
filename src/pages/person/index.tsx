@@ -28,7 +28,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 	return (
 		<ItemsList
 			itemsList={persons}
-			listName='persons'
+			listName='person'
 			title='Discover persons'
 			isMoreDataAvailable={isNextResult}
 			linkToFetchItems={LINK_TO_FETCH_PERSON_LIST}

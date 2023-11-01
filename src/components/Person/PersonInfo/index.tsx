@@ -28,7 +28,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 		isCollectionItem,
 		handleSetCollectionItem,
 		handleRemoveCollectionItem,
-	} = useCollectionButton(personInfo, 'persons')
+	} = useCollectionButton(personInfo, 'person')
 	const {
 		profile_path,
 		name,

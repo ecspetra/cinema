@@ -65,7 +65,7 @@ const MovieInfo: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		handleRemoveCollectionItem,
-	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv-shows' : 'movies')
+	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
 
 	return (
 		<div className='flex gap-x-7 py-7 z-10 mb-16'>

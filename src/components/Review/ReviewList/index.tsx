@@ -26,14 +26,16 @@ const ReviewList: FC<PropsType> = ({
 	isShowTitle = true,
 }) => {
 	const { userId } = useAuth()
-	const { ref, scrollToTop } = useScrollToTop(100)
+	const { listRef, scrollToTop } = useScrollToTop(100)
 	const initialItemsLength = 3
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
 	const [itemsToShow, setItemsToShow] = useState(reviews)
 	const [itemsFromDB, setItemsFromDB] = useState([])
 	const [defaultItems, setDefaultItems] = useState([])
-	const isMoreDataAvailable = maxReviewsLength < itemsToShow.length
+	const isMoreDataAvailable =
+		maxReviewsLength <
+		itemsToShow.filter(item => item.id !== undefined).length
 	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
 
@@ -87,7 +89,7 @@ const ReviewList: FC<PropsType> = ({
 				isCollectionList ? userId : movieId,
 				itemsFromDB,
 				setItemsFromDB,
-				isCollectionList ? 'users' : 'movies'
+				isCollectionList ? 'users' : 'movie'
 			)
 
 			return () => {
@@ -123,17 +125,20 @@ const ReviewList: FC<PropsType> = ({
 	}
 
 	return (
-		<div ref={ref} className='mb-16'>
+		<div ref={listRef} className='mb-16'>
 			{isShowTitle && <Title>Reviews</Title>}
 			<div>
-				{itemsToShow.slice(0, maxReviewsLength).map(item => (
-					<ReviewCard
-						key={item.id}
-						review={item}
-						defaultCardMovieId={movieId}
-						isLinkToMovie={isCollectionList}
-					/>
-				))}
+				{itemsToShow
+					.filter(item => item.id !== undefined)
+					.slice(0, maxReviewsLength)
+					.map(item => (
+						<ReviewCard
+							key={item.id}
+							review={item}
+							defaultCardMovieId={movieId}
+							isLinkToMovie={isCollectionList}
+						/>
+					))}
 				{isShowMoreButton && (
 					<Button
 						className='mx-auto'

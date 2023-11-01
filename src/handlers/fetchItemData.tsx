@@ -1,11 +1,11 @@
-import { LINK_TO_FETCH_MOVIE_DATA } from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_ITEM_DATA } from '@/constants/linksToFetch'
 
-export const fetchMovieData = async (
+export const fetchItemData = async (
 	listName: string,
 	itemId: number,
 	queryParam: string
 ) => {
-	const linkToFetch = LINK_TO_FETCH_MOVIE_DATA.replace('{listName}', listName)
+	const linkToFetch = LINK_TO_FETCH_ITEM_DATA.replace('{listName}', listName)
 		.replace('{itemId}', itemId)
 		.replace('{queryParam}', queryParam)
 

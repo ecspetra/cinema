@@ -9,11 +9,9 @@ import { useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE } from '@/constants/paths'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
-import useBreadcrumbs from '@/hooks/useBreadcrumbs'
 
 const Header = () => {
 	const { userId, photoURL, isLoggedIn } = useAuth()
-	const breadcrumbs = useBreadcrumbs()
 	const router = useRouter()
 	const pathname = usePathname()
 	const collectionMoviesLink = userId
@@ -40,13 +38,13 @@ const Header = () => {
 					<Link href={collectionMoviesLink} as={collectionMoviesLink}>
 						<span>My collection</span>
 					</Link>
-					<Link href={'/persons'} as={'/persons'}>
+					<Link href={'/person'} as={'/person'}>
 						<span>Persons</span>
 					</Link>
-					<Link href={'/movies'} as={'/movies'}>
+					<Link href={'/movie'} as={'/movie'}>
 						<span>Movies</span>
 					</Link>
-					<Link href={'/tv-shows'} as={'/tv-shows'}>
+					<Link href={'/tv'} as={'/tv'}>
 						<span>TV shows</span>
 					</Link>
 					{isShowUserMenu && (
@@ -67,7 +65,7 @@ const Header = () => {
 						</Link>
 					)}
 				</div>
-				<Breadcrumbs breadcrumbs={breadcrumbs} />
+				<Breadcrumbs />
 			</div>
 		</header>
 	)

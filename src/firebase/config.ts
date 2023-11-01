@@ -56,9 +56,9 @@ export interface AuthContextType {
 }
 
 export const USER_COLLECTIONS = [
-	'movies',
-	'tv-shows',
-	'persons',
+	'movie',
+	'tv',
+	'person',
 	'reviews',
 	'replies',
 	'marks',
@@ -294,8 +294,17 @@ export const getCollectionItemsList = async (
 			return itemSnapshot.val()
 		})
 	)
+	// ).then(data => {
+	// 	if (collectionName === 'reviews') {
+	// 		return data.filter(item => item.id !== undefined)
+	// 	}
+	// 	return data
+	// })
 
-	return { isMoreDataAvailable, items }
+	return {
+		isMoreDataAvailable,
+		items,
+	}
 }
 
 export const collectionListener = (
@@ -497,7 +506,7 @@ export const reviewsListener = (
 	collectionId: number | string,
 	loadedItems: Array<IReviewCardFromDB>,
 	setItems: ([]) => void,
-	collectionName: 'movies' | 'users'
+	collectionName: 'movie' | 'users'
 ) => {
 	let reviewsRef
 	if (collectionName === 'users') {

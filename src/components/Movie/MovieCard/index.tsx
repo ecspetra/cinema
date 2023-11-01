@@ -28,7 +28,7 @@ const MovieCard: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		handleRemoveCollectionItem,
-	} = useCollectionButton(item, 'movies')
+	} = useCollectionButton(item, 'movie')
 
 	const {
 		id,
@@ -44,12 +44,8 @@ const MovieCard: FC<PropsType> = ({
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
-				href={
-					isTVShow ? '/tv-shows/tv-show/[id]' : '/movies/movie/[id]'
-				}
-				as={
-					isTVShow ? `/tv-shows/tv-show/${id}` : `/movies/movie/${id}`
-				}
+				href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
+				as={isTVShow ? `/tv/${id}` : `/movie/${id}`}
 				className='group relative'
 			>
 				<MarkSmall

@@ -1,8 +1,5 @@
 import { NextPageContext } from 'next'
-import {
-	LINK_TO_FETCH_PERSON,
-	LINK_TO_FETCH_MOVIES_WITH_PERSONS,
-} from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_MOVIES_WITH_PERSONS } from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PersonInfo from '@/components/Person/PersonInfo'
@@ -10,7 +7,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
-import { fetchPersonData } from '@/handlers/fetchPersonData'
+import { fetchItemData } from '@/handlers/fetchItemData'
 
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(null)
@@ -23,12 +20,20 @@ const Person = ({ personFromProps }) => {
 	useEffect(() => {
 		const fetchPerson = async () => {
 			const getPersonInfo = async () => {
-				const result = await fetchPersonData(router.query.id, '')
+				const result = await fetchItemData(
+					'person',
+					router.query.id,
+					''
+				)
 				return result
 			}
 
 			const getPersonImages = async () => {
-				const result = await fetchPersonData(router.query.id, '/images')
+				const result = await fetchItemData(
+					'person',
+					router.query.id,
+					'/images'
+				)
 				return result
 			}
 
@@ -82,12 +87,12 @@ const Person = ({ personFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const getPersonInfo = async () => {
-		const result = await fetchPersonData(ctx.query.id, '')
+		const result = await fetchItemData('person', ctx.query.id, '')
 		return result
 	}
 
 	const getPersonImages = async () => {
-		const result = await fetchPersonData(ctx.query.id, '/images')
+		const result = await fetchItemData('person', ctx.query.id, '/images')
 		return result
 	}
 

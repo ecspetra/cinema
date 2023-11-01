@@ -1,7 +1,7 @@
 import { NextPageContext } from 'next'
 import { LINK_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
-import MoviePersonsList from '../../../components/Person/PersonList/MoviePersonList'
-import MovieInfo from '../../../components/Movie/MovieInfo'
+import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
+import MovieInfo from '../../components/Movie/MovieInfo'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
@@ -9,7 +9,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
 import { getDBReviewsList } from '@/firebase/config'
-import { fetchMovieData } from '@/handlers/fetchMovieData'
+import { fetchItemData } from '@/handlers/fetchItemData'
 
 const TVShow = ({ tvShowFromProps }) => {
 	const router = useRouter()
@@ -56,11 +56,11 @@ const TVShow = ({ tvShowFromProps }) => {
 					reviewsFromDB,
 					similarMoviesResult,
 				] = await Promise.all([
-					fetchMovieData('tv', router.query.id, ''),
-					fetchMovieData('tv', router.query.id, '/credits'),
-					fetchMovieData('tv', router.query.id, '/images'),
-					fetchMovieData('tv', router.query.id, '/reviews'),
-					fetchMovieData('tv', router.query.id, '/videos'),
+					fetchItemData('tv', router.query.id, ''),
+					fetchItemData('tv', router.query.id, '/credits'),
+					fetchItemData('tv', router.query.id, '/images'),
+					fetchItemData('tv', router.query.id, '/reviews'),
+					fetchItemData('tv', router.query.id, '/videos'),
 					getMovieReviews(),
 					getResultsByPage(linkToFetchSimilarMovies, 1),
 				])
@@ -160,11 +160,11 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			reviewsFromDB,
 			similarMoviesResult,
 		] = await Promise.all([
-			fetchMovieData('tv', ctx.query.id, ''),
-			fetchMovieData('tv', ctx.query.id, '/credits'),
-			fetchMovieData('tv', ctx.query.id, '/images'),
-			fetchMovieData('tv', ctx.query.id, '/reviews'),
-			fetchMovieData('tv', ctx.query.id, '/videos'),
+			fetchItemData('tv', ctx.query.id, ''),
+			fetchItemData('tv', ctx.query.id, '/credits'),
+			fetchItemData('tv', ctx.query.id, '/images'),
+			fetchItemData('tv', ctx.query.id, '/reviews'),
+			fetchItemData('tv', ctx.query.id, '/videos'),
 			getMovieReviews(),
 			getResultsByPage(linkToFetchSimilarShows, 1),
 		])

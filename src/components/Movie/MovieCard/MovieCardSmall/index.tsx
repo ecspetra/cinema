@@ -48,16 +48,8 @@ const MovieCardSmall: FC<PropsType> = ({
 		<div className={classNames(!mark && 'w-24 h-36', 'flex-none')}>
 			{isLinkToMovie ? (
 				<Link
-					href={
-						isTVShow
-							? '/tv-shows/tv-show/[id]'
-							: '/movies/movie/[id]'
-					}
-					as={
-						isTVShow
-							? `/tv-shows/tv-show/${itemId}`
-							: `/movies/movie/${itemId}`
-					}
+					href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
+					as={isTVShow ? `/tv/${itemId}` : `/movie/${itemId}`}
 					className='group'
 				>
 					{movieCard}

@@ -25,15 +25,15 @@ const PersonCard: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		handleRemoveCollectionItem,
-	} = useCollectionButton(item, 'persons')
+	} = useCollectionButton(item, 'person')
 
 	const { id, job, name, character, profile_path } = item
 
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
-				href={`persons/person/[id]`}
-				as={`persons/person/${id}`}
+				href={`/person/[id]`}
+				as={`/person/${id}`}
 				className='group text-sm'
 			>
 				<Image

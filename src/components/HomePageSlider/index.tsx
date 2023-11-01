@@ -4,7 +4,7 @@ import HomePageSliderItemsList from '@/components/HomePageSlider/HomePageSliderI
 import Image from '@/components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import TopBanner from '@/components/TopBanner'
-import { fetchMovieData } from '@/handlers/fetchMovieData'
+import { fetchItemData } from '@/handlers/fetchItemData'
 import Title from '@/app/components/UI/Title/Title'
 import ReactPlayer from 'react-player'
 
@@ -20,8 +20,8 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 	const [videoSrc, setVideoSrc] = useState<string>('')
 
 	const getSelectedItemImageSrc = async () => {
-		const images = await fetchMovieData('movie', selectedItem.id, '/images')
-		const videos = await fetchMovieData('movie', selectedItem.id, '/videos')
+		const images = await fetchItemData('movie', selectedItem.id, '/images')
+		const videos = await fetchItemData('movie', selectedItem.id, '/videos')
 		const movieTeaser =
 			videos.results.length &&
 			videos.results.find(

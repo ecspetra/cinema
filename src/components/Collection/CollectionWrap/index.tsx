@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import { USER_COLLECTIONS } from '@/firebase/config'
 import {
@@ -8,14 +7,8 @@ import {
 	IPersonCard,
 	IReviewCardFromDB,
 } from '../../../../interfaces'
-import MovieCard from '@/components/Movie/MovieCard'
-import Link from 'next/link'
-import { useAuth } from '@/context/AuthProvider'
-import PersonCard from '../../Person/PersonList/PersonCard'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
-import MovieCardSmall from '@/components/Movie/MovieCard/MovieCardSmall'
-import ReviewsCollectionWrap from '@/components/Collection/CollectionWrap/ReviewsCollectionWrap'
 import MarksCollectionWrap from '@/components/Collection/CollectionWrap/MarksCollectionWrap'
 import ItemsCollectionWrap from '@/components/Collection/ItemsCollectionWrap'
 
@@ -48,7 +41,7 @@ const CollectionWrap: FC<PropsType> = ({
 				)
 			case 'marks':
 				return <MarksCollectionWrap items={items} />
-			case 'movies':
+			case 'movie':
 				return (
 					<ItemsCollectionWrap
 						items={items}
@@ -56,7 +49,7 @@ const CollectionWrap: FC<PropsType> = ({
 						isMoreDataAvailable={isMoreDataAvailable}
 					/>
 				)
-			case 'persons':
+			case 'person':
 				return (
 					<ItemsCollectionWrap
 						items={items}

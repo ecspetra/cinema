@@ -256,7 +256,7 @@ const ReviewCard: FC<PropsType> = ({
 		>
 			{isLinkToMovie ? (
 				<Link
-					href='/movies/movie/[id]'
+					href='/movie/[id]'
 					as={`/movie/${movieId}`}
 					className='group'
 				>

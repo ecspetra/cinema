@@ -11,7 +11,7 @@ import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>
-	listName: 'movie' | 'persons' | 'tv'
+	listName: 'movie' | 'person' | 'tv'
 	title: string
 	isMoreDataAvailable: boolean
 	linkToFetchItems?: string
@@ -32,7 +32,7 @@ const ItemsList: FC<PropsType> = ({
 		useState(isMoreDataAvailable)
 
 	const getItems = async () => {
-		if (listName !== 'persons') {
+		if (listName !== 'person') {
 			getMovieGenres(fetchedItems, listName).then(data => {
 				setItemsToShow(prevState => [...prevState, ...data])
 			})
@@ -81,7 +81,7 @@ const ItemsList: FC<PropsType> = ({
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
-					if (listName !== 'persons') {
+					if (listName !== 'person') {
 						return (
 							<MovieCard
 								key={item.id}
