@@ -27,7 +27,7 @@ const MovieCard: FC<PropsType> = ({
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
-		handleRemoveCollectionItem,
+		openConfirmationPopup,
 	} = useCollectionButton(item, 'movie')
 
 	const {
@@ -85,8 +85,8 @@ const MovieCard: FC<PropsType> = ({
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(item.id, userId)
-							: () => handleSetCollectionItem(item)
+							? openConfirmationPopup
+							: handleSetCollectionItem
 					}
 				/>
 			)}

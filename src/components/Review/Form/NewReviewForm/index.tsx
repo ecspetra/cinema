@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Title from '../../../../app/components/UI/Title/Title'
 import Button from '../../../../app/components/UI/Button'
 import { setNewReviewItem } from '@/firebase/config'
 import { uuidv4 } from '@firebase/util'
 import moment from 'moment'
-import { openLoginModal } from '@/handlers/openLoginModal'
+import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { IReplyCard, IReviewCardFromDB } from '../../../../../interfaces'
@@ -84,6 +84,11 @@ const NewReviewForm: FC<PropsType> = ({
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
 		}
 	}
+
+	useEffect(() => {
+		setTextareaValue('')
+		setError('')
+	}, [movieId])
 
 	return (
 		<>

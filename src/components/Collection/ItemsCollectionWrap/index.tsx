@@ -49,10 +49,13 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 					as={`/collection/${type}?uid=${userId}&type=${type}`}
 					className='flex justify-center items-center'
 				>
-					View all
-					{/*<Button className='mx-auto mt-8' context='empty'>*/}
-					{/*	View all*/}
-					{/*</Button>*/}
+					<Button
+						type='link'
+						className='mx-auto mt-8'
+						context='empty'
+					>
+						View all
+					</Button>
 				</Link>
 			)}
 		</>

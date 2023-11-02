@@ -88,111 +88,124 @@ const ReviewCard: FC<PropsType> = ({
 
 	const handleRemoveReview = () => {
 		setIsMounted(false)
-		removeReviewItem(id, movieId, userId, 'reviews')
+
+		setTimeout(() => {
+			removeReviewItem(id, movieId, userId, 'reviews')
+		}, 500)
 	}
 
 	const reviewContent = (
-		<div className='mb-4 p-4 gap-4 bg-gray-900 relative flex duration-300 group-hover:bg-gray-800'>
-			{isCurrentUserItem && (
-				<Dropdown>
-					<DropdownItem
-						label='Edit'
-						icon={faPenToSquare}
-						onClick={() => setIsShowEditForm(true)}
-					/>
-					<DropdownItem
-						label='Delete'
-						icon={faTrash}
-						onClick={handleRemoveReview}
-					/>
-				</Dropdown>
-			)}
-			{isLinkToMovie && (
-				<MovieCardSmall itemId={movieId} isTVShow={isTVShow} />
-			)}
-			<div className='w-full'>
-				<div className='flex mb-2 max-w-[calc(100%-54px)]'>
-					<div className='flex items-center'>
-						<Image
-							className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
-							src={
-								isItemFromDB
-									? authorInfo.photoURL
-									: `https://image.tmdb.org/t/p/original${avatar_path}`
-							}
-							defaultImage={defaultUserImage}
+		<div>
+			<div className='mb-4 p-4 gap-4 bg-gray-900 relative duration-300 flex group-hover:bg-gray-800'>
+				{isCurrentUserItem && (
+					<Dropdown>
+						<DropdownItem
+							label='Edit'
+							icon={faPenToSquare}
+							onClick={() => setIsShowEditForm(true)}
 						/>
-						<div>
-							<Title variant='h3' className='mb-2 min-h-[22.5px]'>
-								{isItemFromDB ? authorInfo.displayName : author}
-							</Title>
-							<p className='text-xs'>{formattedDate}</p>
+						<DropdownItem
+							label='Delete'
+							icon={faTrash}
+							onClick={handleRemoveReview}
+						/>
+					</Dropdown>
+				)}
+				{isLinkToMovie && (
+					<MovieCardSmall itemId={movieId} isTVShow={isTVShow} />
+				)}
+				<div className='w-full'>
+					<div className='flex mb-2 max-w-[calc(100%-54px)]'>
+						<div className='flex items-center'>
+							<Image
+								className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
+								src={
+									isItemFromDB
+										? authorInfo.photoURL
+										: `https://image.tmdb.org/t/p/original${avatar_path}`
+								}
+								defaultImage={defaultUserImage}
+							/>
+							<div>
+								<Title
+									variant='h3'
+									className='mb-2 min-h-[22.5px]'
+								>
+									{isItemFromDB
+										? authorInfo.displayName
+										: author}
+								</Title>
+								<p className='text-xs'>{formattedDate}</p>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div>
-					{isShowEditForm ? (
-						<EditReviewForm
-							item={review}
-							movieId={defaultCardMovieId ?? movieId}
-							onFormClose={setIsShowEditForm}
-						/>
-					) : (
-						<>
-							<div className='mb-4'>
-								<div
-									style={{
-										maxHeight: isContentOpen
-											? contentHeight
-											: '3rem',
-									}}
-									ref={contentRef}
-									className='overflow-hidden transition-[max-height] duration-500'
-								>
-									<p
-										className={classNames(
-											isShowTruncateDots && 'line-clamp-2'
-										)}
+					<div>
+						{isShowEditForm ? (
+							<EditReviewForm
+								item={review}
+								movieId={defaultCardMovieId ?? movieId}
+								onFormClose={setIsShowEditForm}
+							/>
+						) : (
+							<>
+								<div className='mb-4'>
+									<div
+										style={{
+											maxHeight: isContentOpen
+												? contentHeight
+												: '3rem',
+										}}
+										ref={contentRef}
+										className='overflow-hidden transition-[max-height] duration-500'
 									>
-										{content}
-									</p>
+										<p
+											className={classNames(
+												isShowTruncateDots &&
+													'line-clamp-2'
+											)}
+										>
+											{content}
+										</p>
+									</div>
+									{isLongReviewContent && (
+										<Button
+											context='text'
+											onClick={handleReviewContent}
+										>
+											{isContentOpen
+												? 'Hide'
+												: 'Show more'}
+										</Button>
+									)}
 								</div>
-								{isLongReviewContent && (
-									<Button
-										context='text'
-										onClick={handleReviewContent}
-									>
-										{isContentOpen ? 'Hide' : 'Show more'}
-									</Button>
-								)}
-							</div>
-							<ReviewActions
-								reviewId={id}
-								movieId={defaultCardMovieId ?? movieId}
-								userId={userId}
-								onReply={() => setIsShowReplyForm(true)}
-								collectionName='reviews'
-							/>
-							<RepliesList
-								movieId={defaultCardMovieId ?? movieId}
-								userId={userId}
-								reviewId={id}
-								replies={replies}
-								onReply={handleReplyTo}
-							/>
-							{isShowReplyForm && (
-								<NewReviewForm
+								<ReviewActions
+									reviewId={id}
 									movieId={defaultCardMovieId ?? movieId}
-									isTVShow={isTVShow}
+									userId={userId}
+									onReply={() => setIsShowReplyForm(true)}
+									collectionName='reviews'
+								/>
+								<RepliesList
+									movieId={defaultCardMovieId ?? movieId}
 									userId={userId}
 									reviewId={id}
-									replyTo={replyTo}
-									onFormClose={handleFormClose}
-									isReply
+									replies={replies}
+									onReply={handleReplyTo}
 								/>
-							)}
-						</>
-					)}
+								{isShowReplyForm && (
+									<NewReviewForm
+										movieId={defaultCardMovieId ?? movieId}
+										isTVShow={isTVShow}
+										userId={userId}
+										reviewId={id}
+										replyTo={replyTo}
+										onFormClose={handleFormClose}
+										isReply
+									/>
+								)}
+							</>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

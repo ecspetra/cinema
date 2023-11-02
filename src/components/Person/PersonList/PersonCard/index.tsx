@@ -24,7 +24,7 @@ const PersonCard: FC<PropsType> = ({
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
-		handleRemoveCollectionItem,
+		openConfirmationPopup,
 	} = useCollectionButton(item, 'person')
 
 	const { id, job, name, character, profile_path } = item
@@ -55,8 +55,8 @@ const PersonCard: FC<PropsType> = ({
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(id, userId)
-							: () => handleSetCollectionItem(item)
+							? openConfirmationPopup
+							: handleSetCollectionItem
 					}
 				/>
 			)}

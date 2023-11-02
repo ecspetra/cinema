@@ -2,7 +2,7 @@ import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
 import { getCollectionItemsList } from '@/firebase/config'
 import Button from '@/app/components/UI/Button'
-import { openLoginModal } from '@/handlers/openLoginModal'
+import { handleModals, openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
 import {

@@ -10,7 +10,7 @@ import {
 	setNewMarkForMovie,
 } from '@/firebase/config'
 import { useModal } from '@/context/ModalProvider'
-import { openLoginModal } from '@/handlers/openLoginModal'
+import { handleModals, openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
 import { IMarkFromDB } from '../../../interfaces'
 

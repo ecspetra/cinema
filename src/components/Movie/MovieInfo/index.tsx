@@ -64,7 +64,7 @@ const MovieInfo: FC<PropsType> = ({
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
-		handleRemoveCollectionItem,
+		openConfirmationPopup,
 	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
 
 	return (
@@ -93,31 +93,28 @@ const MovieInfo: FC<PropsType> = ({
 					})}
 				</div>
 				<div className='mb-5'>
-					{release_date ||
-						(first_air_date && (
-							<div className='flex items-center text-sm'>
-								<FontAwesomeIcon
-									className='mr-1.5'
-									icon={faCalendarCheck}
-								/>
-								<span className='mr-1.5'>
-									{release_date
-										? 'Release date'
-										: 'First air date'}
-								</span>
-								{new Intl.DateTimeFormat('en-GB', {
-									month: 'long',
-									day: '2-digit',
-									year: 'numeric',
-								}).format(
-									new Date(
-										release_date
-											? release_date
-											: first_air_date
-									)
-								)}
-							</div>
-						))}
+					{(release_date || first_air_date) && (
+						<div className='flex items-center text-sm'>
+							<FontAwesomeIcon
+								className='mr-1.5'
+								icon={faCalendarCheck}
+							/>
+							<span className='mr-1.5'>
+								{release_date
+									? 'Release date:'
+									: 'First air date:'}
+							</span>
+							{new Intl.DateTimeFormat('en-GB', {
+								month: 'long',
+								day: '2-digit',
+								year: 'numeric',
+							}).format(
+								new Date(
+									release_date ? release_date : first_air_date
+								)
+							)}
+						</div>
+					)}
 					{production_countries.length > 0 && (
 						<div className='flex items-center text-sm'>
 							<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
@@ -166,8 +163,8 @@ const MovieInfo: FC<PropsType> = ({
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(id, userId)
-							: () => handleSetCollectionItem(basicInfo)
+							? openConfirmationPopup
+							: handleSetCollectionItem
 					}
 				/>
 				<ImagesList images={movieImages} />
