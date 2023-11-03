@@ -1,22 +1,17 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
-
-type ModalContentType = {
-	modalTitle: string
-	modalText: string
-	modalClassName: string
-	modalContent: JSX.Element | null
-	alertInfo: {
-		isAlert: boolean
-		type: 'success' | 'error' | ''
-	} | null
-}
+import React, {
+	createContext,
+	useContext,
+	useState,
+	ReactNode,
+	useEffect,
+} from 'react'
+import { IModalContent } from '../../interfaces'
 
 type ModalContextType = {
-	showModal: (content: ModalContentType) => void
+	showModal: (content: IModalContent) => void
 	hideModal: () => void
-	isModalVisible: boolean
+	currentModal: IModalContent
 	isMounted: boolean
-	content: ModalContentType
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
@@ -34,41 +29,46 @@ type ModalProviderProps = {
 }
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {
+	const [modalQueue, setModalQueue] = useState<ModalContextType[]>([])
+	const [currentModal, setCurrentModal] = useState<IModalContent | null>(null)
 	const [isMounted, setIsMounted] = useState(false)
-	const [isModalVisible, setIsModalVisible] = useState(false)
-	const [content, setContent] = useState<ModalContentType>({
-		modalTitle: '',
-		modalText: '',
-		modalClassName: '',
-		modalContent: null,
-		alertInfo: null,
-	})
 
-	const showModal = (modalContent: ModalContentType) => {
-		setContent(modalContent)
-		setIsModalVisible(true)
-		setIsMounted(true)
+	const showModal = (modalData: IModalContent) => {
+		setModalQueue(prevState => [...prevState, modalData])
 	}
 
-	const hideModal = () => {
+	const hideModal = (modalId: string) => {
 		setIsMounted(false)
 
 		setTimeout(() => {
-			setIsModalVisible(false)
-			setContent({
-				modalTitle: '',
-				modalText: '',
-				modalClassName: '',
-				modalContent: null,
-				alertInfo: null,
-			})
+			setModalQueue(prevState =>
+				prevState.filter(item => item.id !== modalId)
+			)
+			setCurrentModal(null)
 		}, 300)
 	}
 
+	useEffect(() => {
+		if (modalQueue.length > 0 && !currentModal) {
+			setCurrentModal(modalQueue[modalQueue.length - 1])
+		}
+	}, [modalQueue, currentModal])
+
+	useEffect(() => {
+		if (currentModal) {
+			setIsMounted(true)
+		}
+	}, [currentModal])
+
+	const contextValue = {
+		showModal,
+		hideModal,
+		isMounted,
+		currentModal,
+	}
+
 	return (
-		<ModalContext.Provider
-			value={{ showModal, hideModal, isModalVisible, isMounted, content }}
-		>
+		<ModalContext.Provider value={contextValue}>
 			{children}
 		</ModalContext.Provider>
 	)

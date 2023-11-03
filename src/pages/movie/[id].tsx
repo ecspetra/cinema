@@ -114,23 +114,23 @@ const Movie = ({ movieFromProps }) => {
 				movieVideo={movieTeaser?.key}
 			/>
 			<div>
-				<MoviePersonsList
-					personsFromProps={movie.creditsResult.cast}
-					title='Cast'
-				/>
-				<MoviePersonsList
-					personsFromProps={movie.creditsResult.crew}
-					title='Crew'
-				/>
-				<ItemsList
-					itemsList={movie.similarMoviesResult.items}
-					listName='movie'
-					title='Similar movies'
-					isMoreDataAvailable={
-						movie.similarMoviesResult.isMoreDataAvailable
-					}
-					linkToFetchItems={linkToFetchSimilarMovies}
-				/>
+				{/*<MoviePersonsList*/}
+				{/*	personsFromProps={movie.creditsResult.cast}*/}
+				{/*	title='Cast'*/}
+				{/*/>*/}
+				{/*<MoviePersonsList*/}
+				{/*	personsFromProps={movie.creditsResult.crew}*/}
+				{/*	title='Crew'*/}
+				{/*/>*/}
+				{/*<ItemsList*/}
+				{/*	itemsList={movie.similarMoviesResult.items}*/}
+				{/*	listName='movie'*/}
+				{/*	title='Similar movies'*/}
+				{/*	isMoreDataAvailable={*/}
+				{/*		movie.similarMoviesResult.isMoreDataAvailable*/}
+				{/*	}*/}
+				{/*	linkToFetchItems={linkToFetchSimilarMovies}*/}
+				{/*/>*/}
 			</div>
 		</>
 	)

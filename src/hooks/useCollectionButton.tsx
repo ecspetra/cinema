@@ -22,7 +22,7 @@ export const useCollectionButton = (
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
 	const { userId, isLoggedIn } = useAuth()
-	const { showModal, hideModal } = useModal()
+	const { showModal, hideModal, currentModal } = useModal()
 
 	const handleSetCollectionItem = () => {
 		if (isLoggedIn) {
@@ -78,18 +78,19 @@ export const useCollectionButton = (
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveCollectionItem = () => {
+	const handleRemoveCollectionItem = modalId => {
+		hideModal(modalId)
+
 		setIsLoadingCollection(true)
 		removeCollectionItem(itemInfo.id, userId, collection)
 			.then(() => {
 				setIsCollectionItem(false)
 				setIsLoadingCollection(false)
-				hideModal()
 			})
 			.then(() => {
 				showSuccessNotification(
 					showModal,
-					'The item was successfully deleted'
+					'The item was successfully removed'
 				)
 			})
 			.catch(() => {

@@ -50,7 +50,8 @@ const SignUpForm = () => {
 	})
 	const router = useRouter()
 	const pathname = usePathname()
-	const { hideModal } = useModal()
+	const { hideModal, currentModal } = useModal()
+	const { id } = currentModal || {}
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isNameValid = formData.name.value.trim() !== ''
 	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
@@ -118,7 +119,7 @@ const SignUpForm = () => {
 				)
 				updateFormError('')
 				clearForm()
-				hideModal()
+				hideModal(id)
 				if (isAuthPage) await router.push('/')
 			} catch (error: any) {
 				updateFormError(error.toString())

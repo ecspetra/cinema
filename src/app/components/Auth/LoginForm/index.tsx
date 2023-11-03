@@ -48,7 +48,8 @@ const LoginForm = () => {
 		},
 	})
 	const pathname = usePathname()
-	const { hideModal } = useModal()
+	const { hideModal, currentModal } = useModal()
+	const { id } = currentModal || {}
 	const router = useRouter()
 	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
 	const isPasswordValid = formData.password.value.length > 0
@@ -104,7 +105,7 @@ const LoginForm = () => {
 				await signIn(formData.email.value, formData.password.value)
 				updateFormError('')
 				clearForm()
-				hideModal()
+				hideModal(id)
 
 				let target
 

@@ -120,3 +120,15 @@ export interface IPersonInfo {
 	deathday: string | null
 	biography: string
 }
+
+export interface IModalContent {
+	id: string
+	modalTitle: string
+	modalText: string
+	modalClassName: string
+	modalContent: JSX.Element | null
+	alertInfo: {
+		isAlert: boolean
+		type: 'success' | 'error' | ''
+	} | null
+}

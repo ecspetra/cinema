@@ -1,11 +1,10 @@
 import AuthForm from '@/app/components/Auth/AuthForm'
 import React from 'react'
 import Button from '@/app/components/UI/Button'
+import { uuidv4 } from '@firebase/util'
 
 export const openLoginModal = showModal => {
 	showModal({
-		modalTitle: '',
-		modalText: '',
 		modalClassName: '',
 		modalContent: <AuthForm />,
 		alertInfo: null,
@@ -13,14 +12,16 @@ export const openLoginModal = showModal => {
 }
 
 export const openRemoveModal = (showModal, onClose, onRemove, itemName) => {
+	const modalId = uuidv4()
 	showModal({
+		id: modalId,
 		modalTitle: `Are you sure you want to remove ${itemName} from your collection?`,
 		modalText: '',
 		modalClassName: '',
 		modalContent: (
 			<div className='flex justify-between items-center gap-4'>
-				<Button onClick={onRemove}>Confirm</Button>
-				<Button context='filledDark' onClick={onClose}>
+				<Button onClick={() => onRemove(modalId)}>Confirm</Button>
+				<Button context='filledDark' onClick={() => onClose(modalId)}>
 					Cancel
 				</Button>
 			</div>
@@ -31,6 +32,7 @@ export const openRemoveModal = (showModal, onClose, onRemove, itemName) => {
 
 export const showSuccessNotification = (showModal, text) => {
 	showModal({
+		id: uuidv4(),
 		modalTitle: ``,
 		modalText: text,
 		modalClassName: '',
