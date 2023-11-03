@@ -10,6 +10,7 @@ import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
 import useScrollToTop from '@/hooks/useScrollToTop'
 import useItemsToShow from '@/hooks/useItemsToShow'
+import { uuidv4 } from '@firebase/util'
 
 type PropsType = {
 	images: Array<IBackdrop> | Array<IPersonImage>
@@ -33,6 +34,7 @@ const ImagesList: FC<PropsType> = ({
 
 	const handleSliderImage = (idx: number) => {
 		showModal({
+			id: uuidv4(),
 			modalTitle: '',
 			modalText: '',
 			modalClassName: isPersonImages ? '!p-0' : '!max-w-7xl !p-0',
@@ -43,6 +45,7 @@ const ImagesList: FC<PropsType> = ({
 					isPersonImages={isPersonImages}
 				/>
 			),
+			alertInfo: null,
 		})
 	}
 

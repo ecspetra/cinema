@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { faStar, faStarHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Title from '@/app/components/UI/Title/Title'
 
 type PropsType = {
 	rating: number
@@ -52,15 +53,18 @@ const Rating: FC<PropsType> = ({ rating, voteCount }) => {
 	}, [rating])
 
 	return (
-		<div className='flex gap-x-1 text-white items-center mb-5'>
-			{ratingIcons.map(item => item)}
-			<p className='text-sm font-semibold leading-none mr-2'>
-				{Math.ceil(rating * 10) / 10}
-			</p>
-			<p className='text-gray-400 text-sm leading-none mt-[2px]'>
-				{voteCount} voted
-			</p>
-		</div>
+		<>
+			<Title variant='h3'>Rating</Title>
+			<div className='flex gap-x-1 text-white items-center mb-5'>
+				{ratingIcons.map(item => item)}
+				<p className='text-sm font-semibold leading-none mr-2'>
+					{Math.ceil(rating * 10) / 10}
+				</p>
+				<p className='text-gray-400 text-sm leading-none mt-[2px]'>
+					{voteCount} voted
+				</p>
+			</div>
+		</>
 	)
 }
 

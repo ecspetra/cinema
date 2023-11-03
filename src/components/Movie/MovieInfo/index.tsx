@@ -25,6 +25,8 @@ import { useAuth } from '@/context/AuthProvider'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
+import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
+import moment from 'moment'
 
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
@@ -56,6 +58,7 @@ const MovieInfo: FC<PropsType> = ({
 		first_air_date,
 		vote_count,
 		vote_average,
+		seasons,
 	} = basicInfo
 
 	const isTVShowItem = !!(first_air_date && name)
@@ -104,15 +107,9 @@ const MovieInfo: FC<PropsType> = ({
 									? 'Release date:'
 									: 'First air date:'}
 							</span>
-							{new Intl.DateTimeFormat('en-GB', {
-								month: 'long',
-								day: '2-digit',
-								year: 'numeric',
-							}).format(
-								new Date(
-									release_date ? release_date : first_air_date
-								)
-							)}
+							{moment(
+								release_date ? release_date : first_air_date
+							).format('Do MMM YYYY')}
 						</div>
 					)}
 					{production_countries.length > 0 && (
@@ -167,6 +164,7 @@ const MovieInfo: FC<PropsType> = ({
 							: handleSetCollectionItem
 					}
 				/>
+				{isTVShowItem && <TVSeasonsList seasonsList={seasons} />}
 				<ImagesList images={movieImages} />
 				<ReviewsList movieId={id} reviews={movieReviews} />
 				<NewReviewForm

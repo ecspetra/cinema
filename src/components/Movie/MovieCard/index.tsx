@@ -1,5 +1,5 @@
 import { IMovieCard, ITVShowCard } from '../../../../interfaces'
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
 import Image from '../../Images/Image/index'
@@ -7,23 +7,25 @@ import Title from '../../../app/components/UI/Title/Title'
 import Genre from '../../Genre/index'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
-import { useAuth } from '@/context/AuthProvider'
 import MarkSmall from '@/components/Mark/MarkSmall'
 import moment from 'moment'
+import { CSSTransition } from 'react-transition-group'
 
 type PropsType = {
 	item: IMovieCard | ITVShowCard
 	isShowButton?: boolean
 	isTVShow?: boolean
+	isCollectionListItem?: boolean
 }
 
 const MovieCard: FC<PropsType> = ({
 	item,
 	isShowButton = true,
 	isTVShow = false,
+	isCollectionListItem = false,
 }) => {
-	const { userId } = useAuth()
 	const {
+		isMounted,
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
@@ -41,7 +43,7 @@ const MovieCard: FC<PropsType> = ({
 	} = item
 	const isShowGenres = genres?.length > 0
 
-	return (
+	const movieCard = (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
 				href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
@@ -91,6 +93,23 @@ const MovieCard: FC<PropsType> = ({
 				/>
 			)}
 		</div>
+	)
+
+	return (
+		<>
+			{isCollectionListItem ? (
+				<CSSTransition
+					in={isMounted}
+					timeout={500}
+					classNames='collection-card'
+					unmountOnExit
+				>
+					{movieCard}
+				</CSSTransition>
+			) : (
+				movieCard
+			)}
+		</>
 	)
 }
 

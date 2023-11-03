@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import ItemsList from '@/components/List/ItemsList'
+import TopBanner from '@/components/TopBanner'
 
 const Persons = ({ items, isMoreDataAvailable }) => {
 	const [persons, setPersons] = useState([])
@@ -26,13 +27,16 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 	if (!persons.length) return <Loader />
 
 	return (
-		<ItemsList
-			itemsList={persons}
-			listName='person'
-			title='Discover persons'
-			isMoreDataAvailable={isNextResult}
-			linkToFetchItems={LINK_TO_FETCH_PERSON_LIST}
-		/>
+		<>
+			<TopBanner />
+			<ItemsList
+				itemsList={persons}
+				listName='person'
+				title='Discover persons'
+				isMoreDataAvailable={isNextResult}
+				linkToFetchItems={LINK_TO_FETCH_PERSON_LIST}
+			/>
+		</>
 	)
 }
 
