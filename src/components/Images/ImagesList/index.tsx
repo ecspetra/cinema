@@ -9,6 +9,7 @@ import { useModal } from '@/context/ModalProvider'
 import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
 import useScrollToTop from '@/hooks/useScrollToTop'
+import useItemsToShow from '@/hooks/useItemsToShow'
 
 type PropsType = {
 	images: Array<IBackdrop> | Array<IPersonImage>
@@ -21,29 +22,14 @@ const ImagesList: FC<PropsType> = ({
 	isPersonImages = false,
 	className,
 }) => {
-	const [itemsToShow, setItemsToShow] = useState<Array<IBackdrop>>([])
 	const { showModal } = useModal()
-	const { ref, scrollToTop } = useScrollToTop(100)
-	const initialItemsLength = 12
-	const isAllDataVisible = itemsToShow.length > initialItemsLength
-	const isShowMoreButton = images.length > initialItemsLength
-	const buttonText = isAllDataVisible ? 'Show less' : 'Show all'
-
-	const getImages = () => {
-		if (isAllDataVisible) scrollToTop()
-
-		const newImages = isAllDataVisible
-			? images.slice(0, initialItemsLength)
-			: images
-
-		if (isAllDataVisible) {
-			setTimeout(() => {
-				setItemsToShow(newImages)
-			}, 600)
-		} else {
-			setItemsToShow(newImages)
-		}
-	}
+	const {
+		itemsToShow,
+		getItemsToShow,
+		isShowMoreButton,
+		buttonText,
+		listRef,
+	} = useItemsToShow(images, 12)
 
 	const handleSliderImage = (idx: number) => {
 		showModal({
@@ -60,17 +46,12 @@ const ImagesList: FC<PropsType> = ({
 		})
 	}
 
-	useEffect(() => {
-		const initialItems = images.slice(0, initialItemsLength)
-		setItemsToShow(initialItems)
-	}, [images])
-
 	if (!images.length) {
 		return <EmptyList title='Images' />
 	}
 
 	return (
-		<div ref={ref} className={classNames('mb-16', className)}>
+		<div ref={listRef} className={classNames('mb-16', className)}>
 			<Title>Images</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start'>
 				{itemsToShow.map((item, idx) => (
@@ -95,7 +76,7 @@ const ImagesList: FC<PropsType> = ({
 				<Button
 					className='mx-auto mt-8'
 					context='empty'
-					onClick={getImages}
+					onClick={getItemsToShow}
 				>
 					{buttonText}
 				</Button>

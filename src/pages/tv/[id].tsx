@@ -11,13 +11,13 @@ import ItemsList from '@/components/List/ItemsList'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
 
-const Movie = ({ movieFromProps }) => {
+const TVShow = ({ tvShowFromProps }) => {
 	const router = useRouter()
 	const [movie, setMovie] = useState(null)
 	const [linkToFetchSimilarMovies, setLinkToFetchSimilarMovies] = useState(
 		LINK_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
 			'{listName}',
-			'movie'
+			'tv'
 		)
 	)
 	const movieTeaser =
@@ -34,7 +34,7 @@ const Movie = ({ movieFromProps }) => {
 				LINK_TO_FETCH_SIMILAR_LIST.replace(
 					'{itemId}',
 					router.query.id
-				).replace('{listName}', 'movie')
+				).replace('{listName}', 'tv')
 			)
 
 			try {
@@ -56,11 +56,11 @@ const Movie = ({ movieFromProps }) => {
 					reviewsFromDB,
 					similarMoviesResult,
 				] = await Promise.all([
-					fetchItemData('movie', router.query.id, ''),
-					fetchItemData('movie', router.query.id, '/credits'),
-					fetchItemData('movie', router.query.id, '/images'),
-					fetchItemData('movie', router.query.id, '/reviews'),
-					fetchItemData('movie', router.query.id, '/videos'),
+					fetchItemData('tv', router.query.id, ''),
+					fetchItemData('tv', router.query.id, '/credits'),
+					fetchItemData('tv', router.query.id, '/images'),
+					fetchItemData('tv', router.query.id, '/reviews'),
+					fetchItemData('tv', router.query.id, '/videos'),
 					getMovieReviews(),
 					getResultsByPage(linkToFetchSimilarMovies, 1),
 				])
@@ -81,14 +81,14 @@ const Movie = ({ movieFromProps }) => {
 			}
 		}
 
-		if (!movieFromProps) {
+		if (!tvShowFromProps) {
 			fetchData()
 		}
 	}, [router.query.id])
 
 	useEffect(() => {
-		setMovie(movieFromProps)
-	}, [movieFromProps])
+		setMovie(tvShowFromProps)
+	}, [tvShowFromProps])
 
 	if (
 		!movie ||
@@ -114,23 +114,23 @@ const Movie = ({ movieFromProps }) => {
 				movieVideo={movieTeaser?.key}
 			/>
 			<div>
-				{/*<MoviePersonsList*/}
-				{/*	personsFromProps={movie.creditsResult.cast}*/}
-				{/*	title='Cast'*/}
-				{/*/>*/}
-				{/*<MoviePersonsList*/}
-				{/*	personsFromProps={movie.creditsResult.crew}*/}
-				{/*	title='Crew'*/}
-				{/*/>*/}
-				{/*<ItemsList*/}
-				{/*	itemsList={movie.similarMoviesResult.items}*/}
-				{/*	listName='movie'*/}
-				{/*	title='Similar movies'*/}
-				{/*	isMoreDataAvailable={*/}
-				{/*		movie.similarMoviesResult.isMoreDataAvailable*/}
-				{/*	}*/}
-				{/*	linkToFetchItems={linkToFetchSimilarMovies}*/}
-				{/*/>*/}
+				<MoviePersonsList
+					personsFromProps={movie.creditsResult.cast}
+					title='Cast'
+				/>
+				<MoviePersonsList
+					personsFromProps={movie.creditsResult.crew}
+					title='Crew'
+				/>
+				<ItemsList
+					itemsList={movie.similarMoviesResult.items}
+					listName='tv'
+					title='Similar movies'
+					isMoreDataAvailable={
+						movie.similarMoviesResult.isMoreDataAvailable
+					}
+					linkToFetchItems={linkToFetchSimilarMovies}
+				/>
 			</div>
 		</>
 	)
@@ -138,10 +138,10 @@ const Movie = ({ movieFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const linkToFetchSimilarMovies = LINK_TO_FETCH_SIMILAR_LIST.replace(
+		const linkToFetchSimilarShows = LINK_TO_FETCH_SIMILAR_LIST.replace(
 			'{itemId}',
 			ctx.query.id
-		).replace('{listName}', 'movie')
+		).replace('{listName}', 'tv')
 
 		const getMovieReviews = async () => {
 			const collectionReviews = await getDBReviewsList(
@@ -160,20 +160,20 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			reviewsFromDB,
 			similarMoviesResult,
 		] = await Promise.all([
-			fetchItemData('movie', ctx.query.id, ''),
-			fetchItemData('movie', ctx.query.id, '/credits'),
-			fetchItemData('movie', ctx.query.id, '/images'),
-			fetchItemData('movie', ctx.query.id, '/reviews'),
-			fetchItemData('movie', ctx.query.id, '/videos'),
+			fetchItemData('tv', ctx.query.id, ''),
+			fetchItemData('tv', ctx.query.id, '/credits'),
+			fetchItemData('tv', ctx.query.id, '/images'),
+			fetchItemData('tv', ctx.query.id, '/reviews'),
+			fetchItemData('tv', ctx.query.id, '/videos'),
 			getMovieReviews(),
-			getResultsByPage(linkToFetchSimilarMovies, 1),
+			getResultsByPage(linkToFetchSimilarShows, 1),
 		])
 
 		const reviews = [...reviewsResult.results, ...reviewsFromDB]
 
 		return {
 			props: {
-				movieFromProps: {
+				tvShowFromProps: {
 					basicInfoResult,
 					creditsResult,
 					imagesResult,
@@ -187,10 +187,10 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				movieFromProps: {},
+				tvShowFromProps: {},
 			},
 		}
 	}
 }
 
-export default Movie
+export default TVShow

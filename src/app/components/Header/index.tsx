@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE } from '@/constants/paths'
+import Breadcrumbs from '@/app/components/Breadcrumbs'
 
 const Header = () => {
 	const { userId, photoURL, isLoggedIn } = useAuth()
@@ -29,33 +30,42 @@ const Header = () => {
 
 	return (
 		<header className='fixed top-0 left-0 w-full z-50 bg-black'>
-			<div className='max-w-screen-xl flex justify-between items-center mx-auto p-5'>
-				<Link href={`/`} as={`/`}>
-					<span>CinemaStreet</span>
-				</Link>
-				<Link href={collectionMoviesLink} as={collectionMoviesLink}>
-					<span>My collection</span>
-				</Link>
-				<Link href={'/persons'} as={'/persons'}>
-					<span>Persons</span>
-				</Link>
-				{isShowUserMenu && (
-					<div className='flex justify-center items-center gap-4'>
-						<Image
-							className='!w-11 h-11 rounded-full'
-							src={photoURL}
-							defaultImage={defaultUserImage}
-						/>
-						<Button context='text' onClick={handleSignOutUser}>
-							Sign Out
-						</Button>
-					</div>
-				)}
-				{isShowAuthButton && (
-					<Link href={`/auth`} as={`/auth`}>
-						<span>Sign In</span>
+			<div className='max-w-screen-xl mx-auto p-5'>
+				<div className='flex justify-between items-center'>
+					<Link href={`/`} as={`/`}>
+						<span>CinemaStreet</span>
 					</Link>
-				)}
+					<Link href={collectionMoviesLink} as={collectionMoviesLink}>
+						<span>My collection</span>
+					</Link>
+					<Link href={'/person'} as={'/person'}>
+						<span>Persons</span>
+					</Link>
+					<Link href={'/movie'} as={'/movie'}>
+						<span>Movies</span>
+					</Link>
+					<Link href={'/tv'} as={'/tv'}>
+						<span>TV shows</span>
+					</Link>
+					{isShowUserMenu && (
+						<div className='flex justify-center items-center gap-4'>
+							<Image
+								className='!w-11 h-11 rounded-full'
+								src={photoURL}
+								defaultImage={defaultUserImage}
+							/>
+							<Button context='text' onClick={handleSignOutUser}>
+								Sign Out
+							</Button>
+						</div>
+					)}
+					{isShowAuthButton && (
+						<Link href={`/auth`} as={`/auth`}>
+							<span>Sign In</span>
+						</Link>
+					)}
+				</div>
+				<Breadcrumbs />
 			</div>
 		</header>
 	)

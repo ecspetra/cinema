@@ -10,17 +10,16 @@ import PersonCard from '../../Person/PersonList/PersonCard'
 import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
-	collectionName: 'movies' | 'persons'
-	itemsList: {
-		items: Array<IMovieCard>
-		isMoreDataAvailable: boolean
-	}
+	collectionName: 'movie' | 'person'
+	items: Array<IMovieCard>
+	isMoreDataAvailable: boolean
 	title: string
 }
 
 const CollectionItemsList: FC<PropsType> = ({
 	collectionName,
-	itemsList: { items, isMoreDataAvailable },
+	items,
+	isMoreDataAvailable,
 	title,
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -74,9 +73,9 @@ const CollectionItemsList: FC<PropsType> = ({
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
-					if (collectionName === 'movies') {
-						return <MovieCard key={item.id} movie={item} />
-					} else return <PersonCard key={item.id} person={item} />
+					if (collectionName === 'movie') {
+						return <MovieCard key={item.id} item={item} />
+					} else return <PersonCard key={item.id} item={item} />
 				})}
 			</div>
 			{isLoading && <Loader type='static' />}

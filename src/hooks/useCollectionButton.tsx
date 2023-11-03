@@ -6,37 +6,50 @@ import {
 } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
-import { openLoginModal } from '@/handlers/openLoginModal'
-import { IMovieCard, IPersonCard } from '../../interfaces'
+import {
+	openLoginModal,
+	openRemoveModal,
+	showErrorNotification,
+	showSuccessNotification,
+} from '@/handlers/handleModals'
+import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
 
 export const useCollectionButton = (
 	itemInfo: IMovieCard | IPersonCard,
-	collection: 'movies' | 'persons'
+	collection: 'movie' | 'tv' | 'person'
 ) => {
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
 	const { userId, isLoggedIn } = useAuth()
-	const { showModal } = useModal()
+	const { showModal, hideModal, currentModal } = useModal()
 
-	const handleSetCollectionItem = (item: IMovieCard | IPersonCard) => {
+	const handleSetCollectionItem = () => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			let newItem: IMovieCard | IPersonCard = {}
+			let newItem: IMovieCard | ITVShowCard | IPersonCard = {}
 
-			if (collection === 'movies') {
+			if (collection === 'movie') {
 				newItem = {
-					id: item.id,
-					poster_path: item.poster_path,
-					release_date: item.release_date,
-					title: item.title,
-					genres: item.genres,
+					id: itemInfo.id,
+					poster_path: itemInfo.poster_path,
+					release_date: itemInfo.release_date,
+					title: itemInfo.title,
+					genres: itemInfo.genres,
+				}
+			} else if (collection === 'tv') {
+				newItem = {
+					id: itemInfo.id,
+					poster_path: itemInfo.poster_path,
+					first_air_date: itemInfo.first_air_date,
+					name: itemInfo.name,
+					genres: itemInfo.genres,
 				}
 			} else {
 				newItem = {
-					id: item.id,
-					profile_path: item.profile_path,
-					name: item.name,
+					id: itemInfo.id,
+					profile_path: itemInfo.profile_path,
+					name: itemInfo.name,
 				}
 			}
 
@@ -46,9 +59,17 @@ export const useCollectionButton = (
 						.then(data => {
 							setIsCollectionItem(data)
 							setIsLoadingCollection(false)
+							showSuccessNotification(
+								showModal,
+								'The item was successfully added'
+							)
 						})
 						.catch(() => {
 							setIsLoadingCollection(false)
+							showErrorNotification(
+								showModal,
+								'An error has occurred'
+							)
 						})
 				})
 				.catch(() => {
@@ -57,16 +78,35 @@ export const useCollectionButton = (
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveCollectionItem = (itemId: number, userId: string) => {
+	const handleRemoveCollectionItem = modalId => {
+		hideModal(modalId)
+
 		setIsLoadingCollection(true)
-		removeCollectionItem(itemId, userId, collection)
+		removeCollectionItem(itemInfo.id, userId, collection)
 			.then(() => {
 				setIsCollectionItem(false)
 				setIsLoadingCollection(false)
 			})
+			.then(() => {
+				showSuccessNotification(
+					showModal,
+					'The item was successfully removed'
+				)
+			})
 			.catch(() => {
 				setIsLoadingCollection(false)
+				showErrorNotification(showModal, 'An error has occurred')
 			})
+	}
+
+	const openConfirmationPopup = () => {
+		const itemName = itemInfo.title ? itemInfo.title : itemInfo.name
+		openRemoveModal(
+			showModal,
+			hideModal,
+			handleRemoveCollectionItem,
+			itemName
+		)
 	}
 
 	useEffect(() => {
@@ -87,6 +127,6 @@ export const useCollectionButton = (
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
-		handleRemoveCollectionItem,
+		openConfirmationPopup,
 	}
 }

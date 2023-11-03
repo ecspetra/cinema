@@ -22,13 +22,12 @@ type PropsType = {
 }
 
 const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
-	const { userId } = useAuth()
 	const {
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
-		handleRemoveCollectionItem,
-	} = useCollectionButton(personInfo, 'persons')
+		openConfirmationPopup,
+	} = useCollectionButton(personInfo, 'person')
 	const {
 		profile_path,
 		name,
@@ -92,8 +91,8 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(id, userId)
-							: () => handleSetCollectionItem(personInfo)
+							? openConfirmationPopup
+							: handleSetCollectionItem
 					}
 				/>
 				<ImagesList

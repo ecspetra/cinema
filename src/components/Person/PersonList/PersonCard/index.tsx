@@ -9,13 +9,13 @@ import { useAuth } from '@/context/AuthProvider'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 
 type PropsType = {
-	person: IPersonCard
+	item: IPersonCard
 	isShowButton?: boolean
 	isShowRole?: boolean
 }
 
 const PersonCard: FC<PropsType> = ({
-	person,
+	item,
 	isShowButton = true,
 	isShowRole = false,
 }) => {
@@ -24,10 +24,10 @@ const PersonCard: FC<PropsType> = ({
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
-		handleRemoveCollectionItem,
-	} = useCollectionButton(person, 'persons')
+		openConfirmationPopup,
+	} = useCollectionButton(item, 'person')
 
-	const { id, job, name, character, profile_path } = person
+	const { id, job, name, character, profile_path } = item
 
 	return (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
@@ -55,8 +55,8 @@ const PersonCard: FC<PropsType> = ({
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(id, userId)
-							: () => handleSetCollectionItem(person)
+							? openConfirmationPopup
+							: handleSetCollectionItem
 					}
 				/>
 			)}

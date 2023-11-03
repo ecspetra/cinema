@@ -10,15 +10,17 @@ import {
 	setNewMarkForMovie,
 } from '@/firebase/config'
 import { useModal } from '@/context/ModalProvider'
-import { openLoginModal } from '@/handlers/openLoginModal'
+import { handleModals, openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
 import { IMarkFromDB } from '../../../interfaces'
 
 type PropsType = {
 	movieId: number
+	movieTitle: string
+	isTVShow: boolean
 }
 
-const Mark: FC<PropsType> = ({ movieId }) => {
+const Mark: FC<PropsType> = ({ movieId, movieTitle, isTVShow = false }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
@@ -32,9 +34,15 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
 			setIsLoadingMark(true)
-			setNewMarkForMovie(movieId, userId, mark)
+			const markData = {
+				movieId,
+				movieTitle,
+				mark,
+				isTVShow,
+			}
+			setNewMarkForMovie(markData, userId)
 				.then(() => {
-					getMarkForMovie(movieId, userId)
+					getMarkForMovie(markData, userId)
 						.then(data => {
 							setMarkData(data)
 							setIsLoadingMark(false)
@@ -123,11 +131,15 @@ const Mark: FC<PropsType> = ({ movieId }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(movieId, userId).then(data => {
+			const markData = {
+				movieId,
+				movieTitle,
+			}
+			getMarkForMovie(markData, userId).then(data => {
 				setMarkData(data)
 			})
 		} else getEmptyMarkIcons()
-	}, [userId])
+	}, [userId, movieId, movieTitle])
 
 	useEffect(() => {
 		if (markData) {

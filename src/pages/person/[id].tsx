@@ -1,9 +1,5 @@
 import { NextPageContext } from 'next'
-import {
-	LINK_TO_FETCH_CURRENT_PERSON,
-	LINK_TO_FETCH_CURRENT_PERSON_IMAGES,
-	LINK_TO_FETCH_MOVIES_WITH_PERSONS,
-} from '@/constants/linksToFetch'
+import { LINK_TO_FETCH_MOVIES_WITH_PERSONS } from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PersonInfo from '@/components/Person/PersonInfo'
@@ -11,6 +7,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import ItemsList from '@/components/List/ItemsList'
+import { fetchItemData } from '@/handlers/fetchItemData'
 
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(null)
@@ -23,24 +20,20 @@ const Person = ({ personFromProps }) => {
 	useEffect(() => {
 		const fetchPerson = async () => {
 			const getPersonInfo = async () => {
-				const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON.replace(
-					'{personId}',
-					router.query.id
+				const result = await fetchItemData(
+					'person',
+					router.query.id,
+					''
 				)
-				const response = await fetch(linkToFetch)
-				const result = await response.json()
-
 				return result
 			}
 
 			const getPersonImages = async () => {
-				const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON_IMAGES.replace(
-					'{personId}',
-					router.query.id
+				const result = await fetchItemData(
+					'person',
+					router.query.id,
+					'/images'
 				)
-				const response = await fetch(linkToFetch)
-				const result = await response.json()
-
 				return result
 			}
 
@@ -81,7 +74,7 @@ const Person = ({ personFromProps }) => {
 			<PersonInfo personInfo={person} personImages={images} />
 			<ItemsList
 				itemsList={movies}
-				listName='movies'
+				listName='movie'
 				title={`Movies with ${person.name}`}
 				isMoreDataAvailable={
 					personFromProps.moviesWithPerson.isMoreDataAvailable
@@ -94,24 +87,12 @@ const Person = ({ personFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const getPersonInfo = async () => {
-		const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON.replace(
-			'{personId}',
-			ctx.query.id
-		)
-		const response = await fetch(linkToFetch)
-		const result = await response.json()
-
+		const result = await fetchItemData('person', ctx.query.id, '')
 		return result
 	}
 
 	const getPersonImages = async () => {
-		const linkToFetch = LINK_TO_FETCH_CURRENT_PERSON_IMAGES.replace(
-			'{personId}',
-			ctx.query.id
-		)
-		const response = await fetch(linkToFetch)
-		const result = await response.json()
-
+		const result = await fetchItemData('person', ctx.query.id, '/images')
 		return result
 	}
 

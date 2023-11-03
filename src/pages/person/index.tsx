@@ -13,7 +13,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 		if (!items) {
 			getResultsByPage(LINK_TO_FETCH_PERSON_LIST, 1).then(data => {
 				setPersons(data.items)
-				setIsNextResult(!!data.isMoreDataAvailable)
+				setIsNextResult(data.isMoreDataAvailable)
 			})
 		}
 	}, [])
@@ -28,7 +28,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 	return (
 		<ItemsList
 			itemsList={persons}
-			listName='persons'
+			listName='person'
 			title='Discover persons'
 			isMoreDataAvailable={isNextResult}
 			linkToFetchItems={LINK_TO_FETCH_PERSON_LIST}
@@ -43,7 +43,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		return {
 			props: {
 				items: results.items,
-				isMoreDataAvailable: !!results.isMoreDataAvailable,
+				isMoreDataAvailable: results.isMoreDataAvailable,
 			},
 		}
 	} catch (error) {

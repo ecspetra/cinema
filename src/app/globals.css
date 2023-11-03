@@ -24,6 +24,15 @@ body {
 	overflow-x: hidden;
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
 .modal-open {
 	overflow: hidden;
 }
@@ -74,4 +83,20 @@ input:-webkit-autofill::first-line {
 
 .dropdown-exit-active {
 	@apply opacity-0 -translate-y-3 transition-all duration-300 ease-[ease-in];
+}
+
+.modal-appear {
+	@apply opacity-0 translate-y-3;
+}
+.modal-enter-done {
+	@apply opacity-100 translate-y-0 transition-all duration-300 ease-[ease-in];
+}
+.modal-exit {
+	@apply opacity-100 translate-y-0;
+}
+.modal-exit-active {
+	@apply opacity-0 translate-y-3 transition-all duration-300 ease-[ease-in];;
+}
+.modal-exit-done {
+	@apply opacity-0 translate-y-3 transition-all duration-300 ease-[ease-in];;
 }

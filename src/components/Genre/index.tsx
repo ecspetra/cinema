@@ -1,4 +1,3 @@
-import '@/app/globals.css'
 import { FC } from 'react'
 import { IGenre } from '../../../interfaces'
 

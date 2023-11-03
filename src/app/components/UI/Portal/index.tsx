@@ -4,9 +4,10 @@ import { createPortal } from 'react-dom'
 type ReactPortalPropTypes = {
 	children: JSX.Element | JSX.Element[]
 	wrapperId: string
+	isAlert: boolean
 }
 
-const Portal: FC<ReactPortalPropTypes> = ({ children, wrapperId }) => {
+const Portal: FC<ReactPortalPropTypes> = ({ children, wrapperId, isAlert }) => {
 	const [isDOMReady, setIsDOMReady] = useState<boolean>(false)
 	const [wrapperElement, setWrapperElement] = useState<Element | null>(null)
 
@@ -19,12 +20,15 @@ const Portal: FC<ReactPortalPropTypes> = ({ children, wrapperId }) => {
 
 	useEffect(() => {
 		setIsDOMReady(true)
-		document.body.classList.add('modal-open')
 
-		return () => {
-			document.body.classList.remove('modal-open')
+		if (!isAlert) {
+			document.body.classList.add('modal-open')
+
+			return () => {
+				document.body.classList.remove('modal-open')
+			}
 		}
-	}, [])
+	}, [isAlert])
 
 	useLayoutEffect(() => {
 		let element = document.getElementById(wrapperId)

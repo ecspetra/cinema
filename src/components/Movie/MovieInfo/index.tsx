@@ -13,6 +13,7 @@ import {
 	IMovieInfo,
 	IReviewCard,
 	IReviewCardFromDB,
+	ITVShowInfo,
 } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
@@ -23,24 +24,26 @@ import Title from '../../../app/components/UI/Title/Title'
 import { useAuth } from '@/context/AuthProvider'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
+import ReactPlayer from 'react-player'
 
 type PropsType = {
-	movieInfo: IMovieInfo
+	basicInfo: IMovieInfo | ITVShowInfo
 	movieImages: Array<IBackdrop>
 	movieReviews: Array<IReviewCard | IReviewCardFromDB>
+	movieVideo: string
 }
 
-const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
+const MovieInfo: FC<PropsType> = ({
+	basicInfo,
+	movieImages,
+	movieReviews,
+	movieVideo,
+}) => {
 	const { userId } = useAuth()
-	const {
-		isLoadingCollection,
-		isCollectionItem,
-		handleSetCollectionItem,
-		handleRemoveCollectionItem,
-	} = useCollectionButton(movieInfo, 'movies')
 
 	const {
 		title,
+		name,
 		id,
 		genres,
 		overview,
@@ -50,9 +53,19 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 		poster_path,
 		production_countries,
 		release_date,
+		first_air_date,
 		vote_count,
 		vote_average,
-	} = movieInfo
+	} = basicInfo
+
+	const isTVShowItem = !!(first_air_date && name)
+
+	const {
+		isLoadingCollection,
+		isCollectionItem,
+		handleSetCollectionItem,
+		openConfirmationPopup,
+	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
 
 	return (
 		<div className='flex gap-x-7 py-7 z-10 mb-16'>
@@ -65,7 +78,9 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 				</div>
 			</div>
 			<div className='w-full'>
-				<Title className='text-7xl after:hidden pb-0'>{title}</Title>
+				<Title className='text-7xl after:hidden pb-0'>
+					{title ? title : name}
+				</Title>
 				{tagline && (
 					<Title variant='h2' className='text-gray-400'>
 						{tagline}
@@ -78,18 +93,26 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					})}
 				</div>
 				<div className='mb-5'>
-					{release_date && (
+					{(release_date || first_air_date) && (
 						<div className='flex items-center text-sm'>
 							<FontAwesomeIcon
 								className='mr-1.5'
 								icon={faCalendarCheck}
 							/>
-							<span className='mr-1.5'>Release date:</span>
+							<span className='mr-1.5'>
+								{release_date
+									? 'Release date:'
+									: 'First air date:'}
+							</span>
 							{new Intl.DateTimeFormat('en-GB', {
 								month: 'long',
 								day: '2-digit',
 								year: 'numeric',
-							}).format(new Date(release_date))}
+							}).format(
+								new Date(
+									release_date ? release_date : first_air_date
+								)
+							)}
 						</div>
 					)}
 					{production_countries.length > 0 && (
@@ -128,7 +151,11 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					)}
 				</div>
 				<Rating rating={vote_average} voteCount={vote_count} />
-				<Mark movieId={id} />
+				<Mark
+					movieId={id}
+					movieTitle={title ? title : name}
+					isTVShow={isTVShowItem}
+				/>
 				<p className='mb-6'>{overview}</p>
 				<CollectionButton
 					className='mb-12'
@@ -136,13 +163,28 @@ const MovieInfo: FC<PropsType> = ({ movieInfo, movieImages, movieReviews }) => {
 					isCollectionItem={isCollectionItem}
 					onClick={
 						isCollectionItem
-							? () => handleRemoveCollectionItem(id, userId)
-							: () => handleSetCollectionItem(movieInfo)
+							? openConfirmationPopup
+							: handleSetCollectionItem
 					}
 				/>
 				<ImagesList images={movieImages} />
 				<ReviewsList movieId={id} reviews={movieReviews} />
-				<NewReviewForm movieId={id} userId={userId} />
+				<NewReviewForm
+					movieId={id}
+					userId={userId}
+					isTVShow={isTVShowItem}
+				/>
+				{movieVideo && (
+					<div className='mt-16'>
+						<Title>Trailer</Title>
+						<ReactPlayer
+							url={`https://www.youtube.com/watch?v=${movieVideo}`}
+							controls={true}
+							width={'100%'}
+							style={{ minHeight: `500px` }}
+						/>
+					</div>
+				)}
 			</div>
 		</div>
 	)

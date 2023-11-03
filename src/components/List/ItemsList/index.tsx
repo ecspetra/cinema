@@ -11,7 +11,7 @@ import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>
-	listName: 'movies' | 'persons'
+	listName: 'movie' | 'person' | 'tv'
 	title: string
 	isMoreDataAvailable: boolean
 	linkToFetchItems?: string
@@ -32,8 +32,8 @@ const ItemsList: FC<PropsType> = ({
 		useState(isMoreDataAvailable)
 
 	const getItems = async () => {
-		if (listName === 'movies') {
-			getMovieGenres(fetchedItems).then(data => {
+		if (listName !== 'person') {
+			getMovieGenres(fetchedItems, listName).then(data => {
 				setItemsToShow(prevState => [...prevState, ...data])
 			})
 		} else setItemsToShow(prevState => [...prevState, ...fetchedItems])
@@ -41,12 +41,12 @@ const ItemsList: FC<PropsType> = ({
 		setFetchedItems([])
 	}
 
-	const getMoreDefaultMovies = async () => {
+	const getMoreItems = async () => {
 		setIsLoading(true)
 		getResultsByPage(linkToFetchItems, currentPage)
 			.then(data => {
 				setFetchedItems(data.items)
-				setIsShowMoreButton(!!data.isMoreDataAvailable)
+				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
 			.then(() => {
 				setIsLoading(false)
@@ -61,7 +61,7 @@ const ItemsList: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		if (currentPage > 1) getMoreDefaultMovies()
+		if (currentPage > 1) getMoreItems()
 	}, [currentPage])
 
 	useEffect(() => {
@@ -81,9 +81,15 @@ const ItemsList: FC<PropsType> = ({
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
-					if (listName === 'movies') {
-						return <MovieCard key={item.id} movie={item} />
-					} else return <PersonCard key={item.id} person={item} />
+					if (listName !== 'person') {
+						return (
+							<MovieCard
+								key={item.id}
+								item={item}
+								isTVShow={listName === 'tv'}
+							/>
+						)
+					} else return <PersonCard key={item.id} item={item} />
 				})}
 			</div>
 			{isLoading && <Loader type='static' className='mb-4' />}

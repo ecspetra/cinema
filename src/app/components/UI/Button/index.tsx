@@ -15,6 +15,8 @@ type PropsType = {
 		| 'icon-text'
 		| 'icon'
 		| 'text'
+		| 'listItem'
+		| 'link'
 	className?: string
 	type?: 'submit' | 'reset' | 'button'
 }
@@ -43,6 +45,8 @@ const Button: FC<PropsType> = ({
 		'rounded-md p-2 bg-gray-600/50 font-semibold text-sm hover:bg-amber-900/50 hover:text-amber-400 flex justify-start items-center'
 	const iconButtonClassNames =
 		'w-11 h-11 flex justify-center items-center bg-gray-700 hover:bg-gray-600 rounded-md z-50'
+	const listItemButtonClassNames =
+		'w-full p-2 flex justify-start items-center hover:bg-amber-500 hover:text-black rounded-md leading-normal'
 
 	const getButtonClassNames = () => {
 		switch (context) {
@@ -62,11 +66,13 @@ const Button: FC<PropsType> = ({
 				return iconTextButtonClassNames
 			case 'icon':
 				return iconButtonClassNames
+			case 'listItem':
+				return listItemButtonClassNames
 		}
 	}
 
 	const handleOnClick = event => {
-		if (type !== 'submit') {
+		if (type !== 'submit' && type !== 'link') {
 			event.preventDefault()
 			if (onClick) onClick(event)
 		}

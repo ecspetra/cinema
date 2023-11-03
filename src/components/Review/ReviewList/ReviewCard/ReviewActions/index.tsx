@@ -6,7 +6,7 @@ import {
 	reviewReactionsListener,
 	setNewReviewReaction,
 } from '@/firebase/config'
-import { openLoginModal } from '@/handlers/openLoginModal'
+import { handleModals, openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {

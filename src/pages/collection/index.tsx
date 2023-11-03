@@ -2,7 +2,7 @@ import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
 import { getCollectionItemsList } from '@/firebase/config'
 import Button from '@/app/components/UI/Button'
-import { openLoginModal } from '@/handlers/openLoginModal'
+import { handleModals, openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
 import {
@@ -62,13 +62,13 @@ const Collection = ({ results }) => {
 			try {
 				const collectionMovies = await getCollectionItemsList(
 					userIdFromUrl,
-					'movies',
+					'movie',
 					6,
 					null
 				)
 				const collectionPersons = await getCollectionItemsList(
 					userIdFromUrl,
-					'persons',
+					'person',
 					6,
 					null
 				)
@@ -145,7 +145,7 @@ const Collection = ({ results }) => {
 			<div className='relative z-10'>
 				<CollectionWrap
 					title='Movies'
-					type='movies'
+					type='movie'
 					items={movies ? movies.items : []}
 					isMoreDataAvailable={
 						movies ? movies.isMoreDataAvailable : false
@@ -153,7 +153,7 @@ const Collection = ({ results }) => {
 				/>
 				<CollectionWrap
 					title='Persons'
-					type='persons'
+					type='person'
 					items={persons ? persons.items : []}
 					isMoreDataAvailable={
 						persons ? persons.isMoreDataAvailable : false
@@ -214,13 +214,13 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
 		const collectionMovies = await getCollectionItemsList(
 			userIdFromUrl,
-			'movies',
+			'movie',
 			6,
 			null
 		)
 		const collectionPersons = await getCollectionItemsList(
 			userIdFromUrl,
-			'persons',
+			'person',
 			6,
 			null
 		)
