@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const isLoggedIn = currentUser !== null
 	const userId = currentUser?.uid
 	const photoURL = currentUser?.photoURL
+	const userName = currentUser?.displayName
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async user => {
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		isLoggedIn,
 		userId,
 		photoURL,
+		userName,
 	}
 
 	return (

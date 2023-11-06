@@ -4,7 +4,6 @@ import {
 	getAuth,
 	signInWithEmailAndPassword,
 	signOut,
-	User,
 	updateProfile,
 } from 'firebase/auth'
 import {
@@ -119,6 +118,24 @@ export const signOutUser = async () => {
 	}
 }
 
+// user handlers
+
+export const getUserInfo = (userId: string) => {
+	const infoPath = `users/${userId}/info/`
+	const itemRef = ref(database, infoPath)
+
+	return new Promise(async resolve => {
+		get(itemRef).then(snapshot => {
+			let userInfo = {}
+			if (snapshot.exists()) {
+				userInfo = snapshot.val()
+			}
+
+			resolve(userInfo)
+		})
+	})
+}
+
 // movie marks handlers
 
 export const setNewMarkForMovie = async (markData: object, userId: string) => {
@@ -170,23 +187,6 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 		})
 
 		resolve(isRemoved)
-	})
-}
-
-// user handlers
-
-export const getUserAvatar = (userId: string) => {
-	const infoPath = `users/${userId}/info/`
-	const itemRef = ref(database, infoPath)
-
-	return new Promise(async resolve => {
-		get(itemRef).then(snapshot => {
-			let userInfo = {}
-			if (snapshot.exists()) {
-				userInfo = snapshot.val()
-			}
-			resolve(userInfo)
-		})
 	})
 }
 

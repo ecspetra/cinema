@@ -12,7 +12,7 @@ import moment from 'moment'
 import classNames from 'classnames'
 import {
 	getDBRepliesList,
-	getUserAvatar,
+	getUserInfo,
 	removeReviewItem,
 } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
@@ -245,7 +245,7 @@ const ReviewCard: FC<PropsType> = ({
 		}
 
 		if (isItemFromDB) {
-			getUserAvatar(authorId)
+			getUserInfo(authorId)
 				.then(data => {
 					setAuthorInfo({
 						photoURL: data.photoURL,

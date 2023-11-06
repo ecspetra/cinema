@@ -11,7 +11,7 @@ import { COLLECTION_PAGE } from '@/constants/paths'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
 
 const Header = () => {
-	const { userId, photoURL, isLoggedIn } = useAuth()
+	const { userId, photoURL, isLoggedIn, userName } = useAuth()
 	const router = useRouter()
 	const pathname = usePathname()
 	const collectionMoviesLink = userId
@@ -49,11 +49,20 @@ const Header = () => {
 					</Link>
 					{isShowUserMenu && (
 						<div className='flex justify-center items-center gap-4'>
-							<Image
-								className='!w-11 h-11 rounded-full'
-								src={photoURL}
-								defaultImage={defaultUserImage}
-							/>
+							<Link
+								className='flex justify-center items-center gap-2'
+								href={`/profile/[id]`}
+								as={`/profile/${userId}`}
+							>
+								<Image
+									className='!w-11 h-11 rounded-full'
+									src={photoURL}
+									defaultImage={defaultUserImage}
+								/>
+								<span className='font-semibold'>
+									{userName}
+								</span>
+							</Link>
 							<Button context='text' onClick={handleSignOutUser}>
 								Sign Out
 							</Button>

@@ -12,27 +12,26 @@ const Modal = () => {
 	const { id, modalText, alertInfo } = currentModal || {}
 
 	useEffect(() => {
-		if (alertInfo?.isAlert) {
+		const handleClickOutside = event => {
+			if (modalRef.current && !modalRef.current.contains(event.target)) {
+				hideModal(id)
+			}
+		}
+
+		if (!alertInfo?.isAlert) {
+			document.addEventListener('click', handleClickOutside)
+		} else {
 			setTimeout(() => {
 				hideModal(id)
 			}, 4500)
-		} else {
-			const handleClickOutside = (event: MouseEvent) => {
-				if (
-					modalRef.current &&
-					!modalRef.current.contains(event.target)
-				) {
-					hideModal(id)
-				}
-			}
+		}
 
-			document.addEventListener('click', handleClickOutside)
-
-			return () => {
+		return () => {
+			if (!alertInfo?.isAlert) {
 				document.removeEventListener('click', handleClickOutside)
 			}
 		}
-	}, [modalRef, alertInfo?.isAlert])
+	}, [modalRef, alertInfo?.isAlert, id, hideModal])
 
 	if (!currentModal) return null
 
@@ -50,6 +49,7 @@ const Modal = () => {
 					<ModalContent
 						currentModal={currentModal}
 						onClose={() => hideModal(id)}
+						modalRef={modalRef}
 					/>
 				)}
 			</CSSTransition>

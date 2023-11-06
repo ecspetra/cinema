@@ -6,7 +6,7 @@ import Button from '../../../../app/components/UI/Button'
 import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
-import { getUserAvatar, removeReviewItem } from '@/firebase/config'
+import { getUserInfo, removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
 import Dropdown from '@/app/components/UI/Dropdown'
@@ -59,7 +59,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 	}, [isContentOpen])
 
 	useEffect(() => {
-		getUserAvatar(authorId)
+		getUserInfo(authorId)
 			.then(data => {
 				setAuthorInfo({
 					photoURL: data.photoURL,
