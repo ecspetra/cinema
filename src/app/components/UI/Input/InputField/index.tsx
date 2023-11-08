@@ -10,8 +10,8 @@ type PropsType = {
 	id: string
 	label: string
 	value: string
-	error: string
 	onChange: ChangeEventHandler<HTMLInputElement>
+	error?: string
 	type?: 'image' | 'password' | 'text'
 	placeholder?: string
 	className?: string
@@ -23,8 +23,8 @@ const InputField: FC<PropsType> = ({
 	id,
 	label,
 	value,
-	error,
 	onChange,
+	error,
 	type = 'text',
 	placeholder = 'Enter your text...',
 	className,

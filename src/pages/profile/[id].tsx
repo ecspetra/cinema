@@ -1,14 +1,15 @@
 import { NextPageContext } from 'next'
 import { getUserInfo } from '@/firebase/config'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
-import Image from '@/components/Images/Image'
-import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Title from '@/app/components/UI/Title/Title'
+import ProfileInfo from '@/components/Profile/ProfileInfo'
+import EditProfileForm from '@/components/Profile/Form/EditProfileForm'
 
 const Profile = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
+	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
 	const router = useRouter()
 
 	useEffect(() => {
@@ -33,15 +34,21 @@ const Profile = ({ results }) => {
 	if (!userInfo) return <Loader />
 
 	return (
-		<div className='flex justify-start items-start'>
-			<Image
-				className='!w-11 h-11 rounded-full'
-				src={userInfo.photoURL}
-				defaultImage={defaultUserImage}
-			/>
+		<div className='pt-20'>
+			{isShowEditForm ? (
+				<EditProfileForm
+					userInfo={userInfo}
+					onFormClose={setIsShowEditForm}
+				/>
+			) : (
+				<ProfileInfo
+					userInfo={userInfo}
+					onOpenEditForm={setIsShowEditForm}
+				/>
+			)}
 			<div>
-				<Title>{userInfo.displayName}</Title>
-				<span>{userInfo.email}</span>
+				<Title>{userInfo.displayName} collection</Title>
+				<span>{userInfo.collection}</span>
 			</div>
 		</div>
 	)

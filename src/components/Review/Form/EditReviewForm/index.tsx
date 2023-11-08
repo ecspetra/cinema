@@ -2,7 +2,6 @@ import React, { FC, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { updateReviewItem } from '@/firebase/config'
-import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { IReplyCard, IReviewCardFromDB } from '../../../../../interfaces'
 

@@ -80,6 +80,24 @@ export const addUserToRealtimeDatabase = async (newUser: object) => {
 	await set(newUserRef, newUserData)
 }
 
+export const updateUserInRealtimeDatabase = async (newUser: object) => {
+	const newUserRef = ref(database, `users/${newUser.uid}`)
+
+	const newUserData = {
+		info: {
+			displayName: newUser.displayName,
+			id: newUser.uid,
+			email: newUser.email,
+			photoURL: newUser.photoURL,
+			biography: newUser.biography,
+			favoriteGenres: newUser.favoriteGenres,
+			dateOFBirth: newUser.dateOFBirth,
+		},
+	}
+
+	await set(newUserRef, newUserData)
+}
+
 export const signUp = async (
 	email: string,
 	password: string,
@@ -134,6 +152,15 @@ export const getUserInfo = (userId: string) => {
 			resolve(userInfo)
 		})
 	})
+}
+
+export const updateUserInfo = async (newInfo: object) => {
+	try {
+		await updateProfile(auth.currentUser, newInfo)
+		await updateUserInRealtimeDatabase(newInfo)
+	} catch (error) {
+		throw error
+	}
 }
 
 // movie marks handlers
