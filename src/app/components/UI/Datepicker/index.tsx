@@ -41,9 +41,8 @@ const CustomDatepicker: FC<PropsType> = ({
 			text: 'text-white hover:!bg-amber-500 rounded-none duration-300',
 			disabledText:
 				'!text-gray-500 bg-gray-800 rounded-none hover:!bg-gray-800',
-			input: 'w-full bg-transparent text-base focus:ring-0 focus:border-white !outline-0 pl-10 pr-4 py-4 border border-gray-800 hover:border-white focus-within:border-white duration-300 block rounded-none text-white',
-			inputIcon:
-				'text-white w-4 h-4 absolute top-1/2 transform -translate-y-1/2 left-4',
+			input: 'w-full bg-transparent text-base pl-10 pr-4 pt-8 pb-4 focus:ring-0 focus:border-white !outline-0 border-0 hover:border-0 focus-within:border-0 rounded-none text-white',
+			inputIcon: 'text-white w-4 h-4 absolute top-1/2 transform left-4',
 			selected: 'bg-amber-500 hover:!bg-amber-500',
 		},
 		icons: {
@@ -78,8 +77,8 @@ const CustomDatepicker: FC<PropsType> = ({
 	}
 
 	return (
-		<div className='relative w-full bg-transparent text-base focus:ring-0 focus:border-white !outline-0 pl-10 pr-4 py-4 border border-gray-800 hover:border-white focus-within:border-white duration-300 block rounded-none text-white'>
-			<span className='text-xs text-gray-500 font-semibold'>
+		<div className='relative w-full bg-transparent text-base focus:ring-0 focus:border-white !outline-0 border border-gray-500 hover:border-white focus-within:border-white duration-300 block rounded-none text-white'>
+			<span className='text-xs text-gray-500 font-semibold absolute top-4 left-4'>
 				{`${label}${required ? ' *' : ''}`}
 			</span>
 			<Datepicker
