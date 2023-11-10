@@ -3,19 +3,10 @@ import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import InputField from '@/app/components/UI/Input/InputField'
-import {
-	faAt,
-	faCalendarCheck,
-	faKey,
-	faUser,
-} from '@fortawesome/free-solid-svg-icons'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
+import { faAt, faKey } from '@fortawesome/free-solid-svg-icons'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
-import { updateUserCredential, updateUserInfo } from '@/firebase/config'
-import moment from 'moment'
+import { updateUserCredential } from '@/firebase/config'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
 

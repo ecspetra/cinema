@@ -1,24 +1,16 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react'
+import React, { ChangeEvent, FC, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import InputField from '@/app/components/UI/Input/InputField'
-import {
-	faAt,
-	faCalendarCheck,
-	faKey,
-	faUser,
-} from '@fortawesome/free-solid-svg-icons'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
+import { faCalendarCheck, faUser } from '@fortawesome/free-solid-svg-icons'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { updateUserInfo } from '@/firebase/config'
-import GenreList from '@/components/Genre/GenreList'
 import moment from 'moment'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
+import CustomDatepicker from '@/app/components/UI/Datepicker'
 
 interface EditProfileFormData {
 	name: {
@@ -183,10 +175,10 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 				icon={faCalendarCheck}
 				placeholder='Country'
 			/>
-			<DatePicker
-				selected={initialDateValue}
+			<CustomDatepicker
+				initialDateValue={formData.dateOfBirth.value}
 				onChange={date => handleDateOfBirthChange(date)}
-				maxDate={initialDateValue}
+				label='Date of birth'
 			/>
 			<Textarea
 				onChange={handleTextareaChange}
