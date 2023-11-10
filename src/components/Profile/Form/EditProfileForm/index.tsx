@@ -1,27 +1,39 @@
-import React, { ChangeEvent, FC, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import InputField from '@/app/components/UI/Input/InputField'
-import { faAt, faUser } from '@fortawesome/free-solid-svg-icons'
+import {
+	faAt,
+	faCalendarCheck,
+	faKey,
+	faUser,
+} from '@fortawesome/free-solid-svg-icons'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
+import { showSuccessNotification } from '@/handlers/handleModals'
+import { useModal } from '@/context/ModalProvider'
+import { updateUserInfo } from '@/firebase/config'
+import GenreList from '@/components/Genre/GenreList'
+import moment from 'moment'
 
 interface EditProfileFormData {
 	name: {
 		value: string
 		error: string
 	}
-	email: {
+	country: {
 		value: string
 		error: string
 	}
-	dateOFBirth: {
+	dateOfBirth: {
 		value: string
-	}
-	favoriteGenres: {
-		value: Array<string>
+		error: string
 	}
 	biography: {
 		value: string
+		error: string
 	}
 	formError: {
 		error: string
@@ -33,6 +45,8 @@ type PropsType = {
 }
 
 const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
+	const initialDateValue = new Date()
+	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<EditProfileFormData>({
@@ -40,24 +54,23 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 			value: userInfo.displayName,
 			error: '',
 		},
-		email: {
-			value: userInfo.email,
+		country: {
+			value: userInfo.country || '',
 			error: '',
 		},
-		dateOFBirth: {
-			value: userInfo.dateOFBirth,
-		},
-		favoriteGenres: {
-			value: userInfo.favoriteGenres,
+		dateOfBirth: {
+			value: userInfo.dateOfBirth || '',
+			error: '',
 		},
 		biography: {
-			value: userInfo.biography,
+			value: userInfo.biography || '',
+			error: '',
 		},
 		formError: {
 			error: '',
 		},
 	})
-	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
+	const isNameValid = formData.name.value.length > 0
 
 	const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
@@ -65,32 +78,30 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 		updateField('name', event.target.value, error)
 	}
 
-	const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const error =
-			event.target.value === '' ? ERROR_MESSAGES.INVALID_EMAIL : ''
-		updateField('email', event.target.value, error)
+	const handleCountryChange = (event: ChangeEvent<HTMLInputElement>) => {
+		updateField('country', event.target.value, '')
 	}
 
-	const handleDateOfBirthChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const error =
-			event.target.value === '' ? ERROR_MESSAGES.REQUIRED_FIELD : ''
-		updateField('dateOFBirth', event.target.value, error)
+	const handleDateOfBirthChange = date => {
+		updateField('dateOfBirth', moment(date).format('Do MMM YYYY'), '')
 	}
 
-	const handleTextareaChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const error =
-			event.target.value === '' ? ERROR_MESSAGES.REQUIRED_FIELD : ''
-		updateField('biography', event.target.value, error)
+	const handleTextareaChange = value => {
+		updateField('biography', value, '')
 	}
 
 	const updateField = (
 		fieldName: keyof EditProfileFormData,
 		value: string,
-		error: string = ''
+		error: string
 	) => {
 		setFormData(prevState => ({
 			...prevState,
-			[fieldName]: { ...prevState[fieldName], value, error },
+			[fieldName]: {
+				...prevState[fieldName],
+				value,
+				error,
+			},
 		}))
 
 		if (!isTouched) setIsTouched(true)
@@ -106,10 +117,9 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	const clearForm = () => {
 		setFormData({
 			name: { value: '', error: '' },
-			email: { value: '', error: '' },
-			dateOFBirth: { value: '' },
-			favoriteGenres: { value: [] },
-			biography: { value: '' },
+			country: { value: '', error: '' },
+			dateOfBirth: { value: '', error: '' },
+			biography: { value: '', error: '' },
 			formError: { error: '' },
 		})
 	}
@@ -118,14 +128,19 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 		event.preventDefault()
 		setIsLoading(true)
 
-		const isFormValid = isEmailValid
+		const isFormValid = isNameValid
 
 		if (isFormValid && isTouched) {
 			try {
-				// await signIn(formData.email.value, formData.password.value)
-				console.log(formData)
+				await updateUserInfo(formData)
+
+				onFormClose(false)
 				updateFormError('')
 				clearForm()
+				showSuccessNotification(
+					showModal,
+					'Your profile was successfully updated'
+				)
 			} catch (error: any) {
 				updateFormError(error.toString())
 			} finally {
@@ -134,9 +149,9 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 		} else {
 			setFormData(prevState => ({
 				...prevState,
-				email: {
-					...prevState.email,
-					error: isEmailValid ? '' : ERROR_MESSAGES.INVALID_EMAIL,
+				name: {
+					...prevState.name,
+					error: isNameValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
 				},
 			}))
 			setIsLoading(false)
@@ -144,7 +159,7 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	}
 
 	return (
-		<form>
+		<form className='flex flex-col justify-start items-center z-10 mb-16'>
 			<InputField
 				id='userName'
 				label='Name'
@@ -156,22 +171,17 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 				placeholder='Name'
 			/>
 			<InputField
-				id='userEmail'
-				label='Email'
-				value={formData.email.value}
-				error={formData.email.error}
-				onChange={handleEmailChange}
-				icon={faAt}
-				required
-				placeholder='Email'
+				id='country'
+				label='Country'
+				value={formData.country.value}
+				onChange={handleCountryChange}
+				icon={faCalendarCheck}
+				placeholder='Country'
 			/>
-			<InputField
-				id='dateOFBirth'
-				label='Date of birth'
-				value={formData.dateOFBirth.value}
-				onChange={handleEmailChange}
-				icon={faAt}
-				placeholder='Date of birth'
+			<DatePicker
+				selected={initialDateValue}
+				onChange={date => handleDateOfBirthChange(date)}
+				maxDate={initialDateValue}
 			/>
 			<Textarea
 				onChange={handleTextareaChange}

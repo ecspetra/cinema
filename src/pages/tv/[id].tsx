@@ -25,7 +25,7 @@ const TVShow = ({ tvShowFromProps }) => {
 		movie.videosResult.results.find(
 			item => item.type === 'Teaser' || item.type === 'Trailer'
 		)
-	console.log(movie)
+
 	useEffect(() => {
 		const fetchData = async () => {
 			setMovie(null)

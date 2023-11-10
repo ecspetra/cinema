@@ -47,7 +47,7 @@ const InputField: FC<PropsType> = ({
 				)}
 			>
 				<span className='text-xs text-gray-500 font-semibold'>
-					{`${label}${required && ' *'}`}
+					{`${label}${required ? ' *' : ''}`}
 				</span>
 				<span className='flex justify-between items-center'>
 					<span className='w-full flex justify-start items-center'>

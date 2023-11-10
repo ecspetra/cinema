@@ -7,7 +7,7 @@ import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { COLLECTION_PAGE } from '@/constants/paths'
+import { AUTH_PAGE, COLLECTION_PAGE, PROFILE_PAGE } from '@/constants/paths'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
 
 const Header = () => {
@@ -24,7 +24,9 @@ const Header = () => {
 	const handleSignOutUser = async () => {
 		await signOutUser()
 		if (pathname.startsWith(COLLECTION_PAGE)) {
-			await router.push('/collection')
+			await router.push(COLLECTION_PAGE)
+		} else if (pathname === PROFILE_PAGE.replace('{userId}', userId)) {
+			await router.push(AUTH_PAGE)
 		}
 	}
 

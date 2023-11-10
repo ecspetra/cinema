@@ -1,50 +1,53 @@
-import Image from '@/components/Images/Image'
-import defaultUserImage from '@/app/assets/images/default-user-image.svg'
+import { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faAt,
-	faBarsStaggered,
+	faCalendarCheck,
 	faFlag,
 	faPen,
 } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 
-const ProfileInfo = ({ userInfo, onOpenEditForm }) => {
+type PropsType = {
+	userInfo: object
+	onOpenEditForm: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ProfileInfo: FC<PropsType> = ({ userInfo, onOpenEditForm }) => {
+	const [profile, setProfile] = useState(null)
+
 	const basicInfo = [
-		{ ['Email']: userInfo?.email, icon: faAt },
+		{ ['Email']: profile?.email, icon: faAt },
 		{
-			['Date of birth']: userInfo?.dateOfBirth
-				? userInfo?.dateOfBirth
+			['Date of birth']: profile?.dateOfBirth
+				? profile?.dateOfBirth
 				: 'no info',
-			icon: faFlag,
+			icon: faCalendarCheck,
 		},
 		{
-			['Favorite genres']: userInfo?.favoriteGenres
-				? userInfo?.favoriteGenres
-				: 'no info',
-			icon: faBarsStaggered,
+			['Country']: profile?.country ? profile?.country : 'no info',
+			icon: faFlag,
 		},
 	]
 
+	useEffect(() => {
+		setProfile(userInfo)
+	}, [userInfo])
+
 	return (
-		<div className='flex justify-start items-start z-10 gap-7'>
-			<Image
-				className='!w-[232px] h-[232px] rounded-full'
-				src={userInfo.photoURL}
-				defaultImage={defaultUserImage}
-			/>
-			<div>
-				<div className='flex justify-start items-center gap-4 mb-4'>
-					<Title className='after:hidden !pb-0 mb-0'>
-						{userInfo.displayName}
+		<div className='flex flex-col justify-start items-center z-10'>
+			<div className='w-full'>
+				<div className='flex justify-center items-center gap-4 mb-4'>
+					<Title className='after:hidden !pb-0 !mb-0'>
+						{profile?.displayName}
 					</Title>
 					<Button context='icon' onClick={() => onOpenEditForm(true)}>
 						<FontAwesomeIcon icon={faPen} />
 					</Button>
 				</div>
-				<div className='mb-5'>
+				<div className='mb-16 flex justify-center items-start gap-7'>
 					{basicInfo.map((item, idx) => {
 						return (
 							<div
@@ -63,13 +66,9 @@ const ProfileInfo = ({ userInfo, onOpenEditForm }) => {
 						)
 					})}
 				</div>
-				<div className='mb-5'>
-					<Title variant='h3'>Friends</Title>
-					{userInfo.friends ? userInfo.friends : 'no info'}
-				</div>
-				<div className='mb-5'>
+				<div className='mb-8 pb-8 text-center border-b border-slate-800'>
 					<Title variant='h3'>Biography</Title>
-					{userInfo.biography ? userInfo.biography : 'no info'}
+					{profile?.biography ? profile?.biography : 'no info'}
 				</div>
 			</div>
 		</div>

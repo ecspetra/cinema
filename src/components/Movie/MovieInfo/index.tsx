@@ -27,6 +27,7 @@ import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
 import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
 import moment from 'moment'
+import GenreList from '@/components/Genre/GenreList'
 
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
@@ -90,11 +91,7 @@ const MovieInfo: FC<PropsType> = ({
 					</Title>
 				)}
 				{adult && <span>18+</span>}
-				<div className='flex mb-5'>
-					{genres.map((item, idx) => {
-						return <Genre key={idx} genre={item} />
-					})}
-				</div>
+				<GenreList genres={genres} />
 				<div className='mb-5'>
 					{(release_date || first_air_date) && (
 						<div className='flex items-center text-sm'>

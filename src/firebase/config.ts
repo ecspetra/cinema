@@ -1,9 +1,13 @@
 import { initializeApp } from 'firebase/app'
 import {
 	createUserWithEmailAndPassword,
+	EmailAuthProvider,
 	getAuth,
+	reauthenticateWithCredential,
 	signInWithEmailAndPassword,
 	signOut,
+	updateEmail,
+	updatePassword,
 	updateProfile,
 } from 'firebase/auth'
 import {
@@ -25,6 +29,7 @@ import {
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import {
+	IGenre,
 	IMovieCard,
 	IPersonCard,
 	IReplyCard,
@@ -52,6 +57,7 @@ export interface AuthContextType {
 	isLoggedIn: boolean
 	userId: string
 	photoURL: string
+	userName: string
 }
 
 export const USER_COLLECTIONS = [
@@ -80,23 +86,111 @@ export const addUserToRealtimeDatabase = async (newUser: object) => {
 	await set(newUserRef, newUserData)
 }
 
-export const updateUserInRealtimeDatabase = async (newUser: object) => {
-	const newUserRef = ref(database, `users/${newUser.uid}`)
+export const updateUserInRealtimeDatabase = async (
+	updateFields: object,
+	userId: string
+) => {
+	const newUserRef = ref(database, `users/${userId}`)
 
+	const existingUserData = (await get(newUserRef)).val()
 	const newUserData = {
 		info: {
-			displayName: newUser.displayName,
-			id: newUser.uid,
-			email: newUser.email,
-			photoURL: newUser.photoURL,
-			biography: newUser.biography,
-			favoriteGenres: newUser.favoriteGenres,
-			dateOFBirth: newUser.dateOFBirth,
+			...existingUserData.info,
+			...updateFields,
 		},
 	}
 
 	await set(newUserRef, newUserData)
 }
+
+export const updateProfileIcon = async (newIcon: string) => {
+	const currentUser = auth.currentUser
+	const displayName = currentUser?.displayName
+	const userId = currentUser?.uid
+	const updateFields = {
+		photoURL: newIcon,
+	}
+
+	await updateProfile(currentUser, { displayName, newIcon })
+	await updateUserInRealtimeDatabase(updateFields, userId)
+}
+
+export const updateUserInfo = async (newInfo: object) => {
+	const currentUser = auth.currentUser
+	const displayName = currentUser?.displayName
+	const userId = currentUser?.uid
+	const photoURL = currentUser?.photoURL
+	const updateFields = {
+		displayName: newInfo.name.value,
+		country: newInfo.country.value,
+		dateOfBirth: newInfo.dateOfBirth.value,
+		biography: newInfo.biography.value,
+	}
+
+	await updateProfile(currentUser, { displayName, photoURL })
+	await updateUserInRealtimeDatabase(updateFields, userId)
+}
+
+export const updateProfileGenres = async (newGenres: Array<IGenre>) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const updateFields = {
+		favoriteGenres: newGenres,
+	}
+
+	await updateUserInRealtimeDatabase(updateFields, userId)
+}
+
+// export const updateUserInfo = async (newInfo: object) => {
+// 	const currentUser = auth.currentUser
+// 	const userId = auth.currentUser?.uid
+// 	const displayName = newInfo.name.value
+// 	const photoURL = newInfo.photoURL.value
+// 	const email = newInfo.email.value
+// 	const newPassword = newInfo.newPassword.value
+//
+// 	const credential = EmailAuthProvider.credential(
+// 		oldInfo.email,
+// 		oldInfo.password
+// 	)
+//
+// 	let errorOccurred = false
+//
+// 	try {
+// 		await reauthenticateWithCredential(currentUser, credential)
+// 			.then(async () => {
+// 				await updateProfile(currentUser, { displayName, photoURL })
+// 				console.log('1')
+// 				await updateEmail(currentUser, email)
+// 				console.log('2')
+// 				await updatePassword(currentUser, newPassword)
+// 				console.log('3')
+// 				await updateUserInRealtimeDatabase(newInfo, userId)
+// 				console.log('4')
+// 			})
+// 			.catch(async error => {
+// 				errorOccurred = true
+// 			})
+//
+// 		if (errorOccurred) {
+// 			await updateProfile(currentUser, {
+// 				displayName: oldInfo.name,
+// 				photoURL: oldInfo.photoURL,
+// 			})
+// 			console.log('4')
+// 			await updateEmail(currentUser, oldInfo.email)
+// 			console.log('5')
+//
+// 			await updatePassword(currentUser, oldInfo.password)
+// 			console.log('6')
+//
+// 			await updateUserInRealtimeDatabase(oldInfo, userId)
+// 			console.log('7')
+// 		}
+// 	} catch (error) {
+// 		throw error
+// 	}
+// }
 
 export const signUp = async (
 	email: string,
@@ -136,8 +230,6 @@ export const signOutUser = async () => {
 	}
 }
 
-// user handlers
-
 export const getUserInfo = (userId: string) => {
 	const infoPath = `users/${userId}/info/`
 	const itemRef = ref(database, infoPath)
@@ -152,15 +244,6 @@ export const getUserInfo = (userId: string) => {
 			resolve(userInfo)
 		})
 	})
-}
-
-export const updateUserInfo = async (newInfo: object) => {
-	try {
-		await updateProfile(auth.currentUser, newInfo)
-		await updateUserInRealtimeDatabase(newInfo)
-	} catch (error) {
-		throw error
-	}
 }
 
 // movie marks handlers
@@ -647,6 +730,23 @@ export const collectionRepliesListener = (
 
 	return () => {
 		unsubscribeReplyRemoved()
+	}
+}
+
+export const userProfileListener = (
+	userId: string,
+	setProfile: ([]) => void
+) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+		setProfile(profileData)
+	}
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
 	}
 }
 

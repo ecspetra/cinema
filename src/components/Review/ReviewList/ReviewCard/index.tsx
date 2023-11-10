@@ -26,6 +26,7 @@ import { CSSTransition } from 'react-transition-group'
 import { useAuth } from '@/context/AuthProvider'
 import Link from 'next/link'
 import MovieCardSmall from '@/components/Movie/MovieCard/MovieCardSmall'
+import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 
 type PropsType = {
 	defaultCardMovieId: number
@@ -51,6 +52,7 @@ const ReviewCard: FC<PropsType> = ({
 	} = review
 	const [replies, setReplies] = useState<Array<IReplyCard>>([])
 	const [authorInfo, setAuthorInfo] = useState({
+		userId: '',
 		photoURL: '',
 		displayName: '',
 	})
@@ -117,14 +119,13 @@ const ReviewCard: FC<PropsType> = ({
 				<div className='w-full'>
 					<div className='flex mb-2 max-w-[calc(100%-54px)]'>
 						<div className='flex items-center'>
-							<Image
-								className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
-								src={
+							<ProfileIconSmall
+								userId={isItemFromDB && authorInfo.userId}
+								photoURL={
 									isItemFromDB
 										? authorInfo.photoURL
 										: `https://image.tmdb.org/t/p/original${avatar_path}`
 								}
-								defaultImage={defaultUserImage}
 							/>
 							<div>
 								<Title
@@ -248,6 +249,7 @@ const ReviewCard: FC<PropsType> = ({
 			getUserInfo(authorId)
 				.then(data => {
 					setAuthorInfo({
+						userId: data.id,
 						photoURL: data.photoURL,
 						displayName: data.displayName,
 					})
