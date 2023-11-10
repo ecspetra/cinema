@@ -6,13 +6,14 @@ import Button from '../../../../app/components/UI/Button'
 import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
-import { getUserAvatar, removeReviewItem } from '@/firebase/config'
+import { getUserInfo, removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
 import Dropdown from '@/app/components/UI/Dropdown'
 import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
+import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 
 type PropsType = {
 	movieId: number
@@ -27,6 +28,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
 	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
 	const [authorInfo, setAuthorInfo] = useState({
+		userId: '',
 		photoURL: '',
 		displayName: '',
 	})
@@ -59,9 +61,10 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 	}, [isContentOpen])
 
 	useEffect(() => {
-		getUserAvatar(authorId)
+		getUserInfo(authorId)
 			.then(data => {
 				setAuthorInfo({
+					userId: data.id,
 					photoURL: data.photoURL,
 					displayName: data.displayName,
 				})
@@ -103,10 +106,9 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 				)}
 				<div className='flex mb-2'>
 					<div className='flex items-center'>
-						<Image
-							className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
-							src={authorInfo.photoURL}
-							defaultImage={defaultUserImage}
+						<ProfileIconSmall
+							userId={authorInfo.userId}
+							photoURL={authorInfo.photoURL}
 						/>
 						<div>
 							<Title variant='h3' className='mb-2 min-h-[22.5px]'>

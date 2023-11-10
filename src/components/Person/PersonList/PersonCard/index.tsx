@@ -7,20 +7,23 @@ import Title from '../../../../app/components/UI/Title/Title'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 import { useAuth } from '@/context/AuthProvider'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
+import { CSSTransition } from 'react-transition-group'
 
 type PropsType = {
 	item: IPersonCard
 	isShowButton?: boolean
 	isShowRole?: boolean
+	isCollectionListItem?: boolean
 }
 
 const PersonCard: FC<PropsType> = ({
 	item,
 	isShowButton = true,
 	isShowRole = false,
+	isCollectionListItem = false,
 }) => {
-	const { userId } = useAuth()
 	const {
+		isMounted,
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
@@ -29,7 +32,7 @@ const PersonCard: FC<PropsType> = ({
 
 	const { id, job, name, character, profile_path } = item
 
-	return (
+	const personCard = (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
 				href={`/person/[id]`}
@@ -61,6 +64,23 @@ const PersonCard: FC<PropsType> = ({
 				/>
 			)}
 		</div>
+	)
+
+	return (
+		<>
+			{isCollectionListItem ? (
+				<CSSTransition
+					in={isMounted}
+					timeout={500}
+					classNames='collection-card'
+					unmountOnExit
+				>
+					{personCard}
+				</CSSTransition>
+			) : (
+				personCard
+			)}
+		</>
 	)
 }
 

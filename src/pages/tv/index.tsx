@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import ItemsList from '../../components/List/ItemsList'
+import TopBanner from '@/components/TopBanner'
+import { TV_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 
 const TVShows = ({ tvShows }) => {
 	const [tvShowsList, setTvShowsList] = useState(null)
@@ -22,13 +24,16 @@ const TVShows = ({ tvShows }) => {
 	if (!tvShowsList) return <Loader />
 
 	return (
-		<ItemsList
-			itemsList={tvShowsList.items}
-			listName='tv'
-			title='TV shows'
-			isMoreDataAvailable={tvShowsList.isMoreDataAvailable}
-			linkToFetchItems={LINK_TO_FETCH_TV_SHOWS_LIST}
-		/>
+		<>
+			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
+			<ItemsList
+				itemsList={tvShowsList.items}
+				listName='tv'
+				title='TV shows'
+				isMoreDataAvailable={tvShowsList.isMoreDataAvailable}
+				linkToFetchItems={LINK_TO_FETCH_TV_SHOWS_LIST}
+			/>
+		</>
 	)
 }
 

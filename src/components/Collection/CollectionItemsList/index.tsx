@@ -74,8 +74,21 @@ const CollectionItemsList: FC<PropsType> = ({
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
 					if (collectionName === 'movie') {
-						return <MovieCard key={item.id} item={item} />
-					} else return <PersonCard key={item.id} item={item} />
+						return (
+							<MovieCard
+								key={item.id}
+								item={item}
+								isCollectionListItem
+							/>
+						)
+					} else
+						return (
+							<PersonCard
+								key={item.id}
+								item={item}
+								isCollectionListItem
+							/>
+						)
 				})}
 			</div>
 			{isLoading && <Loader type='static' />}

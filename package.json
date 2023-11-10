@@ -39,6 +39,7 @@
     "react-dom": "18.2.0",
     "react-player": "^2.13.0",
     "react-transition-group": "^4.4.5",
+    "tailwind-datepicker-react": "^1.4.3",
     "typescript": "5.1.6",
     "uuid": "^9.0.1"
   },

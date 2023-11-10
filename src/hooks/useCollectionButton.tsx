@@ -18,11 +18,12 @@ export const useCollectionButton = (
 	itemInfo: IMovieCard | IPersonCard,
 	collection: 'movie' | 'tv' | 'person'
 ) => {
+	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
 	const { userId, isLoggedIn } = useAuth()
-	const { showModal, hideModal, currentModal } = useModal()
+	const { showModal, hideModal } = useModal()
 
 	const handleSetCollectionItem = () => {
 		if (isLoggedIn) {
@@ -80,23 +81,26 @@ export const useCollectionButton = (
 
 	const handleRemoveCollectionItem = modalId => {
 		hideModal(modalId)
-
 		setIsLoadingCollection(true)
-		removeCollectionItem(itemInfo.id, userId, collection)
-			.then(() => {
-				setIsCollectionItem(false)
-				setIsLoadingCollection(false)
-			})
-			.then(() => {
-				showSuccessNotification(
-					showModal,
-					'The item was successfully removed'
-				)
-			})
-			.catch(() => {
-				setIsLoadingCollection(false)
-				showErrorNotification(showModal, 'An error has occurred')
-			})
+		setIsMounted(false)
+
+		setTimeout(() => {
+			removeCollectionItem(itemInfo.id, userId, collection)
+				.then(() => {
+					setIsCollectionItem(false)
+					setIsLoadingCollection(false)
+				})
+				.then(() => {
+					showSuccessNotification(
+						showModal,
+						'The item was successfully removed'
+					)
+				})
+				.catch(() => {
+					setIsLoadingCollection(false)
+					showErrorNotification(showModal, 'An error has occurred')
+				})
+		}, 500)
 	}
 
 	const openConfirmationPopup = () => {
@@ -116,6 +120,7 @@ export const useCollectionButton = (
 				.then(data => {
 					setIsCollectionItem(data)
 					setIsLoadingCollection(false)
+					setIsMounted(true)
 				})
 				.catch(() => {
 					setIsLoadingCollection(false)
@@ -124,6 +129,7 @@ export const useCollectionButton = (
 	}, [isLoggedIn])
 
 	return {
+		isMounted,
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,

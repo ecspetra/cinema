@@ -11,7 +11,6 @@ import { usePathname } from 'next/navigation'
 import {
 	AUTH_PAGE,
 	COLLECTION_PAGE,
-	CURRENT_USER_COLLECTION_MOVIES_PAGE,
 	CURRENT_USER_COLLECTION_PAGE,
 } from '@/constants/paths'
 import { parseCookies } from '@/handlers/handleCookies'

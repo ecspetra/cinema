@@ -25,6 +25,9 @@ import { useAuth } from '@/context/AuthProvider'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
+import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
+import moment from 'moment'
+import GenreList from '@/components/Genre/GenreList'
 
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
@@ -56,6 +59,7 @@ const MovieInfo: FC<PropsType> = ({
 		first_air_date,
 		vote_count,
 		vote_average,
+		seasons,
 	} = basicInfo
 
 	const isTVShowItem = !!(first_air_date && name)
@@ -68,7 +72,7 @@ const MovieInfo: FC<PropsType> = ({
 	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
 
 	return (
-		<div className='flex gap-x-7 py-7 z-10 mb-16'>
+		<div className='flex gap-7 py-7 z-10 mb-16'>
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-28'>
 					<Image
@@ -87,11 +91,7 @@ const MovieInfo: FC<PropsType> = ({
 					</Title>
 				)}
 				{adult && <span>18+</span>}
-				<div className='flex mb-5'>
-					{genres.map((item, idx) => {
-						return <Genre key={idx} genre={item} />
-					})}
-				</div>
+				<GenreList genres={genres} />
 				<div className='mb-5'>
 					{(release_date || first_air_date) && (
 						<div className='flex items-center text-sm'>
@@ -104,15 +104,9 @@ const MovieInfo: FC<PropsType> = ({
 									? 'Release date:'
 									: 'First air date:'}
 							</span>
-							{new Intl.DateTimeFormat('en-GB', {
-								month: 'long',
-								day: '2-digit',
-								year: 'numeric',
-							}).format(
-								new Date(
-									release_date ? release_date : first_air_date
-								)
-							)}
+							{moment(
+								release_date ? release_date : first_air_date
+							).format('Do MMM YYYY')}
 						</div>
 					)}
 					{production_countries.length > 0 && (
@@ -167,6 +161,7 @@ const MovieInfo: FC<PropsType> = ({
 							: handleSetCollectionItem
 					}
 				/>
+				{isTVShowItem && <TVSeasonsList seasonsList={seasons} />}
 				<ImagesList images={movieImages} />
 				<ReviewsList movieId={id} reviews={movieReviews} />
 				<NewReviewForm

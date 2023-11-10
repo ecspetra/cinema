@@ -2,13 +2,10 @@ import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
 import { getCollectionItemsList } from '@/firebase/config'
 import Button from '@/app/components/UI/Button'
-import { handleModals, openLoginModal } from '@/handlers/handleModals'
+import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
-import {
-	CURRENT_USER_COLLECTION_PAGE,
-	COLLECTION_PAGE_TOP_BANNER_IMAGE,
-} from '@/constants/paths'
+import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
 import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
@@ -17,6 +14,7 @@ import CollectionWrap from '../../components/Collection/CollectionWrap'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
+import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 
 const Collection = ({ results }) => {
 	const [movies, setMovies] = useState(null)
@@ -63,13 +61,13 @@ const Collection = ({ results }) => {
 				const collectionMovies = await getCollectionItemsList(
 					userIdFromUrl,
 					'movie',
-					6,
+					5,
 					null
 				)
 				const collectionPersons = await getCollectionItemsList(
 					userIdFromUrl,
 					'person',
-					6,
+					5,
 					null
 				)
 				const collectionReviews = await getCollectionItemsList(
@@ -215,13 +213,13 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		const collectionMovies = await getCollectionItemsList(
 			userIdFromUrl,
 			'movie',
-			6,
+			5,
 			null
 		)
 		const collectionPersons = await getCollectionItemsList(
 			userIdFromUrl,
 			'person',
-			6,
+			5,
 			null
 		)
 		const collectionReviews = await getCollectionItemsList(

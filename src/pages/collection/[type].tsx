@@ -1,15 +1,13 @@
 import { NextPageContext } from 'next'
 import { parseCookies } from '@/handlers/handleCookies'
-import {
-	CURRENT_USER_COLLECTION_PAGE,
-	COLLECTION_PAGE_TOP_BANNER_IMAGE,
-} from '@/constants/paths'
+import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
 import { getCollectionItemsList } from '@/firebase/config'
 import CollectionItemsList from '../../components/Collection/CollectionItemsList'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
+import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 
 const CollectionType = ({ results }) => {
 	const [itemsList, setItemsList] = useState(null)

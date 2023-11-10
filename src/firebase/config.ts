@@ -1,10 +1,13 @@
 import { initializeApp } from 'firebase/app'
 import {
 	createUserWithEmailAndPassword,
+	EmailAuthProvider,
 	getAuth,
+	reauthenticateWithCredential,
 	signInWithEmailAndPassword,
 	signOut,
-	User,
+	updateEmail,
+	updatePassword,
 	updateProfile,
 } from 'firebase/auth'
 import {
@@ -26,6 +29,7 @@ import {
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import {
+	IGenre,
 	IMovieCard,
 	IPersonCard,
 	IReplyCard,
@@ -53,6 +57,7 @@ export interface AuthContextType {
 	isLoggedIn: boolean
 	userId: string
 	photoURL: string
+	userName: string
 }
 
 export const USER_COLLECTIONS = [
@@ -79,6 +84,83 @@ export const addUserToRealtimeDatabase = async (newUser: object) => {
 	}
 
 	await set(newUserRef, newUserData)
+}
+
+export const updateUserInRealtimeDatabase = async (
+	updateFields: object,
+	userId: string
+) => {
+	const newUserRef = ref(database, `users/${userId}`)
+
+	const existingUserData = (await get(newUserRef)).val()
+	const newUserData = {
+		info: {
+			...existingUserData.info,
+			...updateFields,
+		},
+	}
+
+	await set(newUserRef, newUserData)
+}
+
+export const updateProfileIcon = async (newIcon: string) => {
+	const currentUser = auth.currentUser
+	const displayName = currentUser?.displayName
+	const userId = currentUser?.uid
+	const updateFields = {
+		photoURL: newIcon,
+	}
+
+	await updateProfile(currentUser, { displayName, newIcon })
+	await updateUserInRealtimeDatabase(updateFields, userId)
+}
+
+export const updateUserInfo = async (newInfo: object) => {
+	const currentUser = auth.currentUser
+	const displayName = currentUser?.displayName
+	const userId = currentUser?.uid
+	const photoURL = currentUser?.photoURL
+	const updateFields = {
+		displayName: newInfo.name.value,
+		country: newInfo.country.value,
+		dateOfBirth: newInfo.dateOfBirth.value,
+		about: newInfo.about.value,
+	}
+
+	await updateProfile(currentUser, { displayName, photoURL })
+	await updateUserInRealtimeDatabase(updateFields, userId)
+}
+
+export const updateUserCredential = async (newInfo: object) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const oldEmail = currentUser?.email
+	const updateFields = {
+		email: newInfo.email.value,
+	}
+
+	const credential = EmailAuthProvider.credential(
+		oldEmail,
+		newInfo.oldPassword.value
+	)
+
+	await reauthenticateWithCredential(currentUser, credential).then(
+		async () => {
+			await updateEmail(currentUser, newInfo.email.value)
+			await updatePassword(currentUser, newInfo.newPassword.value)
+			await updateUserInRealtimeDatabase(updateFields, userId)
+		}
+	)
+}
+
+export const updateProfileGenres = async (newGenres: Array<IGenre>) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const updateFields = {
+		favoriteGenres: newGenres,
+	}
+
+	await updateUserInRealtimeDatabase(updateFields, userId)
 }
 
 export const signUp = async (
@@ -117,6 +199,22 @@ export const signOutUser = async () => {
 	} catch (error) {
 		throw error
 	}
+}
+
+export const getUserInfo = (userId: string) => {
+	const infoPath = `users/${userId}/info/`
+	const itemRef = ref(database, infoPath)
+
+	return new Promise(async resolve => {
+		get(itemRef).then(snapshot => {
+			let userInfo = {}
+			if (snapshot.exists()) {
+				userInfo = snapshot.val()
+			}
+
+			resolve(userInfo)
+		})
+	})
 }
 
 // movie marks handlers
@@ -170,23 +268,6 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 		})
 
 		resolve(isRemoved)
-	})
-}
-
-// user handlers
-
-export const getUserAvatar = (userId: string) => {
-	const infoPath = `users/${userId}/info/`
-	const itemRef = ref(database, infoPath)
-
-	return new Promise(async resolve => {
-		get(itemRef).then(snapshot => {
-			let userInfo = {}
-			if (snapshot.exists()) {
-				userInfo = snapshot.val()
-			}
-			resolve(userInfo)
-		})
 	})
 }
 
@@ -294,12 +375,6 @@ export const getCollectionItemsList = async (
 			return itemSnapshot.val()
 		})
 	)
-	// ).then(data => {
-	// 	if (collectionName === 'reviews') {
-	// 		return data.filter(item => item.id !== undefined)
-	// 	}
-	// 	return data
-	// })
 
 	return {
 		isMoreDataAvailable,
@@ -620,6 +695,23 @@ export const collectionRepliesListener = (
 
 	return () => {
 		unsubscribeReplyRemoved()
+	}
+}
+
+export const userProfileListener = (
+	userId: string,
+	setProfile: ([]) => void
+) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+		setProfile(profileData)
+	}
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
 	}
 }
 

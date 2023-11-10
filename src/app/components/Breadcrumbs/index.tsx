@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import classNames from 'classnames'
+import { getUserInfo } from '@/firebase/config'
 
 const Breadcrumbs = () => {
 	const router = useRouter()
@@ -19,7 +20,10 @@ const Breadcrumbs = () => {
 				const segment = segments[i]
 				const href = `/${segments.slice(0, i + 1).join('/')}`
 
-				if (!isNaN(segment)) {
+				const isItemIdSegment = !isNaN(segment)
+				const isUserCollectionSegment = segment.includes('?uid')
+
+				if (isItemIdSegment) {
 					const item = await fetchItemData(
 						segments[i - 1],
 						router.query.id,
@@ -33,14 +37,21 @@ const Breadcrumbs = () => {
 				} else {
 					let itemName = ''
 
-					if (segment.includes('?uid')) {
+					if (isUserCollectionSegment) {
 						const parts = segment.split('?uid')
-						itemName = parts[0]
-					} else itemName = segment
+						itemName =
+							parts[0].charAt(0).toUpperCase() + parts[0].slice(1)
+					} else if (
+						segments.includes('profile') &&
+						segment !== 'profile'
+					) {
+						const item = await getUserInfo(router.query.id)
+						itemName = item.displayName
+					} else
+						itemName =
+							segment.charAt(0).toUpperCase() + segment.slice(1)
 
-					const itemNameCapitalized =
-						itemName.charAt(0).toUpperCase() + itemName.slice(1)
-					newBreadcrumbs.push({ label: itemNameCapitalized, href })
+					newBreadcrumbs.push({ label: itemName, href })
 				}
 			}
 
@@ -48,7 +59,7 @@ const Breadcrumbs = () => {
 		}
 
 		getBreadcrumbs()
-	}, [router.asPath])
+	}, [router.asPath, router.query.id])
 
 	if (breadcrumbs.length === 1) return null
 

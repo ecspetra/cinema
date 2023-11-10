@@ -5,6 +5,7 @@ import { uuidv4 } from '@firebase/util'
 
 export const openLoginModal = showModal => {
 	showModal({
+		id: uuidv4(),
 		modalClassName: '',
 		modalContent: <AuthForm />,
 		alertInfo: null,
@@ -46,6 +47,7 @@ export const showSuccessNotification = (showModal, text) => {
 
 export const showErrorNotification = (showModal, text) => {
 	showModal({
+		id: uuidv4(),
 		modalTitle: ``,
 		modalText: text,
 		modalClassName: '',

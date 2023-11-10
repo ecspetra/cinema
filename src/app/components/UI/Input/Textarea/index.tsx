@@ -5,7 +5,7 @@ import classNames from 'classnames'
 type PropsType = {
 	onChange: React.Dispatch<React.SetStateAction<string>>
 	value: string
-	error: string
+	error?: string
 	placeholder?: string
 	className?: string
 }

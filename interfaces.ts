@@ -80,6 +80,7 @@ export interface ITVShowInfo {
 	overview: string
 	vote_average: number
 	vote_count: number
+	seasons: Array<ITVSeasonCard>
 	adult?: boolean
 }
 
@@ -97,6 +98,16 @@ export interface ITVShowCard {
 	first_air_date: string
 	name: string
 	genres?: Array<IGenre>
+}
+
+export interface ITVSeasonCard {
+	id: number
+	name: string
+	episode_count: number
+	overview: string
+	air_date: string
+	poster_path: string
+	vote_average: number
 }
 
 export interface IPersonCard {

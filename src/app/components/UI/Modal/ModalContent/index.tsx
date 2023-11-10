@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react'
+import React, { FC } from 'react'
 import classNames from 'classnames'
 import Button from '@/app/components/UI/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,12 +9,11 @@ import { IModalContent } from '../../../../../../interfaces'
 type PropsType = {
 	currentModal: IModalContent
 	onClose: () => void
+	modalRef: React.RefObject<HTMLDivElement>
 }
 
-const ModalContent: FC<PropsType> = ({ currentModal, onClose }) => {
-	const modalRef = useRef(null)
-	const { id, modalTitle, modalText, modalClassName, modalContent } =
-		currentModal
+const ModalContent: FC<PropsType> = ({ currentModal, onClose, modalRef }) => {
+	const { modalTitle, modalText, modalClassName, modalContent } = currentModal
 	const isShowModalHeader = modalTitle || modalText
 
 	return (

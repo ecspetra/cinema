@@ -100,3 +100,11 @@ input:-webkit-autofill::first-line {
 .modal-exit-done {
 	@apply opacity-0 translate-y-3 transition-all duration-300 ease-[ease-in];;
 }
+
+.collection-card-exit {
+	@apply opacity-100 translate-y-0;
+}
+
+.collection-card-exit-active {
+	@apply opacity-0 -translate-y-32 transition-all duration-500 ease-[ease-in];
+}

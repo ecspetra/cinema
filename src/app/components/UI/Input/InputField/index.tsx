@@ -10,8 +10,8 @@ type PropsType = {
 	id: string
 	label: string
 	value: string
-	error: string
 	onChange: ChangeEventHandler<HTMLInputElement>
+	error?: string
 	type?: 'image' | 'password' | 'text'
 	placeholder?: string
 	className?: string
@@ -23,8 +23,8 @@ const InputField: FC<PropsType> = ({
 	id,
 	label,
 	value,
-	error,
 	onChange,
+	error,
 	type = 'text',
 	placeholder = 'Enter your text...',
 	className,
@@ -41,13 +41,13 @@ const InputField: FC<PropsType> = ({
 			<label
 				htmlFor={id}
 				className={classNames(
-					'w-full bg-transparent pt-2 px-4 pb-4 border border-gray-800 hover:border-white focus-within:border-white duration-300 block',
+					'w-full bg-transparent pt-2 px-4 pb-4 border border-gray-500 hover:border-white focus-within:border-white duration-300 block',
 					className,
 					error && '!border-amber-600'
 				)}
 			>
 				<span className='text-xs text-gray-500 font-semibold'>
-					{`${label}${required && ' *'}`}
+					{`${label}${required ? ' *' : ''}`}
 				</span>
 				<span className='flex justify-between items-center'>
 					<span className='w-full flex justify-start items-center'>
