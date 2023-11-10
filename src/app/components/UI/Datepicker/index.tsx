@@ -1,10 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import Datepicker from 'tailwind-datepicker-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faChevronLeft,
 	faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
+import moment from 'moment'
 
 type PropsType = {
 	initialDateValue: string
@@ -20,9 +21,13 @@ const CustomDatepicker: FC<PropsType> = ({
 	required,
 }) => {
 	const [show, setShow] = useState<boolean>(false)
-
 	const currentDate = new Date()
 	currentDate.setHours(0, 0, 0, 0)
+
+	const initialDate =
+		initialDateValue.length !== 0
+			? moment(initialDateValue, 'Do MMM YYYY').toDate()
+			: currentDate
 
 	const options = {
 		title: '',
@@ -58,7 +63,7 @@ const CustomDatepicker: FC<PropsType> = ({
 			),
 		},
 		datepickerClassNames: 'top-full',
-		defaultDate: initialDateValue,
+		defaultDate: initialDate,
 		language: 'en',
 		disabledDates: [],
 		weekDays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],

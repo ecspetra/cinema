@@ -77,7 +77,8 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	}
 
 	const handleDateOfBirthChange = date => {
-		updateField('dateOfBirth', moment(date).format('Do MMM YYYY'), '')
+		const formattedDate = moment(new Date(date)).format('Do MMM YYYY')
+		updateField('dateOfBirth', formattedDate, '')
 	}
 
 	const handleTextareaChange = value => {
