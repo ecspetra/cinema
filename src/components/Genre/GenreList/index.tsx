@@ -5,7 +5,6 @@ import getAllGenres from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import Button from '@/app/components/UI/Button'
-import classNames from 'classnames'
 import { updateProfileGenres } from '@/firebase/config'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
@@ -14,12 +13,19 @@ type PropsType = {
 	genres: Array<IGenre>
 	title?: string
 	className?: string
+	isEditGenres?: boolean
+	onFormClose?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const GenreList: FC<PropsType> = ({ genres, title = '', className }) => {
+const GenreList: FC<PropsType> = ({
+	genres,
+	title = '',
+	className,
+	isEditGenres = false,
+	onFormClose,
+}) => {
 	const [itemsList, setItemsList] = useState<Array<IGenre>>([])
 	const [favoriteGenres, setFavoriteGenres] = useState<Array<IGenre>>(genres)
-	const [isEdit, setIsEdit] = useState<boolean>(false)
 	const { showModal } = useModal()
 
 	const handleToggleGenre = (genre, isChecked) => {
@@ -40,7 +46,7 @@ const GenreList: FC<PropsType> = ({ genres, title = '', className }) => {
 
 	const handleSaveChanges = async () => {
 		await updateProfileGenres(favoriteGenres).then(() => {
-			setIsEdit(false)
+			onFormClose(false)
 			showSuccessNotification(
 				showModal,
 				'Your profile was successfully updated'
@@ -49,7 +55,7 @@ const GenreList: FC<PropsType> = ({ genres, title = '', className }) => {
 	}
 
 	useEffect(() => {
-		if (isEdit) {
+		if (isEditGenres) {
 			const getGenres = async () => {
 				const allGenres = await getAllGenres('movie')
 				setItemsList(allGenres)
@@ -59,61 +65,44 @@ const GenreList: FC<PropsType> = ({ genres, title = '', className }) => {
 		} else {
 			setItemsList(genres)
 		}
-	}, [isEdit])
+	}, [isEditGenres])
 
 	if (!itemsList.length)
 		return (
-			<>
-				<EmptyList
-					title={title}
-					variant='h3'
-					text='No genres yet'
-					className={classNames('text-center', className)}
-				/>
-				<Button
-					context='filledDark'
-					className='mx-auto'
-					onClick={() => setIsEdit(true)}
-				>
-					Edit genres
-				</Button>
-			</>
+			<EmptyList
+				title={title}
+				variant='h3'
+				text='No genres yet'
+				className={className}
+			/>
 		)
 
 	return (
 		<div className={className}>
 			{title && <Title variant='h3'>{title}</Title>}
-			<div className='flex flex-wrap justify-center items-start mb-5'>
+			<div className='flex flex-wrap justify-start items-start mb-5'>
 				{itemsList.map(item => {
 					return (
 						<Genre
 							key={item.name}
 							genre={item}
-							isEdit={isEdit}
+							isEdit={isEditGenres}
 							isFavorite={handleIsFavoriteGenre(item.name)}
 							onToggle={handleToggleGenre}
 						/>
 					)
 				})}
 			</div>
-			{isEdit ? (
-				<div className='flex justify-center items-center gap-2'>
+			{isEditGenres && (
+				<div className='flex justify-start items-center gap-2'>
 					<Button onClick={handleSaveChanges}>Save</Button>
 					<Button
 						context='filledDark'
-						onClick={() => setIsEdit(false)}
+						onClick={() => onFormClose(false)}
 					>
 						Cancel
 					</Button>
 				</div>
-			) : (
-				<Button
-					context='filledDark'
-					className='mx-auto'
-					onClick={() => setIsEdit(true)}
-				>
-					Edit genres
-				</Button>
 			)}
 		</div>
 	)

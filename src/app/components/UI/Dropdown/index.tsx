@@ -1,14 +1,17 @@
 import React, { FC, ReactNode, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisVertical, faGear } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
+import classNames from 'classnames'
 
 type PropsType = {
 	children: ReactNode
+	icon?: 'settings' | 'dots'
+	className?: string
 }
 
-const Dropdown: FC<PropsType> = ({ children }) => {
+const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const toggleDropdown = event => {
@@ -27,14 +30,17 @@ const Dropdown: FC<PropsType> = ({ children }) => {
 	})
 
 	return (
-		<div className='absolute top-4 right-4' onMouseLeave={closeDropdown}>
+		<div
+			className={classNames('absolute top-4 right-4', className)}
+			onMouseLeave={closeDropdown}
+		>
 			<Button
 				className='!absolute top-0 right-0'
 				context='icon'
 				onClick={toggleDropdown}
 			>
 				<FontAwesomeIcon
-					icon={faEllipsisVertical}
+					icon={icon ? faGear : faEllipsisVertical}
 					className='w-6 h-6'
 				/>
 			</Button>

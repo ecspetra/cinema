@@ -14,26 +14,21 @@ import 'react-datepicker/dist/react-datepicker.css'
 import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
-import { updateUserInfo } from '@/firebase/config'
-import GenreList from '@/components/Genre/GenreList'
+import { updateUserCredential, updateUserInfo } from '@/firebase/config'
 import moment from 'moment'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
 
 interface EditProfileFormData {
-	name: {
+	email: {
 		value: string
 		error: string
 	}
-	country: {
+	oldPassword: {
 		value: string
 		error: string
 	}
-	dateOfBirth: {
-		value: string
-		error: string
-	}
-	about: {
+	newPassword: {
 		value: string
 		error: string
 	}
@@ -46,50 +41,48 @@ type PropsType = {
 	onFormClose: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
+const EditCredentialForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	const initialDateValue = new Date()
 	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<EditProfileFormData>({
-		name: {
-			value: userInfo.displayName,
+		email: {
+			value: '',
 			error: '',
 		},
-		country: {
-			value: userInfo.country || '',
+		oldPassword: {
+			value: '',
 			error: '',
 		},
-		dateOfBirth: {
-			value: userInfo.dateOfBirth || '',
-			error: '',
-		},
-		about: {
-			value: userInfo.about || '',
+		newPassword: {
+			value: '',
 			error: '',
 		},
 		formError: {
 			error: '',
 		},
 	})
-	const isNameValid = formData.name.value.length > 0
+	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
+	const isOldPasswordValid = formData.oldPassword.value.length > 0
+	const isNewPasswordValid = formData.newPassword.value.length > 0
 
-	const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+	const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
-			event.target.value === '' ? ERROR_MESSAGES.REQUIRED_FIELD : ''
-		updateField('name', event.target.value, error)
+			event.target.value === '' ? ERROR_MESSAGES.INVALID_EMAIL : ''
+		updateField('email', event.target.value, error)
 	}
 
-	const handleCountryChange = (event: ChangeEvent<HTMLInputElement>) => {
-		updateField('country', event.target.value, '')
+	const handleOldPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const error =
+			event.target.value === '' ? ERROR_MESSAGES.INVALID_PASSWORD : ''
+		updateField('oldPassword', event.target.value, error)
 	}
 
-	const handleDateOfBirthChange = date => {
-		updateField('dateOfBirth', moment(date).format('Do MMM YYYY'), '')
-	}
-
-	const handleTextareaChange = value => {
-		updateField('about', value, '')
+	const handleNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const error =
+			event.target.value === '' ? ERROR_MESSAGES.INVALID_PASSWORD : ''
+		updateField('newPassword', event.target.value, error)
 	}
 
 	const updateField = (
@@ -118,10 +111,9 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 
 	const clearForm = () => {
 		setFormData({
-			name: { value: '', error: '' },
-			country: { value: '', error: '' },
-			dateOfBirth: { value: '', error: '' },
-			about: { value: '', error: '' },
+			email: { value: '', error: '' },
+			oldPassword: { value: '', error: '' },
+			newPassword: { value: '', error: '' },
 			formError: { error: '' },
 		})
 	}
@@ -130,11 +122,12 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 		event.preventDefault()
 		setIsLoading(true)
 
-		const isFormValid = isNameValid
+		const isFormValid =
+			isEmailValid && isOldPasswordValid && isNewPasswordValid
 
 		if (isFormValid && isTouched) {
 			try {
-				await updateUserInfo(formData)
+				await updateUserCredential(formData)
 
 				onFormClose(false)
 				updateFormError('')
@@ -151,9 +144,21 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 		} else {
 			setFormData(prevState => ({
 				...prevState,
-				name: {
-					...prevState.name,
-					error: isNameValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
+				email: {
+					...prevState.email,
+					error: isEmailValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
+				},
+				oldPassword: {
+					...prevState.oldPassword,
+					error: isOldPasswordValid
+						? ''
+						: ERROR_MESSAGES.REQUIRED_FIELD,
+				},
+				newPassword: {
+					...prevState.newPassword,
+					error: isNewPasswordValid
+						? ''
+						: ERROR_MESSAGES.REQUIRED_FIELD,
 				},
 			}))
 			setIsLoading(false)
@@ -166,31 +171,36 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 			className='flex flex-col justify-start items-start gap-4 z-10 mb-16'
 		>
 			<InputField
-				id='userName'
-				label='Name'
-				value={formData.name.value}
-				error={formData.name.error}
-				onChange={handleNameChange}
-				icon={faUser}
+				id='userEmail'
+				label='Email'
+				value={formData.email.value}
+				error={formData.email.error}
+				onChange={handleEmailChange}
+				icon={faAt}
 				required
-				placeholder='Name'
+				placeholder='Email'
 			/>
 			<InputField
-				id='country'
-				label='Country'
-				value={formData.country.value}
-				onChange={handleCountryChange}
-				icon={faCalendarCheck}
-				placeholder='Country'
+				id='userOldPassword'
+				label='Old password'
+				value={formData.oldPassword.value}
+				error={formData.oldPassword.error}
+				onChange={handleOldPasswordChange}
+				icon={faKey}
+				required
+				type='password'
+				placeholder='Old password'
 			/>
-			<DatePicker
-				selected={initialDateValue}
-				onChange={date => handleDateOfBirthChange(date)}
-				maxDate={initialDateValue}
-			/>
-			<Textarea
-				onChange={handleTextareaChange}
-				value={formData.about.value}
+			<InputField
+				id='userNewPassword'
+				label='New password'
+				value={formData.newPassword.value}
+				error={formData.newPassword.error}
+				onChange={handleNewPasswordChange}
+				icon={faKey}
+				required
+				type='password'
+				placeholder='New password'
 			/>
 			{formData.formError.error && (
 				<Error
@@ -200,11 +210,7 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 			)}
 			<div className='mt-8 flex justify-start items-center'>
 				<Button type='submit'>
-					{isLoading ? (
-						<Loader isShowText type='static' />
-					) : (
-						'Update profile'
-					)}
+					{isLoading ? <Loader isShowText type='static' /> : 'Update'}
 				</Button>
 				<Button
 					context='filledDark'
@@ -218,4 +224,4 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	)
 }
 
-export default EditProfileForm
+export default EditCredentialForm

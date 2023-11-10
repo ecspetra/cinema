@@ -42,7 +42,7 @@ const Button: FC<PropsType> = ({
 	const textButtonClassNames =
 		'inline-flex text-amber-500 border-b border-amber-500 font-semibold hover:text-amber-400 hover:border-transparent'
 	const iconTextButtonClassNames =
-		'rounded-md p-2 bg-gray-600/50 font-semibold text-sm hover:bg-amber-900/50 hover:text-amber-400 flex justify-start items-center'
+		'rounded-md p-2 bg-gray-600/50 font-semibold text-sm leading-tight hover:bg-amber-900/50 hover:text-amber-400 flex justify-start items-center'
 	const iconButtonClassNames =
 		'w-11 h-11 flex justify-center items-center bg-gray-700 hover:bg-gray-600 rounded-md z-10'
 	const listItemButtonClassNames =

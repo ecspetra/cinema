@@ -88,7 +88,7 @@ const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
 	}
 
 	return (
-		<div className='mb-16 w-[232px] mx-auto'>
+		<>
 			<Image
 				className='!w-[232px] h-[232px] rounded-full mb-4'
 				src={image.value}
@@ -106,7 +106,7 @@ const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
 				/>
 			)}
 			{isShowProgressBar && <ProgressBar progress={uploadProgress} />}
-		</div>
+		</>
 	)
 }
 

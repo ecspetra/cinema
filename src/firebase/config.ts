@@ -124,11 +124,33 @@ export const updateUserInfo = async (newInfo: object) => {
 		displayName: newInfo.name.value,
 		country: newInfo.country.value,
 		dateOfBirth: newInfo.dateOfBirth.value,
-		biography: newInfo.biography.value,
+		about: newInfo.about.value,
 	}
 
 	await updateProfile(currentUser, { displayName, photoURL })
 	await updateUserInRealtimeDatabase(updateFields, userId)
+}
+
+export const updateUserCredential = async (newInfo: object) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const oldEmail = currentUser?.email
+	const updateFields = {
+		email: newInfo.email.value,
+	}
+
+	const credential = EmailAuthProvider.credential(
+		oldEmail,
+		newInfo.oldPassword.value
+	)
+
+	await reauthenticateWithCredential(currentUser, credential).then(
+		async () => {
+			await updateEmail(currentUser, newInfo.email.value)
+			await updatePassword(currentUser, newInfo.newPassword.value)
+			await updateUserInRealtimeDatabase(updateFields, userId)
+		}
+	)
 }
 
 export const updateProfileGenres = async (newGenres: Array<IGenre>) => {
@@ -140,57 +162,6 @@ export const updateProfileGenres = async (newGenres: Array<IGenre>) => {
 
 	await updateUserInRealtimeDatabase(updateFields, userId)
 }
-
-// export const updateUserInfo = async (newInfo: object) => {
-// 	const currentUser = auth.currentUser
-// 	const userId = auth.currentUser?.uid
-// 	const displayName = newInfo.name.value
-// 	const photoURL = newInfo.photoURL.value
-// 	const email = newInfo.email.value
-// 	const newPassword = newInfo.newPassword.value
-//
-// 	const credential = EmailAuthProvider.credential(
-// 		oldInfo.email,
-// 		oldInfo.password
-// 	)
-//
-// 	let errorOccurred = false
-//
-// 	try {
-// 		await reauthenticateWithCredential(currentUser, credential)
-// 			.then(async () => {
-// 				await updateProfile(currentUser, { displayName, photoURL })
-// 				console.log('1')
-// 				await updateEmail(currentUser, email)
-// 				console.log('2')
-// 				await updatePassword(currentUser, newPassword)
-// 				console.log('3')
-// 				await updateUserInRealtimeDatabase(newInfo, userId)
-// 				console.log('4')
-// 			})
-// 			.catch(async error => {
-// 				errorOccurred = true
-// 			})
-//
-// 		if (errorOccurred) {
-// 			await updateProfile(currentUser, {
-// 				displayName: oldInfo.name,
-// 				photoURL: oldInfo.photoURL,
-// 			})
-// 			console.log('4')
-// 			await updateEmail(currentUser, oldInfo.email)
-// 			console.log('5')
-//
-// 			await updatePassword(currentUser, oldInfo.password)
-// 			console.log('6')
-//
-// 			await updateUserInRealtimeDatabase(oldInfo, userId)
-// 			console.log('7')
-// 		}
-// 	} catch (error) {
-// 		throw error
-// 	}
-// }
 
 export const signUp = async (
 	email: string,
@@ -404,12 +375,6 @@ export const getCollectionItemsList = async (
 			return itemSnapshot.val()
 		})
 	)
-	// ).then(data => {
-	// 	if (collectionName === 'reviews') {
-	// 		return data.filter(item => item.id !== undefined)
-	// 	}
-	// 	return data
-	// })
 
 	return {
 		isMoreDataAvailable,

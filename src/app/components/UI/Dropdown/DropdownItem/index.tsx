@@ -27,7 +27,7 @@ const DropdownItem: FC<PropsType> = ({
 		<li>
 			<Button
 				context='icon-text'
-				className='w-full'
+				className='w-full text-left'
 				onClick={handleClick}
 			>
 				<FontAwesomeIcon icon={icon} className='mr-2' />
