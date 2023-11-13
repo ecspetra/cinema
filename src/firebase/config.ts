@@ -182,8 +182,8 @@ export const signUp = async (
 		const photoURL = `https://api.dicebear.com/5.x/thumbs/svg?seed=${newUser.uid}`
 
 		await updateProfile(newUser, { displayName, photoURL })
-		await signInWithEmailAndPassword(auth, email, password)
 		await addUserToRealtimeDatabase(newUser)
+		await signInWithEmailAndPassword(auth, email, password)
 	} catch (error) {
 		throw error
 	}
@@ -731,8 +731,8 @@ export const userContextListener = (
 		const profileData = snapshot.val()
 
 		if (
-			prevData.photoURL !== profileData.photoURL ||
-			prevData.userName !== profileData.displayName
+			prevData.photoURL !== profileData?.photoURL ||
+			prevData.userName !== profileData?.displayName
 		) {
 			updateUserProfile()
 		}
