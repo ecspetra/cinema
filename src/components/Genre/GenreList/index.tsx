@@ -65,7 +65,7 @@ const GenreList: FC<PropsType> = ({
 		} else {
 			setItemsList(genres)
 		}
-	}, [isEditGenres])
+	}, [isEditGenres, genres])
 
 	if (!itemsList.length)
 		return (
