@@ -90,8 +90,12 @@ const MovieInfo: FC<PropsType> = ({
 						{tagline}
 					</Title>
 				)}
-				{adult && <span>18+</span>}
 				<GenreList genres={genres} />
+				{adult && (
+					<span className='bg-red-600 p-2 mb-4 font-semibold inline-block rounded-full'>
+						18+
+					</span>
+				)}
 				<div className='mb-5'>
 					{(release_date || first_air_date) && (
 						<div className='flex items-center text-sm'>

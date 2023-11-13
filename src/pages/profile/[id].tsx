@@ -27,7 +27,7 @@ const Profile = ({ results }) => {
 	const [isEditGenres, setIsEditGenres] = useState<boolean>(false)
 	const [isEditCredential, setIsEditCredential] = useState<boolean>(false)
 	const router = useRouter()
-	const { userId } = useAuth()
+	const { userId, updateUserProfile } = useAuth()
 	const isCurrentUserProfile = userId === userInfo?.id
 
 	const handleResetForms = () => {
@@ -62,7 +62,11 @@ const Profile = ({ results }) => {
 
 	useEffect(() => {
 		if (isCurrentUserProfile) {
-			const unsubscribe = userProfileListener(userId, setUserInfo)
+			const unsubscribe = userProfileListener(
+				userId,
+				setUserInfo,
+				updateUserProfile
+			)
 
 			return () => {
 				unsubscribe()

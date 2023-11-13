@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { IGenre } from '../../../interfaces'
-import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 

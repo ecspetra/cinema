@@ -58,6 +58,7 @@ export interface AuthContextType {
 	userId: string
 	photoURL: string
 	userName: string
+	updateUserProfile: () => void
 }
 
 export const USER_COLLECTIONS = [
@@ -107,19 +108,22 @@ export const updateProfileIcon = async (newIcon: string) => {
 	const currentUser = auth.currentUser
 	const displayName = currentUser?.displayName
 	const userId = currentUser?.uid
+	const photoURL = newIcon
+
 	const updateFields = {
 		photoURL: newIcon,
 	}
 
-	await updateProfile(currentUser, { displayName, newIcon })
+	await updateProfile(currentUser, { displayName, photoURL })
 	await updateUserInRealtimeDatabase(updateFields, userId)
 }
 
 export const updateUserInfo = async (newInfo: object) => {
 	const currentUser = auth.currentUser
-	const displayName = currentUser?.displayName
+	const displayName = newInfo.name.value
 	const userId = currentUser?.uid
 	const photoURL = currentUser?.photoURL
+
 	const updateFields = {
 		displayName: newInfo.name.value,
 		country: newInfo.country.value,
@@ -708,6 +712,32 @@ export const userProfileListener = (
 		const profileData = snapshot.val()
 		setProfile(profileData)
 	}
+
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
+	}
+}
+
+export const userContextListener = (
+	userId: string,
+	prevData: object,
+	updateUserProfile: () => void
+) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+
+		if (
+			prevData.id !== profileData.id ||
+			prevData.userName !== profileData.displayName
+		) {
+			updateUserProfile()
+		}
+	}
+
 	const unsubscribe = onValue(userRef, onInfoChanged)
 
 	return () => {

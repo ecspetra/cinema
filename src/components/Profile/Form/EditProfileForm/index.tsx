@@ -39,7 +39,6 @@ type PropsType = {
 }
 
 const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
-	const initialDateValue = new Date()
 	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
@@ -77,7 +76,14 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	}
 
 	const handleDateOfBirthChange = date => {
-		const formattedDate = moment(new Date(date)).format('Do MMM YYYY')
+		let formattedDate
+
+		if (!date) {
+			formattedDate = ''
+		} else {
+			formattedDate = date
+		}
+
 		updateField('dateOfBirth', formattedDate, '')
 	}
 

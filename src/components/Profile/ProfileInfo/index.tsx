@@ -7,6 +7,7 @@ import {
 	faFlag,
 } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
+import moment from 'moment'
 
 type PropsType = {
 	userInfo: object
@@ -19,7 +20,7 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 		{ ['Email']: profile?.email, icon: faAt },
 		{
 			['Date of birth']: profile?.dateOfBirth
-				? profile?.dateOfBirth
+				? moment(profile?.dateOfBirth).format('Do MMM YYYY')
 				: 'No info yet',
 			icon: faCalendarCheck,
 		},

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { auth, AuthContextType } from '@/firebase/config'
-import { onAuthStateChanged, User } from 'firebase/auth'
+import { auth, AuthContextType, userContextListener } from '@/firebase/config'
+import { onAuthStateChanged, reload, User } from 'firebase/auth'
 import { removeCookie, setCookie } from '@/handlers/handleCookies'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -16,10 +16,21 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
-	const isLoggedIn = currentUser !== null
-	const userId = currentUser?.uid
-	const photoURL = currentUser?.photoURL
-	const userName = currentUser?.displayName
+
+	const updateUserProfile = async () => {
+		if (currentUser) {
+			setIsLoading(true)
+
+			try {
+				await reload(currentUser)
+				const updatedUser = auth.currentUser
+				setCurrentUser(updatedUser)
+				setIsLoading(false)
+			} catch (error) {
+				setIsLoading(false)
+			}
+		}
+	}
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async user => {
@@ -33,14 +44,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			}
 		})
 
+		if (currentUser) {
+			const prevData = {
+				id: currentUser?.uid,
+				photoURL: currentUser?.photoURL,
+				userName: currentUser?.displayName,
+			}
+
+			const unsubscribeUserInfo = userContextListener(
+				currentUser?.uid,
+				prevData,
+				updateUserProfile
+			)
+
+			return unsubscribeUserInfo
+		}
+
 		return unsubscribe
-	}, [])
+	}, [currentUser])
 
 	const value: AuthContextType = {
-		isLoggedIn,
-		userId,
-		photoURL,
-		userName,
+		isLoggedIn: currentUser !== null,
+		userId: currentUser?.uid,
+		photoURL: currentUser?.photoURL,
+		userName: currentUser?.displayName,
+		updateUserProfile,
 	}
 
 	return (
