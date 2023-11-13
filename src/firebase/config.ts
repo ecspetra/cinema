@@ -731,7 +731,7 @@ export const userContextListener = (
 		const profileData = snapshot.val()
 
 		if (
-			prevData.id !== profileData.id ||
+			prevData.photoURL !== profileData.photoURL ||
 			prevData.userName !== profileData.displayName
 		) {
 			updateUserProfile()

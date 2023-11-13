@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Image from '@/components/Images/Image'
 import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import FileInputField from '@/app/components/UI/Input/InputField/FileInputField'
@@ -19,7 +19,7 @@ type PropsType = {
 }
 
 const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
-	const [image, setImage] = useState({ value: photoURL, error: '' })
+	const [image, setImage] = useState({ value: '', error: '' })
 	const [uploadProgress, setUploadProgress] = useState(0)
 	const storage = getStorage()
 	const { showModal } = useModal()
@@ -86,6 +86,10 @@ const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
 			return { status: 500, data: 'Error uploading image' }
 		}
 	}
+
+	useEffect(() => {
+		setImage({ value: photoURL, error: '' })
+	}, [photoURL])
 
 	return (
 		<>
