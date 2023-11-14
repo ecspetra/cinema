@@ -46,7 +46,7 @@ const Breadcrumbs = () => {
 						segment !== 'profile'
 					) {
 						const item = await getUserInfo(router.query.id)
-						itemName = item.displayName
+						itemName = item.info.displayName
 					} else
 						itemName =
 							segment.charAt(0).toUpperCase() + segment.slice(1)

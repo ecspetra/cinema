@@ -6,10 +6,10 @@ import ItemsList from '../../components/List/ItemsList'
 import TopBanner from '@/components/TopBanner'
 import { MOVIE_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 
-const Movies = ({ defaultMovies }) => {
+const Movies = ({ results }) => {
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
 	useEffect(() => {
-		if (!defaultMovies) {
+		if (!results) {
 			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
 				setDefaultMovieList(data)
 			})
@@ -17,8 +17,8 @@ const Movies = ({ defaultMovies }) => {
 	}, [])
 
 	useEffect(() => {
-		setDefaultMovieList(defaultMovies)
-	}, [defaultMovies])
+		setDefaultMovieList(results)
+	}, [results])
 
 	if (!defaultMovieList) return <Loader />
 
@@ -45,12 +45,14 @@ export const getServerSideProps = async () => {
 
 		return {
 			props: {
-				defaultMovies,
+				results: defaultMovies,
 			},
 		}
 	} catch (error) {
 		return {
-			props: {},
+			props: {
+				results: null,
+			},
 		}
 	}
 }

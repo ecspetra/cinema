@@ -204,7 +204,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	if (!userId) {
 		return {
 			props: {
-				results: {},
+				results: null,
 			},
 		}
 	}
@@ -262,7 +262,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				results: {},
+				results: null,
 			},
 		}
 	}

@@ -187,7 +187,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				movieFromProps: {},
+				movieFromProps: null,
 			},
 		}
 	}

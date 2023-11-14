@@ -16,9 +16,10 @@ import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
 	photoURL: string
+	isCurrentUserProfile: boolean
 }
 
-const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
+const ProfileIcon: FC<PropsType> = ({ photoURL, isCurrentUserProfile }) => {
 	const [image, setImage] = useState({ value: '', error: '' })
 	const [uploadProgress, setUploadProgress] = useState(0)
 	const storage = getStorage()
@@ -98,18 +99,29 @@ const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
 				src={image.value}
 				defaultImage={defaultUserImage}
 			/>
-			{isShowSaveButton ? (
-				<Button className='w-full' onClick={handleSaveChanges}>
-					Save changes
-				</Button>
-			) : (
-				<FileInputField
-					id='profileImage'
-					error={image.error}
-					onChange={handleImageChange}
-				/>
+			{isCurrentUserProfile && (
+				<>
+					{isShowSaveButton ? (
+						<Button className='w-full' onClick={handleSaveChanges}>
+							Save changes
+						</Button>
+					) : (
+						<FileInputField
+							id='profileImage'
+							error={image.error}
+							onChange={handleImageChange}
+						/>
+					)}
+					{isShowProgressBar && (
+						<ProgressBar progress={uploadProgress} />
+					)}
+				</>
 			)}
-			{isShowProgressBar && <ProgressBar progress={uploadProgress} />}
+			{/*: (*/}
+			{/*	<Button className='w-full' onClick={handleSaveChanges}>*/}
+			{/*		{isFriend ? 'Add to friends' : 'Remove from friends'}*/}
+			{/*	</Button>*/}
+			{/*)}*/}
 		</>
 	)
 }

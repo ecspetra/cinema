@@ -249,9 +249,9 @@ const ReviewCard: FC<PropsType> = ({
 			getUserInfo(authorId)
 				.then(data => {
 					setAuthorInfo({
-						userId: data.id,
-						photoURL: data.photoURL,
-						displayName: data.displayName,
+						userId: data.info.id,
+						photoURL: data.info.photoURL,
+						displayName: data.info.displayName,
 					})
 				})
 				.then(() => {

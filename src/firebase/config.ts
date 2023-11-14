@@ -205,8 +205,8 @@ export const signOutUser = async () => {
 	}
 }
 
-export const getUserInfo = (userId: string) => {
-	const infoPath = `users/${userId}/info/`
+export const getUserInfo = async (userId: string) => {
+	const infoPath = `users/${userId}`
 	const itemRef = ref(database, infoPath)
 
 	return new Promise(async resolve => {
@@ -218,6 +218,34 @@ export const getUserInfo = (userId: string) => {
 
 			resolve(userInfo)
 		})
+	})
+}
+
+export const getUserFriends = friendIdList => {
+	return new Promise(async resolve => {
+		let friendsInfo = []
+
+		const promises = Object.keys(friendIdList).map(async (id: string) => {
+			const itemPath = `users/${id}`
+			const itemRef = ref(database, itemPath)
+
+			try {
+				const snapshot = await get(itemRef)
+
+				let userInfo = {}
+				if (snapshot.exists()) {
+					userInfo = snapshot.val()
+				}
+
+				friendsInfo.push(userInfo)
+			} catch (error) {
+				throw error
+			}
+		})
+
+		await Promise.all(promises)
+
+		resolve(friendsInfo)
 	})
 }
 
@@ -939,4 +967,19 @@ export const getReviewReactions = async (
 	const dislikes = await getItemDislikes()
 
 	return { likes, dislikes }
+}
+
+// friends handlers
+
+export const setNewFriend = async (newFriendId: string) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const currentUserCollectionPath = `users/${userId}/friends/${newFriendId}/`
+	const newFriendCollectionPath = `users/${newFriendId}/friends/${userId}/`
+
+	const itemRef = ref(database, currentUserCollectionPath)
+	const friendItemRef = ref(database, newFriendCollectionPath)
+
+	await set(itemRef, newFriendId)
+	await set(friendItemRef, userId)
 }

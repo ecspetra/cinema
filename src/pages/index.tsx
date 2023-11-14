@@ -47,7 +47,7 @@ const Home = ({ results }) => {
 	)
 }
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async () => {
 	try {
 		const defaultMovies = await getResultsByPage(
 			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
@@ -70,7 +70,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				results: {},
+				results: null,
 			},
 		}
 	}

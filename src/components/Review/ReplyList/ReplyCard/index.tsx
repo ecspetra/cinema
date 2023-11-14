@@ -1,7 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { IReplyCard } from '../../../../../interfaces'
-import Image from '../../../Images/Image'
-import defaultUserImage from '../../../../app/assets/images/default-user-image.svg'
 import Button from '../../../../app/components/UI/Button'
 import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
@@ -64,9 +62,9 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 		getUserInfo(authorId)
 			.then(data => {
 				setAuthorInfo({
-					userId: data.id,
-					photoURL: data.photoURL,
-					displayName: data.displayName,
+					userId: data.info.id,
+					photoURL: data.info.photoURL,
+					displayName: data.info.displayName,
 				})
 			})
 			.then(() => {

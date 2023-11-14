@@ -1,5 +1,10 @@
 import { NextPageContext } from 'next'
-import { getUserInfo, userProfileListener } from '@/firebase/config'
+import {
+	getUserFriends,
+	getUserInfo,
+	setNewFriend,
+	userProfileListener,
+} from '@/firebase/config'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
@@ -20,9 +25,11 @@ import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import Dropdown from '@/app/components/UI/Dropdown'
 import FriendList from '@/components/Friends/FriendList'
 import EditCredentialForm from '@/components/Profile/Form/EditCredentialForm'
+import Button from '@/app/components/UI/Button'
 
 const Profile = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
+	const [friends, setFriends] = useState([])
 	const [isEditInfo, setIsEditInfo] = useState<boolean>(false)
 	const [isEditGenres, setIsEditGenres] = useState<boolean>(false)
 	const [isEditCredential, setIsEditCredential] = useState<boolean>(false)
@@ -46,8 +53,14 @@ const Profile = ({ results }) => {
 			const userIdFromUrl = router.query.id
 
 			try {
-				const result = await getUserInfo(userIdFromUrl)
-				setUserInfo(result)
+				const user = await getUserInfo(userIdFromUrl)
+
+				if (user.friends) {
+					const friends = await getUserFriends(user.friends)
+					setFriends(friends)
+				}
+
+				setUserInfo(user.info)
 			} catch (error) {
 				setUserInfo(null)
 			}
@@ -57,7 +70,8 @@ const Profile = ({ results }) => {
 	}, [])
 
 	useEffect(() => {
-		setUserInfo(results)
+		setUserInfo(results?.info)
+		setFriends(results?.friends)
 	}, [results])
 
 	useEffect(() => {
@@ -77,7 +91,16 @@ const Profile = ({ results }) => {
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<div className='w-full max-w-2xl mx-auto'>
 				<div className='mb-16 relative w-[232px] mx-auto'>
-					<ProfileIcon photoURL={userInfo.photoURL} />
+					<ProfileIcon
+						photoURL={userInfo.photoURL}
+						isCurrentUserProfile={isCurrentUserProfile}
+					/>
+					<Button
+						className='w-full'
+						onClick={() => setNewFriend(userInfo?.id)}
+					>
+						Add to friends
+					</Button>
 					{isCurrentUserProfile && (
 						<Dropdown icon='settings' className='!top-0 !right-0'>
 							<DropdownItem
@@ -117,7 +140,7 @@ const Profile = ({ results }) => {
 					isEditGenres={isEditGenres}
 					onFormClose={setIsEditGenres}
 				/>
-				<FriendList friends={userInfo.friends || []} />
+				<FriendList friends={friends || []} />
 			</div>
 			{!isCurrentUserProfile && (
 				<div>
@@ -131,19 +154,27 @@ const Profile = ({ results }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const userIdFromUrl = ctx.query.id
+	let friends = []
 
 	try {
-		const result = await getUserInfo(userIdFromUrl)
+		const user = await getUserInfo(userIdFromUrl)
+
+		if (user.friends) {
+			friends = await getUserFriends(user.friends)
+		}
 
 		return {
 			props: {
-				results: result,
+				results: {
+					info: user.info,
+					friends: friends,
+				},
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				results: {},
+				results: null,
 			},
 		}
 	}

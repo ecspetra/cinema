@@ -40,7 +40,7 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 				onClick={toggleDropdown}
 			>
 				<FontAwesomeIcon
-					icon={icon ? faGear : faEllipsisVertical}
+					icon={icon === 'settings' ? faGear : faEllipsisVertical}
 					className='w-6 h-6'
 				/>
 			</Button>
