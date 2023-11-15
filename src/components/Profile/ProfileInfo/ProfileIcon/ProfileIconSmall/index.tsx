@@ -14,7 +14,7 @@ const ProfileIconSmall: FC<PropsType> = ({ userId, photoURL }) => {
 
 	const profileIcon = (
 		<Image
-			className='aspect-square !w-10 h-10 mr-3 rounded-md overflow-hidden'
+			className='aspect-square !w-10 h-10 mr-3 rounded-full overflow-hidden'
 			src={photoURL}
 			defaultImage={defaultUserImage}
 		/>

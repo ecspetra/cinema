@@ -26,10 +26,10 @@ const Collection = ({ results }) => {
 	const { userId } = useAuth()
 
 	useEffect(() => {
-		setMovies(results.collectionMovies)
-		setPersons(results.collectionPersons)
-		setReviews(results.allCollectionReviews)
-		setMarks(results.collectionMarks)
+		setMovies(results?.collectionMovies)
+		setPersons(results?.collectionPersons)
+		setReviews(results?.allCollectionReviews)
+		setMarks(results?.collectionMarks)
 	}, [results])
 
 	useEffect(() => {

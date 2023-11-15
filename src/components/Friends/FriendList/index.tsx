@@ -7,13 +7,22 @@ import classNames from 'classnames'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
+import { useModal } from '@/context/ModalProvider'
+import { openFriendsModal } from '@/handlers/handleModals'
 
 type PropsType = {
 	friends: Array<any>
 }
 
 const FriendList: FC<PropsType> = ({ friends }) => {
+	const { showModal } = useModal()
 	const [itemsList, setItemsList] = useState(friends)
+	const initialItemsLength = 3
+	const isShowMoreButton = friends.length > initialItemsLength
+
+	const handleRemoveFriend = id => {
+		console.log(id)
+	}
 
 	useEffect(() => {
 		setItemsList(friends)
@@ -26,15 +35,32 @@ const FriendList: FC<PropsType> = ({ friends }) => {
 		<>
 			<Title>Friends</Title>
 			<div className='flex justify-start items-center'>
-				{itemsList.map(item => {
-					return (
-						<ProfileIconSmall
-							key={item.info.id}
-							userId={item.info.id}
-							photoURL={item.info.photoURL}
-						/>
-					)
-				})}
+				<div className='flex justify-start items-center'>
+					{itemsList.map((item, idx) => {
+						if (idx < initialItemsLength) {
+							return (
+								<ProfileIconSmall
+									key={item.info.id}
+									userId={item.info.id}
+									photoURL={item.info.photoURL}
+								/>
+							)
+						}
+					})}
+				</div>
+				{isShowMoreButton && (
+					<Button
+						onClick={() =>
+							openFriendsModal(
+								showModal,
+								itemsList,
+								handleRemoveFriend
+							)
+						}
+					>
+						Show all
+					</Button>
+				)}
 			</div>
 		</>
 	)
