@@ -117,11 +117,6 @@ const ProfileIcon: FC<PropsType> = ({ photoURL, isCurrentUserProfile }) => {
 					)}
 				</>
 			)}
-			{/*: (*/}
-			{/*	<Button className='w-full' onClick={handleSaveChanges}>*/}
-			{/*		{isFriend ? 'Add to friends' : 'Remove from friends'}*/}
-			{/*	</Button>*/}
-			{/*)}*/}
 		</>
 	)
 }

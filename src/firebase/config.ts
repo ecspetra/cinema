@@ -249,6 +249,23 @@ export const getUserFriends = friendIdList => {
 	})
 }
 
+export const getFriend = (itemId: string) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const collectionPath = `users/${userId}/friends/${itemId}`
+	const itemRef = ref(database, collectionPath)
+
+	return new Promise(async resolve => {
+		let isCollectionItem = false
+
+		get(itemRef).then(snapshot => {
+			if (snapshot.exists()) isCollectionItem = true
+
+			resolve(isCollectionItem)
+		})
+	})
+}
+
 // movie marks handlers
 
 export const setNewMarkForMovie = async (markData: object, userId: string) => {
@@ -307,9 +324,10 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 
 export const setNewCollectionItem = async (
 	item: IMovieCard | IPersonCard,
-	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
 	const newCollectionItemRef = ref(database, collectionPath)
 
@@ -318,9 +336,10 @@ export const setNewCollectionItem = async (
 
 export const getCollectionItem = (
 	itemId: number,
-	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
@@ -337,9 +356,10 @@ export const getCollectionItem = (
 
 export const removeCollectionItem = (
 	itemId: number,
-	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
@@ -982,4 +1002,27 @@ export const setNewFriend = async (newFriendId: string) => {
 
 	await set(itemRef, newFriendId)
 	await set(friendItemRef, userId)
+}
+
+export const removeFriend = (itemId: string) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+
+	const userCollectionFriendRef = ref(
+		database,
+		`users/${userId}/friends/${itemId}`
+	)
+	const friendRef = ref(database, `users/${itemId}/friends/${userId}`)
+
+	return new Promise(async resolve => {
+		let isRemoved = false
+
+		remove(userCollectionFriendRef).then(() => {
+			remove(friendRef).then(() => {
+				isRemoved = true
+			})
+		})
+
+		resolve(isRemoved)
+	})
 }

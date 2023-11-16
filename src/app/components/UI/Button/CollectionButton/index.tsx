@@ -9,6 +9,7 @@ type PropsType = {
 	isCollectionItem: boolean
 	onClick: () => void
 	className?: string
+	collectionName?: string
 }
 
 const CollectionButton: FC<PropsType> = ({
@@ -16,6 +17,7 @@ const CollectionButton: FC<PropsType> = ({
 	isCollectionItem,
 	onClick,
 	className,
+	collectionName = 'collection',
 }) => {
 	return (
 		<Button
@@ -29,8 +31,8 @@ const CollectionButton: FC<PropsType> = ({
 				<span>
 					<FontAwesomeIcon icon={faHeart} className='mr-2' />
 					{isCollectionItem
-						? 'Remove from collection'
-						: 'Add to collection'}
+						? `Remove from ${collectionName}`
+						: `Add to ${collectionName}`}
 				</span>
 			)}
 		</Button>

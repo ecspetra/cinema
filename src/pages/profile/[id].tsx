@@ -2,7 +2,6 @@ import { NextPageContext } from 'next'
 import {
 	getUserFriends,
 	getUserInfo,
-	setNewFriend,
 	userProfileListener,
 } from '@/firebase/config'
 import React, { useEffect, useState } from 'react'
@@ -25,7 +24,8 @@ import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import Dropdown from '@/app/components/UI/Dropdown'
 import FriendList from '@/components/Friends/FriendList'
 import EditCredentialForm from '@/components/Profile/Form/EditCredentialForm'
-import Button from '@/app/components/UI/Button'
+import { useFriendsCollection } from '@/hooks/useFriendsCollection'
+import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 
 const Profile = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
@@ -36,6 +36,13 @@ const Profile = ({ results }) => {
 	const router = useRouter()
 	const { userId } = useAuth()
 	const isCurrentUserProfile = userId === userInfo?.id
+
+	const {
+		isLoadingFriends,
+		isFriend,
+		handleSetNewFriend,
+		openConfirmationPopup,
+	} = useFriendsCollection(userInfo)
 
 	const handleResetForms = () => {
 		setIsEditInfo(false)
@@ -95,12 +102,19 @@ const Profile = ({ results }) => {
 						photoURL={userInfo.photoURL}
 						isCurrentUserProfile={isCurrentUserProfile}
 					/>
-					<Button
-						className='w-full'
-						onClick={() => setNewFriend(userInfo?.id)}
-					>
-						Add to friends
-					</Button>
+					{!isCurrentUserProfile && (
+						<CollectionButton
+							className='w-full'
+							isLoadingCollection={isLoadingFriends}
+							isCollectionItem={isFriend}
+							onClick={
+								isFriend
+									? openConfirmationPopup
+									: handleSetNewFriend
+							}
+							collectionName='friends'
+						/>
+					)}
 					{isCurrentUserProfile && (
 						<Dropdown icon='settings' className='!top-0 !right-0'>
 							<DropdownItem
