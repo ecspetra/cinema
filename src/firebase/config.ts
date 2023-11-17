@@ -829,6 +829,10 @@ export const setNewReviewReaction = async (
 
 	const itemRef = ref(database, collectionPath)
 	const generalCollectionItemRef = ref(database, generalCollectionPath)
+	const userReaction = {
+		movieId: movieId,
+		reviewId: itemId,
+	}
 
 	await set(itemRef, itemId)
 	await set(generalCollectionItemRef, itemId)

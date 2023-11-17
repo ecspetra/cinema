@@ -137,6 +137,7 @@ const ReviewList: FC<PropsType> = ({
 							review={item}
 							defaultCardMovieId={movieId}
 							isLinkToMovie={isCollectionList}
+							isCollectionItem={isCollectionList}
 						/>
 					))}
 				{isShowMoreButton && (

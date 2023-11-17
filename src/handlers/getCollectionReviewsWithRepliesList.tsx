@@ -3,6 +3,10 @@ import { fetchItemData } from '@/handlers/fetchItemData'
 export const getCollectionReviewsWithRepliesList = collectionReplies => {
 	return new Promise(async resolve => {
 		let reviews = []
+		let replies = collectionReplies.items.filter(
+			item => item.movieId !== undefined && item.reviewId !== undefined
+		)
+
 		const addedReviewIds = new Set()
 
 		const fetchMovieReviews = async (movieId: number, reviewId: string) => {
@@ -25,7 +29,7 @@ export const getCollectionReviewsWithRepliesList = collectionReplies => {
 			return null
 		}
 
-		const fetchPromises = collectionReplies.items.map(item => {
+		const fetchPromises = replies.map(item => {
 			return fetchMovieReviews(item.movieId, item.reviewId)
 		})
 

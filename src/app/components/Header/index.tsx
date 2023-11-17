@@ -14,9 +14,7 @@ const Header = () => {
 	const { userId, photoURL, isLoggedIn, userName } = useAuth()
 	const router = useRouter()
 	const pathname = usePathname()
-	const collectionMoviesLink = userId
-		? `/collection?uid=${userId}`
-		: `/collection`
+	const collectionLink = userId ? `/collection?uid=${userId}` : `/collection`
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && isLoggedIn
 	const isShowAuthButton = !isAuthPage && !isLoggedIn
@@ -37,7 +35,7 @@ const Header = () => {
 					<Link href={`/`} as={`/`}>
 						<span>CinemaStreet</span>
 					</Link>
-					<Link href={collectionMoviesLink} as={collectionMoviesLink}>
+					<Link href={collectionLink} as={collectionLink}>
 						<span>My collection</span>
 					</Link>
 					<Link href={'/person'} as={'/person'}>

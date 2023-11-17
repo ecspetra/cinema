@@ -93,7 +93,10 @@ const Collection = ({ results }) => {
 					await getCollectionReviewsWithRepliesList(collectionReplies)
 
 				allCollectionReviews = [
-					...collectionReviews.items,
+					...collectionReviews.items.filter(
+						item =>
+							item.movieId !== undefined && item.id !== undefined
+					),
 					...reviewsWithUserReplies,
 				]
 
@@ -245,7 +248,9 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			await getCollectionReviewsWithRepliesList(collectionReplies)
 
 		allCollectionReviews = [
-			...collectionReviews.items,
+			...collectionReviews.items.filter(
+				item => item.movieId !== undefined && item.id !== undefined
+			),
 			...reviewsWithUserReplies,
 		]
 

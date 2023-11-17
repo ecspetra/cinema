@@ -36,16 +36,16 @@ const MovieCardSmall: FC<PropsType> = ({
 				defaultImage={defaultMovieImage}
 			/>
 			{mark && (
-				<div className='flex justify-center items-center'>
+				<span className='flex justify-center items-center'>
 					<FontAwesomeIcon icon={faStar} className='text-amber-400' />
 					<span className='ml-1 font-semibold'>{mark}</span>
-				</div>
+				</span>
 			)}
 		</>
 	)
 
 	return (
-		<div className={classNames(!mark && 'w-24 h-36', 'flex-none')}>
+		<span className={classNames(!mark && 'w-24 h-36', 'flex-none')}>
 			{isLinkToMovie ? (
 				<Link
 					href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
@@ -57,7 +57,7 @@ const MovieCardSmall: FC<PropsType> = ({
 			) : (
 				movieCard
 			)}
-		</div>
+		</span>
 	)
 }
 

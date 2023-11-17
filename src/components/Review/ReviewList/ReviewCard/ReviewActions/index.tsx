@@ -98,7 +98,7 @@ const ReviewActions: FC<PropsType> = ({
 	}, [reactions, userId])
 
 	return (
-		<div className='flex justify-start items-center mt-auto'>
+		<span className='flex justify-start items-center mt-auto'>
 			<ReviewActionButton
 				title='Like'
 				action='like'
@@ -120,7 +120,7 @@ const ReviewActions: FC<PropsType> = ({
 				action='reply'
 				onClick={onReply}
 			/>
-		</div>
+		</span>
 	)
 }
 

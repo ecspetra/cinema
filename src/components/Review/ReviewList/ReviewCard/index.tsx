@@ -32,12 +32,14 @@ type PropsType = {
 	defaultCardMovieId: number
 	review: IReviewCard | IReviewCardFromDB
 	isLinkToMovie?: boolean
+	isCollectionItem?: boolean
 }
 
 const ReviewCard: FC<PropsType> = ({
 	defaultCardMovieId,
 	review,
 	isLinkToMovie = false,
+	isCollectionItem = false,
 }) => {
 	const { userId } = useAuth()
 	const {
@@ -97,8 +99,8 @@ const ReviewCard: FC<PropsType> = ({
 	}
 
 	const reviewContent = (
-		<div>
-			<div className='mb-4 p-4 gap-4 bg-gray-900 relative duration-300 flex group-hover:bg-gray-800'>
+		<span>
+			<span className='mb-4 p-4 gap-4 bg-gray-900 relative duration-300 flex group-hover:bg-gray-800'>
 				{isCurrentUserItem && (
 					<Dropdown>
 						<DropdownItem
@@ -116,9 +118,9 @@ const ReviewCard: FC<PropsType> = ({
 				{isLinkToMovie && (
 					<MovieCardSmall itemId={movieId} isTVShow={isTVShow} />
 				)}
-				<div className='w-full'>
-					<div className='flex mb-2 max-w-[calc(100%-54px)]'>
-						<div className='flex items-center'>
+				<span className='w-full'>
+					<span className='flex mb-2 max-w-[calc(100%-54px)]'>
+						<span className='flex items-center'>
 							<ProfileIconSmall
 								userId={isItemFromDB && authorInfo.userId}
 								photoURL={
@@ -126,21 +128,21 @@ const ReviewCard: FC<PropsType> = ({
 										? authorInfo.photoURL
 										: `https://image.tmdb.org/t/p/original${avatar_path}`
 								}
+								isLinkToProfile={isItemFromDB && !isLinkToMovie}
 							/>
-							<div>
-								<Title
-									variant='h3'
-									className='mb-2 min-h-[22.5px]'
-								>
+							<span>
+								<span className='mb-2 min-h-[22.5px] text-lg font-semibold leading-tight block'>
 									{isItemFromDB
 										? authorInfo.displayName
 										: author}
-								</Title>
-								<p className='text-xs'>{formattedDate}</p>
-							</div>
-						</div>
-					</div>
-					<div>
+								</span>
+								<span className='text-xs block'>
+									{formattedDate}
+								</span>
+							</span>
+						</span>
+					</span>
+					<span>
 						{isShowEditForm ? (
 							<EditReviewForm
 								item={review}
@@ -149,8 +151,8 @@ const ReviewCard: FC<PropsType> = ({
 							/>
 						) : (
 							<>
-								<div className='mb-4'>
-									<div
+								<span className='block mb-4'>
+									<span
 										style={{
 											maxHeight: isContentOpen
 												? contentHeight
@@ -159,15 +161,15 @@ const ReviewCard: FC<PropsType> = ({
 										ref={contentRef}
 										className='overflow-hidden transition-[max-height] duration-500'
 									>
-										<p
+										<span
 											className={classNames(
 												isShowTruncateDots &&
 													'line-clamp-2'
 											)}
 										>
 											{content}
-										</p>
-									</div>
+										</span>
+									</span>
 									{isLongReviewContent && (
 										<Button
 											context='text'
@@ -178,7 +180,7 @@ const ReviewCard: FC<PropsType> = ({
 												: 'Show more'}
 										</Button>
 									)}
-								</div>
+								</span>
 								<ReviewActions
 									reviewId={id}
 									movieId={defaultCardMovieId ?? movieId}
@@ -192,6 +194,7 @@ const ReviewCard: FC<PropsType> = ({
 									reviewId={id}
 									replies={replies}
 									onReply={handleReplyTo}
+									isCollectionList={isCollectionItem}
 								/>
 								{isShowReplyForm && (
 									<NewReviewForm
@@ -206,10 +209,10 @@ const ReviewCard: FC<PropsType> = ({
 								)}
 							</>
 						)}
-					</div>
-				</div>
-			</div>
-		</div>
+					</span>
+				</span>
+			</span>
+		</span>
 	)
 
 	useEffect(() => {

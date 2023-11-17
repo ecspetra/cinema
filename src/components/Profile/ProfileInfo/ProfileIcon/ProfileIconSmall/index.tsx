@@ -5,11 +5,16 @@ import Link from 'next/link'
 import { PROFILE_PAGE } from '@/constants/paths'
 
 type PropsType = {
-	userId: string
 	photoURL: string
+	isLinkToProfile?: boolean
+	userId?: string
 }
 
-const ProfileIconSmall: FC<PropsType> = ({ userId, photoURL }) => {
+const ProfileIconSmall: FC<PropsType> = ({
+	photoURL,
+	isLinkToProfile = false,
+	userId,
+}) => {
 	const isUserFromDB = userId !== undefined
 
 	const profileIcon = (
@@ -21,7 +26,7 @@ const ProfileIconSmall: FC<PropsType> = ({ userId, photoURL }) => {
 	)
 	return (
 		<>
-			{isUserFromDB ? (
+			{isLinkToProfile && isUserFromDB ? (
 				<Link href={PROFILE_PAGE.replace('{userId}', userId)}>
 					{profileIcon}
 				</Link>
