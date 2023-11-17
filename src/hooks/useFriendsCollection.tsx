@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
 	getCollectionItem,
-	getFriend,
+	getIsFriend,
 	removeCollectionItem,
 	removeFriend,
 	setNewCollectionItem,
@@ -18,7 +18,6 @@ import {
 import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
 
 export const useFriendsCollection = (itemInfo: object) => {
-	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isFriend, setIsFriend] = useState<boolean>(false)
 	const [isLoadingFriends, setIsLoadingFriends] = useState<boolean>(true)
 	const { showModal, hideModal } = useModal()
@@ -30,7 +29,7 @@ export const useFriendsCollection = (itemInfo: object) => {
 
 			setNewFriend(itemInfo?.id)
 				.then(() => {
-					getFriend(itemInfo?.id)
+					getIsFriend(itemInfo?.id)
 						.then(data => {
 							setIsFriend(data)
 							setIsLoadingFriends(false)
@@ -56,23 +55,24 @@ export const useFriendsCollection = (itemInfo: object) => {
 	const handleRemoveFriend = modalId => {
 		hideModal(modalId)
 		setIsLoadingFriends(true)
-		setIsMounted(false)
 
-		removeFriend(itemInfo?.id)
-			.then(() => {
-				setIsFriend(false)
-				setIsLoadingFriends(false)
-			})
-			.then(() => {
-				showSuccessNotification(
-					showModal,
-					'User was removed from friends'
-				)
-			})
-			.catch(() => {
-				setIsLoadingFriends(false)
-				showErrorNotification(showModal, 'An error has occurred')
-			})
+		setTimeout(() => {
+			removeFriend(itemInfo?.id)
+				.then(() => {
+					setIsFriend(false)
+					setIsLoadingFriends(false)
+				})
+				.then(() => {
+					showSuccessNotification(
+						showModal,
+						'User was removed from friends'
+					)
+				})
+				.catch(() => {
+					setIsLoadingFriends(false)
+					showErrorNotification(showModal, 'An error has occurred')
+				})
+		}, 500)
 	}
 
 	const openConfirmationPopup = () => {
@@ -87,11 +87,10 @@ export const useFriendsCollection = (itemInfo: object) => {
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingFriends(true)
-			getFriend(itemInfo?.id)
+			getIsFriend(itemInfo?.id)
 				.then(data => {
 					setIsFriend(data)
 					setIsLoadingFriends(false)
-					setIsMounted(true)
 				})
 				.catch(() => {
 					setIsLoadingFriends(false)
@@ -100,7 +99,6 @@ export const useFriendsCollection = (itemInfo: object) => {
 	}, [isLoggedIn, itemInfo])
 
 	return {
-		isMounted,
 		isLoadingFriends,
 		isFriend,
 		handleSetNewFriend,

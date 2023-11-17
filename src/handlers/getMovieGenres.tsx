@@ -4,14 +4,14 @@ import { IMovieCard, ITVShowCard } from '../../interfaces'
 export const getMovieGenres = (items, listName) => {
 	return new Promise(async resolve => {
 		const allGenres = await getAllGenres(listName)
-		let movies = []
 
+		let movies = []
 		items.map(item => {
 			let genresNames = []
 			let movieWithGenres: ITVShowCard | IMovieCard = null
 
 			item.genre_ids.map(genreId => {
-				const equalGenre = allGenres.find(genre => genreId === genre.id)
+				const equalGenre = allGenres.find(genre => genre.id === genreId)
 				genresNames.push(equalGenre)
 			})
 

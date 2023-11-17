@@ -2,7 +2,8 @@ import { NextPageContext } from 'next'
 import {
 	getUserFriends,
 	getUserInfo,
-	userProfileListener,
+	userFriendsListener,
+	userInfoListener,
 } from '@/firebase/config'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -83,13 +84,27 @@ const Profile = ({ results }) => {
 
 	useEffect(() => {
 		if (isCurrentUserProfile) {
-			const unsubscribe = userProfileListener(userId, setUserInfo)
+			const unsubscribe = userInfoListener(userId, setUserInfo)
 
 			return () => {
 				unsubscribe()
 			}
 		}
 	}, [isCurrentUserProfile])
+
+	useEffect(() => {
+		if (userInfo) {
+			const unsubscribeFriends = userFriendsListener(
+				userInfo?.id,
+				friends,
+				setFriends
+			)
+
+			return () => {
+				unsubscribeFriends()
+			}
+		}
+	}, [userInfo, friends])
 
 	if (!userInfo) return <Loader />
 
@@ -154,7 +169,10 @@ const Profile = ({ results }) => {
 					isEditGenres={isEditGenres}
 					onFormClose={setIsEditGenres}
 				/>
-				<FriendList friends={friends || []} />
+				<FriendList
+					friends={friends || []}
+					onRemove={openConfirmationPopup}
+				/>
 			</div>
 			{!isCurrentUserProfile && (
 				<div>

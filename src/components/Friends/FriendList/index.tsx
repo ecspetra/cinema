@@ -12,17 +12,14 @@ import { openFriendsModal } from '@/handlers/handleModals'
 
 type PropsType = {
 	friends: Array<any>
+	onRemove: () => void
 }
 
-const FriendList: FC<PropsType> = ({ friends }) => {
+const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 	const { showModal } = useModal()
-	const [itemsList, setItemsList] = useState(friends)
+	const [itemsList, setItemsList] = useState([])
 	const initialItemsLength = 3
 	const isShowMoreButton = friends.length > initialItemsLength
-
-	const handleRemoveFriend = id => {
-		console.log(id)
-	}
 
 	useEffect(() => {
 		setItemsList(friends)
@@ -51,11 +48,7 @@ const FriendList: FC<PropsType> = ({ friends }) => {
 				{isShowMoreButton && (
 					<Button
 						onClick={() =>
-							openFriendsModal(
-								showModal,
-								itemsList,
-								handleRemoveFriend
-							)
+							openFriendsModal(showModal, itemsList, onRemove)
 						}
 					>
 						Show all

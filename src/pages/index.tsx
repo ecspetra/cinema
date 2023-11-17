@@ -1,4 +1,3 @@
-import { NextPageContext } from 'next'
 import {
 	LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
 	LINK_TO_FETCH_UPCOMING_MOVIE_LIST,

@@ -226,21 +226,8 @@ export const getUserFriends = friendIdList => {
 		let friendsInfo = []
 
 		const promises = Object.keys(friendIdList).map(async (id: string) => {
-			const itemPath = `users/${id}`
-			const itemRef = ref(database, itemPath)
-
-			try {
-				const snapshot = await get(itemRef)
-
-				let userInfo = {}
-				if (snapshot.exists()) {
-					userInfo = snapshot.val()
-				}
-
-				friendsInfo.push(userInfo)
-			} catch (error) {
-				throw error
-			}
+			const friend = await getUserInfo(id)
+			friendsInfo.push(friend)
 		})
 
 		await Promise.all(promises)
@@ -249,7 +236,7 @@ export const getUserFriends = friendIdList => {
 	})
 }
 
-export const getFriend = (itemId: string) => {
+export const getIsFriend = (itemId: string) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/friends/${itemId}`
@@ -264,6 +251,82 @@ export const getFriend = (itemId: string) => {
 			resolve(isCollectionItem)
 		})
 	})
+}
+
+export const userInfoListener = (userId: string, setProfile: ([]) => void) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+		setProfile(profileData)
+	}
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
+	}
+}
+
+export const userFriendsListener = (
+	userId: string,
+	loadedItems: Array<object>,
+	setFriends: ([]) => void
+) => {
+	const userRef = ref(database, `users/${userId}/friends`)
+
+	const onFriendAdded = async (childSnapshot: DataSnapshot) => {
+		const newFriendId = childSnapshot.val()
+
+		if (
+			loadedItems.length === 0 ||
+			!loadedItems.some(
+				existingItem => existingItem.info.id === newFriendId
+			)
+		) {
+			const newFriend = await getUserInfo(newFriendId)
+			setFriends(prevItems => [newFriend, ...prevItems])
+		}
+	}
+
+	const onFriendRemoved = (childSnapshot: DataSnapshot) => {
+		const removedItemId = childSnapshot.val()
+		setFriends(prevItems =>
+			prevItems.filter(item => item.info.id !== removedItemId)
+		)
+	}
+
+	const unsubscribeFriendAdded = onChildAdded(userRef, onFriendAdded)
+	const unsubscribeFriendRemoved = onChildRemoved(userRef, onFriendRemoved)
+
+	return () => {
+		unsubscribeFriendAdded()
+		unsubscribeFriendRemoved()
+	}
+}
+
+export const userContextListener = (
+	userId: string,
+	prevData: object,
+	updateUserProfile: () => void
+) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+
+		if (
+			prevData.photoURL !== profileData?.photoURL ||
+			prevData.userName !== profileData?.displayName
+		) {
+			updateUserProfile()
+		}
+	}
+
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
+	}
 }
 
 // movie marks handlers
@@ -747,49 +810,6 @@ export const collectionRepliesListener = (
 
 	return () => {
 		unsubscribeReplyRemoved()
-	}
-}
-
-export const userProfileListener = (
-	userId: string,
-	setProfile: ([]) => void
-) => {
-	const userRef = ref(database, `users/${userId}/info`)
-
-	const onInfoChanged = (snapshot: DataSnapshot) => {
-		const profileData = snapshot.val()
-		setProfile(profileData)
-	}
-
-	const unsubscribe = onValue(userRef, onInfoChanged)
-
-	return () => {
-		unsubscribe()
-	}
-}
-
-export const userContextListener = (
-	userId: string,
-	prevData: object,
-	updateUserProfile: () => void
-) => {
-	const userRef = ref(database, `users/${userId}/info`)
-
-	const onInfoChanged = (snapshot: DataSnapshot) => {
-		const profileData = snapshot.val()
-
-		if (
-			prevData.photoURL !== profileData?.photoURL ||
-			prevData.userName !== profileData?.displayName
-		) {
-			updateUserProfile()
-		}
-	}
-
-	const unsubscribe = onValue(userRef, onInfoChanged)
-
-	return () => {
-		unsubscribe()
 	}
 }
 
