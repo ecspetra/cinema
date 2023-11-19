@@ -1,5 +1,5 @@
 import { IMovieCard, ITVShowCard } from '../../../../interfaces'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
 import Image from '../../Images/Image/index'

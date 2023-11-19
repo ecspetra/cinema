@@ -21,6 +21,7 @@ type PropsType = {
 		| Array<IReviewCardFromDB>
 		| Array<IMark>
 	isMoreDataAvailable: boolean
+	isCurrentUserCollection: boolean
 }
 
 const CollectionWrap: FC<PropsType> = ({
@@ -28,6 +29,7 @@ const CollectionWrap: FC<PropsType> = ({
 	type,
 	items,
 	isMoreDataAvailable,
+	isCurrentUserCollection,
 }) => {
 	const getItemsList = () => {
 		switch (type) {
@@ -65,8 +67,12 @@ const CollectionWrap: FC<PropsType> = ({
 		return (
 			<EmptyList
 				title={title}
-				text='This collection is empty. Please add some items in this
-					collection before you can see it here'
+				text={`This collection is empty. ${
+					isCurrentUserCollection
+						? `Please add some items in this
+				collection before you can see it here`
+						: ''
+				}`}
 			/>
 		)
 	}

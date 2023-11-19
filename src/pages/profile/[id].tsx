@@ -27,10 +27,13 @@ import FriendList from '@/components/Friends/FriendList'
 import EditCredentialForm from '@/components/Profile/Form/EditCredentialForm'
 import { useFriendsCollection } from '@/hooks/useFriendsCollection'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
+import UserCollection from '@/components/Collection'
+import { getUserCollection } from '@/handlers/getUserCollection'
 
 const Profile = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
 	const [friends, setFriends] = useState([])
+	const [collection, setCollection] = useState(null)
 	const [isEditInfo, setIsEditInfo] = useState<boolean>(false)
 	const [isEditGenres, setIsEditGenres] = useState<boolean>(false)
 	const [isEditCredential, setIsEditCredential] = useState<boolean>(false)
@@ -62,6 +65,7 @@ const Profile = ({ results }) => {
 
 			try {
 				const user = await getUserInfo(userIdFromUrl)
+				const userCollection = await getUserCollection(userIdFromUrl)
 
 				if (user.friends) {
 					const friends = await getUserFriends(user.friends)
@@ -69,8 +73,11 @@ const Profile = ({ results }) => {
 				}
 
 				setUserInfo(user.info)
+				setCollection(userCollection)
 			} catch (error) {
 				setUserInfo(null)
+				setFriends([])
+				setCollection(null)
 			}
 		}
 
@@ -80,6 +87,7 @@ const Profile = ({ results }) => {
 	useEffect(() => {
 		setUserInfo(results?.info)
 		setFriends(results?.friends)
+		setCollection(results?.collection)
 	}, [results])
 
 	useEffect(() => {
@@ -177,7 +185,13 @@ const Profile = ({ results }) => {
 			{!isCurrentUserProfile && (
 				<div>
 					<Title>{userInfo.displayName} collection</Title>
-					<span>{userInfo.collection}</span>
+					<UserCollection
+						movies={collection.collectionMovies}
+						persons={collection.collectionPersons}
+						marks={collection.collectionMarks}
+						reviews={collection.allCollectionReviews}
+						isCurrentUserCollection={isCurrentUserProfile}
+					/>
 				</div>
 			)}
 		</>
@@ -190,6 +204,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 
 	try {
 		const user = await getUserInfo(userIdFromUrl)
+		const userCollection = await getUserCollection(userIdFromUrl)
 
 		if (user.friends) {
 			friends = await getUserFriends(user.friends)
@@ -200,6 +215,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 				results: {
 					info: user.info,
 					friends: friends,
+					collection: userCollection,
 				},
 			},
 		}
