@@ -57,6 +57,7 @@ const GenreList: FC<PropsType> = ({
 	useEffect(() => {
 		if (isEditGenres) {
 			const getGenres = async () => {
+				console.log(itemsList)
 				const allGenres = await getAllGenres('movie')
 				setItemsList(allGenres)
 			}
@@ -65,7 +66,7 @@ const GenreList: FC<PropsType> = ({
 		} else {
 			setItemsList(genres)
 		}
-	}, [isEditGenres, genres])
+	}, [isEditGenres])
 
 	if (!itemsList.length)
 		return (

@@ -69,12 +69,14 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 						/>
 						<span className='mr-1.5'>Date of birth:</span>
 						<span>
-							<span>{moment(birthday).format('MM.DD.YYYY')}</span>
+							<span>
+								{moment(birthday).format('Do MMM YYYY')}
+							</span>
 							{deathday && (
 								<span>
 									{' '}
 									— Date of death:{' '}
-									{moment(deathday).format('MM.DD.YYYY')}
+									{moment(deathday).format('Do MMM YYYY')}
 								</span>
 							)}
 						</span>

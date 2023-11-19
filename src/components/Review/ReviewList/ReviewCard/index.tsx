@@ -159,7 +159,7 @@ const ReviewCard: FC<PropsType> = ({
 												: '3rem',
 										}}
 										ref={contentRef}
-										className='overflow-hidden transition-[max-height] duration-500'
+										className='overflow-hidden transition-[max-height] duration-500 block'
 									>
 										<span
 											className={classNames(
