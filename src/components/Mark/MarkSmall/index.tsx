@@ -33,11 +33,11 @@ const MarkSmall: FC<PropsType> = ({ movieId, movieTitle, className }) => {
 	return (
 		<div
 			className={classNames(
-				'flex justify-center items-center bg-black border-2 border-amber-500 rounded-full w-14 h-14 z-10',
+				'flex justify-center items-center bg-white rounded-full w-14 h-14 z-10 text-rose-500',
 				className
 			)}
 		>
-			<FontAwesomeIcon icon={faStar} className='text-amber-400' />
+			<FontAwesomeIcon icon={faStar} />
 			<span className='ml-1 font-semibold'>{markData?.data.mark}</span>
 		</div>
 	)

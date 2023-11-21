@@ -17,7 +17,7 @@ const ModalContent: FC<PropsType> = ({ currentModal, onClose, modalRef }) => {
 	const isShowModalHeader = modalTitle || modalText
 
 	return (
-		<div className='w-screen h-screen fixed inset-0 z-50 bg-black/70 flex justify-center items-center backdrop-blur duration-300'>
+		<div className='w-screen h-screen fixed inset-0 z-50 bg-gray-950/70 flex justify-center items-center backdrop-blur duration-300'>
 			<div
 				className={classNames(
 					'w-full max-w-lg relative p-12 bg-gray-900 max-h-[80vh] overflow-hidden flex flex-col',

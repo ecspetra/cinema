@@ -1,4 +1,4 @@
-import { IMovieCard, IPersonCard } from '../../../../interfaces'
+import { IMovieCard } from '../../../../interfaces'
 import React, { FC, useEffect, useRef, useState } from 'react'
 import { getMovieGenres } from '@/handlers/getMovieGenres'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
@@ -88,13 +88,14 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 		setFetchedItems([...itemsList])
 	}, [itemsList])
 
-	const defaultItemClassNames = 'bg-gray-800 group-hover:bg-black'
-	const selectedItemClassNames = 'bg-black'
+	const defaultItemClassNames =
+		'bg-gray-800 group-hover:bg-white group-hover:text-gray-950'
+	const selectedItemClassNames = 'bg-white text-gray-950'
 
 	return (
 		<div
 			ref={containerRef}
-			className='overflow-auto flex flex-col flex-none max-w-sm w-full scrollbar-hide bg-black p-4'
+			className='overflow-auto flex flex-col flex-none max-w-sm w-full scrollbar-hide bg-gray-950'
 		>
 			{itemsToShow.map((item: IMovieCard, idx: number) => {
 				return (
@@ -104,13 +105,12 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 						onClick={() => onSelectItem(item)}
 						className={classNames(
 							'group',
-							selectedItemId === item.id &&
-								'bg-amber-500 text-black'
+							selectedItemId === item.id && 'bg-rose-600'
 						)}
 					>
 						<span
 							className={classNames(
-								'w-20 p-2 text-white font-black mr-4 rounded-md flex-none duration-300',
+								'w-20 p-2 text-white font-black mr-4 flex-none duration-300',
 								selectedItemId === item.id
 									? selectedItemClassNames
 									: defaultItemClassNames
@@ -118,9 +118,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 						>
 							{moment(item.release_date).format('D MMM')}
 						</span>
-						<span className='font-semibold text-left'>
-							{item.title}
-						</span>
+						<span className='text-left'>{item.title}</span>
 					</Button>
 				)
 			})}

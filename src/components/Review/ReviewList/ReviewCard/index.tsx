@@ -100,7 +100,7 @@ const ReviewCard: FC<PropsType> = ({
 
 	const reviewContent = (
 		<span>
-			<span className='mb-4 p-4 gap-4 bg-gray-900 relative duration-300 flex group-hover:bg-gray-800'>
+			<span className='mb-4 p-4 gap-4 bg-gray-900 relative duration-300 flex'>
 				{isCurrentUserItem && (
 					<Dropdown>
 						<DropdownItem
@@ -131,7 +131,7 @@ const ReviewCard: FC<PropsType> = ({
 								isLinkToProfile={isItemFromDB && !isLinkToMovie}
 							/>
 							<span>
-								<span className='mb-2 min-h-[22.5px] text-lg font-semibold leading-tight block'>
+								<span className='mb-1 min-h-[22.5px] text-lg font-semibold leading-tight block'>
 									{isItemFromDB
 										? authorInfo.displayName
 										: author}
@@ -142,7 +142,7 @@ const ReviewCard: FC<PropsType> = ({
 							</span>
 						</span>
 					</span>
-					<span>
+					<span className='flex flex-col h-[calc(100%-50.5px)]'>
 						{isShowEditForm ? (
 							<EditReviewForm
 								item={review}
@@ -273,11 +273,7 @@ const ReviewCard: FC<PropsType> = ({
 			unmountOnExit
 		>
 			{isLinkToMovie ? (
-				<Link
-					href='/movie/[id]'
-					as={`/movie/${movieId}`}
-					className='group'
-				>
+				<Link href='/movie/[id]' as={`/movie/${movieId}`}>
 					{reviewContent}
 				</Link>
 			) : (

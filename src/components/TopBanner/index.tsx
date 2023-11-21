@@ -39,7 +39,7 @@ const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
 	return (
 		<div
 			className={classNames(
-				'w-screen h-[600px] -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-black overflow-hidden',
+				'w-screen h-[600px] -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-gray-950 overflow-hidden',
 				className
 			)}
 		>

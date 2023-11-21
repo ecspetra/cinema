@@ -31,8 +31,8 @@ const Genre: FC<PropsType> = ({
 					onClick={handleToggleIsChecked}
 					className={classNames(
 						'bg-gray-800 rounded flex justify-center items-center text-xs leading-none px-2 py-1 my-0 mr-1 mb-1 duration-300 last:mr-0',
-						isChecked && '!bg-amber-900/50 text-amber-400',
-						isEdit && 'hover:bg-amber-900/50'
+						isChecked && '!bg-rose-900/30 text-rose-500',
+						isEdit && 'hover:bg-rose-900/30'
 					)}
 				>
 					{isChecked && (

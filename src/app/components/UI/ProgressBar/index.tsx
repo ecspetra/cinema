@@ -10,7 +10,7 @@ const ProgressBar: FC<PropsType> = ({ progress }) => {
 			style={{
 				width: `${progress}%`,
 			}}
-			className='h-1 bg-amber-500 mt-2'
+			className='h-1 bg-rose-600 mt-2'
 		/>
 	)
 }

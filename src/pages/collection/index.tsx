@@ -84,7 +84,7 @@ const Collection = ({ results }) => {
 						displayed here
 						<FontAwesomeIcon
 							icon={faFilm}
-							className='ml-4 text-amber-600'
+							className='ml-4 text-rose-600'
 						/>
 					</Title>
 					<p className='mb-8'>

@@ -5,19 +5,40 @@ import { signOutUser } from '@/firebase/config'
 import Image from '@/components/Images/Image'
 import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { AUTH_PAGE, COLLECTION_PAGE, PROFILE_PAGE } from '@/constants/paths'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const Header = () => {
-	const { userId, photoURL, isLoggedIn, userName } = useAuth()
+	const { userId, photoURL, isLoggedIn } = useAuth()
 	const router = useRouter()
 	const pathname = usePathname()
 	const collectionLink = userId ? `/collection?uid=${userId}` : `/collection`
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && isLoggedIn
 	const isShowAuthButton = !isAuthPage && !isLoggedIn
+
+	const routes = [
+		{
+			name: 'Favorite',
+			href: collectionLink,
+		},
+		{
+			name: 'Persons',
+			href: '/person',
+		},
+		{
+			name: 'Movies',
+			href: '/movie',
+		},
+		{
+			name: 'TV',
+			href: '/tv',
+		},
+	]
 
 	const handleSignOutUser = async () => {
 		await signOutUser()
@@ -29,50 +50,60 @@ const Header = () => {
 	}
 
 	return (
-		<header className='fixed top-0 left-0 w-full z-50 bg-black'>
-			<div className='max-w-screen-xl mx-auto p-5'>
-				<div className='flex justify-between items-center'>
+		<header className='fixed top-0 left-0 w-full z-50 bg-gray-950'>
+			<div className='max-w-screen-xl mx-auto py-3 px-5'>
+				<div className='flex justify-between items-center gap-4'>
 					<Link href={`/`} as={`/`}>
 						<span>CinemaStreet</span>
 					</Link>
-					<Link href={collectionLink} as={collectionLink}>
-						<span>My collection</span>
-					</Link>
-					<Link href={'/person'} as={'/person'}>
-						<span>Persons</span>
-					</Link>
-					<Link href={'/movie'} as={'/movie'}>
-						<span>Movies</span>
-					</Link>
-					<Link href={'/tv'} as={'/tv'}>
-						<span>TV shows</span>
-					</Link>
-					{isShowUserMenu && (
-						<div className='flex justify-center items-center gap-4'>
+					<div className='flex justify-end items-center gap-4'>
+						{routes.map(item => {
+							return (
+								<Link
+									key={item.href}
+									className='font-semibold hover:text-rose-600 duration-300'
+									href={item.href}
+									as={item.href}
+								>
+									<span>{item.name}</span>
+								</Link>
+							)
+						})}
+						{isShowUserMenu && (
+							<div className='flex justify-center items-center gap-4'>
+								<Link
+									href={`/profile/[id]`}
+									as={`/profile/${userId}`}
+								>
+									<Image
+										className='!w-11 h-11 rounded-full'
+										src={photoURL}
+										defaultImage={defaultUserImage}
+									/>
+								</Link>
+								<Button
+									context='text'
+									onClick={handleSignOutUser}
+									className='text-sm'
+								>
+									Sign Out
+									<FontAwesomeIcon
+										icon={faRightFromBracket}
+										className='ml-1'
+									/>
+								</Button>
+							</div>
+						)}
+						{isShowAuthButton && (
 							<Link
-								className='flex justify-center items-center gap-2'
-								href={`/profile/[id]`}
-								as={`/profile/${userId}`}
+								href={`/auth`}
+								as={`/auth`}
+								className='font-semibold bg-rose-600 text-sm px-4 py-2 rounded-3xl duration-300'
 							>
-								<Image
-									className='!w-11 h-11 rounded-full'
-									src={photoURL}
-									defaultImage={defaultUserImage}
-								/>
-								<span className='font-semibold'>
-									{userName}
-								</span>
+								<span>Sign In</span>
 							</Link>
-							<Button context='text' onClick={handleSignOutUser}>
-								Sign Out
-							</Button>
-						</div>
-					)}
-					{isShowAuthButton && (
-						<Link href={`/auth`} as={`/auth`}>
-							<span>Sign In</span>
-						</Link>
-					)}
+						)}
+					</div>
 				</div>
 				<Breadcrumbs />
 			</div>

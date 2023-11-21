@@ -31,13 +31,13 @@ const MovieCardSmall: FC<PropsType> = ({
 	const movieCard = (
 		<>
 			<Image
-				className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
+				className='duration-300 mb-4 border-4'
 				src={`https://image.tmdb.org/t/p/w440_and_h660_face${moviePoster}`}
 				defaultImage={defaultMovieImage}
 			/>
 			{mark && (
 				<span className='flex justify-center items-center'>
-					<FontAwesomeIcon icon={faStar} className='text-amber-400' />
+					<FontAwesomeIcon icon={faStar} className='text-rose-500' />
 					<span className='ml-1 font-semibold'>{mark}</span>
 				</span>
 			)}
@@ -50,7 +50,6 @@ const MovieCardSmall: FC<PropsType> = ({
 				<Link
 					href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
 					as={isTVShow ? `/tv/${itemId}` : `/movie/${itemId}`}
-					className='group'
 				>
 					{movieCard}
 				</Link>

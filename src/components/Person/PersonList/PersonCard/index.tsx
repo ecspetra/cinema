@@ -40,7 +40,7 @@ const PersonCard: FC<PropsType> = ({
 				className='group text-sm'
 			>
 				<Image
-					className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
+					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${profile_path}`}
 					defaultImage={defaultPersonImage}
 				/>

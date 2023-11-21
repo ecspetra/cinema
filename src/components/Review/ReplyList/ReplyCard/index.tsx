@@ -92,7 +92,7 @@ const ReplyCard: FC<PropsType> = ({
 			classNames='fade'
 			unmountOnExit
 		>
-			<span className='mb-4 p-4 bg-gray-800 border border-gray-500 relative last:mb-0 block'>
+			<span className='mb-4 p-4 bg-gray-800 rounded-md border-gray-500 relative last:mb-0 block'>
 				{isCurrentUserItem && (
 					<Dropdown>
 						<DropdownItem
@@ -117,7 +117,7 @@ const ReplyCard: FC<PropsType> = ({
 							isLinkToProfile={!isCollectionItem}
 						/>
 						<span>
-							<span className='mb-2 min-h-[22.5px] text-lg font-semibold leading-tight block'>
+							<span className='mb-1 min-h-[22.5px] text-lg font-semibold leading-tight block'>
 								{authorInfo.displayName}
 							</span>
 							<span className='text-xs block'>

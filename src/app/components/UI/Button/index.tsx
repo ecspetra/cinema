@@ -31,22 +31,21 @@ const Button: FC<PropsType> = ({
 	type = 'button',
 }) => {
 	const filledButtonClassNames =
-		'w-72 min-h-[48px] bg-amber-500 border-2 border-transparent rounded-md hover:bg-amber-400 text-black font-semibold p-3 flex justify-center items-center'
+		'w-72 min-h-[48px] bg-rose-600 border-2 border-transparent rounded-3xl hover:bg-rose-500 text-white p-3 flex justify-center items-center'
 	const filledDarkButtonClassNames =
-		'w-72 min-h-[48px] bg-gray-700 rounded-md hover:bg-gray-600 font-semibold p-3 flex justify-center items-center'
+		'w-72 min-h-[48px] bg-gray-700 rounded-3xl hover:bg-gray-600 p-3 flex justify-center items-center'
 	const emptyButtonClassNames =
-		'w-72 border-2 border-amber-500 text-amber-500 rounded-md hover:border-transparent hover:w-full hover:text-amber-400 font-semibold p-3 flex justify-center items-center'
+		'w-72 border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center'
 	const collectionButtonClassNames =
-		'w-72 min-h-[48px] border-2 border-amber-500 text-amber-500 rounded-md hover:border-amber-400 hover:text-amber-400 font-semibold p-3 flex justify-center items-center'
+		'w-72 min-h-[48px] border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-rose-400 hover:text-rose-500 p-3 flex justify-center items-center'
 	const imageButtonClassNames = 'flex justify-center items-center'
-	const textButtonClassNames =
-		'inline-flex text-amber-500 border-b border-amber-500 font-semibold hover:text-amber-400 hover:border-transparent'
+	const textButtonClassNames = 'inline-flex text-rose-600 hover:text-rose-500'
 	const iconTextButtonClassNames =
-		'rounded-md p-2 bg-gray-600/50 font-semibold text-sm leading-tight hover:bg-amber-900/50 hover:text-amber-400 flex justify-start items-center'
+		'rounded-md p-2 bg-gray-600/50 text-sm leading-tight hover:bg-rose-900/30 hover:text-rose-500 flex justify-start items-center'
 	const iconButtonClassNames =
-		'w-11 h-11 flex justify-center items-center bg-gray-700 hover:bg-gray-600 rounded-md z-10'
+		'w-11 h-11 flex justify-center items-center bg-gray-700 hover:bg-gray-600 rounded-3xl z-10'
 	const listItemButtonClassNames =
-		'w-full p-2 flex justify-start items-center hover:bg-amber-500 hover:text-black rounded-md leading-normal'
+		'w-full flex justify-start items-center hover:bg-rose-600 hover:text-white leading-normal'
 
 	const getButtonClassNames = () => {
 		switch (context) {
@@ -82,7 +81,7 @@ const Button: FC<PropsType> = ({
 		<button
 			type={type}
 			className={classNames(
-				'duration-300 relative leading-none',
+				'duration-300 relative leading-none font-semibold',
 				className,
 				getButtonClassNames()
 			)}

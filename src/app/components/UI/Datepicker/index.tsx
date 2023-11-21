@@ -32,7 +32,7 @@ const CustomDatepicker: FC<PropsType> = ({
 			</span>
 			<Datepicker
 				readOnly={true}
-				primaryColor={'amber'}
+				primaryColor={'rose'}
 				toggleClassName={defaultClassName => `${defaultClassName} pt-4`}
 				inputClassName={defaultClassName =>
 					`${defaultClassName} w-full !bg-transparent !rounded-none focus:!ring-0 focus:!border-0 focus-visible:!outline-0 !border-0 !font-light !text-base !text-white pl-4 pt-8 pb-4 pr-4`

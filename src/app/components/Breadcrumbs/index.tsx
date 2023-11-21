@@ -18,7 +18,7 @@ const Breadcrumbs = () => {
 
 			for (let i = 0; i < segments.length; i++) {
 				const segment = segments[i]
-				const href = `/${segments.slice(0, i + 1).join('/')}`
+				const href = `${segments.slice(0, i + 1).join('/')}`
 
 				const isItemIdSegment = !isNaN(segment)
 				const isUserCollectionSegment = segment.includes('?uid')
@@ -71,12 +71,12 @@ const Breadcrumbs = () => {
 					className={classNames(
 						'text-sm',
 						idx === breadcrumbs.length - 1
-							? 'text-amber-500'
+							? 'text-rose-600'
 							: 'text-gray-400'
 					)}
 				>
 					<Link href={item.href}>{item.label}</Link>
-					{idx < breadcrumbs.length - 1 && ' / '}
+					{idx < breadcrumbs.length - 1 && ' > '}
 				</span>
 			))}
 		</nav>

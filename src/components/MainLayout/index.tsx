@@ -10,7 +10,7 @@ const MainLayout: FC<PropsType> = ({ children }) => {
 	return (
 		<>
 			<Header />
-			<main className='container w-full max-w-screen-xl mx-auto pt-20 px-5 pb-5 relative font-light min-h-screen flex flex-col text-base'>
+			<main className='container w-full max-w-screen-xl mx-auto pt-[68px] px-5 pb-5 relative font-light min-h-screen flex flex-col text-base'>
 				{children}
 			</main>
 		</>

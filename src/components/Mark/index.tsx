@@ -28,8 +28,8 @@ const Mark: FC<PropsType> = ({ movieId, movieTitle, isTVShow = false }) => {
 	const { showModal } = useModal()
 	const isShowRemoveMarkButton = markData && userId
 	const MAX_MARK = 10
-	const EMPTY_MARK_COLOR = 'text-amber-900'
-	const FILLED_MARK_COLOR = 'text-amber-400'
+	const EMPTY_MARK_COLOR = 'text-rose-900'
+	const FILLED_MARK_COLOR = 'text-rose-500'
 
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {

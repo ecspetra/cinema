@@ -54,7 +54,7 @@ const ReviewActionButton: FC<PropsType> = ({
 			<Button
 				className={classNames(
 					'mr-2',
-					isCurrentUserReaction && 'text-amber-400 !bg-amber-900/50'
+					isCurrentUserReaction && 'text-rose-500 !bg-rose-900/30'
 				)}
 				context='icon-text'
 				onClick={onClick}

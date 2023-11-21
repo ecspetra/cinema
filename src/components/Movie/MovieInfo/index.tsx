@@ -78,6 +78,7 @@ const MovieInfo: FC<PropsType> = ({
 					<Image
 						src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 						defaultImage={defaultMovieImage}
+						className='border-4'
 					/>
 				</div>
 			</div>
