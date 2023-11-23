@@ -69,7 +69,7 @@ const CollectionItemsList: FC<PropsType> = ({
 	}
 
 	return (
-		<div className='mb-16 z-10'>
+		<div className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {

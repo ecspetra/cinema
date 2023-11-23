@@ -1,26 +1,26 @@
 import React, { FC, useState } from 'react'
-import { IGenre } from '../../../interfaces'
+import { ITag } from '../../../interfaces'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 
 type PropsType = {
-	genre: IGenre
+	tag: ITag
 	isEdit?: boolean
-	isFavorite?: boolean
-	onToggle?: (genre: IGenre, isChecked: boolean) => void
+	isSelected?: boolean
+	onToggle?: (genre: ITag, isChecked: boolean) => void
 }
 
-const Genre: FC<PropsType> = ({
-	genre,
+const Tag: FC<PropsType> = ({
+	tag,
 	isEdit = false,
-	isFavorite = false,
+	isSelected = false,
 	onToggle,
 }) => {
-	const [isChecked, setIsChecked] = useState<boolean>(isFavorite)
+	const [isChecked, setIsChecked] = useState<boolean>(isSelected)
 
 	const handleToggleIsChecked = () => {
-		onToggle(genre, isChecked)
+		onToggle(tag, isChecked)
 		setIsChecked(!isChecked)
 	}
 
@@ -41,15 +41,15 @@ const Genre: FC<PropsType> = ({
 							className='w-3 h-3 mr-1'
 						/>
 					)}
-					{genre.name}
+					{tag.name}
 				</button>
 			) : (
 				<span className='bg-gray-800 rounded flex text-xs leading-none px-2 py-1 my-0 mr-1 mb-1 last:mr-0'>
-					{genre.name}
+					{tag.name}
 				</span>
 			)}
 		</>
 	)
 }
 
-export default Genre
+export default Tag

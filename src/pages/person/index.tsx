@@ -3,8 +3,8 @@ import { LINK_TO_FETCH_PERSON_LIST } from '@/constants/linksToFetch'
 import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
-import ItemsList from '@/components/List/ItemsList'
 import TopBanner from '@/components/TopBanner'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Persons = ({ items, isMoreDataAvailable }) => {
 	const [persons, setPersons] = useState([])
@@ -29,7 +29,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 	return (
 		<>
 			<TopBanner />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={persons}
 				listName='person'
 				title='Discover persons'

@@ -1,4 +1,4 @@
-export interface IGenre {
+export interface ITag {
 	id: number
 	name: string
 }

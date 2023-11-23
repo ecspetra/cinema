@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react'
-import {
-	getCollectionItem,
-	getIsFriend,
-	removeCollectionItem,
-	removeFriend,
-	setNewCollectionItem,
-	setNewFriend,
-} from '@/firebase/config'
+import { getIsFriend, removeFriend, setNewFriend } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import {
@@ -15,7 +8,6 @@ import {
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
-import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
 
 export const useFriendsCollection = (itemInfo: object) => {
 	const [isFriend, setIsFriend] = useState<boolean>(false)

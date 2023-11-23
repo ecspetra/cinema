@@ -5,8 +5,8 @@ import {
 import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
-import ItemsList from '../components/List/ItemsList'
 import HomePageSlider from '@/components/HomePageSlider'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Home = ({ results }) => {
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
@@ -35,7 +35,7 @@ const Home = ({ results }) => {
 	return (
 		<>
 			<HomePageSlider movies={upcomingMovieList} />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={defaultMovieList.items}
 				listName='movie'
 				title='Discover movies'

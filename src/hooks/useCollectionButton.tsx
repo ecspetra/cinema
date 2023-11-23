@@ -22,7 +22,7 @@ export const useCollectionButton = (
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
-	const { userId, isLoggedIn } = useAuth()
+	const { isLoggedIn } = useAuth()
 	const { showModal, hideModal } = useModal()
 
 	const handleSetCollectionItem = () => {

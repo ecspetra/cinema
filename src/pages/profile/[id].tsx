@@ -14,7 +14,7 @@ import EditProfileForm from '@/components/Profile/Form/EditProfileForm'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import TopBanner from '@/components/TopBanner'
 import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
-import GenreList from '@/components/Genre/GenreList'
+import TagList from '@/components/Tag/TagList'
 import { useAuth } from '@/context/AuthProvider'
 import {
 	faBarsStaggered,
@@ -35,7 +35,7 @@ const Profile = ({ results }) => {
 	const [friends, setFriends] = useState([])
 	const [collection, setCollection] = useState(null)
 	const [isEditInfo, setIsEditInfo] = useState<boolean>(false)
-	const [isEditGenres, setIsEditGenres] = useState<boolean>(false)
+	const [isEditTags, setIsEditTags] = useState<boolean>(false)
 	const [isEditCredential, setIsEditCredential] = useState<boolean>(false)
 	const router = useRouter()
 	const { userId } = useAuth()
@@ -50,7 +50,7 @@ const Profile = ({ results }) => {
 
 	const handleResetForms = () => {
 		setIsEditInfo(false)
-		setIsEditGenres(false)
+		setIsEditTags(false)
 		setIsEditCredential(false)
 	}
 
@@ -148,7 +148,7 @@ const Profile = ({ results }) => {
 							<DropdownItem
 								label='Edit genres'
 								icon={faBarsStaggered}
-								onClick={() => handleOpenForm(setIsEditGenres)}
+								onClick={() => handleOpenForm(setIsEditTags)}
 							/>
 							<DropdownItem
 								label='Edit email/password'
@@ -170,12 +170,12 @@ const Profile = ({ results }) => {
 				) : (
 					<ProfileInfo userInfo={userInfo} />
 				)}
-				<GenreList
-					genres={userInfo.favoriteGenres || []}
+				<TagList
+					tags={userInfo.favoriteTags || []}
 					title='Favorite genres'
 					className='mb-8 pb-8'
-					isEditGenres={isEditGenres}
-					onFormClose={setIsEditGenres}
+					isEditTags={isEditTags}
+					onFormClose={setIsEditTags}
 				/>
 				<FriendList
 					friends={friends || []}

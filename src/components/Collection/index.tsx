@@ -23,7 +23,7 @@ const UserCollection: FC<PropsType> = ({
 	isCurrentUserCollection = true,
 }) => {
 	return (
-		<div className='relative z-10'>
+		<>
 			<CollectionWrap
 				title='Movies'
 				type='movie'

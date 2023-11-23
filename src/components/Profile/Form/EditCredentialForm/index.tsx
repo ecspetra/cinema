@@ -159,7 +159,7 @@ const EditCredentialForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className='flex flex-col justify-start items-start gap-4 z-10 mb-16'
+			className='flex flex-col justify-start items-start gap-4 mb-16'
 		>
 			<InputField
 				id='userEmail'

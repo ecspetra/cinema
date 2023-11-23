@@ -42,7 +42,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 	const genderInString = getPersonGender(gender)
 
 	return (
-		<div className='flex gap-7 py-7 z-10 mb-16'>
+		<div className='flex gap-7 py-7 mb-16'>
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-8'>
 					<Image

@@ -4,7 +4,7 @@ import defaultMovieImage from '../../../app/assets/images/default-movie-image.sv
 import Link from 'next/link'
 import Image from '../../Images/Image/index'
 import Title from '../../../app/components/UI/Title/Title'
-import Genre from '../../Genre/index'
+import Tag from '../../Tag/index'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import MarkSmall from '@/components/Mark/MarkSmall'
@@ -41,7 +41,7 @@ const MovieCard: FC<PropsType> = ({
 		release_date,
 		title,
 	} = item
-	const isShowGenres = genres?.length > 0
+	const isShowTags = genres?.length > 0
 
 	const movieCard = (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
@@ -60,7 +60,7 @@ const MovieCard: FC<PropsType> = ({
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 					defaultImage={defaultMovieImage}
 				/>
-				<Title className='relative z-10' variant='h3'>
+				<Title variant='h3'>
 					{title ? title : name}
 					{(release_date || first_air_date) && (
 						<span className='ml-1'>
@@ -73,10 +73,10 @@ const MovieCard: FC<PropsType> = ({
 					)}
 				</Title>
 			</Link>
-			{isShowGenres && (
-				<div className='flex flex-wrap mb-2 relative z-10'>
+			{isShowTags && (
+				<div className='flex flex-wrap mb-2 relative'>
 					{genres.map((item, idx) => {
-						return <Genre key={idx} genre={item} />
+						return <Tag key={idx} tag={item} />
 					})}
 				</div>
 			)}

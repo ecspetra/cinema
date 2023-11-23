@@ -7,9 +7,9 @@ import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
-import ItemsList from '@/components/List/ItemsList'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const TVShow = ({ tvShowFromProps }) => {
 	const router = useRouter()
@@ -122,7 +122,7 @@ const TVShow = ({ tvShowFromProps }) => {
 					personsFromProps={movie.creditsResult.crew}
 					title='Crew'
 				/>
-				<ItemsList
+				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
 					listName='tv'
 					title='Similar movies'

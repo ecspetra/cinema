@@ -6,8 +6,8 @@ import PersonInfo from '@/components/Person/PersonInfo'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
-import ItemsList from '@/components/List/ItemsList'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(null)
@@ -72,7 +72,7 @@ const Person = ({ personFromProps }) => {
 		<>
 			<TopBanner />
 			<PersonInfo personInfo={person} personImages={images} />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={movies}
 				listName='movie'
 				title={`Movies with ${person.name}`}

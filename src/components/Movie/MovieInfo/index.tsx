@@ -6,7 +6,7 @@ import {
 	faCalendarCheck,
 	faFlag,
 } from '@fortawesome/free-solid-svg-icons'
-import Genre from '../../../components/Genre'
+import Tag from '../../../components/Tag'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	IBackdrop,
@@ -27,7 +27,7 @@ import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
 import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
 import moment from 'moment'
-import GenreList from '@/components/Genre/GenreList'
+import TagList from '@/components/Tag/TagList'
 
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
@@ -72,7 +72,7 @@ const MovieInfo: FC<PropsType> = ({
 	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
 
 	return (
-		<div className='flex gap-7 py-7 z-10 mb-16'>
+		<div className='flex gap-7 py-7 mb-16'>
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-28'>
 					<Image
@@ -91,7 +91,7 @@ const MovieInfo: FC<PropsType> = ({
 						{tagline}
 					</Title>
 				)}
-				<GenreList genres={genres} />
+				<TagList tags={genres} />
 				{adult && (
 					<span className='bg-red-600 p-2 mb-4 font-semibold inline-block rounded-full'>
 						18+

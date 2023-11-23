@@ -1,12 +1,11 @@
 import { IMovieCard } from '../../../../interfaces'
-import React, { FC, useEffect, useRef, useState } from 'react'
-import { getMovieGenres } from '@/handlers/getMovieGenres'
-import { getResultsByPage } from '@/handlers/getResultsByPage'
+import React, { FC, useRef } from 'react'
 import Loader from '@/components/Loader'
-import { LINK_TO_FETCH_UPCOMING_MOVIE_LIST } from '@/constants/linksToFetch'
 import Button from '@/app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { LINK_TO_FETCH_UPCOMING_MOVIE_LIST } from '@/constants/linksToFetch'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>
@@ -22,71 +21,13 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 	onSelectItem,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isMoreItemsAvailable, setIsMoreItemsAvailable] =
-		useState<boolean>(isMoreDataAvailable)
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [itemsToShow, setItemsToShow] = useState([])
-	const [fetchedItems, setFetchedItems] = useState([])
 
-	const getItems = async () => {
-		getMovieGenres(fetchedItems, 'movie')
-			.then(data => {
-				setItemsToShow(prevState => [...prevState, ...data])
-			})
-			.then(() => {
-				setFetchedItems([])
-				setIsLoading(false)
-			})
-	}
-
-	const getMoreItems = async () => {
-		getResultsByPage(LINK_TO_FETCH_UPCOMING_MOVIE_LIST, currentPage).then(
-			data => {
-				setFetchedItems(data.items)
-				setIsMoreItemsAvailable(data.isMoreDataAvailable)
-			}
-		)
-	}
-
-	useEffect(() => {
-		if (currentPage > 1) getMoreItems()
-	}, [currentPage])
-
-	useEffect(() => {
-		const itemsContainer = containerRef.current
-
-		const handleScroll = () => {
-			if (
-				itemsContainer &&
-				itemsContainer.scrollHeight - itemsContainer.scrollTop ===
-					itemsContainer.clientHeight &&
-				!isLoading &&
-				isMoreItemsAvailable
-			) {
-				setIsLoading(true)
-				setCurrentPage(prevPage => prevPage + 1)
-			}
-		}
-
-		if (itemsContainer) {
-			itemsContainer.addEventListener('scroll', handleScroll)
-		}
-
-		return () => {
-			if (itemsContainer) {
-				itemsContainer.removeEventListener('scroll', handleScroll)
-			}
-		}
-	}, [containerRef, isMoreItemsAvailable])
-
-	useEffect(() => {
-		if (fetchedItems.length !== 0) getItems()
-	}, [fetchedItems])
-
-	useEffect(() => {
-		setFetchedItems([...itemsList])
-	}, [itemsList])
+	const { isLoading, itemsToShow } = useInfiniteScroll(
+		containerRef,
+		itemsList,
+		isMoreDataAvailable,
+		LINK_TO_FETCH_UPCOMING_MOVIE_LIST
+	)
 
 	const defaultItemClassNames =
 		'bg-gray-800 group-hover:bg-white group-hover:text-gray-950'
@@ -110,7 +51,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 					>
 						<span
 							className={classNames(
-								'w-20 p-2 text-white font-black mr-4 flex-none duration-300',
+								'w-20 p-2 font-black mr-4 flex-none duration-300',
 								selectedItemId === item.id
 									? selectedItemClassNames
 									: defaultItemClassNames
