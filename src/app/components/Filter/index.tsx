@@ -74,7 +74,12 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 	) => {
 		setIsTouched(true)
 		setFormData(prevData => {
-			const updatedData = { ...prevData, [field]: FilterFields[field] }
+			const updatedData = {
+				...prevData,
+				[field]:
+					FilterFields[field].charAt(0).toUpperCase() +
+					FilterFields[field].slice(1).replace(/_/g, ' '),
+			}
 
 			if (!value) {
 				const { [field]: removedField, ...restData } = updatedData
@@ -92,6 +97,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 			const updatedArray = Array.isArray(currentValue)
 				? currentValue.filter(item => item !== value)
 				: []
+			console.log(prevData[field], updatedArray, field)
 
 			const updatedData = { ...prevData, [field]: updatedArray }
 
@@ -173,7 +179,15 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 			case 'primary_release_year':
 			case 'first_air_date_year':
 				return (
-					<Select label='Year' onChange={handleSelectChange}>
+					<Select
+						key={field}
+						label={
+							FilterFields[field].charAt(0).toUpperCase() +
+							FilterFields[field].slice(1).replace(/_/g, ' ')
+						}
+						name={field}
+						onChange={handleSelectChange}
+					>
 						{releaseYears.map((year, idx) => (
 							<SelectOption
 								key={year}
@@ -188,6 +202,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 			case 'with_keywords':
 				return (
 					<Search
+						key={field}
 						name={field}
 						label={FilterFields[field]}
 						onSearch={handleArrayFieldChange}
@@ -197,10 +212,11 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 			case 'with_origin_country':
 				return (
 					<InputField
+						key={field}
 						id={field}
 						label={
-							field.charAt(0).toUpperCase() +
-							field.slice(1).replace(/_/g, ' ')
+							FilterFields[field].charAt(0).toUpperCase() +
+							FilterFields[field].slice(1).replace(/_/g, ' ')
 						}
 						value={formData[field]}
 						onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -209,10 +225,17 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 					/>
 				)
 			case 'with_genres':
-				return <FilterTagList onToggle={handleToggleTag} name={field} />
+				return (
+					<FilterTagList
+						key={field}
+						onToggle={handleToggleTag}
+						name={field}
+					/>
+				)
 			case 'include_adult':
 				return (
 					<Checkbox
+						key={field}
 						name={field}
 						label={
 							FilterFields[field].charAt(0).toUpperCase() +
@@ -246,6 +269,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 							return value.map(item => {
 								return (
 									<Tag
+										key={item}
 										tag={{
 											name: item,
 											field: Object.keys(formData)[idx],
@@ -258,6 +282,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 						} else {
 							return (
 								<Tag
+									key={value}
 									tag={{
 										name: value,
 										field: Object.keys(formData)[idx],

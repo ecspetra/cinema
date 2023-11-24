@@ -3,16 +3,27 @@ import classNames from 'classnames'
 
 type PropsType = {
 	children: JSX.Element
+	name: string
 	label: string
 	onChange: () => void
 	className?: string
 }
 
-const Select: FC<PropsType> = ({ children, label, onChange, className }) => {
+const Select: FC<PropsType> = ({
+	children,
+	name,
+	label,
+	onChange,
+	className,
+}) => {
 	const [selectedOption, setSelectedOption] = useState('')
 
 	const handleSelectChange = event => {
-		onChange(event.target.value)
+		if (name) {
+			onChange(name, event.target.value)
+		} else {
+			onChange(event.target.value)
+		}
 		setSelectedOption(event.target.value)
 	}
 

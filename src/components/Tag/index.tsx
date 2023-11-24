@@ -26,7 +26,7 @@ const Tag: FC<PropsType> = ({
 			onToggle(tag, isChecked)
 			setIsChecked(!isChecked)
 		} else {
-			onRemove(tag.name, tag.field)
+			onRemove(tag.field, tag.name)
 		}
 	}
 
