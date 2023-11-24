@@ -5,12 +5,14 @@ import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
-import { SortByOption } from '@/constants/enum'
 import SelectOption from '@/app/components/UI/Input/Select/SelectOption'
 import Select from '@/app/components/UI/Input/Select'
 import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
-import FilterTag from '@/app/components/Filter/FilterTag'
+import { generateYearsList } from '@/handlers/generateYearsList'
+import Checkbox from '../UI/Input/Checkbox'
+import { FilterFields } from '@/constants/enum'
+import Tag from '@/components/Tag'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
@@ -19,7 +21,6 @@ type PropsType = {
 }
 
 interface FilterFormData {
-	searchQuery: string
 	primary_release_year: number
 	first_air_date_year: number
 	include_adult: boolean
@@ -36,6 +37,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
+	const releaseYears = generateYearsList(1930)
 	console.log(formData)
 
 	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
@@ -45,7 +47,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 	const handleArrayFieldChange = (
 		field: keyof FilterFormData,
-		value: any
+		value: string
 	) => {
 		setIsTouched(true)
 		setFormData(prevData => {
@@ -60,10 +62,27 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 	const handleStringFieldChange = (
 		field: keyof FilterFormData,
-		value: any
+		value: string
 	) => {
 		setIsTouched(true)
 		setFormData(prevData => ({ ...prevData, [field]: value }))
+	}
+
+	const handleBooleanFieldChange = (
+		field: keyof FilterFormData,
+		value: boolean
+	) => {
+		setIsTouched(true)
+		setFormData(prevData => {
+			const updatedData = { ...prevData, [field]: FilterFields[field] }
+
+			if (!value) {
+				const { [field]: removedField, ...restData } = updatedData
+				return restData
+			}
+
+			return updatedData
+		})
 	}
 
 	const handleRemoveFilterTag = (field: keyof FilterFormData, value: any) => {
@@ -138,109 +157,119 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 		}
 	}
 
+	const groupedFields = [
+		'primary_release_year',
+		'vote_average',
+		'with_people',
+		'with_companies',
+		'with_origin_country',
+		'with_keywords',
+	]
+
+	const ungroupedFields = ['with_genres', 'include_adult']
+
+	const getField = (field: keyof FilterFormData) => {
+		switch (field) {
+			case 'primary_release_year':
+			case 'first_air_date_year':
+				return (
+					<Select label='Year' onChange={handleSelectChange}>
+						{releaseYears.map((year, idx) => (
+							<SelectOption
+								key={year}
+								value={year}
+								label={year}
+							/>
+						))}
+					</Select>
+				)
+			case 'with_people':
+			case 'with_companies':
+			case 'with_keywords':
+				return (
+					<Search
+						name={field}
+						label={FilterFields[field]}
+						onSearch={handleArrayFieldChange}
+					/>
+				)
+			case 'vote_average':
+			case 'with_origin_country':
+				return (
+					<InputField
+						id={field}
+						label={
+							field.charAt(0).toUpperCase() +
+							field.slice(1).replace(/_/g, ' ')
+						}
+						value={formData[field]}
+						onChange={(e: ChangeEvent<HTMLInputElement>) =>
+							handleStringFieldChange(field, e.target.value)
+						}
+					/>
+				)
+			case 'with_genres':
+				return <FilterTagList onToggle={handleToggleTag} name={field} />
+			case 'include_adult':
+				return (
+					<Checkbox
+						name={field}
+						label={
+							FilterFields[field].charAt(0).toUpperCase() +
+							FilterFields[field].slice(1).replace(/_/g, ' ')
+						}
+						onToggle={handleBooleanFieldChange}
+					/>
+				)
+		}
+	}
+
 	return (
 		<div className='mb-16 bg-gray-950 p-4'>
-			<Title variant='h3'>Filter</Title>
-			<div className='flex justify-start items-start'>
-				{Object.values(formData).map((value, idx) => {
-					if (Array.isArray(value)) {
-						return value.map(item => {
+			<Title>Filter</Title>
+			<form onSubmit={handleSearch}>
+				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+					{fields.map((field: keyof FilterFormData) => {
+						if (groupedFields.includes(field))
+							return getField(field)
+					})}
+				</div>
+				<div>
+					{fields.map((field: keyof FilterFormData) => {
+						if (ungroupedFields.includes(field))
+							return getField(field)
+					})}
+				</div>
+				<div className='flex justify-start items-start border-t'>
+					{Object.values(formData).map((value, idx) => {
+						if (Array.isArray(value)) {
+							return value.map(item => {
+								return (
+									<Tag
+										tag={{
+											name: item,
+											field: Object.keys(formData)[idx],
+										}}
+										isEdit
+										onRemove={handleRemoveFilterTag}
+									/>
+								)
+							})
+						} else {
 							return (
-								<FilterTag
-									key={item}
-									field={Object.keys(formData)[idx]}
-									tag={item}
+								<Tag
+									tag={{
+										name: value,
+										field: Object.keys(formData)[idx],
+									}}
+									isEdit
 									onRemove={handleRemoveFilterTag}
 								/>
 							)
-						})
-					} else {
-						return (
-							<FilterTag
-								key={value}
-								field={Object.keys(formData)[idx]}
-								tag={value}
-								onRemove={handleRemoveFilterTag}
-							/>
-						)
-					}
-				})}
-			</div>
-
-			<form onSubmit={handleSearch}>
-				<div className='flex justify-between items-start'>
-					<div className='flex gap-4'>
-						{fields.map((item: keyof FilterFormData) => {
-							if (
-								item === 'primary_release_year' ||
-								item === 'first_air_date_year'
-							) {
-								return (
-									<Select
-										key={item}
-										label='Year'
-										onChange={handleSelectChange}
-										className='max-w-[200px]'
-									>
-										{Object.values(SortByOption).map(
-											(item, idx) => (
-												<SelectOption
-													key={item}
-													value={item}
-													text={
-														Object.keys(
-															SortByOption
-														)[idx]
-													}
-												/>
-											)
-										)}
-									</Select>
-								)
-							} else if (
-								item === 'with_people' ||
-								item === 'with_companies'
-							) {
-								return (
-									<Search
-										key={item}
-										formFieldName={item}
-										onSearch={handleArrayFieldChange}
-									/>
-								)
-							} else if (item === 'with_genres') {
-								return (
-									<FilterTagList
-										key={item}
-										onToggle={handleToggleTag}
-										formFieldName={item}
-									/>
-								)
-							} else {
-								return (
-									<InputField
-										key={item}
-										id={item}
-										label={
-											item.charAt(0).toUpperCase() +
-											item.slice(1).replace(/_/g, ' ')
-										}
-										value={formData[item]}
-										onChange={(
-											e: ChangeEvent<HTMLInputElement>
-										) =>
-											handleStringFieldChange(
-												item,
-												e.target.value
-											)
-										}
-									/>
-								)
-							}
-						})}
-					</div>
+						}
+					})}
 				</div>
-				<Button className='mt-8 w-full' type='submit'>
+				<Button className='mt-8 mx-auto' type='submit'>
 					{isLoading ? <Loader isShowText type='static' /> : 'Apply'}
 				</Button>
 				{error && (

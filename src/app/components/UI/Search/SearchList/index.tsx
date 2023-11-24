@@ -9,7 +9,7 @@ type PropsType = {
 	isMoreDataAvailable: boolean
 	linkToFetch: string
 	onSearch: () => void
-	formFieldName: string
+	name: string
 }
 
 const SearchList: FC<PropsType> = ({
@@ -17,7 +17,7 @@ const SearchList: FC<PropsType> = ({
 	isMoreDataAvailable,
 	linkToFetch,
 	onSearch,
-	formFieldName,
+	name,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -37,7 +37,7 @@ const SearchList: FC<PropsType> = ({
 				return (
 					<Button
 						key={item.id}
-						onClick={() => onSearch(formFieldName, item.name)}
+						onClick={() => onSearch(name, item.name)}
 						className='z-10'
 					>
 						{item.name}

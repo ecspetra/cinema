@@ -14,7 +14,7 @@ const ItemsListSort: FC<PropsType> = ({ onChange }) => {
 				<SelectOption
 					key={item}
 					value={item}
-					text={Object.keys(SortByOption)[idx]}
+					label={Object.keys(SortByOption)[idx]}
 				/>
 			))}
 		</Select>

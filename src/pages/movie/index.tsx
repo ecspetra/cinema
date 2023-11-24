@@ -34,15 +34,14 @@ const Movies = ({ results }) => {
 				type='movie'
 				onApply={setLinkToFetch}
 				fields={[
-					'searchQuery',
 					'primary_release_year',
-					'include_adult',
 					'vote_average',
 					'with_people',
 					'with_companies',
-					'with_genres',
 					'with_origin_country',
 					'with_keywords',
+					'with_genres',
+					'include_adult',
 				]}
 			/>
 			<ItemsListWrap

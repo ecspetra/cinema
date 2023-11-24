@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { ITag } from '../../../interfaces'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 
@@ -9,6 +9,7 @@ type PropsType = {
 	isEdit?: boolean
 	isSelected?: boolean
 	onToggle?: (tag: ITag, isChecked: boolean) => void
+	onRemove?: (tag: ITag, isChecked: boolean) => void
 }
 
 const Tag: FC<PropsType> = ({
@@ -16,12 +17,17 @@ const Tag: FC<PropsType> = ({
 	isEdit = false,
 	isSelected = false,
 	onToggle,
+	onRemove,
 }) => {
 	const [isChecked, setIsChecked] = useState<boolean>(isSelected)
 
 	const handleToggleIsChecked = () => {
-		onToggle(tag, isChecked)
-		setIsChecked(!isChecked)
+		if (onToggle) {
+			onToggle(tag, isChecked)
+			setIsChecked(!isChecked)
+		} else {
+			onRemove(tag.name, tag.field)
+		}
 	}
 
 	return (
@@ -42,6 +48,12 @@ const Tag: FC<PropsType> = ({
 						/>
 					)}
 					{tag.name}
+					{onRemove && (
+						<FontAwesomeIcon
+							icon={faXmark}
+							className='w-3 h-3 ml-2'
+						/>
+					)}
 				</button>
 			) : (
 				<span className='bg-gray-800 rounded flex text-xs leading-none px-2 py-1 my-0 mr-1 mb-1 last:mr-0'>

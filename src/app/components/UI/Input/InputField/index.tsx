@@ -37,7 +37,7 @@ const InputField: FC<PropsType> = ({
 		'w-full bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
 
 	return (
-		<div className='w-full'>
+		<div className='w-full h-fit'>
 			<label
 				htmlFor={id}
 				className={classNames(

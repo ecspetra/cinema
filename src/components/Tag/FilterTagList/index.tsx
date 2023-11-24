@@ -6,14 +6,14 @@ import Title from '@/app/components/UI/Title/Title'
 
 type PropsType = {
 	onToggle: () => void
-	formFieldName: string
+	name: string
 }
 
-const FilterTagList: FC<PropsType> = ({ onToggle, formFieldName }) => {
+const FilterTagList: FC<PropsType> = ({ onToggle, name }) => {
 	const [itemsList, setItemsList] = useState<Array<ITag>>([])
 
 	const onToggleTag = (tag, isChecked) => {
-		onToggle(formFieldName, tag, isChecked)
+		onToggle(name, tag, isChecked)
 	}
 
 	useEffect(() => {
@@ -26,7 +26,7 @@ const FilterTagList: FC<PropsType> = ({ onToggle, formFieldName }) => {
 	}, [])
 
 	return (
-		<>
+		<div className='h-fit'>
 			<Title variant='h3'>With genres</Title>
 			<div className='flex flex-wrap justify-start items-start mb-5'>
 				{itemsList.map(item => {
@@ -40,7 +40,7 @@ const FilterTagList: FC<PropsType> = ({ onToggle, formFieldName }) => {
 					)
 				})}
 			</div>
-		</>
+		</div>
 	)
 }
 
