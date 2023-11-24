@@ -5,11 +5,12 @@ import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
-import { FilterFields, SortByOption } from '@/constants/enum'
+import { SortByOption } from '@/constants/enum'
 import SelectOption from '@/app/components/UI/Input/Select/SelectOption'
 import Select from '@/app/components/UI/Input/Select'
 import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
+import FilterTag from '@/app/components/Filter/FilterTag'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
@@ -27,7 +28,7 @@ interface FilterFormData {
 	with_companies: Array<string>
 	with_genres: Array<string>
 	with_origin_country: string
-	with_keywords: string
+	with_keywords: Array<string>
 }
 
 const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
@@ -37,9 +38,51 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 	const [error, setError] = useState<string>('')
 	console.log(formData)
 
-	const handleInputChange = (field: keyof FilterFormData, value: any) => {
+	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
 		setIsTouched(true)
 		setFormData(prevData => ({ ...prevData, [field]: value }))
+	}
+
+	const handleArrayFieldChange = (
+		field: keyof FilterFormData,
+		value: any
+	) => {
+		setIsTouched(true)
+		setFormData(prevData => {
+			const currentValue = prevData[field]
+
+			const updatedArray = Array.isArray(currentValue)
+				? [...currentValue, value]
+				: [value]
+			return { ...prevData, [field]: updatedArray }
+		})
+	}
+
+	const handleStringFieldChange = (
+		field: keyof FilterFormData,
+		value: any
+	) => {
+		setIsTouched(true)
+		setFormData(prevData => ({ ...prevData, [field]: value }))
+	}
+
+	const handleRemoveFilterTag = (field: keyof FilterFormData, value: any) => {
+		setFormData(prevData => {
+			const currentValue = prevData[field]
+
+			const updatedArray = Array.isArray(currentValue)
+				? currentValue.filter(item => item !== value)
+				: []
+
+			const updatedData = { ...prevData, [field]: updatedArray }
+
+			if (updatedArray.length === 0) {
+				const { [field]: removedField, ...restData } = updatedData
+				return restData
+			}
+
+			return updatedData
+		})
 	}
 
 	const handleToggleTag = (field: keyof FilterFormData, tag, isChecked) => {
@@ -52,7 +95,14 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 				const updatedArray = Array.isArray(currentValue)
 					? currentValue.filter(item => item !== tag.name)
 					: []
-				return { ...prevData, [field]: updatedArray }
+
+				const updatedData = { ...prevData, [field]: updatedArray }
+				if (updatedArray.length === 0) {
+					const { [field]: removedField, ...restData } = updatedData
+					return restData
+				}
+
+				return updatedData
 			} else {
 				const updatedArray = Array.isArray(currentValue)
 					? [...currentValue, tag.name]
@@ -60,11 +110,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 				return { ...prevData, [field]: updatedArray }
 			}
 		})
-	}
-
-	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
-		setIsTouched(true)
-		setFormData(prevData => ({ ...prevData, [field]: value }))
 	}
 
 	const handleSearch = async (event: React.FormEvent) => {
@@ -92,12 +137,36 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 			setIsLoading(false)
 		}
 	}
+
 	return (
 		<div className='mb-16 bg-gray-950 p-4'>
 			<Title variant='h3'>Filter</Title>
-			{/*{Object.values(formData).map(item => {*/}
-			{/*	return <span>{item}</span>*/}
-			{/*})}*/}
+			<div className='flex justify-start items-start'>
+				{Object.values(formData).map((value, idx) => {
+					if (Array.isArray(value)) {
+						return value.map(item => {
+							return (
+								<FilterTag
+									key={item}
+									field={Object.keys(formData)[idx]}
+									tag={item}
+									onRemove={handleRemoveFilterTag}
+								/>
+							)
+						})
+					} else {
+						return (
+							<FilterTag
+								key={value}
+								field={Object.keys(formData)[idx]}
+								tag={value}
+								onRemove={handleRemoveFilterTag}
+							/>
+						)
+					}
+				})}
+			</div>
+
 			<form onSubmit={handleSearch}>
 				<div className='flex justify-between items-start'>
 					<div className='flex gap-4'>
@@ -109,7 +178,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 								return (
 									<Select
 										key={item}
-										label='Sort by'
+										label='Year'
 										onChange={handleSelectChange}
 										className='max-w-[200px]'
 									>
@@ -135,7 +204,8 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 								return (
 									<Search
 										key={item}
-										formFieldName={FilterFields[item]}
+										formFieldName={item}
+										onSearch={handleArrayFieldChange}
 									/>
 								)
 							} else if (item === 'with_genres') {
@@ -159,7 +229,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 										onChange={(
 											e: ChangeEvent<HTMLInputElement>
 										) =>
-											handleInputChange(
+											handleStringFieldChange(
 												item,
 												e.target.value
 											)

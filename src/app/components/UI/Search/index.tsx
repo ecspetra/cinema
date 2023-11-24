@@ -4,12 +4,14 @@ import InputField from '@/app/components/UI/Input/InputField'
 import { LINK_TO_SEARCH } from '@/constants/linksToFetch'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import SearchList from '@/app/components/UI/Search/SearchList'
+import { FilterFields } from '@/constants/enum'
 
 type PropsType = {
 	formFieldName: string
+	onSearch: () => void
 }
 
-const Search: FC<PropsType> = ({ formFieldName }) => {
+const Search: FC<PropsType> = ({ formFieldName, onSearch }) => {
 	const [searchQuery, setSearchQuery] = useState<string>('')
 	const [results, setResults] = useState([])
 	const [isMoreDataAvailable, setIsMoreDataAvailable] =
@@ -17,10 +19,11 @@ const Search: FC<PropsType> = ({ formFieldName }) => {
 
 	const linkToFetch = LINK_TO_SEARCH.replace(
 		'{fieldName}',
-		formFieldName
+		FilterFields[formFieldName]
 	).replace('{searchQuery}', searchQuery)
 
 	useEffect(() => {
+		setResults([])
 		if (searchQuery.length > 0) {
 			setTimeout(() => {
 				getResultsByPage(linkToFetch, 1).then(data => {
@@ -36,19 +39,23 @@ const Search: FC<PropsType> = ({ formFieldName }) => {
 			<InputField
 				id={formFieldName}
 				label={
-					formFieldName.charAt(0).toUpperCase() +
-					formFieldName.slice(1)
+					FilterFields[formFieldName].charAt(0).toUpperCase() +
+					FilterFields[formFieldName].slice(1)
 				}
 				value={searchQuery}
 				onChange={event => setSearchQuery(event.target.value)}
 				icon={faMagnifyingGlass}
 				placeholder='Search'
 			/>
-			<SearchList
-				itemsList={results}
-				isMoreDataAvailable={isMoreDataAvailable}
-				linkToFetch={linkToFetch}
-			/>
+			{searchQuery.length > 0 && (
+				<SearchList
+					itemsList={results}
+					isMoreDataAvailable={isMoreDataAvailable}
+					linkToFetch={linkToFetch}
+					onSearch={onSearch}
+					formFieldName={formFieldName}
+				/>
+			)}
 		</div>
 	)
 }

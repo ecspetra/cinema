@@ -8,7 +8,7 @@ type PropsType = {
 	tag: ITag
 	isEdit?: boolean
 	isSelected?: boolean
-	onToggle?: (genre: ITag, isChecked: boolean) => void
+	onToggle?: (tag: ITag, isChecked: boolean) => void
 }
 
 const Tag: FC<PropsType> = ({

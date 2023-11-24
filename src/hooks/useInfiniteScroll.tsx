@@ -1,5 +1,4 @@
 import { useEffect, RefObject, useState } from 'react'
-import { getMovieGenres } from '@/handlers/getMovieGenres'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 
 export const useInfiniteScroll = (
@@ -12,24 +11,13 @@ export const useInfiniteScroll = (
 	const [isMoreItemsAvailable, setIsMoreItemsAvailable] =
 		useState<boolean>(isMoreDataAvailable)
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [itemsToShow, setItemsToShow] = useState([])
-	const [fetchedItems, setFetchedItems] = useState([])
-
-	const getItems = async () => {
-		getMovieGenres(fetchedItems, 'movie')
-			.then(data => {
-				setItemsToShow(prevState => [...prevState, ...data])
-			})
-			.then(() => {
-				setFetchedItems([])
-				setIsLoading(false)
-			})
-	}
+	const [items, setItems] = useState([])
 
 	const getMoreItems = async () => {
 		getResultsByPage(linkToFetch, currentPage).then(data => {
-			setFetchedItems(data.items)
+			setItems(prevState => [...prevState, ...data.items])
 			setIsMoreItemsAvailable(data.isMoreDataAvailable)
+			setIsLoading(false)
 		})
 	}
 
@@ -38,12 +26,12 @@ export const useInfiniteScroll = (
 	}, [currentPage])
 
 	useEffect(() => {
-		if (fetchedItems.length !== 0) getItems()
-	}, [fetchedItems])
+		setItems([...itemsList])
+	}, [itemsList])
 
 	useEffect(() => {
-		setFetchedItems([...itemsList])
-	}, [itemsList])
+		setIsMoreItemsAvailable(isMoreDataAvailable)
+	}, [isMoreDataAvailable])
 
 	useEffect(() => {
 		const itemsContainer = containerRef.current
@@ -74,6 +62,6 @@ export const useInfiniteScroll = (
 
 	return {
 		isLoading,
-		itemsToShow,
+		items,
 	}
 }

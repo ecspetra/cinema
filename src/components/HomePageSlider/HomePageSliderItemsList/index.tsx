@@ -1,5 +1,5 @@
 import { IMovieCard } from '../../../../interfaces'
-import React, { FC, useRef } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import moment from 'moment'
@@ -22,7 +22,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
-	const { isLoading, itemsToShow } = useInfiniteScroll(
+	const { isLoading, items } = useInfiniteScroll(
 		containerRef,
 		itemsList,
 		isMoreDataAvailable,
@@ -38,7 +38,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 			ref={containerRef}
 			className='overflow-auto flex flex-col flex-none max-w-sm w-full scrollbar-hide bg-gray-950'
 		>
-			{itemsToShow.map((item: IMovieCard, idx: number) => {
+			{items.map((item: IMovieCard, idx: number) => {
 				return (
 					<Button
 						key={idx}
@@ -51,7 +51,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 					>
 						<span
 							className={classNames(
-								'w-20 p-2 font-black mr-4 flex-none duration-300',
+								'w-20 h-full p-2 font-black mr-4 flex justify-center items-center flex-none duration-300',
 								selectedItemId === item.id
 									? selectedItemClassNames
 									: defaultItemClassNames
@@ -59,7 +59,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 						>
 							{moment(item.release_date).format('D MMM')}
 						</span>
-						<span className='text-left'>{item.title}</span>
+						<span className='text-left py-2'>{item.title}</span>
 					</Button>
 				)
 			})}
