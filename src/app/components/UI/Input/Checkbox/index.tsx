@@ -1,19 +1,24 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 
 type PropsType = {
 	name: string
 	label: string
 	onToggle: () => void
+	isSelected: boolean
 }
 
-const Checkbox: FC<PropsType> = ({ name, label, onToggle }) => {
+const Checkbox: FC<PropsType> = ({ name, label, onToggle, isSelected }) => {
 	const [isChecked, setIsChecked] = useState<boolean>(false)
 
 	const handleOnChange = () => {
 		onToggle(name, !isChecked)
 		setIsChecked(!isChecked)
 	}
+
+	useEffect(() => {
+		setIsChecked(isSelected)
+	}, [isSelected])
 
 	return (
 		<label className='relative h-fit inline-flex items-center cursor-pointer'>

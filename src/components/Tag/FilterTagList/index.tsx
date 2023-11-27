@@ -5,12 +5,14 @@ import getAllGenres from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 
 type PropsType = {
+	tags: Array<ITag>
 	onToggle: () => void
 	name: string
 }
 
-const FilterTagList: FC<PropsType> = ({ onToggle, name }) => {
+const FilterTagList: FC<PropsType> = ({ tags, onToggle, name }) => {
 	const [itemsList, setItemsList] = useState<Array<ITag>>([])
+	const [selectedTags, setSelectedTags] = useState<Array<ITag>>(tags)
 
 	const onToggleTag = (tag, isChecked) => {
 		onToggle(name, tag, isChecked)
@@ -25,6 +27,10 @@ const FilterTagList: FC<PropsType> = ({ onToggle, name }) => {
 		getTags()
 	}, [])
 
+	useEffect(() => {
+		setSelectedTags(tags)
+	}, [tags])
+
 	return (
 		<div className='h-fit'>
 			<Title variant='h3'>With genres</Title>
@@ -35,6 +41,10 @@ const FilterTagList: FC<PropsType> = ({ onToggle, name }) => {
 							key={item.name}
 							tag={item}
 							isEdit
+							isSelected={
+								selectedTags &&
+								selectedTags.find(tag => tag.name === item.name)
+							}
 							onToggle={onToggleTag}
 						/>
 					)

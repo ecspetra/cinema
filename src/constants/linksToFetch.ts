@@ -8,4 +8,4 @@ export const LINK_TO_FETCH_ALL_GENRES = `https://api.themoviedb.org/3/genre/{que
 export const LINK_TO_FETCH_PERSON_LIST = `https://api.themoviedb.org/3/person/popular?api_key=${API_KEY}&page={currentPage}`
 export const LINK_TO_FETCH_MOVIES_WITH_PERSONS = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_people={personId}&page={currentPage}`
 export const LINK_TO_SEARCH = `https://api.themoviedb.org/3/search/{fieldName}?api_key=${API_KEY}&query={searchQuery}&page={currentPage}`
-export const LINK_TO_SEARCH_LIST_ITEMS = `https://api.themoviedb.org/3/discover/{type}?api_key=${API_KEY}&query={searchQuery}&page={currentPage}`
+export const LINK_TO_SEARCH_LIST_ITEMS = `https://api.themoviedb.org/3/discover/{type}?api_key=${API_KEY}&{searchQuery}&page={currentPage}`

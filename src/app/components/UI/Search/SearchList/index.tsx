@@ -27,7 +27,7 @@ const SearchList: FC<PropsType> = ({
 		isMoreDataAvailable,
 		linkToFetch
 	)
-
+	console.log(itemsList)
 	return (
 		<div
 			ref={containerRef}
@@ -37,7 +37,9 @@ const SearchList: FC<PropsType> = ({
 				return (
 					<Button
 						key={item.id}
-						onClick={() => onSearch(name, item.name)}
+						onClick={() =>
+							onSearch(name, { id: item.id, name: item.name })
+						}
 						className='z-10'
 					>
 						{item.name}

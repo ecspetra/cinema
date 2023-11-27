@@ -16,10 +16,10 @@ const Search: FC<PropsType> = ({ name, label, onSearch }) => {
 	const [results, setResults] = useState([])
 	const [isMoreDataAvailable, setIsMoreDataAvailable] =
 		useState<boolean>(false)
-	const linkToFetch = LINK_TO_SEARCH.replace('{fieldName}', label).replace(
-		'{searchQuery}',
-		searchQuery
-	)
+	const linkToFetch = LINK_TO_SEARCH.replace(
+		'{fieldName}',
+		label.toLowerCase()
+	).replace('{searchQuery}', searchQuery)
 
 	useEffect(() => {
 		setResults([])
@@ -32,12 +32,11 @@ const Search: FC<PropsType> = ({ name, label, onSearch }) => {
 			}, 500)
 		}
 	}, [searchQuery])
-
 	return (
 		<div className='relative h-fit'>
 			<InputField
 				id={name}
-				label={label.charAt(0).toUpperCase() + label.slice(1)}
+				label={label}
 				value={searchQuery}
 				onChange={event => setSearchQuery(event.target.value)}
 				icon={faMagnifyingGlass}

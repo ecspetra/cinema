@@ -1,5 +1,5 @@
 import { IMovieCard, IPersonCard } from '../../../../interfaces'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import { SortByOption } from '@/constants/enum'
@@ -34,6 +34,10 @@ const ItemsListWrap: FC<PropsType> = ({
 		)
 		setLinkToFetch(updatedLinkToFetch)
 	}
+
+	useEffect(() => {
+		setLinkToFetch(linkToFetchItems)
+	}, [linkToFetchItems])
 
 	if (!itemsList.length) {
 		return <EmptyList title={title} />

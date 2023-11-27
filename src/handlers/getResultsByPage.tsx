@@ -6,7 +6,7 @@ export const getResultsByPage = async (link, page) => {
 		)
 		const result = await defaultResponse.json()
 		const nextResult = await nextResponse.json()
-
+		console.log(result)
 		return {
 			items: result.results,
 			isMoreDataAvailable: !!nextResult.results.length,

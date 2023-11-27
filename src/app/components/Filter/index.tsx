@@ -13,6 +13,7 @@ import { generateYearsList } from '@/handlers/generateYearsList'
 import Checkbox from '../UI/Input/Checkbox'
 import { FilterFields } from '@/constants/enum'
 import Tag from '@/components/Tag'
+import { LINK_TO_SEARCH_LIST_ITEMS } from '@/constants/linksToFetch'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
@@ -47,7 +48,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 	const handleArrayFieldChange = (
 		field: keyof FilterFormData,
-		value: string
+		value: object
 	) => {
 		setIsTouched(true)
 		setFormData(prevData => {
@@ -76,9 +77,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 		setFormData(prevData => {
 			const updatedData = {
 				...prevData,
-				[field]:
-					FilterFields[field].charAt(0).toUpperCase() +
-					FilterFields[field].slice(1).replace(/_/g, ' '),
+				[field]: value,
 			}
 
 			if (!value) {
@@ -90,19 +89,18 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 		})
 	}
 
-	const handleRemoveFilterTag = (field: keyof FilterFormData, value: any) => {
+	const handleRemoveFilterTag = (tag: any) => {
 		setFormData(prevData => {
-			const currentValue = prevData[field]
+			const currentValue = prevData[tag.field]
 
 			const updatedArray = Array.isArray(currentValue)
-				? currentValue.filter(item => item !== value)
+				? currentValue.filter(item => item.name !== tag.name)
 				: []
-			console.log(prevData[field], updatedArray, field)
 
-			const updatedData = { ...prevData, [field]: updatedArray }
+			const updatedData = { ...prevData, [tag.field]: updatedArray }
 
 			if (updatedArray.length === 0) {
-				const { [field]: removedField, ...restData } = updatedData
+				const { [tag.field]: removedField, ...restData } = updatedData
 				return restData
 			}
 
@@ -118,7 +116,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 			if (isChecked) {
 				const updatedArray = Array.isArray(currentValue)
-					? currentValue.filter(item => item !== tag.name)
+					? currentValue.filter(item => item.name !== tag.name)
 					: []
 
 				const updatedData = { ...prevData, [field]: updatedArray }
@@ -130,11 +128,34 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 				return updatedData
 			} else {
 				const updatedArray = Array.isArray(currentValue)
-					? [...currentValue, tag.name]
-					: [tag.name]
+					? [...currentValue, tag]
+					: [tag]
 				return { ...prevData, [field]: updatedArray }
 			}
 		})
+	}
+
+	const getQuery = () => {
+		let queryArray = []
+
+		for (const key in formData) {
+			if (formData.hasOwnProperty(key)) {
+				const value = formData[key]
+
+				if (Array.isArray(value)) {
+					queryArray.push(
+						`${key}=${value.map(item => item?.id).join(',')}`
+					)
+				} else if (
+					typeof value === 'string' ||
+					typeof value === 'boolean'
+				) {
+					queryArray.push(`${key}=${value || ''}`)
+				}
+			}
+		}
+
+		return queryArray.join('&').replace(/\s/g, '')
 	}
 
 	const handleSearch = async (event: React.FormEvent) => {
@@ -145,12 +166,14 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 		if (isFormValid && isTouched) {
 			try {
-				// onApply(
-				// 	LINK_TO_SEARCH_MOVIE.replace('{type}', type).replace(
-				// 		'{searchQuery}',
-				// 		formData.searchQuery.value
-				// 	)
-				// )
+				const query = getQuery()
+				console.log(query)
+				onApply(
+					LINK_TO_SEARCH_LIST_ITEMS.replace('{type}', type).replace(
+						'{searchQuery}',
+						query
+					)
+				)
 				setError('')
 			} catch (error: any) {
 				setError(error.toString())
@@ -165,6 +188,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 	const groupedFields = [
 		'primary_release_year',
+		'first_air_date_year',
 		'vote_average',
 		'with_people',
 		'with_companies',
@@ -181,10 +205,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 				return (
 					<Select
 						key={field}
-						label={
-							FilterFields[field].charAt(0).toUpperCase() +
-							FilterFields[field].slice(1).replace(/_/g, ' ')
-						}
+						label={FilterFields[field]}
 						name={field}
 						onChange={handleSelectChange}
 					>
@@ -214,11 +235,8 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 					<InputField
 						key={field}
 						id={field}
-						label={
-							FilterFields[field].charAt(0).toUpperCase() +
-							FilterFields[field].slice(1).replace(/_/g, ' ')
-						}
-						value={formData[field]}
+						label={FilterFields[field]}
+						value={formData[field] || ''}
 						onChange={(e: ChangeEvent<HTMLInputElement>) =>
 							handleStringFieldChange(field, e.target.value)
 						}
@@ -228,6 +246,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 				return (
 					<FilterTagList
 						key={field}
+						tags={formData[field]}
 						onToggle={handleToggleTag}
 						name={field}
 					/>
@@ -237,11 +256,9 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 					<Checkbox
 						key={field}
 						name={field}
-						label={
-							FilterFields[field].charAt(0).toUpperCase() +
-							FilterFields[field].slice(1).replace(/_/g, ' ')
-						}
+						label={FilterFields[field]}
 						onToggle={handleBooleanFieldChange}
+						isSelected={formData[field] !== undefined}
 					/>
 				)
 		}
@@ -269,9 +286,9 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 							return value.map(item => {
 								return (
 									<Tag
-										key={item}
+										key={item.name}
 										tag={{
-											name: item,
+											name: item.name,
 											field: Object.keys(formData)[idx],
 										}}
 										isEdit
@@ -284,7 +301,14 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 								<Tag
 									key={value}
 									tag={{
-										name: value,
+										name:
+											typeof value === 'boolean'
+												? FilterFields[
+														Object.keys(formData)[
+															idx
+														]
+												  ]
+												: value,
 										field: Object.keys(formData)[idx],
 									}}
 									isEdit
