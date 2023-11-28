@@ -5,7 +5,7 @@ export const useInfiniteScroll = (
 	containerRef: RefObject<HTMLElement>,
 	itemsList: Array<any>,
 	isMoreDataAvailable: boolean,
-	linkToFetch: string
+	urlToFetch: string
 ) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isMoreItemsAvailable, setIsMoreItemsAvailable] =
@@ -14,7 +14,9 @@ export const useInfiniteScroll = (
 	const [items, setItems] = useState([])
 
 	const getMoreItems = async () => {
-		getResultsByPage(linkToFetch, currentPage).then(data => {
+		if (currentPage === 1) setItems([])
+
+		getResultsByPage(urlToFetch, currentPage).then(data => {
 			setItems(prevState => [...prevState, ...data.items])
 			setIsMoreItemsAvailable(data.isMoreDataAvailable)
 			setIsLoading(false)
@@ -32,6 +34,11 @@ export const useInfiniteScroll = (
 	useEffect(() => {
 		setIsMoreItemsAvailable(isMoreDataAvailable)
 	}, [isMoreDataAvailable])
+
+	useEffect(() => {
+		setCurrentPage(1)
+		setIsMoreItemsAvailable(true)
+	}, [urlToFetch])
 
 	useEffect(() => {
 		const itemsContainer = containerRef.current
@@ -58,7 +65,7 @@ export const useInfiniteScroll = (
 				itemsContainer.removeEventListener('scroll', handleScroll)
 			}
 		}
-	}, [containerRef, isMoreItemsAvailable])
+	}, [containerRef, isMoreItemsAvailable, isLoading])
 
 	return {
 		isLoading,

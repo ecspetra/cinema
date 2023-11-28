@@ -1,3 +1,9 @@
+import {
+	URL_TO_FETCH_COUNTRIES,
+	URL_TO_SEARCH,
+	URL_TO_SEARCH_COUNTRIES,
+} from '@/constants/linksToFetch'
+
 export enum SortByOption {
 	'Popularity: Low to hight' = 'popularity.asc',
 	'Popularity: Hight to low' = 'popularity.desc',
@@ -20,6 +26,22 @@ export enum FilterFields {
 	with_people = 'Person',
 	with_companies = 'Company',
 	with_genres = 'Genres',
-	with_origin_country = 'Country',
+	with_original_language = 'Country',
 	with_keywords = 'Keyword',
+}
+
+export enum FilterUrlToSearch {
+	with_people = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		FilterFields.with_people.toLowerCase()
+	),
+	with_companies = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		FilterFields.with_companies.toLowerCase()
+	),
+	with_original_language = URL_TO_FETCH_COUNTRIES,
+	with_keywords = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		FilterFields.with_keywords.toLowerCase()
+	),
 }

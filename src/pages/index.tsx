@@ -1,6 +1,6 @@
 import {
-	LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
-	LINK_TO_FETCH_UPCOMING_MOVIE_LIST,
+	URL_TO_FETCH_DEFAULT_MOVIE_LIST,
+	URL_TO_FETCH_UPCOMING_MOVIE_LIST,
 } from '@/constants/linksToFetch'
 import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
@@ -14,14 +14,12 @@ const Home = ({ results }) => {
 
 	useEffect(() => {
 		if (!results) {
-			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
+			getResultsByPage(URL_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
 				setDefaultMovieList(data)
 			})
-			getResultsByPage(LINK_TO_FETCH_UPCOMING_MOVIE_LIST, 1).then(
-				data => {
-					setUpcomingMovieList(data)
-				}
-			)
+			getResultsByPage(URL_TO_FETCH_UPCOMING_MOVIE_LIST, 1).then(data => {
+				setUpcomingMovieList(data)
+			})
 		}
 	}, [])
 
@@ -40,7 +38,7 @@ const Home = ({ results }) => {
 				listName='movie'
 				title='Discover movies'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
-				linkToFetchItems={LINK_TO_FETCH_DEFAULT_MOVIE_LIST}
+				urlToFetchItems={URL_TO_FETCH_DEFAULT_MOVIE_LIST}
 			/>
 		</>
 	)
@@ -49,12 +47,12 @@ const Home = ({ results }) => {
 export const getServerSideProps = async () => {
 	try {
 		const defaultMovies = await getResultsByPage(
-			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
+			URL_TO_FETCH_DEFAULT_MOVIE_LIST,
 			1
 		)
 
 		const upcomingMovies = await getResultsByPage(
-			LINK_TO_FETCH_UPCOMING_MOVIE_LIST,
+			URL_TO_FETCH_UPCOMING_MOVIE_LIST,
 			1
 		)
 

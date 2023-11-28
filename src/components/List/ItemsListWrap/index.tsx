@@ -11,7 +11,8 @@ type PropsType = {
 	listName: 'movie' | 'person' | 'tv'
 	title: string
 	isMoreDataAvailable: boolean
-	linkToFetchItems?: string
+	text?: string
+	urlToFetchItems?: string
 	isFilterable?: boolean
 	isSortable?: boolean
 }
@@ -21,26 +22,31 @@ const ItemsListWrap: FC<PropsType> = ({
 	listName,
 	title,
 	isMoreDataAvailable,
-	linkToFetchItems,
+	text,
+	urlToFetchItems,
 	isFilterable = false,
 	isSortable = false,
 }) => {
-	const [linkToFetch, setLinkToFetch] = useState<string>(linkToFetchItems)
+	const [urlToFetch, setUrlToFetch] = useState<string>(urlToFetchItems)
+	const [isShowEmptyList, setIsShowEmptyList] = useState<boolean>(
+		!itemsList.length
+	)
 
 	const handleSortChange = (value: SortByOption) => {
-		const updatedLinkToFetch = linkToFetch.replace(
+		const updatedLinkToFetch = urlToFetch.replace(
 			/(sort_by=)[^&]*/,
 			`$1${value}`
 		)
-		setLinkToFetch(updatedLinkToFetch)
+		setUrlToFetch(updatedLinkToFetch)
 	}
 
 	useEffect(() => {
-		setLinkToFetch(linkToFetchItems)
-	}, [linkToFetchItems])
+		setUrlToFetch(urlToFetchItems)
+		setIsShowEmptyList(false)
+	}, [urlToFetchItems])
 
-	if (!itemsList.length) {
-		return <EmptyList title={title} />
+	if (isShowEmptyList) {
+		return <EmptyList title={title} text={text} />
 	}
 
 	return (
@@ -53,8 +59,9 @@ const ItemsListWrap: FC<PropsType> = ({
 				itemsList={itemsList}
 				listName={listName}
 				isMoreDataAvailable={isMoreDataAvailable}
-				linkToFetchItems={linkToFetch}
+				urlToFetchItems={urlToFetch}
 				isFilterable={isFilterable}
+				onEmptyList={setIsShowEmptyList}
 			/>
 		</div>
 	)

@@ -1,10 +1,4 @@
 import CollectionWrap from '@/components/Collection/CollectionWrap'
-import {
-	IMark,
-	IMovieCard,
-	IPersonCard,
-	IReviewCardFromDB,
-} from '../../../interfaces'
 import React, { FC } from 'react'
 
 type PropsType = {
@@ -56,7 +50,7 @@ const UserCollection: FC<PropsType> = ({
 				isMoreDataAvailable={false}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
-		</div>
+		</>
 	)
 }
 

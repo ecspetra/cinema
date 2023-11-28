@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
+import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
 import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
 import MovieInfo from '../../components/Movie/MovieInfo'
 import React, { useEffect, useState } from 'react'
@@ -14,8 +14,8 @@ import ItemsListWrap from '@/components/List/ItemsListWrap'
 const Movie = ({ movieFromProps }) => {
 	const router = useRouter()
 	const [movie, setMovie] = useState(null)
-	const [linkToFetchSimilarMovies, setLinkToFetchSimilarMovies] = useState(
-		LINK_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
+	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] = useState(
+		URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
 			'{listName}',
 			'movie'
 		)
@@ -30,8 +30,8 @@ const Movie = ({ movieFromProps }) => {
 		const fetchData = async () => {
 			setMovie(null)
 
-			setLinkToFetchSimilarMovies(
-				LINK_TO_FETCH_SIMILAR_LIST.replace(
+			setUrlToFetchSimilarMovies(
+				URL_TO_FETCH_SIMILAR_LIST.replace(
 					'{itemId}',
 					router.query.id
 				).replace('{listName}', 'movie')
@@ -62,7 +62,7 @@ const Movie = ({ movieFromProps }) => {
 					fetchItemData('movie', router.query.id, '/reviews'),
 					fetchItemData('movie', router.query.id, '/videos'),
 					getMovieReviews(),
-					getResultsByPage(linkToFetchSimilarMovies, 1),
+					getResultsByPage(urlToFetchSimilarMovies, 1),
 				])
 
 				const reviews = [...reviewsResult.results, ...reviewsFromDB]
@@ -129,7 +129,7 @@ const Movie = ({ movieFromProps }) => {
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}
-					linkToFetchItems={linkToFetchSimilarMovies}
+					urlToFetchItems={urlToFetchSimilarMovies}
 				/>
 			</div>
 		</>
@@ -138,7 +138,7 @@ const Movie = ({ movieFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const linkToFetchSimilarMovies = LINK_TO_FETCH_SIMILAR_LIST.replace(
+		const urlToFetchSimilarMovies = URL_TO_FETCH_SIMILAR_LIST.replace(
 			'{itemId}',
 			ctx.query.id
 		).replace('{listName}', 'movie')
@@ -166,7 +166,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			fetchItemData('movie', ctx.query.id, '/reviews'),
 			fetchItemData('movie', ctx.query.id, '/videos'),
 			getMovieReviews(),
-			getResultsByPage(linkToFetchSimilarMovies, 1),
+			getResultsByPage(urlToFetchSimilarMovies, 1),
 		])
 
 		const reviews = [...reviewsResult.results, ...reviewsFromDB]

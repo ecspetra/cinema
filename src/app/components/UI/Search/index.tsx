@@ -1,37 +1,44 @@
 import React, { FC, useEffect, useState } from 'react'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
-import { LINK_TO_SEARCH } from '@/constants/linksToFetch'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import SearchList from '@/app/components/UI/Search/SearchList'
 
 type PropsType = {
 	name: string
 	label: string
+	urlToFetch: string
 	onSearch: () => void
 }
 
-const Search: FC<PropsType> = ({ name, label, onSearch }) => {
+const Search: FC<PropsType> = ({ name, label, urlToFetch, onSearch }) => {
 	const [searchQuery, setSearchQuery] = useState<string>('')
 	const [results, setResults] = useState([])
 	const [isMoreDataAvailable, setIsMoreDataAvailable] =
 		useState<boolean>(false)
-	const linkToFetch = LINK_TO_SEARCH.replace(
-		'{fieldName}',
-		label.toLowerCase()
-	).replace('{searchQuery}', searchQuery)
+
+	const urlToFetchWithSearchQuery = urlToFetch.replace(
+		'{searchQuery}',
+		searchQuery
+	)
+
+	const resetSearch = () => {
+		setSearchQuery('')
+		setResults([])
+	}
 
 	useEffect(() => {
 		setResults([])
 		if (searchQuery.length > 0) {
 			setTimeout(() => {
-				getResultsByPage(linkToFetch, 1).then(data => {
+				getResultsByPage(urlToFetchWithSearchQuery, 1).then(data => {
 					setResults(data.items)
 					setIsMoreDataAvailable(data.isMoreDataAvailable)
 				})
 			}, 500)
 		}
 	}, [searchQuery])
+
 	return (
 		<div className='relative h-fit'>
 			<InputField
@@ -46,9 +53,10 @@ const Search: FC<PropsType> = ({ name, label, onSearch }) => {
 				<SearchList
 					itemsList={results}
 					isMoreDataAvailable={isMoreDataAvailable}
-					linkToFetch={linkToFetch}
+					urlToFetch={urlToFetchWithSearchQuery}
 					onSearch={onSearch}
 					name={name}
+					onClose={resetSearch}
 				/>
 			)}
 		</div>

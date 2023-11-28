@@ -1,4 +1,4 @@
-import { LINK_TO_FETCH_TV_SHOWS_LIST } from '@/constants/linksToFetch'
+import { URL_TO_FETCH_TV_SHOWS_LIST } from '@/constants/linksToFetch'
 import { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
@@ -11,7 +11,7 @@ const TVShows = ({ tvShows }) => {
 
 	useEffect(() => {
 		if (!tvShows) {
-			getResultsByPage(LINK_TO_FETCH_TV_SHOWS_LIST, 1).then(data => {
+			getResultsByPage(URL_TO_FETCH_TV_SHOWS_LIST, 1).then(data => {
 				setTvShowsList(data)
 			})
 		}
@@ -31,7 +31,7 @@ const TVShows = ({ tvShows }) => {
 				listName='tv'
 				title='TV shows'
 				isMoreDataAvailable={tvShowsList.isMoreDataAvailable}
-				linkToFetchItems={LINK_TO_FETCH_TV_SHOWS_LIST}
+				urlToFetchItems={URL_TO_FETCH_TV_SHOWS_LIST}
 			/>
 		</>
 	)
@@ -39,7 +39,7 @@ const TVShows = ({ tvShows }) => {
 
 export const getServerSideProps = async () => {
 	try {
-		const tvShows = await getResultsByPage(LINK_TO_FETCH_TV_SHOWS_LIST, 1)
+		const tvShows = await getResultsByPage(URL_TO_FETCH_TV_SHOWS_LIST, 1)
 
 		return {
 			props: {

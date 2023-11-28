@@ -11,7 +11,8 @@ type PropsType = {
 	itemsList: Array<IMovieCard> | Array<IPersonCard>
 	listName: 'movie' | 'person' | 'tv'
 	isMoreDataAvailable: boolean
-	linkToFetchItems?: string
+	urlToFetchItems?: string
+	onEmptyList: () => void
 	isFilterable?: boolean
 }
 
@@ -19,7 +20,8 @@ const ItemsList: FC<PropsType> = ({
 	itemsList,
 	listName,
 	isMoreDataAvailable,
-	linkToFetchItems,
+	urlToFetchItems,
+	onEmptyList,
 	isFilterable = false,
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -41,8 +43,10 @@ const ItemsList: FC<PropsType> = ({
 
 	const getMoreItems = page => {
 		setIsLoading(true)
-		getResultsByPage(linkToFetchItems, page)
+		getResultsByPage(urlToFetchItems, page)
 			.then(data => {
+				if (!data.items.length) onEmptyList(true)
+
 				setFetchedItems(data.items)
 				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
@@ -76,10 +80,11 @@ const ItemsList: FC<PropsType> = ({
 
 	useEffect(() => {
 		resetItems()
-	}, [itemsList, linkToFetchItems])
+		console.log(urlToFetchItems)
+	}, [itemsList, urlToFetchItems])
 
 	return (
-		<div className='mb-16'>
+		<>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
 					if (listName !== 'person') {
@@ -103,7 +108,7 @@ const ItemsList: FC<PropsType> = ({
 					Show more
 				</Button>
 			)}
-		</div>
+		</>
 	)
 }
 

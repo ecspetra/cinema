@@ -44,6 +44,9 @@ const Select: FC<PropsType> = ({
 				onChange={handleSelectChange}
 				className='w-full relative left-0 top-0 pl-4 pt-8 pb-4 pr-4 bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
 			>
+				<option value='' disabled hidden>
+					Select
+				</option>
 				{children}
 			</select>
 		</label>

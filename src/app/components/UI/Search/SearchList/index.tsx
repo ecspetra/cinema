@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef } from 'react'
 import Button from '@/app/components/UI/Button'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { IMovieCard } from '../../../../../../interfaces'
@@ -7,16 +7,18 @@ import Loader from '@/components/Loader'
 type PropsType = {
 	itemsList: Array<IMovieCard>
 	isMoreDataAvailable: boolean
-	linkToFetch: string
+	urlToFetch: string
 	onSearch: () => void
+	onClose: () => void
 	name: string
 }
 
 const SearchList: FC<PropsType> = ({
 	itemsList,
 	isMoreDataAvailable,
-	linkToFetch,
+	urlToFetch,
 	onSearch,
+	onClose,
 	name,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
@@ -25,22 +27,48 @@ const SearchList: FC<PropsType> = ({
 		containerRef,
 		itemsList,
 		isMoreDataAvailable,
-		linkToFetch
+		urlToFetch
 	)
-	console.log(itemsList)
+
+	const handleSelectListItem = (fieldName, { id, name }) => {
+		onSearch(fieldName, { id, name })
+		onClose()
+	}
+
+	useEffect(() => {
+		const handleClickOutside = event => {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target)
+			) {
+				onClose()
+			}
+		}
+
+		document.addEventListener('click', handleClickOutside)
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside)
+		}
+	}, [containerRef])
+
 	return (
 		<div
 			ref={containerRef}
-			className='absolute top-full flex flex-col flex-none w-80 h-80 overflow-y-auto scrollbar-hide bg-gray-950'
+			className='w-full absolute top-full flex flex-col items-center flex-none h-80 overflow-y-auto scrollbar-hide bg-gray-700 z-10'
 		>
 			{items.map(item => {
 				return (
 					<Button
 						key={item.id}
 						onClick={() =>
-							onSearch(name, { id: item.id, name: item.name })
+							handleSelectListItem(name, {
+								id: item.id,
+								name: item.name,
+							})
 						}
-						className='z-10'
+						context='listItem'
+						className='w-full z-10'
 					>
 						{item.name}
 					</Button>

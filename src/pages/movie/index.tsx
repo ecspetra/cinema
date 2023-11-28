@@ -1,4 +1,4 @@
-import { LINK_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
+import { URL_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
@@ -9,13 +9,13 @@ import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Movies = ({ results }) => {
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
-	const [linkToFetch, setLinkToFetch] = useState(
-		LINK_TO_FETCH_DEFAULT_MOVIE_LIST
+	const [urlToFetch, setUrlToFetch] = useState(
+		URL_TO_FETCH_DEFAULT_MOVIE_LIST
 	)
 
 	useEffect(() => {
 		if (!results) {
-			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
+			getResultsByPage(URL_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
 				setDefaultMovieList(data)
 			})
 		}
@@ -32,24 +32,25 @@ const Movies = ({ results }) => {
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
 			<Filter
 				type='movie'
-				onApply={setLinkToFetch}
+				onApply={setUrlToFetch}
 				fields={[
 					'primary_release_year',
 					'vote_average',
 					'with_people',
 					'with_companies',
-					'with_origin_country',
+					'with_original_language',
 					'with_keywords',
 					'with_genres',
-					'include_adult',
 				]}
+				defaultUrl={URL_TO_FETCH_DEFAULT_MOVIE_LIST}
 			/>
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
 				listName='movie'
 				title='Movies'
+				text='No movies found'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
-				linkToFetchItems={linkToFetch}
+				urlToFetchItems={urlToFetch}
 				isFilterable
 				isSortable
 			/>
@@ -60,7 +61,7 @@ const Movies = ({ results }) => {
 export const getServerSideProps = async () => {
 	try {
 		const defaultMovies = await getResultsByPage(
-			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
+			URL_TO_FETCH_DEFAULT_MOVIE_LIST,
 			1
 		)
 

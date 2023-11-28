@@ -5,7 +5,7 @@ import Button from '@/app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
-import { LINK_TO_FETCH_UPCOMING_MOVIE_LIST } from '@/constants/linksToFetch'
+import { URL_TO_FETCH_UPCOMING_MOVIE_LIST } from '@/constants/linksToFetch'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>
@@ -26,7 +26,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 		containerRef,
 		itemsList,
 		isMoreDataAvailable,
-		LINK_TO_FETCH_UPCOMING_MOVIE_LIST
+		URL_TO_FETCH_UPCOMING_MOVIE_LIST
 	)
 
 	const defaultItemClassNames =

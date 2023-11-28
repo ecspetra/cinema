@@ -1,6 +1,6 @@
 import Title from '@/app/components/UI/Title/Title'
 import InputField from '@/app/components/UI/Input/InputField'
-import React, { ChangeEvent, FC, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useState } from 'react'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
@@ -10,36 +10,42 @@ import Select from '@/app/components/UI/Input/Select'
 import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
 import { generateYearsList } from '@/handlers/generateYearsList'
-import Checkbox from '../UI/Input/Checkbox'
-import { FilterFields } from '@/constants/enum'
-import Tag from '@/components/Tag'
-import { LINK_TO_SEARCH_LIST_ITEMS } from '@/constants/linksToFetch'
+import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
+import { URL_TO_SEARCH_LIST_ITEMS } from '@/constants/linksToFetch'
+import { getCountriesList } from '@/handlers/getCountriesList'
+import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
 	type: 'movie' | 'person'
 	fields: (keyof FilterFormData)[]
+	defaultUrl: string
 }
 
 interface FilterFormData {
 	primary_release_year: number
 	first_air_date_year: number
-	include_adult: boolean
 	vote_average: number
 	with_people: Array<string>
 	with_companies: Array<string>
 	with_genres: Array<string>
-	with_origin_country: string
+	with_original_language: string
 	with_keywords: Array<string>
 }
 
-const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
+const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
-	const releaseYears = generateYearsList(1930)
-	console.log(formData)
+	const [countryList, setCountryList] = useState([])
+	const releaseYearsList = generateYearsList(1930)
+
+	const handleResetFilter = () => {
+		setFormData({})
+		setIsTouched(false)
+		onApply(defaultUrl)
+	}
 
 	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
 		setIsTouched(true)
@@ -67,26 +73,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 	) => {
 		setIsTouched(true)
 		setFormData(prevData => ({ ...prevData, [field]: value }))
-	}
-
-	const handleBooleanFieldChange = (
-		field: keyof FilterFormData,
-		value: boolean
-	) => {
-		setIsTouched(true)
-		setFormData(prevData => {
-			const updatedData = {
-				...prevData,
-				[field]: value,
-			}
-
-			if (!value) {
-				const { [field]: removedField, ...restData } = updatedData
-				return restData
-			}
-
-			return updatedData
-		})
 	}
 
 	const handleRemoveFilterTag = (tag: any) => {
@@ -146,10 +132,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 					queryArray.push(
 						`${key}=${value.map(item => item?.id).join(',')}`
 					)
-				} else if (
-					typeof value === 'string' ||
-					typeof value === 'boolean'
-				) {
+				} else if (typeof value === 'string') {
 					queryArray.push(`${key}=${value || ''}`)
 				}
 			}
@@ -166,14 +149,18 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 
 		if (isFormValid && isTouched) {
 			try {
-				const query = getQuery()
-				console.log(query)
-				onApply(
-					LINK_TO_SEARCH_LIST_ITEMS.replace('{type}', type).replace(
-						'{searchQuery}',
-						query
+				if (Object.keys(formData).length === 0) {
+					onApply(defaultUrl)
+				} else {
+					const query = getQuery()
+					onApply(
+						URL_TO_SEARCH_LIST_ITEMS.replace(
+							'{type}',
+							type
+						).replace('{searchQuery}', query)
 					)
-				)
+				}
+
 				setError('')
 			} catch (error: any) {
 				setError(error.toString())
@@ -192,11 +179,11 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 		'vote_average',
 		'with_people',
 		'with_companies',
-		'with_origin_country',
+		'with_original_language',
 		'with_keywords',
 	]
 
-	const ungroupedFields = ['with_genres', 'include_adult']
+	const ungroupedFields = ['with_genres']
 
 	const getField = (field: keyof FilterFormData) => {
 		switch (field) {
@@ -209,11 +196,28 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 						name={field}
 						onChange={handleSelectChange}
 					>
-						{releaseYears.map((year, idx) => (
+						{releaseYearsList.map((item, idx) => (
 							<SelectOption
-								key={year}
-								value={year}
-								label={year}
+								key={item}
+								value={item}
+								label={item}
+							/>
+						))}
+					</Select>
+				)
+			case 'with_original_language':
+				return (
+					<Select
+						key={field}
+						label={FilterFields[field]}
+						name={field}
+						onChange={handleSelectChange}
+					>
+						{countryList.map((item, idx) => (
+							<SelectOption
+								key={idx}
+								value={item.iso_3166_1.toLowerCase()}
+								label={item.english_name}
 							/>
 						))}
 					</Select>
@@ -226,11 +230,11 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 						key={field}
 						name={field}
 						label={FilterFields[field]}
+						urlToFetch={FilterUrlToSearch[field]}
 						onSearch={handleArrayFieldChange}
 					/>
 				)
 			case 'vote_average':
-			case 'with_origin_country':
 				return (
 					<InputField
 						key={field}
@@ -251,18 +255,17 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 						name={field}
 					/>
 				)
-			case 'include_adult':
-				return (
-					<Checkbox
-						key={field}
-						name={field}
-						label={FilterFields[field]}
-						onToggle={handleBooleanFieldChange}
-						isSelected={formData[field] !== undefined}
-					/>
-				)
 		}
 	}
+
+	useEffect(() => {
+		const fetchCountriesList = async () => {
+			const countryList = await getCountriesList(type)
+			setCountryList(countryList)
+		}
+
+		fetchCountriesList()
+	}, [])
 
 	return (
 		<div className='mb-16 bg-gray-950 p-4'>
@@ -280,45 +283,13 @@ const Filter: FC<PropsType> = ({ onApply, type, fields }) => {
 							return getField(field)
 					})}
 				</div>
-				<div className='flex justify-start items-start border-t'>
-					{Object.values(formData).map((value, idx) => {
-						if (Array.isArray(value)) {
-							return value.map(item => {
-								return (
-									<Tag
-										key={item.name}
-										tag={{
-											name: item.name,
-											field: Object.keys(formData)[idx],
-										}}
-										isEdit
-										onRemove={handleRemoveFilterTag}
-									/>
-								)
-							})
-						} else {
-							return (
-								<Tag
-									key={value}
-									tag={{
-										name:
-											typeof value === 'boolean'
-												? FilterFields[
-														Object.keys(formData)[
-															idx
-														]
-												  ]
-												: value,
-										field: Object.keys(formData)[idx],
-									}}
-									isEdit
-									onRemove={handleRemoveFilterTag}
-								/>
-							)
-						}
-					})}
-				</div>
-				<Button className='mt-8 mx-auto' type='submit'>
+				<SelectedFilters
+					formData={formData}
+					onRemove={handleRemoveFilterTag}
+					onReset={handleResetFilter}
+					countryList={countryList}
+				/>
+				<Button type='submit' className='mx-auto'>
 					{isLoading ? <Loader isShowText type='static' /> : 'Apply'}
 				</Button>
 				{error && (
