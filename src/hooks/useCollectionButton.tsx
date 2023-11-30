@@ -22,7 +22,7 @@ export const useCollectionButton = (
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
 	const [isLoadingCollection, setIsLoadingCollection] =
 		useState<boolean>(true)
-	const { userId, isLoggedIn } = useAuth()
+	const { isLoggedIn } = useAuth()
 	const { showModal, hideModal } = useModal()
 
 	const handleSetCollectionItem = () => {
@@ -54,9 +54,9 @@ export const useCollectionButton = (
 				}
 			}
 
-			setNewCollectionItem(newItem, userId, collection)
+			setNewCollectionItem(newItem, collection)
 				.then(() => {
-					getCollectionItem(itemInfo.id, userId, collection)
+					getCollectionItem(itemInfo.id, collection)
 						.then(data => {
 							setIsCollectionItem(data)
 							setIsLoadingCollection(false)
@@ -85,7 +85,7 @@ export const useCollectionButton = (
 		setIsMounted(false)
 
 		setTimeout(() => {
-			removeCollectionItem(itemInfo.id, userId, collection)
+			removeCollectionItem(itemInfo.id, collection)
 				.then(() => {
 					setIsCollectionItem(false)
 					setIsLoadingCollection(false)
@@ -116,7 +116,7 @@ export const useCollectionButton = (
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			getCollectionItem(itemInfo.id, userId, collection)
+			getCollectionItem(itemInfo.id, collection)
 				.then(data => {
 					setIsCollectionItem(data)
 					setIsLoadingCollection(false)

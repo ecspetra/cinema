@@ -58,6 +58,7 @@ export interface AuthContextType {
 	userId: string
 	photoURL: string
 	userName: string
+	updateUserProfile: () => void
 }
 
 export const USER_COLLECTIONS = [
@@ -107,19 +108,22 @@ export const updateProfileIcon = async (newIcon: string) => {
 	const currentUser = auth.currentUser
 	const displayName = currentUser?.displayName
 	const userId = currentUser?.uid
+	const photoURL = newIcon
+
 	const updateFields = {
 		photoURL: newIcon,
 	}
 
-	await updateProfile(currentUser, { displayName, newIcon })
+	await updateProfile(currentUser, { displayName, photoURL })
 	await updateUserInRealtimeDatabase(updateFields, userId)
 }
 
 export const updateUserInfo = async (newInfo: object) => {
 	const currentUser = auth.currentUser
-	const displayName = currentUser?.displayName
+	const displayName = newInfo.name.value
 	const userId = currentUser?.uid
 	const photoURL = currentUser?.photoURL
+
 	const updateFields = {
 		displayName: newInfo.name.value,
 		country: newInfo.country.value,
@@ -178,8 +182,8 @@ export const signUp = async (
 		const photoURL = `https://api.dicebear.com/5.x/thumbs/svg?seed=${newUser.uid}`
 
 		await updateProfile(newUser, { displayName, photoURL })
-		await signInWithEmailAndPassword(auth, email, password)
 		await addUserToRealtimeDatabase(newUser)
+		await signInWithEmailAndPassword(auth, email, password)
 	} catch (error) {
 		throw error
 	}
@@ -201,8 +205,8 @@ export const signOutUser = async () => {
 	}
 }
 
-export const getUserInfo = (userId: string) => {
-	const infoPath = `users/${userId}/info/`
+export const getUserInfo = async (userId: string) => {
+	const infoPath = `users/${userId}`
 	const itemRef = ref(database, infoPath)
 
 	return new Promise(async resolve => {
@@ -215,6 +219,114 @@ export const getUserInfo = (userId: string) => {
 			resolve(userInfo)
 		})
 	})
+}
+
+export const getUserFriends = friendIdList => {
+	return new Promise(async resolve => {
+		let friendsInfo = []
+
+		const promises = Object.keys(friendIdList).map(async (id: string) => {
+			const friend = await getUserInfo(id)
+			friendsInfo.push(friend)
+		})
+
+		await Promise.all(promises)
+
+		resolve(friendsInfo)
+	})
+}
+
+export const getIsFriend = (itemId: string) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const collectionPath = `users/${userId}/friends/${itemId}`
+	const itemRef = ref(database, collectionPath)
+
+	return new Promise(async resolve => {
+		let isCollectionItem = false
+
+		get(itemRef).then(snapshot => {
+			if (snapshot.exists()) isCollectionItem = true
+
+			resolve(isCollectionItem)
+		})
+	})
+}
+
+export const userInfoListener = (userId: string, setProfile: ([]) => void) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+		setProfile(profileData)
+	}
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
+	}
+}
+
+export const userFriendsListener = (
+	userId: string,
+	loadedItems: Array<object>,
+	setFriends: ([]) => void
+) => {
+	const userRef = ref(database, `users/${userId}/friends`)
+
+	const onFriendAdded = async (childSnapshot: DataSnapshot) => {
+		const newFriendId = childSnapshot.val()
+
+		if (
+			loadedItems.length === 0 ||
+			!loadedItems.some(
+				existingItem => existingItem.info.id === newFriendId
+			)
+		) {
+			const newFriend = await getUserInfo(newFriendId)
+			setFriends(prevItems => [newFriend, ...prevItems])
+		}
+	}
+
+	const onFriendRemoved = (childSnapshot: DataSnapshot) => {
+		const removedItemId = childSnapshot.val()
+		setFriends(prevItems =>
+			prevItems.filter(item => item.info.id !== removedItemId)
+		)
+	}
+
+	const unsubscribeFriendAdded = onChildAdded(userRef, onFriendAdded)
+	const unsubscribeFriendRemoved = onChildRemoved(userRef, onFriendRemoved)
+
+	return () => {
+		unsubscribeFriendAdded()
+		unsubscribeFriendRemoved()
+	}
+}
+
+export const userContextListener = (
+	userId: string,
+	prevData: object,
+	updateUserProfile: () => void
+) => {
+	const userRef = ref(database, `users/${userId}/info`)
+
+	const onInfoChanged = (snapshot: DataSnapshot) => {
+		const profileData = snapshot.val()
+
+		if (
+			prevData.photoURL !== profileData?.photoURL ||
+			prevData.userName !== profileData?.displayName
+		) {
+			updateUserProfile()
+		}
+	}
+
+	const unsubscribe = onValue(userRef, onInfoChanged)
+
+	return () => {
+		unsubscribe()
+	}
 }
 
 // movie marks handlers
@@ -275,9 +387,10 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 
 export const setNewCollectionItem = async (
 	item: IMovieCard | IPersonCard,
-	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
 	const newCollectionItemRef = ref(database, collectionPath)
 
@@ -286,9 +399,10 @@ export const setNewCollectionItem = async (
 
 export const getCollectionItem = (
 	itemId: number,
-	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
@@ -305,9 +419,10 @@ export const getCollectionItem = (
 
 export const removeCollectionItem = (
 	itemId: number,
-	userId: string,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
@@ -698,23 +813,6 @@ export const collectionRepliesListener = (
 	}
 }
 
-export const userProfileListener = (
-	userId: string,
-	setProfile: ([]) => void
-) => {
-	const userRef = ref(database, `users/${userId}/info`)
-
-	const onInfoChanged = (snapshot: DataSnapshot) => {
-		const profileData = snapshot.val()
-		setProfile(profileData)
-	}
-	const unsubscribe = onValue(userRef, onInfoChanged)
-
-	return () => {
-		unsubscribe()
-	}
-}
-
 export const setNewReviewReaction = async (
 	userId: string,
 	itemId: string,
@@ -731,6 +829,10 @@ export const setNewReviewReaction = async (
 
 	const itemRef = ref(database, collectionPath)
 	const generalCollectionItemRef = ref(database, generalCollectionPath)
+	const userReaction = {
+		movieId: movieId,
+		reviewId: itemId,
+	}
 
 	await set(itemRef, itemId)
 	await set(generalCollectionItemRef, itemId)
@@ -909,4 +1011,42 @@ export const getReviewReactions = async (
 	const dislikes = await getItemDislikes()
 
 	return { likes, dislikes }
+}
+
+// friends handlers
+
+export const setNewFriend = async (newFriendId: string) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+	const currentUserCollectionPath = `users/${userId}/friends/${newFriendId}/`
+	const newFriendCollectionPath = `users/${newFriendId}/friends/${userId}/`
+
+	const itemRef = ref(database, currentUserCollectionPath)
+	const friendItemRef = ref(database, newFriendCollectionPath)
+
+	await set(itemRef, newFriendId)
+	await set(friendItemRef, userId)
+}
+
+export const removeFriend = (itemId: string) => {
+	const currentUser = auth.currentUser
+	const userId = currentUser?.uid
+
+	const userCollectionFriendRef = ref(
+		database,
+		`users/${userId}/friends/${itemId}`
+	)
+	const friendRef = ref(database, `users/${itemId}/friends/${userId}`)
+
+	return new Promise(async resolve => {
+		let isRemoved = false
+
+		remove(userCollectionFriendRef).then(() => {
+			remove(friendRef).then(() => {
+				isRemoved = true
+			})
+		})
+
+		resolve(isRemoved)
+	})
 }

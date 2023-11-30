@@ -1,17 +1,18 @@
-import { LINK_TO_FETCH_TV_SHOWS_LIST } from '@/constants/linksToFetch'
-import { useEffect, useState } from 'react'
+import { URL_TO_FETCH_TV_SHOWS_LIST } from '@/constants/linksToFetch'
+import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
-import ItemsList from '../../components/List/ItemsList'
 import TopBanner from '@/components/TopBanner'
 import { TV_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const TVShows = ({ tvShows }) => {
 	const [tvShowsList, setTvShowsList] = useState(null)
 
 	useEffect(() => {
 		if (!tvShows) {
-			getResultsByPage(LINK_TO_FETCH_TV_SHOWS_LIST, 1).then(data => {
+			getResultsByPage(URL_TO_FETCH_TV_SHOWS_LIST, 1).then(data => {
 				setTvShowsList(data)
 			})
 		}
@@ -26,12 +27,12 @@ const TVShows = ({ tvShows }) => {
 	return (
 		<>
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={tvShowsList.items}
 				listName='tv'
-				title='TV shows'
 				isMoreDataAvailable={tvShowsList.isMoreDataAvailable}
-				linkToFetchItems={LINK_TO_FETCH_TV_SHOWS_LIST}
+				urlToFetchItems={URL_TO_FETCH_TV_SHOWS_LIST}
+				title='TV shows'
 			/>
 		</>
 	)
@@ -39,7 +40,7 @@ const TVShows = ({ tvShows }) => {
 
 export const getServerSideProps = async () => {
 	try {
-		const tvShows = await getResultsByPage(LINK_TO_FETCH_TV_SHOWS_LIST, 1)
+		const tvShows = await getResultsByPage(URL_TO_FETCH_TV_SHOWS_LIST, 1)
 
 		return {
 			props: {
@@ -48,7 +49,7 @@ export const getServerSideProps = async () => {
 		}
 	} catch (error) {
 		return {
-			props: {},
+			props: null,
 		}
 	}
 }

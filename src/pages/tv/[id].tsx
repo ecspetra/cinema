@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
+import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
 import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
 import MovieInfo from '../../components/Movie/MovieInfo'
 import React, { useEffect, useState } from 'react'
@@ -7,15 +7,16 @@ import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
-import ItemsList from '@/components/List/ItemsList'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const TVShow = ({ tvShowFromProps }) => {
 	const router = useRouter()
 	const [movie, setMovie] = useState(null)
-	const [linkToFetchSimilarMovies, setLinkToFetchSimilarMovies] = useState(
-		LINK_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
+	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] = useState(
+		URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
 			'{listName}',
 			'tv'
 		)
@@ -23,15 +24,17 @@ const TVShow = ({ tvShowFromProps }) => {
 	const movieTeaser =
 		movie &&
 		movie.videosResult.results.find(
-			item => item.type === 'Teaser' || item.type === 'Trailer'
+			item =>
+				(item.type === 'Teaser' || item.type === 'Trailer') &&
+				item.site === 'YouTube'
 		)
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setMovie(null)
 
-			setLinkToFetchSimilarMovies(
-				LINK_TO_FETCH_SIMILAR_LIST.replace(
+			setUrlToFetchSimilarMovies(
+				URL_TO_FETCH_SIMILAR_LIST.replace(
 					'{itemId}',
 					router.query.id
 				).replace('{listName}', 'tv')
@@ -62,7 +65,7 @@ const TVShow = ({ tvShowFromProps }) => {
 					fetchItemData('tv', router.query.id, '/reviews'),
 					fetchItemData('tv', router.query.id, '/videos'),
 					getMovieReviews(),
-					getResultsByPage(linkToFetchSimilarMovies, 1),
+					getResultsByPage(urlToFetchSimilarMovies, 1),
 				])
 
 				const reviews = [...reviewsResult.results, ...reviewsFromDB]
@@ -122,14 +125,14 @@ const TVShow = ({ tvShowFromProps }) => {
 					personsFromProps={movie.creditsResult.crew}
 					title='Crew'
 				/>
-				<ItemsList
+				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
 					listName='tv'
-					title='Similar movies'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}
-					linkToFetchItems={linkToFetchSimilarMovies}
+					urlToFetchItems={urlToFetchSimilarMovies}
+					title='Similar movies'
 				/>
 			</div>
 		</>
@@ -138,7 +141,7 @@ const TVShow = ({ tvShowFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const linkToFetchSimilarShows = LINK_TO_FETCH_SIMILAR_LIST.replace(
+		const urlToFetchSimilarShows = URL_TO_FETCH_SIMILAR_LIST.replace(
 			'{itemId}',
 			ctx.query.id
 		).replace('{listName}', 'tv')
@@ -166,7 +169,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			fetchItemData('tv', ctx.query.id, '/reviews'),
 			fetchItemData('tv', ctx.query.id, '/videos'),
 			getMovieReviews(),
-			getResultsByPage(linkToFetchSimilarShows, 1),
+			getResultsByPage(urlToFetchSimilarShows, 1),
 		])
 
 		const reviews = [...reviewsResult.results, ...reviewsFromDB]
@@ -187,7 +190,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				tvShowFromProps: {},
+				tvShowFromProps: null,
 			},
 		}
 	}

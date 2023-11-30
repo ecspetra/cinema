@@ -25,7 +25,9 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 		const movieTeaser =
 			videos.results.length &&
 			videos.results.find(
-				item => item.type === 'Teaser' || item.type === 'Trailer'
+				item =>
+					(item.type === 'Teaser' || item.type === 'Trailer') &&
+					item.site === 'YouTube'
 			)
 		setImageSrc(
 			images.backdrops.length ? images.backdrops[0].file_path : ''
@@ -44,7 +46,7 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 				className='-mb-72 after:h-full'
 			/>
 			<Title>Upcoming movies</Title>
-			<div className='flex justify-between items-stretch max-h-[500px] gap-4 mb-16 z-10'>
+			<div className='flex justify-between items-stretch max-h-[500px] gap-4 mb-16'>
 				{videoSrc ? (
 					<ReactPlayer
 						url={`https://www.youtube.com/watch?v=${videoSrc}`}

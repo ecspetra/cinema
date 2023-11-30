@@ -1,5 +1,10 @@
 import { NextPageContext } from 'next'
-import { getUserInfo, userProfileListener } from '@/firebase/config'
+import {
+	getUserFriends,
+	getUserInfo,
+	userFriendsListener,
+	userInfoListener,
+} from '@/firebase/config'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
@@ -9,7 +14,7 @@ import EditProfileForm from '@/components/Profile/Form/EditProfileForm'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import TopBanner from '@/components/TopBanner'
 import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
-import GenreList from '@/components/Genre/GenreList'
+import TagList from '@/components/Tag/TagList'
 import { useAuth } from '@/context/AuthProvider'
 import {
 	faBarsStaggered,
@@ -20,19 +25,32 @@ import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import Dropdown from '@/app/components/UI/Dropdown'
 import FriendList from '@/components/Friends/FriendList'
 import EditCredentialForm from '@/components/Profile/Form/EditCredentialForm'
+import { useFriendsCollection } from '@/hooks/useFriendsCollection'
+import CollectionButton from '@/app/components/UI/Button/CollectionButton'
+import UserCollection from '@/components/Collection'
+import { getUserCollection } from '@/handlers/getUserCollection'
 
 const Profile = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
+	const [friends, setFriends] = useState([])
+	const [collection, setCollection] = useState(null)
 	const [isEditInfo, setIsEditInfo] = useState<boolean>(false)
-	const [isEditGenres, setIsEditGenres] = useState<boolean>(false)
+	const [isEditTags, setIsEditTags] = useState<boolean>(false)
 	const [isEditCredential, setIsEditCredential] = useState<boolean>(false)
 	const router = useRouter()
 	const { userId } = useAuth()
 	const isCurrentUserProfile = userId === userInfo?.id
 
+	const {
+		isLoadingFriends,
+		isFriend,
+		handleSetNewFriend,
+		openConfirmationPopup,
+	} = useFriendsCollection(userInfo)
+
 	const handleResetForms = () => {
 		setIsEditInfo(false)
-		setIsEditGenres(false)
+		setIsEditTags(false)
 		setIsEditCredential(false)
 	}
 
@@ -46,10 +64,20 @@ const Profile = ({ results }) => {
 			const userIdFromUrl = router.query.id
 
 			try {
-				const result = await getUserInfo(userIdFromUrl)
-				setUserInfo(result)
+				const user = await getUserInfo(userIdFromUrl)
+				const userCollection = await getUserCollection(userIdFromUrl)
+
+				if (user.friends) {
+					const friends = await getUserFriends(user.friends)
+					setFriends(friends)
+				}
+
+				setUserInfo(user.info)
+				setCollection(userCollection)
 			} catch (error) {
 				setUserInfo(null)
+				setFriends([])
+				setCollection(null)
 			}
 		}
 
@@ -57,18 +85,34 @@ const Profile = ({ results }) => {
 	}, [])
 
 	useEffect(() => {
-		setUserInfo(results)
+		setUserInfo(results?.info)
+		setFriends(results?.friends)
+		setCollection(results?.collection)
 	}, [results])
 
 	useEffect(() => {
 		if (isCurrentUserProfile) {
-			const unsubscribe = userProfileListener(userId, setUserInfo)
+			const unsubscribe = userInfoListener(userId, setUserInfo)
 
 			return () => {
 				unsubscribe()
 			}
 		}
 	}, [isCurrentUserProfile])
+
+	useEffect(() => {
+		if (userInfo) {
+			const unsubscribeFriends = userFriendsListener(
+				userInfo?.id,
+				friends,
+				setFriends
+			)
+
+			return () => {
+				unsubscribeFriends()
+			}
+		}
+	}, [userInfo, friends])
 
 	if (!userInfo) return <Loader />
 
@@ -77,7 +121,23 @@ const Profile = ({ results }) => {
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<div className='w-full max-w-2xl mx-auto'>
 				<div className='mb-16 relative w-[232px] mx-auto'>
-					<ProfileIcon photoURL={userInfo.photoURL} />
+					<ProfileIcon
+						photoURL={userInfo.photoURL}
+						isCurrentUserProfile={isCurrentUserProfile}
+					/>
+					{!isCurrentUserProfile && (
+						<CollectionButton
+							className='w-full'
+							isLoadingCollection={isLoadingFriends}
+							isCollectionItem={isFriend}
+							onClick={
+								isFriend
+									? openConfirmationPopup
+									: handleSetNewFriend
+							}
+							collectionName='friends'
+						/>
+					)}
 					{isCurrentUserProfile && (
 						<Dropdown icon='settings' className='!top-0 !right-0'>
 							<DropdownItem
@@ -88,7 +148,7 @@ const Profile = ({ results }) => {
 							<DropdownItem
 								label='Edit genres'
 								icon={faBarsStaggered}
-								onClick={() => handleOpenForm(setIsEditGenres)}
+								onClick={() => handleOpenForm(setIsEditTags)}
 							/>
 							<DropdownItem
 								label='Edit email/password'
@@ -110,19 +170,28 @@ const Profile = ({ results }) => {
 				) : (
 					<ProfileInfo userInfo={userInfo} />
 				)}
-				<GenreList
-					genres={userInfo.favoriteGenres || []}
+				<TagList
+					tags={userInfo.favoriteTags || []}
 					title='Favorite genres'
 					className='mb-8 pb-8'
-					isEditGenres={isEditGenres}
-					onFormClose={setIsEditGenres}
+					isEditTags={isEditTags}
+					onFormClose={setIsEditTags}
 				/>
-				<FriendList friends={userInfo.friends || []} />
+				<FriendList
+					friends={friends || []}
+					onRemove={openConfirmationPopup}
+				/>
 			</div>
 			{!isCurrentUserProfile && (
 				<div>
 					<Title>{userInfo.displayName} collection</Title>
-					<span>{userInfo.collection}</span>
+					<UserCollection
+						movies={collection.collectionMovies}
+						persons={collection.collectionPersons}
+						marks={collection.collectionMarks}
+						reviews={collection.allCollectionReviews}
+						isCurrentUserCollection={isCurrentUserProfile}
+					/>
 				</div>
 			)}
 		</>
@@ -131,19 +200,29 @@ const Profile = ({ results }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const userIdFromUrl = ctx.query.id
+	let friends = []
 
 	try {
-		const result = await getUserInfo(userIdFromUrl)
+		const user = await getUserInfo(userIdFromUrl)
+		const userCollection = await getUserCollection(userIdFromUrl)
+
+		if (user.friends) {
+			friends = await getUserFriends(user.friends)
+		}
 
 		return {
 			props: {
-				results: result,
+				results: {
+					info: user.info,
+					friends: friends,
+					collection: userCollection,
+				},
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				results: {},
+				results: null,
 			},
 		}
 	}

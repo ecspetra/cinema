@@ -5,7 +5,6 @@ import Image from '../../../Images/Image'
 import Link from 'next/link'
 import Title from '../../../../app/components/UI/Title/Title'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
-import { useAuth } from '@/context/AuthProvider'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import { CSSTransition } from 'react-transition-group'
 
@@ -40,16 +39,12 @@ const PersonCard: FC<PropsType> = ({
 				className='group text-sm'
 			>
 				<Image
-					className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
+					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${profile_path}`}
 					defaultImage={defaultPersonImage}
 				/>
-				<Title className='relative z-10' variant='h3'>
-					{name}
-				</Title>
-				{isShowRole && (
-					<p className='relative z-10 text-xs'>{character ?? job}</p>
-				)}
+				<Title variant='h3'>{name}</Title>
+				{isShowRole && <p className='text-xs'>{character ?? job}</p>}
 			</Link>
 			{isShowButton && (
 				<CollectionButton

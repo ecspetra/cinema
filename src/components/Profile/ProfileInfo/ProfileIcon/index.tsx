@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Image from '@/components/Images/Image'
 import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import FileInputField from '@/app/components/UI/Input/InputField/FileInputField'
@@ -16,10 +16,11 @@ import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
 	photoURL: string
+	isCurrentUserProfile: boolean
 }
 
-const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
-	const [image, setImage] = useState({ value: photoURL, error: '' })
+const ProfileIcon: FC<PropsType> = ({ photoURL, isCurrentUserProfile }) => {
+	const [image, setImage] = useState({ value: '', error: '' })
 	const [uploadProgress, setUploadProgress] = useState(0)
 	const storage = getStorage()
 	const { showModal } = useModal()
@@ -87,6 +88,10 @@ const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
 		}
 	}
 
+	useEffect(() => {
+		setImage({ value: photoURL, error: '' })
+	}, [photoURL])
+
 	return (
 		<>
 			<Image
@@ -94,18 +99,24 @@ const ProfileIcon: FC<PropsType> = ({ photoURL }) => {
 				src={image.value}
 				defaultImage={defaultUserImage}
 			/>
-			{isShowSaveButton ? (
-				<Button className='w-full' onClick={handleSaveChanges}>
-					Save changes
-				</Button>
-			) : (
-				<FileInputField
-					id='profileImage'
-					error={image.error}
-					onChange={handleImageChange}
-				/>
+			{isCurrentUserProfile && (
+				<>
+					{isShowSaveButton ? (
+						<Button className='w-full' onClick={handleSaveChanges}>
+							Save changes
+						</Button>
+					) : (
+						<FileInputField
+							id='profileImage'
+							error={image.error}
+							onChange={handleImageChange}
+						/>
+					)}
+					{isShowProgressBar && (
+						<ProgressBar progress={uploadProgress} />
+					)}
+				</>
 			)}
-			{isShowProgressBar && <ProgressBar progress={uploadProgress} />}
 		</>
 	)
 }

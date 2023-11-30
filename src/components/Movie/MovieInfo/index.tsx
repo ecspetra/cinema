@@ -6,7 +6,6 @@ import {
 	faCalendarCheck,
 	faFlag,
 } from '@fortawesome/free-solid-svg-icons'
-import Genre from '../../../components/Genre'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	IBackdrop,
@@ -18,7 +17,7 @@ import {
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
-import ReviewsList from '../../Review/ReviewList'
+import ReviewList from '../../Review/ReviewList'
 import NewReviewForm from '../../Review/Form/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
 import { useAuth } from '@/context/AuthProvider'
@@ -27,7 +26,7 @@ import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
 import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
 import moment from 'moment'
-import GenreList from '@/components/Genre/GenreList'
+import TagList from '@/components/Tag/TagList'
 
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
@@ -72,12 +71,13 @@ const MovieInfo: FC<PropsType> = ({
 	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
 
 	return (
-		<div className='flex gap-7 py-7 z-10 mb-16'>
+		<div className='flex gap-7 py-7 mb-16'>
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-28'>
 					<Image
 						src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 						defaultImage={defaultMovieImage}
+						className='border-4'
 					/>
 				</div>
 			</div>
@@ -90,8 +90,12 @@ const MovieInfo: FC<PropsType> = ({
 						{tagline}
 					</Title>
 				)}
-				{adult && <span>18+</span>}
-				<GenreList genres={genres} />
+				<TagList tags={genres} />
+				{adult && (
+					<span className='bg-red-600 p-2 mb-4 font-semibold inline-block rounded-full'>
+						18+
+					</span>
+				)}
 				<div className='mb-5'>
 					{(release_date || first_air_date) && (
 						<div className='flex items-center text-sm'>
@@ -163,7 +167,7 @@ const MovieInfo: FC<PropsType> = ({
 				/>
 				{isTVShowItem && <TVSeasonsList seasonsList={seasons} />}
 				<ImagesList images={movieImages} />
-				<ReviewsList movieId={id} reviews={movieReviews} />
+				<ReviewList movieId={id} reviews={movieReviews} />
 				<NewReviewForm
 					movieId={id}
 					userId={userId}

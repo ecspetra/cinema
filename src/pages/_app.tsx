@@ -5,7 +5,6 @@ import MainLayout from '../components/MainLayout/index'
 import { ModalProvider } from '@/context/ModalProvider'
 import Modal from '@/app/components/UI/Modal'
 import PageLoader from '@/app/components/PageLoader'
-import Alert from '@/app/components/UI/Alert'
 
 class MyApp extends App {
 	render() {

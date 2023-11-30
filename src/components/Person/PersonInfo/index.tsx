@@ -42,7 +42,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 	const genderInString = getPersonGender(gender)
 
 	return (
-		<div className='flex gap-7 py-7 z-10 mb-16'>
+		<div className='flex gap-7 py-7 mb-16'>
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-8'>
 					<Image
@@ -69,12 +69,14 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 						/>
 						<span className='mr-1.5'>Date of birth:</span>
 						<span>
-							<span>{moment(birthday).format('MM.DD.YYYY')}</span>
+							<span>
+								{moment(birthday).format('Do MMM YYYY')}
+							</span>
 							{deathday && (
 								<span>
 									{' '}
 									— Date of death:{' '}
-									{moment(deathday).format('MM.DD.YYYY')}
+									{moment(deathday).format('Do MMM YYYY')}
 								</span>
 							)}
 						</span>

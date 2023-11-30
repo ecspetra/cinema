@@ -4,10 +4,7 @@ import {
 	IReviewCard,
 	IReviewCardFromDB,
 } from '../../../../../interfaces'
-import Image from '../../../Images/Image'
-import defaultUserImage from '../../../../app/assets/images/default-user-image.svg'
 import Button from '../../../../app/components/UI/Button'
-import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
 import {
@@ -32,12 +29,14 @@ type PropsType = {
 	defaultCardMovieId: number
 	review: IReviewCard | IReviewCardFromDB
 	isLinkToMovie?: boolean
+	isCollectionItem?: boolean
 }
 
 const ReviewCard: FC<PropsType> = ({
 	defaultCardMovieId,
 	review,
 	isLinkToMovie = false,
+	isCollectionItem = false,
 }) => {
 	const { userId } = useAuth()
 	const {
@@ -97,119 +96,116 @@ const ReviewCard: FC<PropsType> = ({
 	}
 
 	const reviewContent = (
-		<div>
-			<div className='mb-4 p-4 gap-4 bg-gray-900 relative duration-300 flex group-hover:bg-gray-800'>
-				{isCurrentUserItem && (
-					<Dropdown>
-						<DropdownItem
-							label='Edit'
-							icon={faPenToSquare}
-							onClick={() => setIsShowEditForm(true)}
+		<span className=' p-4 gap-4 bg-gray-900 relative duration-300 flex'>
+			{isCurrentUserItem && (
+				<Dropdown>
+					<DropdownItem
+						label='Edit'
+						icon={faPenToSquare}
+						onClick={() => setIsShowEditForm(true)}
+					/>
+					<DropdownItem
+						label='Delete'
+						icon={faTrash}
+						onClick={handleRemoveReview}
+					/>
+				</Dropdown>
+			)}
+			{isLinkToMovie && (
+				<MovieCardSmall
+					itemId={movieId}
+					type={isTVShow ? 'tv' : 'movie'}
+				/>
+			)}
+			<span className='w-full'>
+				<span className='flex mb-2 max-w-[calc(100%-54px)]'>
+					<span className='flex items-center'>
+						<ProfileIconSmall
+							userId={isItemFromDB && authorInfo.userId}
+							photoURL={
+								isItemFromDB
+									? authorInfo.photoURL
+									: `https://image.tmdb.org/t/p/original${avatar_path}`
+							}
+							isLinkToProfile={isItemFromDB && !isLinkToMovie}
 						/>
-						<DropdownItem
-							label='Delete'
-							icon={faTrash}
-							onClick={handleRemoveReview}
+						<span>
+							<span className='mb-1 min-h-[22.5px] text-lg font-semibold leading-tight block'>
+								{isItemFromDB ? authorInfo.displayName : author}
+							</span>
+							<span className='text-xs block'>
+								{formattedDate}
+							</span>
+						</span>
+					</span>
+				</span>
+				<span className='flex flex-col h-[calc(100%-50.5px)]'>
+					{isShowEditForm ? (
+						<EditReviewForm
+							item={review}
+							movieId={defaultCardMovieId ?? movieId}
+							onFormClose={setIsShowEditForm}
 						/>
-					</Dropdown>
-				)}
-				{isLinkToMovie && (
-					<MovieCardSmall itemId={movieId} isTVShow={isTVShow} />
-				)}
-				<div className='w-full'>
-					<div className='flex mb-2 max-w-[calc(100%-54px)]'>
-						<div className='flex items-center'>
-							<ProfileIconSmall
-								userId={isItemFromDB && authorInfo.userId}
-								photoURL={
-									isItemFromDB
-										? authorInfo.photoURL
-										: `https://image.tmdb.org/t/p/original${avatar_path}`
-								}
-							/>
-							<div>
-								<Title
-									variant='h3'
-									className='mb-2 min-h-[22.5px]'
+					) : (
+						<>
+							<span className='block mb-4'>
+								<span
+									style={{
+										maxHeight: isContentOpen
+											? contentHeight
+											: '3rem',
+									}}
+									ref={contentRef}
+									className='overflow-hidden transition-[max-height] duration-500 block'
 								>
-									{isItemFromDB
-										? authorInfo.displayName
-										: author}
-								</Title>
-								<p className='text-xs'>{formattedDate}</p>
-							</div>
-						</div>
-					</div>
-					<div>
-						{isShowEditForm ? (
-							<EditReviewForm
-								item={review}
-								movieId={defaultCardMovieId ?? movieId}
-								onFormClose={setIsShowEditForm}
-							/>
-						) : (
-							<>
-								<div className='mb-4'>
-									<div
-										style={{
-											maxHeight: isContentOpen
-												? contentHeight
-												: '3rem',
-										}}
-										ref={contentRef}
-										className='overflow-hidden transition-[max-height] duration-500'
+									<span
+										className={classNames(
+											isShowTruncateDots && 'line-clamp-2'
+										)}
 									>
-										<p
-											className={classNames(
-												isShowTruncateDots &&
-													'line-clamp-2'
-											)}
-										>
-											{content}
-										</p>
-									</div>
-									{isLongReviewContent && (
-										<Button
-											context='text'
-											onClick={handleReviewContent}
-										>
-											{isContentOpen
-												? 'Hide'
-												: 'Show more'}
-										</Button>
-									)}
-								</div>
-								<ReviewActions
-									reviewId={id}
-									movieId={defaultCardMovieId ?? movieId}
-									userId={userId}
-									onReply={() => setIsShowReplyForm(true)}
-									collectionName='reviews'
-								/>
-								<RepliesList
-									movieId={defaultCardMovieId ?? movieId}
-									userId={userId}
-									reviewId={id}
-									replies={replies}
-									onReply={handleReplyTo}
-								/>
-								{isShowReplyForm && (
-									<NewReviewForm
-										movieId={defaultCardMovieId ?? movieId}
-										isTVShow={isTVShow}
-										userId={userId}
-										reviewId={id}
-										replyTo={replyTo}
-										onFormClose={handleFormClose}
-										isReply
-									/>
+										{content}
+									</span>
+								</span>
+								{isLongReviewContent && (
+									<Button
+										context='text'
+										onClick={handleReviewContent}
+									>
+										{isContentOpen ? 'Hide' : 'Show more'}
+									</Button>
 								)}
-							</>
-						)}
-					</div>
-				</div>
-			</div>
-		</div>
+							</span>
+							<ReviewActions
+								reviewId={id}
+								movieId={defaultCardMovieId ?? movieId}
+								userId={userId}
+								onReply={() => setIsShowReplyForm(true)}
+								collectionName='reviews'
+							/>
+							<RepliesList
+								movieId={defaultCardMovieId ?? movieId}
+								userId={userId}
+								reviewId={id}
+								replies={replies}
+								onReply={handleReplyTo}
+								isCollectionList={isCollectionItem}
+							/>
+							{isShowReplyForm && (
+								<NewReviewForm
+									movieId={defaultCardMovieId ?? movieId}
+									isTVShow={isTVShow}
+									userId={userId}
+									reviewId={id}
+									replyTo={replyTo}
+									onFormClose={handleFormClose}
+									isReply
+								/>
+							)}
+						</>
+					)}
+				</span>
+			</span>
+		</span>
 	)
 
 	useEffect(() => {
@@ -249,9 +245,9 @@ const ReviewCard: FC<PropsType> = ({
 			getUserInfo(authorId)
 				.then(data => {
 					setAuthorInfo({
-						userId: data.id,
-						photoURL: data.photoURL,
-						displayName: data.displayName,
+						userId: data.info.id,
+						photoURL: data.info.photoURL,
+						displayName: data.info.displayName,
 					})
 				})
 				.then(() => {
@@ -273,12 +269,12 @@ const ReviewCard: FC<PropsType> = ({
 				<Link
 					href='/movie/[id]'
 					as={`/movie/${movieId}`}
-					className='group'
+					className='mb-4 block last:mb-0'
 				>
 					{reviewContent}
 				</Link>
 			) : (
-				reviewContent
+				<span className='mb-4 block last:mb-0'>{reviewContent}</span>
 			)}
 		</CSSTransition>
 	)

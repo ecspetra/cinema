@@ -39,13 +39,10 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
 
 	const hideModal = (modalId: string) => {
 		setIsMounted(false)
-
-		setTimeout(() => {
-			setModalQueue(prevState =>
-				prevState.filter(item => item.id !== modalId)
-			)
-			setCurrentModal(null)
-		}, 300)
+		setModalQueue(prevState =>
+			prevState.filter(item => item.id !== modalId)
+		)
+		setCurrentModal(null)
 	}
 
 	useEffect(() => {

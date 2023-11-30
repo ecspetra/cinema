@@ -24,7 +24,7 @@ const TVSeasonCard: FC<PropsType> = ({ season }) => {
 	return (
 		<div className='flex justify-start items-start gap-4 mb-4 last:mb-0'>
 			<Image
-				className='!w-24 !h-36 flex-none duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
+				className='!w-24 !h-36 flex-none duration-300 mb-4 group-hover:border-rose-600 border-4'
 				src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
 				defaultImage={defaultMovieImage}
 			/>

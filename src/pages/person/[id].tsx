@@ -1,21 +1,22 @@
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_MOVIES_WITH_PERSONS } from '@/constants/linksToFetch'
+import { URL_TO_FETCH_MOVIES_WITH_PERSONS } from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PersonInfo from '@/components/Person/PersonInfo'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
-import ItemsList from '@/components/List/ItemsList'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Person = ({ personFromProps }) => {
 	const [person, setPerson] = useState(null)
 	const [images, setImages] = useState([])
 	const [movies, setMovies] = useState([])
 	const router = useRouter()
-	const linkToFetchMoviesWithCurrentPerson =
-		LINK_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', router.query.id)
+	const urlToFetchMoviesWithCurrentPerson =
+		URL_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', router.query.id)
 
 	useEffect(() => {
 		const fetchPerson = async () => {
@@ -41,7 +42,7 @@ const Person = ({ personFromProps }) => {
 				const personInfo = await getPersonInfo()
 				const personImages = await getPersonImages()
 				const moviesWithPerson = await getResultsByPage(
-					linkToFetchMoviesWithCurrentPerson,
+					urlToFetchMoviesWithCurrentPerson,
 					1
 				)
 
@@ -72,14 +73,14 @@ const Person = ({ personFromProps }) => {
 		<>
 			<TopBanner />
 			<PersonInfo personInfo={person} personImages={images} />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={movies}
 				listName='movie'
-				title={`Movies with ${person.name}`}
 				isMoreDataAvailable={
 					personFromProps.moviesWithPerson.isMoreDataAvailable
 				}
-				linkToFetchItems={linkToFetchMoviesWithCurrentPerson}
+				urlToFetchItems={urlToFetchMoviesWithCurrentPerson}
+				title={`Movies with ${person.name}`}
 			/>
 		</>
 	)
@@ -97,15 +98,12 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 
 	try {
-		const linkToFetchMoviesWithCurrentPerson =
-			LINK_TO_FETCH_MOVIES_WITH_PERSONS.replace(
-				'{personId}',
-				ctx.query.id
-			)
+		const urlToFetchMoviesWithCurrentPerson =
+			URL_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', ctx.query.id)
 		const personInfo = await getPersonInfo()
 		const personImages = await getPersonImages()
 		const moviesWithPerson = await getResultsByPage(
-			linkToFetchMoviesWithCurrentPerson,
+			urlToFetchMoviesWithCurrentPerson,
 			1
 		)
 

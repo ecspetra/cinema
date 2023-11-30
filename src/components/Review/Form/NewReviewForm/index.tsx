@@ -105,7 +105,7 @@ const NewReviewForm: FC<PropsType> = ({
 					value={textareaValue}
 					error={error}
 				/>
-				<div className='mt-8 flex justify-start items-center'>
+				<span className='mt-8 flex justify-start items-center'>
 					<Button onClick={handleSubmit}>{buttonText}</Button>
 					{isReply && (
 						<Button
@@ -116,7 +116,7 @@ const NewReviewForm: FC<PropsType> = ({
 							Cancel
 						</Button>
 					)}
-				</div>
+				</span>
 			</form>
 		</>
 	)

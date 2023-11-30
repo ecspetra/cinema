@@ -1,10 +1,11 @@
 import { NextPageContext } from 'next'
-import { LINK_TO_FETCH_PERSON_LIST } from '@/constants/linksToFetch'
-import { useEffect, useState } from 'react'
+import { URL_TO_FETCH_PERSON_LIST } from '@/constants/linksToFetch'
+import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
-import ItemsList from '@/components/List/ItemsList'
 import TopBanner from '@/components/TopBanner'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Persons = ({ items, isMoreDataAvailable }) => {
 	const [persons, setPersons] = useState([])
@@ -12,7 +13,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 
 	useEffect(() => {
 		if (!items) {
-			getResultsByPage(LINK_TO_FETCH_PERSON_LIST, 1).then(data => {
+			getResultsByPage(URL_TO_FETCH_PERSON_LIST, 1).then(data => {
 				setPersons(data.items)
 				setIsNextResult(data.isMoreDataAvailable)
 			})
@@ -29,12 +30,12 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 	return (
 		<>
 			<TopBanner />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={persons}
 				listName='person'
-				title='Discover persons'
 				isMoreDataAvailable={isNextResult}
-				linkToFetchItems={LINK_TO_FETCH_PERSON_LIST}
+				urlToFetchItems={URL_TO_FETCH_PERSON_LIST}
+				title='Discover persons'
 			/>
 		</>
 	)
@@ -42,7 +43,7 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
-		const results = await getResultsByPage(LINK_TO_FETCH_PERSON_LIST, 1)
+		const results = await getResultsByPage(URL_TO_FETCH_PERSON_LIST, 1)
 
 		return {
 			props: {

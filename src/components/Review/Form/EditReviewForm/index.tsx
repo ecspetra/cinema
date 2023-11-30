@@ -78,7 +78,7 @@ const EditReviewForm: FC<PropsType> = ({
 				value={textareaValue}
 				error={error}
 			/>
-			<div className='mt-8 flex justify-start items-center'>
+			<span className='mt-8 flex justify-start items-center'>
 				<Button onClick={handleSubmit}>{buttonText}</Button>
 				<Button
 					context='filledDark'
@@ -87,7 +87,7 @@ const EditReviewForm: FC<PropsType> = ({
 				>
 					Cancel
 				</Button>
-			</div>
+			</span>
 		</form>
 	)
 }

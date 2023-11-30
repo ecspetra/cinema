@@ -9,21 +9,23 @@ import classNames from 'classnames'
 
 type PropsType = {
 	itemId: number
-	isTVShow: boolean
+	type: 'movie' | 'tv'
 	mark?: number
 	isLinkToMovie?: boolean
+	className?: string
 }
 
 const MovieCardSmall: FC<PropsType> = ({
 	itemId,
-	isTVShow,
+	type,
 	mark,
 	isLinkToMovie = false,
+	className = false,
 }) => {
 	const [moviePoster, setMoviePoster] = useState<string>('')
 
 	useEffect(() => {
-		getMoviePoster(itemId, isTVShow).then(data => {
+		getMoviePoster(itemId, type).then(data => {
 			setMoviePoster(data)
 		})
 	}, [])
@@ -31,33 +33,31 @@ const MovieCardSmall: FC<PropsType> = ({
 	const movieCard = (
 		<>
 			<Image
-				className='duration-300 mb-4 group-hover:shadow-amber-700/30 group-hover:shadow-2xl'
+				className='duration-300 mb-4 border-4'
 				src={`https://image.tmdb.org/t/p/w440_and_h660_face${moviePoster}`}
 				defaultImage={defaultMovieImage}
 			/>
 			{mark && (
-				<div className='flex justify-center items-center'>
-					<FontAwesomeIcon icon={faStar} className='text-amber-400' />
+				<span className='flex justify-center items-center'>
+					<FontAwesomeIcon icon={faStar} className='text-rose-500' />
 					<span className='ml-1 font-semibold'>{mark}</span>
-				</div>
+				</span>
 			)}
 		</>
 	)
 
 	return (
-		<div className={classNames(!mark && 'w-24 h-36', 'flex-none')}>
+		<span
+			className={classNames(!mark && 'w-24 h-36', 'flex-none', className)}
+		>
 			{isLinkToMovie ? (
-				<Link
-					href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
-					as={isTVShow ? `/tv/${itemId}` : `/movie/${itemId}`}
-					className='group'
-				>
+				<Link href={`/${type}/[id]`} as={`/${type}/${itemId}`}>
 					{movieCard}
 				</Link>
 			) : (
 				movieCard
 			)}
-		</div>
+		</span>
 	)
 }
 

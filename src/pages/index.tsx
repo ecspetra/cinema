@@ -1,13 +1,13 @@
-import { NextPageContext } from 'next'
 import {
-	LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
-	LINK_TO_FETCH_UPCOMING_MOVIE_LIST,
+	URL_TO_FETCH_UPCOMING_MOVIE_LIST,
+	URL_TO_SEARCH_LIST_ITEMS,
 } from '@/constants/linksToFetch'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
-import ItemsList from '../components/List/ItemsList'
 import HomePageSlider from '@/components/HomePageSlider'
+import ItemsList from '../components/List/ItemsListWrap/ItemsList'
+import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Home = ({ results }) => {
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
@@ -15,14 +15,15 @@ const Home = ({ results }) => {
 
 	useEffect(() => {
 		if (!results) {
-			getResultsByPage(LINK_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
+			getResultsByPage(
+				URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'movie'),
+				1
+			).then(data => {
 				setDefaultMovieList(data)
 			})
-			getResultsByPage(LINK_TO_FETCH_UPCOMING_MOVIE_LIST, 1).then(
-				data => {
-					setUpcomingMovieList(data)
-				}
-			)
+			getResultsByPage(URL_TO_FETCH_UPCOMING_MOVIE_LIST, 1).then(data => {
+				setUpcomingMovieList(data)
+			})
 		}
 	}, [])
 
@@ -36,26 +37,29 @@ const Home = ({ results }) => {
 	return (
 		<>
 			<HomePageSlider movies={upcomingMovieList} />
-			<ItemsList
+			<ItemsListWrap
 				itemsList={defaultMovieList.items}
 				listName='movie'
-				title='Discover movies'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
-				linkToFetchItems={LINK_TO_FETCH_DEFAULT_MOVIE_LIST}
+				urlToFetchItems={URL_TO_SEARCH_LIST_ITEMS.replace(
+					'{type}',
+					'movie'
+				)}
+				title='Discover movies'
 			/>
 		</>
 	)
 }
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async () => {
 	try {
 		const defaultMovies = await getResultsByPage(
-			LINK_TO_FETCH_DEFAULT_MOVIE_LIST,
+			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'movie'),
 			1
 		)
 
 		const upcomingMovies = await getResultsByPage(
-			LINK_TO_FETCH_UPCOMING_MOVIE_LIST,
+			URL_TO_FETCH_UPCOMING_MOVIE_LIST,
 			1
 		)
 
@@ -70,7 +74,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	} catch (error) {
 		return {
 			props: {
-				results: {},
+				results: null,
 			},
 		}
 	}

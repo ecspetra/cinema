@@ -32,7 +32,7 @@ const Textarea: FC<PropsType> = ({
 				className={classNames(
 					'w-full bg-transparent p-4 border border-gray-500 hover:border-white duration-300 resize-none outline-none block',
 					className,
-					error && '!border-amber-600'
+					error && '!border-rose-600'
 				)}
 				placeholder={placeholder}
 			/>

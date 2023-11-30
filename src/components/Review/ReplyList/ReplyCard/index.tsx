@@ -1,9 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { IReplyCard } from '../../../../../interfaces'
-import Image from '../../../Images/Image'
-import defaultUserImage from '../../../../app/assets/images/default-user-image.svg'
 import Button from '../../../../app/components/UI/Button'
-import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
 import { getUserInfo, removeReviewItem } from '@/firebase/config'
@@ -20,9 +17,16 @@ type PropsType = {
 	userId: string
 	reply: IReplyCard
 	onReply: (userName: string) => void
+	isCollectionItem?: boolean
 }
 
-const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
+const ReplyCard: FC<PropsType> = ({
+	movieId,
+	userId,
+	reply,
+	onReply,
+	isCollectionItem,
+}) => {
 	const { content, id, created_at, authorId, replyTo } = reply
 	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
@@ -64,9 +68,9 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 		getUserInfo(authorId)
 			.then(data => {
 				setAuthorInfo({
-					userId: data.id,
-					photoURL: data.photoURL,
-					displayName: data.displayName,
+					userId: data.info.id,
+					photoURL: data.info.photoURL,
+					displayName: data.info.displayName,
 				})
 			})
 			.then(() => {
@@ -87,7 +91,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 			classNames='fade'
 			unmountOnExit
 		>
-			<div className='mb-4 p-4 bg-gray-800 border border-gray-500 relative last:mb-0'>
+			<span className='mb-4 p-4 bg-gray-800 rounded-md border-gray-500 relative last:mb-0 block'>
 				{isCurrentUserItem && (
 					<Dropdown>
 						<DropdownItem
@@ -104,21 +108,24 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 						/>
 					</Dropdown>
 				)}
-				<div className='flex mb-2'>
-					<div className='flex items-center'>
+				<span className='flex mb-2'>
+					<span className='flex items-center'>
 						<ProfileIconSmall
 							userId={authorInfo.userId}
 							photoURL={authorInfo.photoURL}
+							isLinkToProfile={!isCollectionItem}
 						/>
-						<div>
-							<Title variant='h3' className='mb-2 min-h-[22.5px]'>
+						<span>
+							<span className='mb-1 min-h-[22.5px] text-lg font-semibold leading-tight block'>
 								{authorInfo.displayName}
-							</Title>
-							<p className='text-xs'>{formattedDate}</p>
-						</div>
-					</div>
-				</div>
-				<div>
+							</span>
+							<span className='text-xs block'>
+								{formattedDate}
+							</span>
+						</span>
+					</span>
+				</span>
+				<span>
 					{isShowEditForm ? (
 						<EditReviewForm
 							item={reply}
@@ -128,8 +135,8 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 						/>
 					) : (
 						<>
-							<div className='mb-4'>
-								<div
+							<span className='mb-4 block'>
+								<span
 									style={{
 										maxHeight: isContentOpen
 											? contentHeight
@@ -138,15 +145,15 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 									ref={contentRef}
 									className='overflow-hidden transition-[max-height] duration-500'
 								>
-									<p
+									<span
 										className={classNames(
 											isShowTruncateDots && 'line-clamp-2'
 										)}
 									>
 										<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
 										{content}
-									</p>
-								</div>
+									</span>
+								</span>
 								{isLongReviewContent && (
 									<Button
 										context='text'
@@ -155,7 +162,7 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 										{isContentOpen ? 'Hide' : 'Show more'}
 									</Button>
 								)}
-							</div>
+							</span>
 							<ReviewActions
 								reviewId={id}
 								movieId={movieId}
@@ -165,8 +172,8 @@ const ReplyCard: FC<PropsType> = ({ movieId, userId, reply, onReply }) => {
 							/>
 						</>
 					)}
-				</div>
-			</div>
+				</span>
+			</span>
 		</CSSTransition>
 	)
 }

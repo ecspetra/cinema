@@ -39,7 +39,6 @@ type PropsType = {
 }
 
 const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
-	const initialDateValue = new Date()
 	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
@@ -77,7 +76,14 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	}
 
 	const handleDateOfBirthChange = date => {
-		const formattedDate = moment(new Date(date)).format('Do MMM YYYY')
+		let formattedDate
+
+		if (!date) {
+			formattedDate = ''
+		} else {
+			formattedDate = date
+		}
+
 		updateField('dateOfBirth', formattedDate, '')
 	}
 
@@ -156,7 +162,7 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className='flex flex-col justify-start items-start gap-4 z-10 mb-16'
+			className='flex flex-col justify-start items-start gap-4 mb-16'
 		>
 			<InputField
 				id='userName'
@@ -187,7 +193,7 @@ const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
 			/>
 			{formData.formError.error && (
 				<Error
-					className='px-4 py-2 bg-amber-600/20 w-full rounded-md'
+					className='px-4 py-2 bg-rose-600/20 w-full rounded-md'
 					error={formData.formError.error}
 				/>
 			)}

@@ -7,6 +7,7 @@ import {
 	faFlag,
 } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
+import moment from 'moment'
 
 type PropsType = {
 	userInfo: object
@@ -19,7 +20,7 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 		{ ['Email']: profile?.email, icon: faAt },
 		{
 			['Date of birth']: profile?.dateOfBirth
-				? profile?.dateOfBirth
+				? moment(profile?.dateOfBirth).format('Do MMM YYYY')
 				: 'No info yet',
 			icon: faCalendarCheck,
 		},
@@ -34,7 +35,7 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 	}, [userInfo])
 
 	return (
-		<div className='flex flex-col justify-start items-center z-10'>
+		<div className='flex flex-col justify-start items-center'>
 			<div className='w-full'>
 				<Title className='after:hidden !pb-0'>
 					{profile?.displayName}

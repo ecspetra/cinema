@@ -1,28 +1,28 @@
-import MovieCard from '../../Movie/MovieCard'
-import { IMovieCard, IPersonCard } from '../../../../interfaces'
+import MovieCard from '../../../Movie/MovieCard'
+import { IMovieCard, IPersonCard } from '../../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import { getMovieGenres } from '@/handlers/getMovieGenres'
 import Button from '@/app/components/UI/Button'
-import Title from '@/app/components/UI/Title/Title'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
-import PersonCard from '../../Person/PersonList/PersonCard'
-import EmptyList from '@/components/List/EmptyList'
+import PersonCard from '../../../Person/PersonList/PersonCard'
 
 type PropsType = {
-	itemsList: Array<IMovieCard>
+	itemsList: Array<IMovieCard> | Array<IPersonCard>
 	listName: 'movie' | 'person' | 'tv'
-	title: string
 	isMoreDataAvailable: boolean
-	linkToFetchItems?: string
+	urlToFetchItems?: string
+	onEmptyList: () => void
+	isFilterable?: boolean
 }
 
 const ItemsList: FC<PropsType> = ({
 	itemsList,
 	listName,
-	title,
 	isMoreDataAvailable,
-	linkToFetchItems,
+	urlToFetchItems,
+	onEmptyList,
+	isFilterable = false,
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -31,7 +31,7 @@ const ItemsList: FC<PropsType> = ({
 	const [isShowMoreButton, setIsShowMoreButton] =
 		useState(isMoreDataAvailable)
 
-	const getItems = async () => {
+	const getItems = () => {
 		if (listName !== 'person') {
 			getMovieGenres(fetchedItems, listName).then(data => {
 				setItemsToShow(prevState => [...prevState, ...data])
@@ -41,10 +41,11 @@ const ItemsList: FC<PropsType> = ({
 		setFetchedItems([])
 	}
 
-	const getMoreItems = async () => {
+	const getMoreItems = page => {
 		setIsLoading(true)
-		getResultsByPage(linkToFetchItems, currentPage)
+		getResultsByPage(urlToFetchItems, page)
 			.then(data => {
+				if (!data.items.length) onEmptyList(true)
 				setFetchedItems(data.items)
 				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
@@ -53,32 +54,35 @@ const ItemsList: FC<PropsType> = ({
 			})
 	}
 
-	const resetItems = async () => {
-		setCurrentPage(1)
+	const resetItems = () => {
 		setItemsToShow([])
-		setFetchedItems([...itemsList])
-		setIsShowMoreButton(isMoreDataAvailable)
+		setCurrentPage(1)
+
+		if (isFilterable) {
+			setIsShowMoreButton(false)
+			getMoreItems(1)
+		} else {
+			setFetchedItems([...itemsList])
+			setIsShowMoreButton(isMoreDataAvailable)
+		}
 	}
 
 	useEffect(() => {
-		if (currentPage > 1) getMoreItems()
+		if (currentPage > 1) getMoreItems(currentPage)
 	}, [currentPage])
 
 	useEffect(() => {
-		if (fetchedItems.length !== 0) getItems()
+		if (fetchedItems.length !== 0) {
+			getItems()
+		}
 	}, [fetchedItems])
 
 	useEffect(() => {
 		resetItems()
-	}, [itemsList])
-
-	if (!itemsToShow.length) {
-		return <EmptyList title={title} />
-	}
+	}, [itemsList, urlToFetchItems])
 
 	return (
-		<div className='mb-16'>
-			<Title>{title}</Title>
+		<>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
 					if (listName !== 'person') {
@@ -102,7 +106,7 @@ const ItemsList: FC<PropsType> = ({
 					Show more
 				</Button>
 			)}
-		</div>
+		</>
 	)
 }
 

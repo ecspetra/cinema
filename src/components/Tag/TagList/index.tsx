@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
-import Genre from '@/components/Genre'
-import { IGenre } from '../../../../interfaces'
+import Tag from '@/components/Tag'
+import { ITag } from '../../../../interfaces'
 import getAllGenres from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
@@ -10,42 +10,42 @@ import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
-	genres: Array<IGenre>
+	tags: Array<ITag>
 	title?: string
 	className?: string
-	isEditGenres?: boolean
+	isEditTags?: boolean
 	onFormClose?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const GenreList: FC<PropsType> = ({
-	genres,
+const TagList: FC<PropsType> = ({
+	tags,
 	title = '',
 	className,
-	isEditGenres = false,
+	isEditTags = false,
 	onFormClose,
 }) => {
-	const [itemsList, setItemsList] = useState<Array<IGenre>>([])
-	const [favoriteGenres, setFavoriteGenres] = useState<Array<IGenre>>(genres)
+	const [itemsList, setItemsList] = useState<Array<ITag>>([])
+	const [selectedTags, setSelectedTags] = useState<Array<ITag>>(tags)
 	const { showModal } = useModal()
 
-	const handleToggleGenre = (genre, isChecked) => {
+	const handleToggleTag = (tag, isChecked) => {
 		if (isChecked) {
-			setFavoriteGenres(prevState =>
-				prevState.filter(item => item.name !== genre.name)
+			setSelectedTags(prevState =>
+				prevState.filter(item => item.name !== tag.name)
 			)
 		} else {
-			setFavoriteGenres(prevState => [...prevState, genre])
+			setSelectedTags(prevState => [...prevState, tag])
 		}
 	}
 
-	const handleIsFavoriteGenre = genre => {
-		if (genres && genres.find(item => item.name === genre)) {
+	const handleIsSelectedTag = tag => {
+		if (tags && tags.find(item => item.name === tag)) {
 			return true
 		}
 	}
 
 	const handleSaveChanges = async () => {
-		await updateProfileGenres(favoriteGenres).then(() => {
+		await updateProfileGenres(selectedTags).then(() => {
 			onFormClose(false)
 			showSuccessNotification(
 				showModal,
@@ -55,17 +55,17 @@ const GenreList: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		if (isEditGenres) {
-			const getGenres = async () => {
-				const allGenres = await getAllGenres('movie')
-				setItemsList(allGenres)
+		if (isEditTags) {
+			const getTags = async () => {
+				const allTags = await getAllGenres('movie')
+				setItemsList(allTags)
 			}
 
-			getGenres()
+			getTags()
 		} else {
-			setItemsList(genres)
+			setItemsList(tags)
 		}
-	}, [isEditGenres])
+	}, [isEditTags])
 
 	if (!itemsList.length)
 		return (
@@ -83,17 +83,17 @@ const GenreList: FC<PropsType> = ({
 			<div className='flex flex-wrap justify-start items-start mb-5'>
 				{itemsList.map(item => {
 					return (
-						<Genre
+						<Tag
 							key={item.name}
-							genre={item}
-							isEdit={isEditGenres}
-							isFavorite={handleIsFavoriteGenre(item.name)}
-							onToggle={handleToggleGenre}
+							tag={item}
+							isEdit={isEditTags}
+							isSelected={handleIsSelectedTag(item.name)}
+							onToggle={handleToggleTag}
 						/>
 					)
 				})}
 			</div>
-			{isEditGenres && (
+			{isEditTags && (
 				<div className='flex justify-start items-center gap-2'>
 					<Button onClick={handleSaveChanges}>Save</Button>
 					<Button
@@ -108,4 +108,4 @@ const GenreList: FC<PropsType> = ({
 	)
 }
 
-export default GenreList
+export default TagList

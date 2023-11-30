@@ -29,7 +29,7 @@ const PageLoader = ({ children }) => {
 			{isLoading && (
 				<div className='fixed w-screen h-screen z-50 flex justify-center items-center'>
 					<Loader
-						className='!w-12 !h-12 rounded-full text-amber-600 bg-white'
+						className='!w-12 !h-12 rounded-full text-rose-600 bg-white'
 						isPageLoader
 					/>
 				</div>

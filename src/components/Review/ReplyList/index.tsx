@@ -3,7 +3,6 @@ import { IReplyCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
 import { repliesListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/ReplyList/ReplyCard'
-import { TransitionGroup } from 'react-transition-group'
 
 type PropsType = {
 	movieId: number
@@ -11,6 +10,7 @@ type PropsType = {
 	reviewId: string
 	replies: Array<IReplyCard>
 	onReply: (userName: string) => void
+	isCollectionList?: boolean
 }
 
 const ReplyList: FC<PropsType> = ({
@@ -19,6 +19,7 @@ const ReplyList: FC<PropsType> = ({
 	reviewId,
 	replies,
 	onReply,
+	isCollectionList = false,
 }) => {
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
@@ -60,7 +61,7 @@ const ReplyList: FC<PropsType> = ({
 	if (!itemsToShow.length) return null
 
 	return (
-		<div className='mt-4'>
+		<span className='mt-4 block'>
 			{itemsToShow.slice(0, maxReviewsLength).map(item => (
 				<ReplyCard
 					key={item.id}
@@ -68,6 +69,7 @@ const ReplyList: FC<PropsType> = ({
 					userId={userId}
 					movieId={movieId}
 					onReply={onReply}
+					isCollectionItem={isCollectionList}
 				/>
 			))}
 			{isShowMoreButton && (
@@ -79,7 +81,7 @@ const ReplyList: FC<PropsType> = ({
 					{buttonText}
 				</Button>
 			)}
-		</div>
+		</span>
 	)
 }
 
