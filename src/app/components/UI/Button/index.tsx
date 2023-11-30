@@ -40,7 +40,8 @@ const Button: FC<PropsType> = ({
 	const collectionButtonClassNames =
 		'w-72 min-h-[48px] border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-rose-400 hover:text-rose-500 p-3 flex justify-center items-center'
 	const imageButtonClassNames = 'flex justify-center items-center'
-	const textButtonClassNames = 'inline-flex text-rose-600 hover:text-rose-500'
+	const textButtonClassNames =
+		'inline-flex h-fit text-rose-600 hover:text-rose-500'
 	const iconTextButtonClassNames =
 		'rounded-md p-2 bg-gray-600/50 text-sm leading-tight hover:bg-rose-900/30 hover:text-rose-500 flex justify-start items-center'
 	const iconButtonClassNames =

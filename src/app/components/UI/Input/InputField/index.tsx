@@ -34,14 +34,14 @@ const InputField: FC<PropsType> = ({
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
 	const isPasswordInput = type === 'password'
 	const inputClassName =
-		'w-full bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
+		'w-full h-full bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
 
 	return (
-		<div className='w-full h-fit'>
+		<div className='w-full h-full'>
 			<label
 				htmlFor={id}
 				className={classNames(
-					'w-full bg-transparent pt-2 px-4 pb-4 border border-gray-500 hover:border-white focus-within:border-white duration-300 block',
+					'w-full h-full bg-transparent pt-1 px-3 pb-2 border border-gray-500 hover:border-white focus-within:border-white duration-300 block',
 					className,
 					error && '!border-rose-600'
 				)}

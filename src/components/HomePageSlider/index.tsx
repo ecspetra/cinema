@@ -25,7 +25,9 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 		const movieTeaser =
 			videos.results.length &&
 			videos.results.find(
-				item => item.type === 'Teaser' || item.type === 'Trailer'
+				item =>
+					(item.type === 'Teaser' || item.type === 'Trailer') &&
+					item.site === 'YouTube'
 			)
 		setImageSrc(
 			images.backdrops.length ? images.backdrops[0].file_path : ''

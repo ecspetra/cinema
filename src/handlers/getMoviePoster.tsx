@@ -1,6 +1,6 @@
 import { fetchItemData } from '@/handlers/fetchItemData'
 
-export const getMoviePoster = async (movieId: number, isTVShow: boolean) => {
-	const result = await fetchItemData(isTVShow ? 'tv' : 'movie', movieId, '')
+export const getMoviePoster = async (movieId: number, type: string) => {
+	const result = await fetchItemData(type, movieId, '')
 	return result.poster_path
 }

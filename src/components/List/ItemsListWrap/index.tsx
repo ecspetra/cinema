@@ -11,7 +11,6 @@ type PropsType = {
 	listName: 'movie' | 'person' | 'tv'
 	title: string
 	isMoreDataAvailable: boolean
-	text?: string
 	urlToFetchItems?: string
 	isFilterable?: boolean
 	isSortable?: boolean
@@ -22,11 +21,11 @@ const ItemsListWrap: FC<PropsType> = ({
 	listName,
 	title,
 	isMoreDataAvailable,
-	text,
 	urlToFetchItems,
 	isFilterable = false,
 	isSortable = false,
 }) => {
+	const [isFirstRender, setIsFirstRender] = useState<boolean>(true)
 	const [urlToFetch, setUrlToFetch] = useState<string>(urlToFetchItems)
 	const [isShowEmptyList, setIsShowEmptyList] = useState<boolean>(
 		!itemsList.length
@@ -42,11 +41,16 @@ const ItemsListWrap: FC<PropsType> = ({
 
 	useEffect(() => {
 		setUrlToFetch(urlToFetchItems)
-		setIsShowEmptyList(false)
+
+		if (!isFirstRender) {
+			setIsShowEmptyList(false)
+		} else {
+			setIsFirstRender(false)
+		}
 	}, [urlToFetchItems])
 
 	if (isShowEmptyList) {
-		return <EmptyList title={title} text={text} />
+		return <EmptyList title={title} />
 	}
 
 	return (

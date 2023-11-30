@@ -9,6 +9,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Movie = ({ movieFromProps }) => {
@@ -23,7 +24,9 @@ const Movie = ({ movieFromProps }) => {
 	const movieTeaser =
 		movie &&
 		movie.videosResult.results.find(
-			item => item.type === 'Teaser' || item.type === 'Trailer'
+			item =>
+				(item.type === 'Teaser' || item.type === 'Trailer') &&
+				item.site === 'YouTube'
 		)
 
 	useEffect(() => {
@@ -124,12 +127,12 @@ const Movie = ({ movieFromProps }) => {
 				/>
 				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
-					listName='movie'
-					title='Similar movies'
+					listName={'movie'}
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}
 					urlToFetchItems={urlToFetchSimilarMovies}
+					title={'Similar movies'}
 				/>
 			</div>
 		</>

@@ -46,7 +46,6 @@ const ItemsList: FC<PropsType> = ({
 		getResultsByPage(urlToFetchItems, page)
 			.then(data => {
 				if (!data.items.length) onEmptyList(true)
-
 				setFetchedItems(data.items)
 				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
@@ -80,7 +79,6 @@ const ItemsList: FC<PropsType> = ({
 
 	useEffect(() => {
 		resetItems()
-		console.log(urlToFetchItems)
 	}, [itemsList, urlToFetchItems])
 
 	return (

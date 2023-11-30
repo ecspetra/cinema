@@ -44,6 +44,11 @@ export const useInfiniteScroll = (
 		const itemsContainer = containerRef.current
 
 		const handleScroll = () => {
+			console.log(
+				itemsContainer.scrollHeight,
+				itemsContainer.scrollTop,
+				itemsContainer.clientHeight
+			)
 			if (
 				itemsContainer &&
 				itemsContainer.scrollHeight - itemsContainer.scrollTop ===

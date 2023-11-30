@@ -38,6 +38,7 @@ const CollectionWrap: FC<PropsType> = ({
 					<ReviewList
 						reviews={items}
 						isShowTitle={false}
+						className='!mb-0'
 						isCollectionList
 					/>
 				)
@@ -78,7 +79,7 @@ const CollectionWrap: FC<PropsType> = ({
 	}
 
 	return (
-		<div className='mb-16'>
+		<div className='mb-16 last:mb-0'>
 			<Title>{title}</Title>
 			{getItemsList()}
 		</div>

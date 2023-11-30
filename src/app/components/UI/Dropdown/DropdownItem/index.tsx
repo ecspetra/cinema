@@ -7,19 +7,14 @@ type PropsType = {
 	label: string
 	icon: IconDefinition
 	onClick: (event) => void
-	closeDropdown?: () => void
+	closeList?: () => void
 }
 
-const DropdownItem: FC<PropsType> = ({
-	label,
-	icon,
-	onClick,
-	closeDropdown,
-}) => {
+const DropdownItem: FC<PropsType> = ({ label, icon, onClick, closeList }) => {
 	const handleClick = event => {
 		onClick(event)
-		if (closeDropdown) {
-			closeDropdown()
+		if (closeList) {
+			closeList()
 		}
 	}
 

@@ -6,7 +6,6 @@ import {
 	faCalendarCheck,
 	faFlag,
 } from '@fortawesome/free-solid-svg-icons'
-import Tag from '../../../components/Tag'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	IBackdrop,
@@ -18,7 +17,7 @@ import {
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
 import Mark from '../../../components/Mark'
-import ReviewsList from '../../Review/ReviewList'
+import ReviewList from '../../Review/ReviewList'
 import NewReviewForm from '../../Review/Form/NewReviewForm'
 import Title from '../../../app/components/UI/Title/Title'
 import { useAuth } from '@/context/AuthProvider'
@@ -168,7 +167,7 @@ const MovieInfo: FC<PropsType> = ({
 				/>
 				{isTVShowItem && <TVSeasonsList seasonsList={seasons} />}
 				<ImagesList images={movieImages} />
-				<ReviewsList movieId={id} reviews={movieReviews} />
+				<ReviewList movieId={id} reviews={movieReviews} />
 				<NewReviewForm
 					movieId={id}
 					userId={userId}

@@ -1,5 +1,8 @@
-import React, { JSX, useState, FC } from 'react'
+import React, { JSX, useState, FC, useRef } from 'react'
 import classNames from 'classnames'
+import { useClickOutsideContainer } from '@/hooks/useClickOutsideContainer'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type PropsType = {
 	children: JSX.Element
@@ -16,40 +19,53 @@ const Select: FC<PropsType> = ({
 	onChange,
 	className,
 }) => {
-	const [selectedOption, setSelectedOption] = useState('')
+	const containerRef = useRef<HTMLDivElement | null>(null)
+	const [selectedOption, setSelectedOption] = useState('Select')
+	const { isOpen, onToggleContainer, onCloseContainer } =
+		useClickOutsideContainer(containerRef)
 
-	const handleSelectChange = event => {
+	const handleSelectChange = (value, label) => {
 		if (name) {
-			onChange(name, event.target.value)
+			onChange(name, value)
 		} else {
-			onChange(event.target.value)
+			onChange(value)
 		}
-		setSelectedOption(event.target.value)
+		setSelectedOption(label)
 	}
 
+	const childrenWithProps = React.Children.map(children, child => {
+		if (React.isValidElement(child)) {
+			return React.cloneElement(child, {
+				onClick: handleSelectChange,
+				closeList: onCloseContainer,
+			})
+		}
+		return child
+	})
+
 	return (
-		<label
-			htmlFor='selectOption'
-			className={classNames(
-				'w-full h-full relative bg-transparent border border-gray-500 hover:border-white focus-within:border-white duration-300 block',
-				className
-			)}
+		<div
+			ref={containerRef}
+			className={classNames('relative w-full h-16', className)}
 		>
-			<span className='text-xs text-gray-500 font-semibold absolute top-4 left-4'>
-				{label}
-			</span>
-			<select
-				id='selectOption'
-				value={selectedOption}
-				onChange={handleSelectChange}
-				className='w-full relative left-0 top-0 pl-4 pt-8 pb-4 pr-4 bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
+			<button
+				onClick={onToggleContainer}
+				className='w-full h-full text-left bg-transparent border border-gray-500 hover:border-white focus-within:border-white duration-300 block'
 			>
-				<option value='' disabled hidden>
-					Select
-				</option>
-				{children}
-			</select>
-		</label>
+				<span className='text-xs text-gray-500 font-semibold absolute top-2 left-3 z-10'>
+					{label}
+				</span>
+				<span className='absolute top-7 left-3 w-[calc(100%-22px)] flex justify-between items-center'>
+					<span className='truncate'>{selectedOption}</span>
+					<FontAwesomeIcon icon={faChevronDown} />
+				</span>
+			</button>
+			{isOpen && (
+				<div className='w-full absolute top-full flex flex-col items-center flex-none h-60 border border-gray-500 overflow-y-auto scrollbar-hide bg-gray-950 shadow-[0_35px_60px_15px_rgba(3,7,18,1)] z-10'>
+					{childrenWithProps}
+				</div>
+			)}
+		</div>
 	)
 }
 

@@ -1,28 +1,32 @@
-import React, { FC, useEffect, useRef } from 'react'
-import Button from '@/app/components/UI/Button'
+import React, { FC, useRef } from 'react'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { IMovieCard } from '../../../../../../interfaces'
 import Loader from '@/components/Loader'
+import SearchItemBasic from '@/app/components/UI/Search/SearchList/SearchItemBasic'
+import SearchItemMovie from '@/app/components/UI/Search/SearchList/SearchItemMovie'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>
 	isMoreDataAvailable: boolean
+	isSearchQueryUpdate: boolean
 	urlToFetch: string
 	onSearch: () => void
 	onClose: () => void
 	name: string
+	type?: 'basic' | 'movie' | 'tv' | 'person'
 }
 
 const SearchList: FC<PropsType> = ({
 	itemsList,
 	isMoreDataAvailable,
+	isSearchQueryUpdate,
 	urlToFetch,
 	onSearch,
 	onClose,
 	name,
+	type = 'basic',
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
-
 	const { isLoading, items } = useInfiniteScroll(
 		containerRef,
 		itemsList,
@@ -30,51 +34,50 @@ const SearchList: FC<PropsType> = ({
 		urlToFetch
 	)
 
-	const handleSelectListItem = (fieldName, { id, name }) => {
+	const handleSelectBasicListItem = (fieldName, { id, name }) => {
 		onSearch(fieldName, { id, name })
 		onClose()
 	}
 
-	useEffect(() => {
-		const handleClickOutside = event => {
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(event.target)
-			) {
-				onClose()
-			}
-		}
-
-		document.addEventListener('click', handleClickOutside)
-
-		return () => {
-			document.removeEventListener('click', handleClickOutside)
-		}
-	}, [containerRef])
-
 	return (
 		<div
 			ref={containerRef}
-			className='w-full absolute top-full flex flex-col items-center flex-none h-80 overflow-y-auto scrollbar-hide bg-gray-700 z-10'
+			className='w-full absolute top-full flex flex-col items-start flex-none h-60 box-content border border-gray-500 overflow-y-auto scrollbar-hide bg-gray-950 shadow-[0_35px_60px_15px_rgba(3,7,18,1)] z-20'
 		>
-			{items.map(item => {
-				return (
-					<Button
-						key={item.id}
-						onClick={() =>
-							handleSelectListItem(name, {
-								id: item.id,
-								name: item.name,
-							})
+			{isSearchQueryUpdate ? (
+				<Loader type='static' className='mb-4' />
+			) : (
+				<>
+					{!items.length && (
+						<span className='mt-4 mx-auto'>No results found</span>
+					)}
+					{items.map(item => {
+						switch (type) {
+							case 'basic':
+								return (
+									<SearchItemBasic
+										key={item.id}
+										item={item}
+										fieldName={name}
+										onSelect={handleSelectBasicListItem}
+									/>
+								)
+							case 'movie':
+							case 'tv':
+								return (
+									<SearchItemMovie
+										key={item.id}
+										item={item}
+										type={type}
+										fieldName={name}
+										onSelect={handleSelectBasicListItem}
+									/>
+								)
 						}
-						context='listItem'
-						className='w-full z-10'
-					>
-						{item.name}
-					</Button>
-				)
-			})}
-			{isLoading && <Loader type='static' className='mb-4' />}
+					})}
+					{isLoading && <Loader type='static' className='mb-4' />}
+				</>
+			)}
 		</div>
 	)
 }

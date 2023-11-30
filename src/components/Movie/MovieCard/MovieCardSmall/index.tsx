@@ -9,21 +9,23 @@ import classNames from 'classnames'
 
 type PropsType = {
 	itemId: number
-	isTVShow: boolean
+	type: 'movie' | 'tv'
 	mark?: number
 	isLinkToMovie?: boolean
+	className?: string
 }
 
 const MovieCardSmall: FC<PropsType> = ({
 	itemId,
-	isTVShow,
+	type,
 	mark,
 	isLinkToMovie = false,
+	className = false,
 }) => {
 	const [moviePoster, setMoviePoster] = useState<string>('')
 
 	useEffect(() => {
-		getMoviePoster(itemId, isTVShow).then(data => {
+		getMoviePoster(itemId, type).then(data => {
 			setMoviePoster(data)
 		})
 	}, [])
@@ -45,12 +47,11 @@ const MovieCardSmall: FC<PropsType> = ({
 	)
 
 	return (
-		<span className={classNames(!mark && 'w-24 h-36', 'flex-none')}>
+		<span
+			className={classNames(!mark && 'w-24 h-36', 'flex-none', className)}
+		>
 			{isLinkToMovie ? (
-				<Link
-					href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
-					as={isTVShow ? `/tv/${itemId}` : `/movie/${itemId}`}
-				>
+				<Link href={`/${type}/[id]`} as={`/${type}/${itemId}`}>
 					{movieCard}
 				</Link>
 			) : (

@@ -1,7 +1,6 @@
 import Title from '@/app/components/UI/Title/Title'
 import InputField from '@/app/components/UI/Input/InputField'
 import React, { ChangeEvent, FC, useEffect, useState } from 'react'
-import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
@@ -11,7 +10,6 @@ import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
 import { generateYearsList } from '@/handlers/generateYearsList'
 import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
-import { URL_TO_SEARCH_LIST_ITEMS } from '@/constants/linksToFetch'
 import { getCountriesList } from '@/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 
@@ -35,7 +33,6 @@ interface FilterFormData {
 
 const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
 	const [countryList, setCountryList] = useState([])
@@ -43,12 +40,10 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 
 	const handleResetFilter = () => {
 		setFormData({})
-		setIsTouched(false)
 		onApply(defaultUrl)
 	}
 
 	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
-		setIsTouched(true)
 		setFormData(prevData => ({ ...prevData, [field]: value }))
 	}
 
@@ -56,7 +51,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 		field: keyof FilterFormData,
 		value: object
 	) => {
-		setIsTouched(true)
 		setFormData(prevData => {
 			const currentValue = prevData[field]
 
@@ -71,7 +65,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 		field: keyof FilterFormData,
 		value: string
 	) => {
-		setIsTouched(true)
 		setFormData(prevData => ({ ...prevData, [field]: value }))
 	}
 
@@ -95,8 +88,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	}
 
 	const handleToggleTag = (field: keyof FilterFormData, tag, isChecked) => {
-		setIsTouched(true)
-
 		setFormData(prevData => {
 			const currentValue = prevData[field]
 
@@ -138,37 +129,25 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 			}
 		}
 
-		return queryArray.join('&').replace(/\s/g, '')
+		return `&${queryArray.join('&').replace(/\s/g, '')}`
 	}
 
 	const handleSearch = async (event: React.FormEvent) => {
 		event.preventDefault()
 		setIsLoading(true)
 
-		const isFormValid = true
-
-		if (isFormValid && isTouched) {
-			try {
-				if (Object.keys(formData).length === 0) {
-					onApply(defaultUrl)
-				} else {
-					const query = getQuery()
-					onApply(
-						URL_TO_SEARCH_LIST_ITEMS.replace(
-							'{type}',
-							type
-						).replace('{searchQuery}', query)
-					)
-				}
-
-				setError('')
-			} catch (error: any) {
-				setError(error.toString())
-			} finally {
-				setIsLoading(false)
+		try {
+			if (Object.keys(formData).length === 0) {
+				onApply(defaultUrl)
+			} else {
+				const query = getQuery()
+				onApply(defaultUrl.concat(query))
 			}
-		} else {
-			setError(isFormValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD)
+
+			setError('')
+		} catch (error: any) {
+			setError(error.toString())
+		} finally {
 			setIsLoading(false)
 		}
 	}

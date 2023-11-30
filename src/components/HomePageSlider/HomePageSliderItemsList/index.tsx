@@ -45,7 +45,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 						context='listItem'
 						onClick={() => onSelectItem(item)}
 						className={classNames(
-							'group',
+							'group !p-0',
 							selectedItemId === item.id && 'bg-rose-600'
 						)}
 					>

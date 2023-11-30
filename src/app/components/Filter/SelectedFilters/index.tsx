@@ -1,7 +1,6 @@
 import Tag from '@/components/Tag'
 import React, { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 
 type PropsType = {
@@ -20,8 +19,15 @@ const SelectedFilters: FC<PropsType> = ({
 	if (Object.keys(formData).length === 0) return null
 
 	return (
-		<div className='mb-4 p-4 gap-4 bg-gray-900'>
-			<Title variant='h3'>Selected filters</Title>
+		<div className='mb-4 p-4 gap-4 bg-gray-900 rounded-md'>
+			<div className='flex justify-between items-center mb-4'>
+				<Title variant='h3' className='!mb-0 mr-2'>
+					Selected filters
+				</Title>
+				<Button context='text' onClick={onReset}>
+					Reset
+				</Button>
+			</div>
 			<div className='flex justify-start items-start'>
 				{Object.keys(formData).map((field, idx) => {
 					switch (field) {
@@ -77,9 +83,6 @@ const SelectedFilters: FC<PropsType> = ({
 					}
 				})}
 			</div>
-			<Button context='filledDark' onClick={onReset}>
-				Reset
-			</Button>
 		</div>
 	)
 }

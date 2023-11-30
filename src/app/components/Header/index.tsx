@@ -11,34 +11,17 @@ import { AUTH_PAGE, COLLECTION_PAGE, PROFILE_PAGE } from '@/constants/paths'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { createRoutes } from '@/constants/routes'
+import Logo from '@/app/components/Logo'
 
 const Header = () => {
 	const { userId, photoURL, isLoggedIn } = useAuth()
 	const router = useRouter()
 	const pathname = usePathname()
-	const collectionLink = userId ? `/collection?uid=${userId}` : `/collection`
+	const ROUTES = createRoutes(userId)
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && isLoggedIn
 	const isShowAuthButton = !isAuthPage && !isLoggedIn
-
-	const routes = [
-		{
-			name: 'Favorite',
-			href: collectionLink,
-		},
-		{
-			name: 'Persons',
-			href: '/person',
-		},
-		{
-			name: 'Movies',
-			href: '/movie',
-		},
-		{
-			name: 'TV',
-			href: '/tv',
-		},
-	]
 
 	const handleSignOutUser = async () => {
 		await signOutUser()
@@ -53,11 +36,9 @@ const Header = () => {
 		<header className='fixed top-0 left-0 w-full z-20 bg-gray-950'>
 			<div className='max-w-screen-xl mx-auto py-3 px-5'>
 				<div className='flex justify-between items-center gap-4'>
-					<Link href={`/`} as={`/`}>
-						<span>CinemaStreet</span>
-					</Link>
+					<Logo />
 					<div className='flex justify-end items-center gap-4'>
-						{routes.map(item => {
+						{ROUTES.map(item => {
 							return (
 								<Link
 									key={item.href}

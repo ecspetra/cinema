@@ -1,21 +1,30 @@
-import { URL_TO_FETCH_DEFAULT_MOVIE_LIST } from '@/constants/linksToFetch'
+import {
+	URL_TO_SEARCH,
+	URL_TO_SEARCH_LIST_ITEMS,
+} from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import { MOVIE_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Filter from '@/app/components/Filter'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
+import Search from '@/app/components/UI/Search'
+import Title from '@/app/components/UI/Title/Title'
 
 const Movies = ({ results }) => {
-	const [defaultMovieList, setDefaultMovieList] = useState(null)
-	const [urlToFetch, setUrlToFetch] = useState(
-		URL_TO_FETCH_DEFAULT_MOVIE_LIST
+	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
+		'{type}',
+		'movie'
 	)
+	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'movie')
+	const [defaultMovieList, setDefaultMovieList] = useState(null)
+	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
 
 	useEffect(() => {
 		if (!results) {
-			getResultsByPage(URL_TO_FETCH_DEFAULT_MOVIE_LIST, 1).then(data => {
+			getResultsByPage(urlToFetch, 1).then(data => {
 				setDefaultMovieList(data)
 			})
 		}
@@ -30,6 +39,14 @@ const Movies = ({ results }) => {
 	return (
 		<>
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
+			<Search
+				type='movie'
+				name='movieSearch'
+				label='Search movie'
+				urlToFetch={defaultUrlToSearch}
+				onSearch={setUrlToFetch}
+				isWrapped
+			/>
 			<Filter
 				type='movie'
 				onApply={setUrlToFetch}
@@ -42,13 +59,12 @@ const Movies = ({ results }) => {
 					'with_keywords',
 					'with_genres',
 				]}
-				defaultUrl={URL_TO_FETCH_DEFAULT_MOVIE_LIST}
+				defaultUrl={defaultUrlToFetch}
 			/>
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
 				listName='movie'
 				title='Movies'
-				text='No movies found'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable
@@ -61,7 +77,7 @@ const Movies = ({ results }) => {
 export const getServerSideProps = async () => {
 	try {
 		const defaultMovies = await getResultsByPage(
-			URL_TO_FETCH_DEFAULT_MOVIE_LIST,
+			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'movie'),
 			1
 		)
 

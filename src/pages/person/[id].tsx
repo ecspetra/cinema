@@ -7,6 +7,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Person = ({ personFromProps }) => {
@@ -75,11 +76,11 @@ const Person = ({ personFromProps }) => {
 			<ItemsListWrap
 				itemsList={movies}
 				listName='movie'
-				title={`Movies with ${person.name}`}
 				isMoreDataAvailable={
 					personFromProps.moviesWithPerson.isMoreDataAvailable
 				}
 				urlToFetchItems={urlToFetchMoviesWithCurrentPerson}
+				title={`Movies with ${person.name}`}
 			/>
 		</>
 	)

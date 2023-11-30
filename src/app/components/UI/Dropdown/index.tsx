@@ -14,17 +14,17 @@ type PropsType = {
 const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
-	const toggleDropdown = event => {
+	const toggleList = event => {
 		setIsOpen(!isOpen)
 	}
 
-	const closeDropdown = () => {
+	const closeList = () => {
 		setIsOpen(false)
 	}
 
 	const childrenWithProps = React.Children.map(children, child => {
 		if (React.isValidElement(child)) {
-			return React.cloneElement(child, { closeDropdown })
+			return React.cloneElement(child, { closeList })
 		}
 		return child
 	})
@@ -32,12 +32,12 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 	return (
 		<span
 			className={classNames('absolute top-4 right-4', className)}
-			onMouseLeave={closeDropdown}
+			onMouseLeave={closeList}
 		>
 			<Button
 				className='!absolute top-0 right-0'
 				context='icon'
-				onClick={toggleDropdown}
+				onClick={toggleList}
 			>
 				<FontAwesomeIcon
 					icon={icon === 'settings' ? faGear : faEllipsisVertical}
@@ -51,9 +51,9 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 				unmountOnExit
 			>
 				<span className='w-52 relative right-0 pt-14 block'>
-					<ul className='w-full p-2 rounded-md bg-gray-600'>
+					<span className='w-full p-2 rounded-md bg-gray-600'>
 						{childrenWithProps}
-					</ul>
+					</span>
 				</span>
 			</CSSTransition>
 		</span>

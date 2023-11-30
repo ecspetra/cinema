@@ -1,9 +1,10 @@
 import { NextPageContext } from 'next'
 import { URL_TO_FETCH_PERSON_LIST } from '@/constants/linksToFetch'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
+import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Persons = ({ items, isMoreDataAvailable }) => {
@@ -32,9 +33,9 @@ const Persons = ({ items, isMoreDataAvailable }) => {
 			<ItemsListWrap
 				itemsList={persons}
 				listName='person'
-				title='Discover persons'
 				isMoreDataAvailable={isNextResult}
 				urlToFetchItems={URL_TO_FETCH_PERSON_LIST}
+				title='Discover persons'
 			/>
 		</>
 	)

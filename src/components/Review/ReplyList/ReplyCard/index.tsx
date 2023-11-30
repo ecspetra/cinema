@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { IReplyCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
-import Title from '../../../../app/components/UI/Title/Title'
 import moment from 'moment'
 import classNames from 'classnames'
 import { getUserInfo, removeReviewItem } from '@/firebase/config'

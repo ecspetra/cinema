@@ -2,20 +2,18 @@ import React, { FC, useEffect, useState } from 'react'
 import { IReviewCard, IReviewCardFromDB } from '../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import {
-	collectionRepliesListener,
-	repliesListener,
-	reviewsListener,
-} from '@/firebase/config'
+import { collectionRepliesListener, reviewsListener } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
 import EmptyList from '@/components/List/EmptyList'
 import useScrollToTop from '@/hooks/useScrollToTop'
+import classNames from 'classnames'
 
 type PropsType = {
 	reviews: Array<IReviewCard | IReviewCardFromDB>
 	movieId?: number
 	isCollectionList?: boolean
+	className?: string
 	isShowTitle?: boolean
 }
 
@@ -23,6 +21,7 @@ const ReviewList: FC<PropsType> = ({
 	reviews,
 	movieId,
 	isCollectionList = false,
+	className,
 	isShowTitle = true,
 }) => {
 	const { userId } = useAuth()
@@ -125,7 +124,7 @@ const ReviewList: FC<PropsType> = ({
 	}
 
 	return (
-		<div ref={listRef} className='mb-16'>
+		<div ref={listRef} className={classNames('mb-16', className)}>
 			{isShowTitle && <Title>Reviews</Title>}
 			<div>
 				{itemsToShow
