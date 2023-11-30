@@ -18,6 +18,7 @@ type PropsType = {
 		| 'listItem'
 		| 'link'
 		| 'tag'
+		| 'field'
 	className?: string
 	type?: 'submit' | 'reset' | 'button' | 'link'
 }
@@ -50,6 +51,8 @@ const Button: FC<PropsType> = ({
 		'w-full py-1 px-2 flex justify-start items-center hover:bg-rose-600 hover:text-white leading-normal'
 	const tagButtonClassNames =
 		'bg-gray-800 rounded flex justify-center items-center text-xs leading-none px-2 py-1 my-0 mr-1 mb-1 duration-300 last:mr-0'
+	const fieldButtonClassNames =
+		'w-full h-full text-left bg-transparent border border-gray-500 hover:border-white focus-within:border-white !font-light block'
 
 	const getButtonClassNames = () => {
 		switch (context) {
@@ -73,6 +76,8 @@ const Button: FC<PropsType> = ({
 				return listItemButtonClassNames
 			case 'tag':
 				return tagButtonClassNames
+			case 'field':
+				return fieldButtonClassNames
 		}
 	}
 

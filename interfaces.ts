@@ -58,7 +58,7 @@ export interface IMovieInfo {
 	poster_path: string
 	title: string
 	tagline: string
-	genres: Array<IGenre>
+	genres: Array<ITag>
 	release_date: string
 	production_countries: Array<object>
 	production_companies: Array<object>
@@ -73,7 +73,7 @@ export interface ITVShowInfo {
 	poster_path: string
 	name: string
 	tagline: string
-	genres: Array<IGenre>
+	genres: Array<ITag>
 	first_air_date: string
 	production_countries: Array<object>
 	production_companies: Array<object>

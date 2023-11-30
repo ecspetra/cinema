@@ -53,14 +53,14 @@ const Persons = ({ results }) => {
 
 export const getServerSideProps = async () => {
 	try {
-		const defaultMovies = await getResultsByPage(
+		const defaultPersons = await getResultsByPage(
 			URL_TO_FETCH_PERSON_LIST,
 			1
 		)
 
 		return {
 			props: {
-				results: defaultMovies,
+				results: defaultPersons,
 			},
 		}
 	} catch (error) {

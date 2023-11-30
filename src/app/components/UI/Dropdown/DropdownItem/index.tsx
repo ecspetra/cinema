@@ -19,16 +19,14 @@ const DropdownItem: FC<PropsType> = ({ label, icon, onClick, closeList }) => {
 	}
 
 	return (
-		<li>
-			<Button
-				context='icon-text'
-				className='w-full text-left'
-				onClick={handleClick}
-			>
-				<FontAwesomeIcon icon={icon} className='mr-2' />
-				<span>{label}</span>
-			</Button>
-		</li>
+		<Button
+			context='icon-text'
+			className='w-full text-left'
+			onClick={handleClick}
+		>
+			<FontAwesomeIcon icon={icon} className='mr-2' />
+			<span>{label}</span>
+		</Button>
 	)
 }
 

@@ -12,6 +12,7 @@ import { generateYearsList } from '@/handlers/generateYearsList'
 import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
 import { getCountriesList } from '@/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
+import { generateRatingList } from '@/handlers/generateRatingList'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
@@ -23,7 +24,7 @@ type PropsType = {
 interface FilterFormData {
 	primary_release_year: number
 	first_air_date_year: number
-	vote_average: number
+	'vote_average.lte': number
 	with_people: Array<string>
 	with_companies: Array<string>
 	with_genres: Array<string>
@@ -36,7 +37,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
 	const [countryList, setCountryList] = useState([])
-	const releaseYearsList = generateYearsList(1930)
 
 	const handleResetFilter = () => {
 		setFormData({})
@@ -123,13 +123,29 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 					queryArray.push(
 						`${key}=${value.map(item => item?.id).join(',')}`
 					)
-				} else if (typeof value === 'string') {
+				} else if (
+					typeof value === 'string' ||
+					typeof value === 'number'
+				) {
 					queryArray.push(`${key}=${value || ''}`)
 				}
 			}
 		}
 
 		return `&${queryArray.join('&').replace(/\s/g, '')}`
+	}
+
+	const getSelectOptions = field => {
+		let options = []
+		switch (field) {
+			case 'primary_release_year':
+			case 'first_air_date_year':
+				options = generateYearsList(1930)
+				return options
+			case 'vote_average.lte':
+				options = generateRatingList(10)
+				return options
+		}
 	}
 
 	const handleSearch = async (event: React.FormEvent) => {
@@ -155,19 +171,20 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	const groupedFields = [
 		'primary_release_year',
 		'first_air_date_year',
-		'vote_average',
+		'vote_average.lte',
 		'with_people',
 		'with_companies',
 		'with_original_language',
 		'with_keywords',
 	]
-
 	const ungroupedFields = ['with_genres']
 
 	const getField = (field: keyof FilterFormData) => {
 		switch (field) {
 			case 'primary_release_year':
 			case 'first_air_date_year':
+			case 'vote_average.lte':
+				const options = getSelectOptions(field)
 				return (
 					<Select
 						key={field}
@@ -175,7 +192,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						name={field}
 						onChange={handleSelectChange}
 					>
-						{releaseYearsList.map((item, idx) => (
+						{options.map((item, idx) => (
 							<SelectOption
 								key={item}
 								value={item}
@@ -211,18 +228,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						label={FilterFields[field]}
 						urlToFetch={FilterUrlToSearch[field]}
 						onSearch={handleArrayFieldChange}
-					/>
-				)
-			case 'vote_average':
-				return (
-					<InputField
-						key={field}
-						id={field}
-						label={FilterFields[field]}
-						value={formData[field] || ''}
-						onChange={(e: ChangeEvent<HTMLInputElement>) =>
-							handleStringFieldChange(field, e.target.value)
-						}
 					/>
 				)
 			case 'with_genres':

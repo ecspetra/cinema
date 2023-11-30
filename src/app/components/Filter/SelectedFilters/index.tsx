@@ -33,7 +33,7 @@ const SelectedFilters: FC<PropsType> = ({
 					switch (field) {
 						case 'primary_release_year':
 						case 'first_air_date_year':
-						case 'vote_average':
+						case 'vote_average.lte':
 							return (
 								<Tag
 									key={field}

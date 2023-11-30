@@ -14,10 +14,9 @@ export enum SortByOption {
 }
 
 export enum FilterFields {
-	searchQuery = 'Search',
 	primary_release_year = 'Year',
 	first_air_date_year = 'First air date',
-	vote_average = 'Vote average',
+	'vote_average.lte' = 'Vote average',
 	with_people = 'Person',
 	with_companies = 'Company',
 	with_genres = 'Genres',

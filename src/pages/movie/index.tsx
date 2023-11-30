@@ -8,10 +8,8 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import { MOVIE_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Filter from '@/app/components/Filter'
-import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
-import Title from '@/app/components/UI/Title/Title'
 
 const Movies = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
@@ -52,7 +50,7 @@ const Movies = ({ results }) => {
 				onApply={setUrlToFetch}
 				fields={[
 					'primary_release_year',
-					'vote_average',
+					'vote_average.lte',
 					'with_people',
 					'with_companies',
 					'with_original_language',

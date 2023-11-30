@@ -37,7 +37,7 @@ const Header = () => {
 			<div className='max-w-screen-xl mx-auto py-3 px-5'>
 				<div className='flex justify-between items-center gap-4'>
 					<Logo />
-					<div className='flex justify-end items-center gap-4'>
+					<div className='flex justify-center items-center gap-4'>
 						{ROUTES.map(item => {
 							return (
 								<Link
@@ -50,41 +50,41 @@ const Header = () => {
 								</Link>
 							)
 						})}
-						{isShowUserMenu && (
-							<div className='flex justify-center items-center gap-4'>
-								<Link
-									href={`/profile/[id]`}
-									as={`/profile/${userId}`}
-								>
-									<Image
-										className='!w-11 h-11 rounded-full'
-										src={photoURL}
-										defaultImage={defaultUserImage}
-									/>
-								</Link>
-								<Button
-									context='text'
-									onClick={handleSignOutUser}
-									className='text-sm'
-								>
-									Sign Out
-									<FontAwesomeIcon
-										icon={faRightFromBracket}
-										className='ml-1'
-									/>
-								</Button>
-							</div>
-						)}
-						{isShowAuthButton && (
-							<Link
-								href={`/auth`}
-								as={`/auth`}
-								className='font-semibold bg-rose-600 text-sm px-4 py-2 rounded-3xl duration-300'
-							>
-								<span>Sign In</span>
-							</Link>
-						)}
 					</div>
+					{isShowUserMenu && (
+						<div className='flex justify-center items-center gap-4'>
+							<Link
+								href={`/profile/[id]`}
+								as={`/profile/${userId}`}
+							>
+								<Image
+									className='!w-11 h-11 rounded-full'
+									src={photoURL}
+									defaultImage={defaultUserImage}
+								/>
+							</Link>
+							<Button
+								context='text'
+								onClick={handleSignOutUser}
+								className='text-sm'
+							>
+								Sign Out
+								<FontAwesomeIcon
+									icon={faRightFromBracket}
+									className='ml-1'
+								/>
+							</Button>
+						</div>
+					)}
+					{isShowAuthButton && (
+						<Link
+							href={`/auth`}
+							as={`/auth`}
+							className='font-semibold bg-rose-600 text-sm px-4 py-2 rounded-3xl duration-300'
+						>
+							<span>Sign In</span>
+						</Link>
+					)}
 				</div>
 				<Breadcrumbs />
 			</div>
