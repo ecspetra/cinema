@@ -1,61 +1,72 @@
-import { NextPageContext } from 'next'
-import { URL_TO_FETCH_PERSON_LIST } from '@/constants/linksToFetch'
+import {
+	URL_TO_FETCH_PERSON_LIST,
+	URL_TO_SEARCH,
+} from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
-import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
+import Search from '@/app/components/UI/Search'
 
-const Persons = ({ items, isMoreDataAvailable }) => {
-	const [persons, setPersons] = useState([])
-	const [isNextResult, setIsNextResult] = useState(false)
+const Persons = ({ results }) => {
+	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
+	const [defaultPersonList, setDefaultPersonList] = useState(null)
+	const [urlToFetch, setUrlToFetch] = useState(URL_TO_FETCH_PERSON_LIST)
 
 	useEffect(() => {
-		if (!items) {
-			getResultsByPage(URL_TO_FETCH_PERSON_LIST, 1).then(data => {
-				setPersons(data.items)
-				setIsNextResult(data.isMoreDataAvailable)
+		if (!results) {
+			getResultsByPage(urlToFetch, 1).then(data => {
+				setDefaultPersonList(data)
 			})
 		}
 	}, [])
 
 	useEffect(() => {
-		setPersons(items)
-		setIsNextResult(isMoreDataAvailable)
-	}, [items, isMoreDataAvailable])
+		setDefaultPersonList(results)
+	}, [results])
 
-	if (!persons.length) return <Loader />
+	if (!defaultPersonList) return <Loader />
 
 	return (
 		<>
 			<TopBanner />
+			<Search
+				type='person'
+				name='personSearch'
+				label='Search person'
+				urlToFetch={defaultUrlToSearch}
+				onSearch={setUrlToFetch}
+				isWrapped
+			/>
 			<ItemsListWrap
-				itemsList={persons}
+				itemsList={defaultPersonList.items}
 				listName='person'
-				isMoreDataAvailable={isNextResult}
-				urlToFetchItems={URL_TO_FETCH_PERSON_LIST}
-				title='Discover persons'
+				isMoreDataAvailable={defaultPersonList.isMoreDataAvailable}
+				urlToFetchItems={urlToFetch}
+				title='Persons'
+				isFilterable
 			/>
 		</>
 	)
 }
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async () => {
 	try {
-		const results = await getResultsByPage(URL_TO_FETCH_PERSON_LIST, 1)
+		const defaultMovies = await getResultsByPage(
+			URL_TO_FETCH_PERSON_LIST,
+			1
+		)
 
 		return {
 			props: {
-				items: results.items,
-				isMoreDataAvailable: results.isMoreDataAvailable,
+				results: defaultMovies,
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				items: [],
-				isMoreDataAvailable: false,
+				results: null,
 			},
 		}
 	}

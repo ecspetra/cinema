@@ -30,7 +30,6 @@ const ItemsListWrap: FC<PropsType> = ({
 	const [isShowEmptyList, setIsShowEmptyList] = useState<boolean>(
 		!itemsList.length
 	)
-
 	const handleSortChange = (value: SortByOption) => {
 		const updatedLinkToFetch = urlToFetch.replace(
 			/(sort_by=)[^&]*/,

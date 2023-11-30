@@ -8,28 +8,25 @@ type PropsType = {
 	type: string
 }
 
-const SearchItemMovie: FC<PropsType> = ({ item, type }) => {
+const SearchItemLink: FC<PropsType> = ({ item, type }) => {
+	const { id, title, name, release_date, first_air_date } = item
 	return (
 		<Link
 			href={`/${type}/[id]`}
-			as={`/${type}/${item.id}`}
+			as={`/${type}/${id}`}
 			className='flex justify-start items-center gap-4 w-full hover:bg-rose-600 duration-300 p-2'
 		>
-			<MovieCardSmall
-				itemId={item.id}
-				className='!w-16 !h-24'
-				type={type}
-			/>
+			<MovieCardSmall itemId={id} className='!w-16 !h-24' type={type} />
 			<span>
 				<span className='flex flex-col justify-start items-start'>
-					<span className='font-semibold'>{item.title}</span>
-					{(item.release_date || item.first_air_date) && (
+					<span className='font-semibold'>
+						{title ? title : name}
+					</span>
+					{(release_date || first_air_date) && (
 						<span className='text-xs font-light'>
 							(
 							{moment(
-								item.release_date
-									? item.release_date
-									: item.first_air_date
+								release_date ? release_date : first_air_date
 							).format('YYYY')}
 							)
 						</span>
@@ -40,4 +37,4 @@ const SearchItemMovie: FC<PropsType> = ({ item, type }) => {
 	)
 }
 
-export default SearchItemMovie
+export default SearchItemLink

@@ -2,14 +2,14 @@ import React, { FC, useEffect, useState } from 'react'
 import defaultMovieImage from '../../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
 import Image from '../../../Images/Image/index'
-import { getMoviePoster } from '@/handlers/getMoviePoster'
+import { getCover } from '@/handlers/getCover'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 
 type PropsType = {
 	itemId: number
-	type: 'movie' | 'tv'
+	type: 'movie' | 'tv' | 'person'
 	mark?: number
 	isLinkToMovie?: boolean
 	className?: string
@@ -25,7 +25,7 @@ const MovieCardSmall: FC<PropsType> = ({
 	const [moviePoster, setMoviePoster] = useState<string>('')
 
 	useEffect(() => {
-		getMoviePoster(itemId, type).then(data => {
+		getCover(itemId, type).then(data => {
 			setMoviePoster(data)
 		})
 	}, [])

@@ -15,7 +15,7 @@ import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
-	type: 'movie' | 'person'
+	type: 'movie' | 'tv'
 	fields: (keyof FilterFormData)[]
 	defaultUrl: string
 }
