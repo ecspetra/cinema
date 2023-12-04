@@ -183,16 +183,13 @@ const Profile = ({ results }) => {
 				/>
 			</div>
 			{!isCurrentUserProfile && (
-				<div className='mt-16'>
-					<Title>{userInfo.displayName} collection</Title>
-					<UserCollection
-						movies={collection.collectionMovies}
-						persons={collection.collectionPersons}
-						marks={collection.collectionMarks}
-						reviews={collection.allCollectionReviews}
-						isCurrentUserCollection={isCurrentUserProfile}
-					/>
-				</div>
+				<UserCollection
+					movies={collection.collectionMovies}
+					persons={collection.collectionPersons}
+					marks={collection.collectionMarks}
+					reviews={collection.allCollectionReviews}
+					isCurrentUserCollection={isCurrentUserProfile}
+				/>
 			)}
 		</>
 	)

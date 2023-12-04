@@ -65,7 +65,6 @@ export interface IMovieInfo {
 	overview: string
 	vote_average: number
 	vote_count: number
-	adult?: boolean
 }
 
 export interface ITVShowInfo {
@@ -81,7 +80,6 @@ export interface ITVShowInfo {
 	vote_average: number
 	vote_count: number
 	seasons: Array<ITVSeasonCard>
-	adult?: boolean
 }
 
 export interface IMovieCard {

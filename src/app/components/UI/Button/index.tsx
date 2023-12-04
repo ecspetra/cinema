@@ -16,11 +16,10 @@ type PropsType = {
 		| 'icon'
 		| 'text'
 		| 'listItem'
-		| 'link'
 		| 'tag'
 		| 'field'
 	className?: string
-	type?: 'submit' | 'reset' | 'button' | 'link'
+	type?: 'submit' | 'reset' | 'button'
 }
 
 const Button: FC<PropsType> = ({
@@ -82,7 +81,7 @@ const Button: FC<PropsType> = ({
 	}
 
 	const handleOnClick = event => {
-		if (type !== 'submit' && type !== 'link') {
+		if (type !== 'submit') {
 			event.preventDefault()
 			if (onClick) onClick(event)
 		}

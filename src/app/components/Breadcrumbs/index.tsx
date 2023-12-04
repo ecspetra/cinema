@@ -18,7 +18,7 @@ const Breadcrumbs = () => {
 
 			for (let i = 0; i < segments.length; i++) {
 				const segment = segments[i]
-				const href = `${segments.slice(0, i + 1).join('/')}`
+				const href = `/${segments.slice(0, i + 1).join('/')}`
 
 				const isItemIdSegment = !isNaN(segment)
 				const isUserCollectionSegment = segment.includes('?uid')
@@ -47,9 +47,10 @@ const Breadcrumbs = () => {
 					) {
 						const item = await getUserInfo(router.query.id)
 						itemName = item.info.displayName
-					} else
+					} else {
 						itemName =
 							segment.charAt(0).toUpperCase() + segment.slice(1)
+					}
 
 					newBreadcrumbs.push({ label: itemName, href })
 				}

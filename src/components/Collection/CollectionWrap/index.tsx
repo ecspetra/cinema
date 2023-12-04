@@ -64,16 +64,27 @@ const CollectionWrap: FC<PropsType> = ({
 		}
 	}
 
+	const getEmptyCollectionText = () => {
+		switch (type) {
+			case 'movie':
+			case 'person':
+				return `Please add some ${type} to your collection before you can see it here`
+			case 'tv':
+				return `Please add some TV show to your collection before you can see it here`
+			case 'marks':
+				return `Please rate something before you can see it here`
+			case 'reviews':
+			case 'replies':
+				return `Please write a review before you can see it here`
+		}
+	}
+
 	if (!items.length) {
 		return (
 			<EmptyList
 				title={title}
-				text={`This collection is empty. ${
-					isCurrentUserCollection
-						? `Please add some items in this
-				collection before you can see it here`
-						: ''
-				}`}
+				text={isCurrentUserCollection ? getEmptyCollectionText() : ''}
+				className='border border-gray-500 mb-4 p-4 last:mb-0'
 			/>
 		)
 	}

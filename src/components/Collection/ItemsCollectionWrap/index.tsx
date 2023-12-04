@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import PersonCard from '@/components/Person/PersonList/PersonCard'
 import { IMovieCard, IPersonCard } from '../../../../interfaces'
 import Link from 'next/link'
-import Button from '@/app/components/UI/Button'
 import { useAuth } from '@/context/AuthProvider'
 import MovieCard from '@/components/Movie/MovieCard'
 
@@ -47,15 +46,9 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 				<Link
 					href={`/collection/[type]?uid=${userId}&type=${type}`}
 					as={`/collection/${type}?uid=${userId}&type=${type}`}
-					className='flex justify-center items-center'
+					className='w-72 border-2 border-rose-600 duration-300 font-semibold leading-none text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center mx-auto mt-8'
 				>
-					<Button
-						type='link'
-						className='mx-auto mt-8'
-						context='empty'
-					>
-						View all
-					</Button>
+					View all
 				</Link>
 			)}
 		</>

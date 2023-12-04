@@ -37,7 +37,7 @@ const TVShows = ({ results }) => {
 			<Search
 				type='tv'
 				name='tvShowsSearch'
-				label='Search TV Shows'
+				label='Search TV shows'
 				urlToFetch={defaultUrlToSearch}
 				onSearch={setUrlToFetch}
 				isWrapped
