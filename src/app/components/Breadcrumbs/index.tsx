@@ -47,6 +47,8 @@ const Breadcrumbs = () => {
 					) {
 						const item = await getUserInfo(router.query.id)
 						itemName = item.info.displayName
+					} else if (segment === 'tv') {
+						itemName = segment.toUpperCase()
 					} else {
 						itemName =
 							segment.charAt(0).toUpperCase() + segment.slice(1)

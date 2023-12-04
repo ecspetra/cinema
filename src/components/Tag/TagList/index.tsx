@@ -57,7 +57,7 @@ const TagList: FC<PropsType> = ({
 	useEffect(() => {
 		if (isEditTags) {
 			const getTags = async () => {
-				const allTags = await getAllGenres('movie')
+				const allTags = await getAllGenres()
 				setItemsList(allTags)
 			}
 

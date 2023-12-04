@@ -20,7 +20,7 @@ const FilterTagList: FC<PropsType> = ({ tags, onToggle, name }) => {
 
 	useEffect(() => {
 		const getTags = async () => {
-			const allTags = await getAllGenres('movie')
+			const allTags = await getAllGenres()
 			setItemsList(allTags)
 		}
 

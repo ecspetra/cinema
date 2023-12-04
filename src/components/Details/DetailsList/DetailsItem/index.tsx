@@ -110,7 +110,7 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 	}
 
 	return (
-		<div className='flex items-center flex-wrap text-sm'>
+		<div className='flex items-center flex-wrap text-sm mb-1'>
 			{getDetailsItem()}
 		</div>
 	)

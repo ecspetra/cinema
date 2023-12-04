@@ -8,6 +8,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
+import { PERSON_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 
 const Persons = ({ results }) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
@@ -30,7 +31,7 @@ const Persons = ({ results }) => {
 
 	return (
 		<>
-			<TopBanner />
+			<TopBanner imageSrc={PERSON_LIST_TOP_BANNER_IMAGE} />
 			<Search
 				type='person'
 				name='personSearch'

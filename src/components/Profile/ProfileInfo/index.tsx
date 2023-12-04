@@ -42,13 +42,11 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 	return (
 		<div className='flex flex-col justify-start items-center'>
 			<div className='w-full'>
-				<Title className='after:hidden !pb-0'>
+				<Title className='text-7xl after:hidden pb-0'>
 					{profile?.displayName}
 				</Title>
-				<div className='flex justify-start items-start gap-7 mb-8 pb-8 border-b border-slate-800'>
-					<DetailsList itemsList={details} />
-				</div>
-				<div className='mb-8 pb-8 border-b border-slate-800'>
+				<DetailsList itemsList={details} />
+				<div className='mb-8'>
 					<Title variant='h3'>About</Title>
 					{profile?.about ? profile?.about : 'No info yet'}
 				</div>

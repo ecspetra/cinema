@@ -45,8 +45,20 @@ const ItemsList: FC<PropsType> = ({
 		setIsLoading(true)
 		getResultsByPage(urlToFetchItems, page)
 			.then(data => {
+				let newItems = []
 				if (!data.items.length) onEmptyList(true)
-				setFetchedItems(data.items)
+
+				data.items.map(item => {
+					if (
+						!itemsToShow.find(
+							existingItem => existingItem.id === item.id
+						)
+					) {
+						newItems.push(item)
+					}
+				})
+
+				setFetchedItems(newItems)
 				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
 			.then(() => {

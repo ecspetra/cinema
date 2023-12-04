@@ -107,7 +107,7 @@ const MovieInfo: FC<PropsType> = ({
 						{tagline}
 					</Title>
 				)}
-				<TagList tags={genres} />
+				<TagList tags={genres} className='mb-5' />
 				<DetailsList itemsList={details} />
 				<Rating rating={vote_average} voteCount={vote_count} />
 				<Mark

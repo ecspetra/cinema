@@ -83,7 +83,11 @@ const CollectionWrap: FC<PropsType> = ({
 		return (
 			<EmptyList
 				title={title}
-				text={isCurrentUserCollection ? getEmptyCollectionText() : ''}
+				text={
+					isCurrentUserCollection
+						? getEmptyCollectionText()
+						: undefined
+				}
 				className='border border-gray-500 mb-4 p-4 last:mb-0'
 			/>
 		)

@@ -9,7 +9,6 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
-import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const TVShow = ({ tvShowFromProps }) => {

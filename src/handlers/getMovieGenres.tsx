@@ -3,9 +3,9 @@ import { IMovieCard, ITVShowCard } from '../../interfaces'
 
 export const getMovieGenres = (items, listName) => {
 	return new Promise(async resolve => {
-		const allGenres = await getAllGenres(listName)
-
+		const allGenres = await getAllGenres()
 		let movies = []
+
 		items.map(item => {
 			let genresNames = []
 			let movieWithGenres: ITVShowCard | IMovieCard = null
