@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import {
 	openLoginModal,
-	openRemoveModal,
+	openRemoveFriendModal,
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
@@ -44,12 +44,12 @@ export const useFriendsCollection = (itemInfo: object) => {
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveFriend = modalId => {
+	const handleRemoveFriend = (userId, modalId) => {
 		hideModal(modalId)
 		setIsLoadingFriends(true)
 
 		setTimeout(() => {
-			removeFriend(itemInfo?.id)
+			removeFriend(userId)
 				.then(() => {
 					setIsFriend(false)
 					setIsLoadingFriends(false)
@@ -67,12 +67,17 @@ export const useFriendsCollection = (itemInfo: object) => {
 		}, 500)
 	}
 
-	const openConfirmationPopup = () => {
-		openRemoveModal(
+	const openConfirmationPopup = (userInfo, modalId = null) => {
+		if (modalId) {
+			hideModal(modalId)
+		}
+
+		openRemoveFriendModal(
 			showModal,
 			hideModal,
 			handleRemoveFriend,
-			itemInfo?.displayName
+			userInfo?.displayName,
+			userInfo?.id
 		)
 	}
 

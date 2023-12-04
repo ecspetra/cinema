@@ -39,7 +39,7 @@ const Button: FC<PropsType> = ({
 	const emptyButtonClassNames =
 		'w-72 border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center'
 	const collectionButtonClassNames =
-		'w-72 min-h-[48px] border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-rose-400 hover:text-rose-500 p-3 flex justify-center items-center'
+		'w-72 min-h-[48px] border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-rose-500 hover:text-rose-500 p-3 flex justify-center items-center'
 	const imageButtonClassNames = 'flex justify-center items-center'
 	const textButtonClassNames =
 		'inline-flex h-fit text-rose-600 hover:text-rose-500'

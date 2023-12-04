@@ -1,9 +1,5 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisVertical, faGear } from '@fortawesome/free-solid-svg-icons'
-import { CSSTransition } from 'react-transition-group'
-import classNames from 'classnames'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
@@ -40,6 +36,7 @@ const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 									key={item.info.id}
 									userId={item.info.id}
 									photoURL={item.info.photoURL}
+									isLinkToProfile
 								/>
 							)
 						}
@@ -47,6 +44,7 @@ const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 				</div>
 				{isShowMoreButton && (
 					<Button
+						context='text'
 						onClick={() =>
 							openFriendsModal(showModal, itemsList, onRemove)
 						}

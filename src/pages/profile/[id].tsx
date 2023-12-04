@@ -132,7 +132,7 @@ const Profile = ({ results }) => {
 							isCollectionItem={isFriend}
 							onClick={
 								isFriend
-									? openConfirmationPopup
+									? () => openConfirmationPopup(userInfo)
 									: handleSetNewFriend
 							}
 							collectionName='friends'
@@ -171,9 +171,9 @@ const Profile = ({ results }) => {
 					<ProfileInfo userInfo={userInfo} />
 				)}
 				<TagList
-					tags={userInfo.favoriteTags || []}
+					tags={userInfo.favoriteGenres || []}
 					title='Favorite genres'
-					className='mb-8 pb-8'
+					className='mb-16'
 					isEditTags={isEditTags}
 					onFormClose={setIsEditTags}
 				/>
@@ -183,7 +183,7 @@ const Profile = ({ results }) => {
 				/>
 			</div>
 			{!isCurrentUserProfile && (
-				<div>
+				<div className='mt-16'>
 					<Title>{userInfo.displayName} collection</Title>
 					<UserCollection
 						movies={collection.collectionMovies}

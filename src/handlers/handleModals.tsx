@@ -5,8 +5,9 @@ import { uuidv4 } from '@firebase/util'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 
 export const openLoginModal = showModal => {
+	const modalId = uuidv4()
 	showModal({
-		id: uuidv4(),
+		id: modalId,
 		modalClassName: '',
 		modalContent: <AuthForm />,
 		alertInfo: null,
@@ -14,8 +15,9 @@ export const openLoginModal = showModal => {
 }
 
 export const openFriendsModal = (showModal, itemsList, onRemove) => {
+	const modalId = uuidv4()
 	showModal({
-		id: uuidv4(),
+		id: modalId,
 		modalTitle: 'Friends',
 		modalClassName: '',
 		modalContent: (
@@ -24,12 +26,13 @@ export const openFriendsModal = (showModal, itemsList, onRemove) => {
 					return (
 						<div
 							key={item.info.id}
-							className='flex justify-between items-center gap-4 w-full mb-4'
+							className='flex justify-between items-center gap-4 w-full mb-4 last:mb-0'
 						>
 							<div className='flex justify-between items-center'>
 								<ProfileIconSmall
 									userId={item.info.id}
 									photoURL={item.info.photoURL}
+									isLinkToProfile
 								/>
 								<span className='font-semibold'>
 									{item.info.displayName}
@@ -37,7 +40,7 @@ export const openFriendsModal = (showModal, itemsList, onRemove) => {
 							</div>
 							<Button
 								context='icon-text'
-								onClick={() => onRemove(item.info.id)}
+								onClick={() => onRemove(item.info, modalId)}
 							>
 								Remove
 							</Button>
@@ -45,6 +48,33 @@ export const openFriendsModal = (showModal, itemsList, onRemove) => {
 					)
 				})}
 			</>
+		),
+		alertInfo: null,
+	})
+}
+
+export const openRemoveFriendModal = (
+	showModal,
+	onClose,
+	onRemove,
+	itemName,
+	itemId
+) => {
+	const modalId = uuidv4()
+	showModal({
+		id: modalId,
+		modalTitle: `Are you sure you want to remove ${itemName} from your friends?`,
+		modalText: '',
+		modalClassName: '',
+		modalContent: (
+			<div className='flex justify-between items-center gap-4'>
+				<Button onClick={() => onRemove(itemId, modalId)}>
+					Confirm
+				</Button>
+				<Button context='filledDark' onClick={() => onClose(modalId)}>
+					Cancel
+				</Button>
+			</div>
 		),
 		alertInfo: null,
 	})
@@ -70,8 +100,9 @@ export const openRemoveModal = (showModal, onClose, onRemove, itemName) => {
 }
 
 export const showSuccessNotification = (showModal, text) => {
+	const modalId = uuidv4()
 	showModal({
-		id: uuidv4(),
+		id: modalId,
 		modalTitle: ``,
 		modalText: text,
 		modalClassName: '',
@@ -84,8 +115,9 @@ export const showSuccessNotification = (showModal, text) => {
 }
 
 export const showErrorNotification = (showModal, text) => {
+	const modalId = uuidv4()
 	showModal({
-		id: uuidv4(),
+		id: modalId,
 		modalTitle: ``,
 		modalText: text,
 		modalClassName: '',

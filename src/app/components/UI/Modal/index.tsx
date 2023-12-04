@@ -7,9 +7,17 @@ import ModalContent from '@/app/components/UI/Modal/ModalContent'
 
 const Modal = () => {
 	const modalRef = useRef(null)
+	const timeoutRef = useRef(null)
 	const { hideModal, isMounted, currentModal } = useModal()
 
 	const { id, modalText, alertInfo } = currentModal || {}
+
+	const handleClose = () => {
+		hideModal(id)
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current)
+		}
+	}
 
 	useEffect(() => {
 		const handleClickOutside = event => {
@@ -21,7 +29,7 @@ const Modal = () => {
 		if (!alertInfo?.isAlert) {
 			document.addEventListener('click', handleClickOutside)
 		} else {
-			setTimeout(() => {
+			timeoutRef.current = setTimeout(() => {
 				hideModal(id)
 			}, 4500)
 		}
@@ -29,6 +37,9 @@ const Modal = () => {
 		return () => {
 			if (!alertInfo?.isAlert) {
 				document.removeEventListener('click', handleClickOutside)
+			}
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current)
 			}
 		}
 	}, [modalRef, alertInfo?.isAlert, id, hideModal])
@@ -48,7 +59,7 @@ const Modal = () => {
 				) : (
 					<ModalContent
 						currentModal={currentModal}
-						onClose={() => hideModal(id)}
+						onClose={handleClose}
 						modalRef={modalRef}
 					/>
 				)}

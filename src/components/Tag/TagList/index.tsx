@@ -80,7 +80,7 @@ const TagList: FC<PropsType> = ({
 	return (
 		<div className={className}>
 			{title && <Title variant='h3'>{title}</Title>}
-			<div className='flex flex-wrap justify-start items-start mb-5'>
+			<div className='flex flex-wrap justify-start items-start'>
 				{itemsList.map(item => {
 					return (
 						<Tag
@@ -94,7 +94,7 @@ const TagList: FC<PropsType> = ({
 				})}
 			</div>
 			{isEditTags && (
-				<div className='flex justify-start items-center gap-2'>
+				<div className='flex justify-start items-center gap-2 mt-5'>
 					<Button onClick={handleSaveChanges}>Save</Button>
 					<Button
 						context='filledDark'

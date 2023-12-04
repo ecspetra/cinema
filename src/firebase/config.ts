@@ -29,7 +29,7 @@ import {
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import {
-	IGenre,
+	ITag,
 	IMovieCard,
 	IPersonCard,
 	IReplyCard,
@@ -157,7 +157,7 @@ export const updateUserCredential = async (newInfo: object) => {
 	)
 }
 
-export const updateProfileGenres = async (newGenres: Array<IGenre>) => {
+export const updateProfileGenres = async (newGenres: Array<ITag>) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 	const updateFields = {

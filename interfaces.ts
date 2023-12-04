@@ -89,7 +89,7 @@ export interface IMovieCard {
 	poster_path: string
 	release_date: string
 	title: string
-	genres?: Array<IGenre>
+	genres?: Array<ITag>
 }
 
 export interface ITVShowCard {
@@ -97,7 +97,7 @@ export interface ITVShowCard {
 	poster_path: string
 	first_air_date: string
 	name: string
-	genres?: Array<IGenre>
+	genres?: Array<ITag>
 }
 
 export interface ITVSeasonCard {
