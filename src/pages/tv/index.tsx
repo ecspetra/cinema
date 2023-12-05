@@ -57,7 +57,7 @@ const TVShows = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultTvShowsList.items}
-				listName='tv'
+				type='tv'
 				isMoreDataAvailable={defaultTvShowsList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				title='TV shows'

@@ -1,15 +1,16 @@
 import MovieCard from '../../../Movie/MovieCard'
-import { IMovieCard, IPersonCard } from '../../../../../interfaces'
+import { IMovieCard, IPersonCard, ISearchCard } from '../../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import { getMovieGenres } from '@/handlers/getMovieGenres'
 import Button from '@/app/components/UI/Button'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import PersonCard from '../../../Person/PersonList/PersonCard'
+import SearchCard from '@/app/components/UI/Search/SearchCard'
 
 type PropsType = {
 	itemsList: Array<IMovieCard> | Array<IPersonCard>
-	listName: 'movie' | 'person' | 'tv'
+	type: 'movie' | 'person' | 'tv' | 'general'
 	isMoreDataAvailable: boolean
 	urlToFetchItems?: string
 	onEmptyList: () => void
@@ -18,7 +19,7 @@ type PropsType = {
 
 const ItemsList: FC<PropsType> = ({
 	itemsList,
-	listName,
+	type,
 	isMoreDataAvailable,
 	urlToFetchItems,
 	onEmptyList,
@@ -32,8 +33,8 @@ const ItemsList: FC<PropsType> = ({
 		useState(isMoreDataAvailable)
 
 	const getItems = () => {
-		if (listName !== 'person') {
-			getMovieGenres(fetchedItems, listName).then(data => {
+		if (type !== 'person' && type !== 'general') {
+			getMovieGenres(fetchedItems, type).then(data => {
 				setItemsToShow(prevState => [...prevState, ...data])
 			})
 		} else setItemsToShow(prevState => [...prevState, ...fetchedItems])
@@ -96,17 +97,21 @@ const ItemsList: FC<PropsType> = ({
 	return (
 		<>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
-				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
-					if (listName !== 'person') {
-						return (
-							<MovieCard
-								key={item.id}
-								item={item}
-								isTVShow={listName === 'tv'}
-							/>
-						)
-					} else return <PersonCard key={item.id} item={item} />
-				})}
+				{itemsToShow.map(
+					(item: IMovieCard | IPersonCard | ISearchCard) => {
+						if (type === 'general') {
+							return <SearchCard key={item.id} item={item} />
+						} else if (type !== 'person') {
+							return (
+								<MovieCard
+									key={item.id}
+									item={item}
+									isTVShow={type === 'tv'}
+								/>
+							)
+						} else return <PersonCard key={item.id} item={item} />
+					}
+				)}
 			</div>
 			{isLoading && <Loader type='static' className='mb-4' />}
 			{isShowMoreButton && (

@@ -8,7 +8,7 @@ import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
 
 type PropsType = {
 	itemsList: Array<IMovieCard> | Array<IPersonCard>
-	listName: 'movie' | 'person' | 'tv'
+	type: 'movie' | 'person' | 'tv'
 	title: string
 	isMoreDataAvailable: boolean
 	urlToFetchItems?: string
@@ -18,7 +18,7 @@ type PropsType = {
 
 const ItemsListWrap: FC<PropsType> = ({
 	itemsList,
-	listName,
+	type,
 	title,
 	isMoreDataAvailable,
 	urlToFetchItems,
@@ -60,7 +60,7 @@ const ItemsListWrap: FC<PropsType> = ({
 			</div>
 			<ItemsList
 				itemsList={itemsList}
-				listName={listName}
+				type={type}
 				isMoreDataAvailable={isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable={isFilterable}

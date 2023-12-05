@@ -127,7 +127,7 @@ const Movie = ({ movieFromProps }) => {
 				/>
 				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
-					listName={'movie'}
+					type='movie'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}

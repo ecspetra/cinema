@@ -9,6 +9,7 @@ import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Error from '@/app/components/UI/Error'
 import Loader from '@/components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import classNames from 'classnames'
 
 type PropsType = {
 	name: string
@@ -17,6 +18,7 @@ type PropsType = {
 	urlToFetch: string
 	onSearch: () => void
 	isWrapped?: boolean
+	className?: string
 }
 
 const Search: FC<PropsType> = ({
@@ -26,6 +28,7 @@ const Search: FC<PropsType> = ({
 	urlToFetch,
 	onSearch,
 	isWrapped = false,
+	className,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -154,7 +157,10 @@ const Search: FC<PropsType> = ({
 	return (
 		<>
 			{isWrapped ? (
-				<form className='mb-4 bg-gray-950 p-4' onSubmit={handleSearch}>
+				<form
+					className={classNames('mb-4 bg-gray-950 p-4', className)}
+					onSubmit={handleSearch}
+				>
 					{search}
 					{error && (
 						<Error

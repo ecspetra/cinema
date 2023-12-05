@@ -42,7 +42,7 @@ const Persons = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultPersonList.items}
-				listName='person'
+				type='person'
 				isMoreDataAvailable={defaultPersonList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				title='Persons'

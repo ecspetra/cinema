@@ -61,7 +61,7 @@ const Movies = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
-				listName='movie'
+				type='movie'
 				title='Movies'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
