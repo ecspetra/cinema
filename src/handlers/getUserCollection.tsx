@@ -35,7 +35,12 @@ export const getUserCollection = async userId => {
 		null,
 		null
 	)
-	const collectionMarks = await getCollectionMarksList(userId)
+	const collectionMarks = await getCollectionItemsList(
+		userId,
+		'marks',
+		null,
+		null
+	)
 
 	const reviewsWithUserReplies =
 		await getCollectionReviewsWithRepliesList(collectionReplies)
@@ -52,6 +57,6 @@ export const getUserCollection = async userId => {
 		collectionTVShows,
 		collectionPersons,
 		allCollectionReviews,
-		collectionMarks,
+		collectionMarks: collectionMarks.items,
 	}
 }

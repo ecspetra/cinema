@@ -10,7 +10,7 @@ import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
 	collectionName: 'movie' | 'person'
-	items: Array<IMovieCard>
+	items: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	title: string
 }

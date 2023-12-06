@@ -35,6 +35,7 @@ import {
 	IReviewCardFromDB,
 } from '../../interfaces'
 import { onValue } from '@firebase/database'
+import { fetchItemData } from '@/handlers/fetchItemData'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -391,15 +392,15 @@ export const removeMarkForMovie = (
 // collection handlers
 
 export const setNewCollectionItem = async (
-	item: IItemCard,
+	itemId: number,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const newCollectionItemRef = ref(database, collectionPath)
 
-	await set(newCollectionItemRef, item)
+	await set(newCollectionItemRef, itemId)
 }
 
 export const getCollectionItem = (
@@ -490,12 +491,38 @@ export const getCollectionItemsList = async (
 		itemIds.pop()
 	}
 
-	const items = await Promise.all(
-		itemIds.map(async itemId => {
-			const itemSnapshot = await get(child(userCollectionRef, itemId))
-			return itemSnapshot.val()
-		})
-	)
+	const getItems = async () => {
+		switch (collectionName) {
+			case 'movie':
+			case 'tv':
+			case 'person':
+				return await Promise.all(
+					itemIds.map(async itemId => {
+						const itemInfo = await fetchItemData(
+							collectionName,
+							itemId,
+							''
+						)
+						console.log(itemInfo)
+						return itemInfo
+					})
+				)
+			case 'reviews':
+			case 'replies':
+				return await Promise.all(
+					itemIds.map(async itemId => {
+						const itemSnapshot = await get(
+							child(userCollectionRef, itemId)
+						)
+						return itemSnapshot.val()
+					})
+				)
+			case 'marks':
+				return await getCollectionMarksList(userId)
+		}
+	}
+
+	const items = await getItems()
 
 	return {
 		isMoreDataAvailable,

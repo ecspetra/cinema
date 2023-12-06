@@ -28,37 +28,8 @@ export const useCollectionButton = (
 	const handleSetCollectionItem = () => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			let newItem: IItemCard = {}
 
-			switch (collection) {
-				case 'movie':
-					newItem = {
-						id: itemInfo.id,
-						poster_path: itemInfo.poster_path,
-						release_date: itemInfo.release_date,
-						title: itemInfo.title,
-						genres: itemInfo.genres,
-					}
-					break
-				case 'tv':
-					newItem = {
-						id: itemInfo.id,
-						poster_path: itemInfo.poster_path,
-						first_air_date: itemInfo.first_air_date,
-						name: itemInfo.name,
-						genres: itemInfo.genres,
-					}
-					break
-				case 'person':
-					newItem = {
-						id: itemInfo.id,
-						profile_path: itemInfo.profile_path,
-						name: itemInfo.name,
-					}
-					break
-			}
-
-			setNewCollectionItem(newItem, collection)
+			setNewCollectionItem(itemInfo.id, collection)
 				.then(() => {
 					getCollectionItem(itemInfo.id, collection)
 						.then(data => {
