@@ -10,17 +10,16 @@ import {
 	setNewMarkForMovie,
 } from '@/firebase/config'
 import { useModal } from '@/context/ModalProvider'
-import { handleModals, openLoginModal } from '@/handlers/handleModals'
+import { openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
 import { IMarkFromDB } from '../../../interfaces'
 
 type PropsType = {
-	movieId: number
-	movieTitle: string
-	isTVShow: boolean
+	itemId: number
+	type: string
 }
 
-const Mark: FC<PropsType> = ({ movieId, movieTitle, isTVShow = false }) => {
+const Mark: FC<PropsType> = ({ itemId, type }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
@@ -34,15 +33,14 @@ const Mark: FC<PropsType> = ({ movieId, movieTitle, isTVShow = false }) => {
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
 			setIsLoadingMark(true)
-			const markData = {
-				movieId,
-				movieTitle,
-				mark,
-				isTVShow,
+			const itemData = {
+				id: itemId,
+				mark: mark,
+				type: type,
 			}
-			setNewMarkForMovie(markData, userId)
+			setNewMarkForMovie(itemData, userId)
 				.then(() => {
-					getMarkForMovie(markData, userId)
+					getMarkForMovie(itemId, userId, type)
 						.then(data => {
 							setMarkData(data)
 							setIsLoadingMark(false)
@@ -118,7 +116,7 @@ const Mark: FC<PropsType> = ({ movieId, movieTitle, isTVShow = false }) => {
 
 	const handleRemoveMyMark = (markKey: string, userId: string) => {
 		setIsLoadingMark(true)
-		removeMarkForMovie(markKey, userId)
+		removeMarkForMovie(markKey, userId, type)
 			.then(() => {
 				setMarkData(null)
 				getEmptyMarkIcons()
@@ -131,15 +129,11 @@ const Mark: FC<PropsType> = ({ movieId, movieTitle, isTVShow = false }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			const markData = {
-				movieId,
-				movieTitle,
-			}
-			getMarkForMovie(markData, userId).then(data => {
+			getMarkForMovie(itemId, userId, type).then(data => {
 				setMarkData(data)
 			})
 		} else getEmptyMarkIcons()
-	}, [userId, movieId, movieTitle])
+	}, [userId, itemId])
 
 	useEffect(() => {
 		if (markData) {

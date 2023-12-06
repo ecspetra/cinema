@@ -30,8 +30,7 @@ import {
 import { uuidv4 } from '@firebase/util'
 import {
 	ITag,
-	IMovieCard,
-	IPersonCard,
+	IItemCard,
 	IReplyCard,
 	IReviewCardFromDB,
 } from '../../interfaces'
@@ -332,36 +331,38 @@ export const userContextListener = (
 // movie marks handlers
 
 export const setNewMarkForMovie = async (markData: object, userId: string) => {
-	const newMarkRef = ref(database, `users/${userId}/movieMarks/${uuidv4()}`)
+	const newMarkRef = ref(
+		database,
+		`users/${userId}/marks/${markData.type}/${uuidv4()}`
+	)
 
 	const newMarkData = {
-		movieId: markData.movieId,
-		movieTitle: markData.movieTitle,
+		itemId: markData.id,
 		mark: markData.mark,
-		isTVShow: markData.isTVShow,
+		type: markData.type,
 	}
 
 	await set(newMarkRef, newMarkData)
 }
 
-export const getMarkForMovie = (markData: object, userId: string) => {
-	const marksCollectionRef = ref(database, `users/${userId}/movieMarks`)
+export const getMarkForMovie = (
+	itemId: number,
+	userId: string,
+	type: string
+) => {
+	const marksCollectionRef = ref(database, `users/${userId}/marks/${type}`)
 
 	return new Promise(async resolve => {
 		get(marksCollectionRef).then(snapshot => {
 			let response
 
 			snapshot.forEach(childSnapshot => {
-				const movieMark = {
+				const mark = {
 					key: childSnapshot.key,
 					data: childSnapshot.val(),
 				}
 
-				if (
-					movieMark.data.movieId === markData.movieId &&
-					movieMark.data.movieTitle === markData.movieTitle
-				)
-					response = movieMark
+				if (mark.data.itemId === itemId) response = mark
 			})
 
 			resolve(response)
@@ -369,8 +370,12 @@ export const getMarkForMovie = (markData: object, userId: string) => {
 	})
 }
 
-export const removeMarkForMovie = (markKey: string, userId: string) => {
-	const markRef = ref(database, `users/${userId}/movieMarks/${markKey}`)
+export const removeMarkForMovie = (
+	markKey: string,
+	userId: string,
+	type: string
+) => {
+	const markRef = ref(database, `users/${userId}/marks/${type}/${markKey}`)
 
 	return new Promise(async resolve => {
 		let isRemoved = false
@@ -386,7 +391,7 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 // collection handlers
 
 export const setNewCollectionItem = async (
-	item: IMovieCard | IPersonCard,
+	item: IItemCard,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
 	const currentUser = auth.currentUser
@@ -444,6 +449,7 @@ export const getCollectionItemsList = async (
 	lastItemId: string | null
 ) => {
 	const collectionPath = `users/${userId}/${collectionName}/`
+
 	const userCollectionRef = ref(database, collectionPath)
 	let paginationQuery
 
@@ -495,6 +501,29 @@ export const getCollectionItemsList = async (
 		isMoreDataAvailable,
 		items,
 	}
+}
+
+export const getCollectionMarksList = async (userId: string) => {
+	const getMarks = async type => {
+		let items = []
+		const collectionPath = `users/${userId}/marks/${type}`
+		const collectionRef = ref(database, collectionPath)
+		const snapshot = await get(collectionRef)
+
+		if (snapshot.exists()) {
+			snapshot.forEach(childSnapshot => {
+				const item = childSnapshot.val()
+				items.push(item)
+			})
+		}
+
+		return items
+	}
+
+	const movieMarks = await getMarks('movie')
+	const tvMarks = await getMarks('tv')
+
+	return [...movieMarks, ...tvMarks]
 }
 
 export const collectionListener = (

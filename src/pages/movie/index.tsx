@@ -10,6 +10,7 @@ import { MOVIE_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Filter from '@/app/components/Filter'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
+import Title from '@/app/components/UI/Title/Title'
 
 const Movies = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
@@ -19,6 +20,7 @@ const Movies = ({ results }) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'movie')
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
 	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
+	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
 
 	useEffect(() => {
 		if (!results) {
@@ -37,12 +39,15 @@ const Movies = ({ results }) => {
 	return (
 		<>
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
+			<Title className='text-7xl after:hidden pb-0'>Movies</Title>
 			<Search
 				type='movie'
 				name='movieSearch'
 				label='Search movie'
 				urlToFetch={defaultUrlToSearch}
+				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
+				isApplied={!isDefaultList}
 				isWrapped
 			/>
 			<Filter
@@ -62,7 +67,6 @@ const Movies = ({ results }) => {
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
 				type='movie'
-				title='Movies'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable

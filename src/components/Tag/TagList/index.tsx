@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import Tag from '@/components/Tag'
 import { ITag } from '../../../../interfaces'
-import getAllGenres from '@/handlers/getAllGenres'
+import { getAllGenres } from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import Button from '@/app/components/UI/Button'
@@ -57,7 +57,7 @@ const TagList: FC<PropsType> = ({
 	useEffect(() => {
 		if (isEditTags) {
 			const getTags = async () => {
-				const allTags = await getAllGenres()
+				const allTags = await getAllGenres('all')
 				setItemsList(allTags)
 			}
 

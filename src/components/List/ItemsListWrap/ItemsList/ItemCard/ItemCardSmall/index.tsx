@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
-import defaultMovieImage from '../../../../app/assets/images/default-movie-image.svg'
+import defaultMovieImage from '../../../../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
-import Image from '../../../Images/Image/index'
+import Image from '../../../../../Images/Image'
 import { getCover } from '@/handlers/getCover'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,26 +15,26 @@ type PropsType = {
 	className?: string
 }
 
-const MovieCardSmall: FC<PropsType> = ({
+const ItemCardSmall: FC<PropsType> = ({
 	itemId,
 	type,
 	mark,
 	isLinkToMovie = false,
 	className = false,
 }) => {
-	const [moviePoster, setMoviePoster] = useState<string>('')
+	const [itemCover, setItemCover] = useState<string>('')
 
 	useEffect(() => {
 		getCover(itemId, type).then(data => {
-			setMoviePoster(data)
+			setItemCover(data)
 		})
 	}, [])
 
-	const movieCard = (
+	const itemCard = (
 		<>
 			<Image
 				className='duration-300 mb-4 border-4'
-				src={`https://image.tmdb.org/t/p/w440_and_h660_face${moviePoster}`}
+				src={`https://image.tmdb.org/t/p/w440_and_h660_face${itemCover}`}
 				defaultImage={defaultMovieImage}
 			/>
 			{mark && (
@@ -52,13 +52,13 @@ const MovieCardSmall: FC<PropsType> = ({
 		>
 			{isLinkToMovie ? (
 				<Link href={`/${type}/[id]`} as={`/${type}/${itemId}`}>
-					{movieCard}
+					{itemCard}
 				</Link>
 			) : (
-				movieCard
+				itemCard
 			)}
 		</span>
 	)
 }
 
-export default MovieCardSmall
+export default ItemCardSmall

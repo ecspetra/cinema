@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import moment from 'moment/moment'
-import MovieCardSmall from '@/components/Movie/MovieCard/MovieCardSmall'
+import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import Link from 'next/link'
 
 type PropsType = {
@@ -16,7 +16,7 @@ const SearchItemLink: FC<PropsType> = ({ item, type }) => {
 			as={`/${type}/${id}`}
 			className='flex justify-start items-center gap-4 w-full hover:bg-rose-600 duration-300 p-2'
 		>
-			<MovieCardSmall itemId={id} className='!w-16 !h-24' type={type} />
+			<ItemCardSmall itemId={id} className='!w-16 !h-24' type={type} />
 			<span>
 				<span className='flex flex-col justify-start items-start'>
 					<span className='font-semibold'>

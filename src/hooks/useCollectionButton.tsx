@@ -12,10 +12,10 @@ import {
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
-import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
+import { IItemCard } from '../../interfaces'
 
 export const useCollectionButton = (
-	itemInfo: IMovieCard | IPersonCard,
+	itemInfo: IItemCard,
 	collection: 'movie' | 'tv' | 'person'
 ) => {
 	const [isMounted, setIsMounted] = useState<boolean>(false)
@@ -28,30 +28,34 @@ export const useCollectionButton = (
 	const handleSetCollectionItem = () => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			let newItem: IMovieCard | ITVShowCard | IPersonCard = {}
+			let newItem: IItemCard = {}
 
-			if (collection === 'movie') {
-				newItem = {
-					id: itemInfo.id,
-					poster_path: itemInfo.poster_path,
-					release_date: itemInfo.release_date,
-					title: itemInfo.title,
-					genres: itemInfo.genres,
-				}
-			} else if (collection === 'tv') {
-				newItem = {
-					id: itemInfo.id,
-					poster_path: itemInfo.poster_path,
-					first_air_date: itemInfo.first_air_date,
-					name: itemInfo.name,
-					genres: itemInfo.genres,
-				}
-			} else {
-				newItem = {
-					id: itemInfo.id,
-					profile_path: itemInfo.profile_path,
-					name: itemInfo.name,
-				}
+			switch (collection) {
+				case 'movie':
+					newItem = {
+						id: itemInfo.id,
+						poster_path: itemInfo.poster_path,
+						release_date: itemInfo.release_date,
+						title: itemInfo.title,
+						genres: itemInfo.genres,
+					}
+					break
+				case 'tv':
+					newItem = {
+						id: itemInfo.id,
+						poster_path: itemInfo.poster_path,
+						first_air_date: itemInfo.first_air_date,
+						name: itemInfo.name,
+						genres: itemInfo.genres,
+					}
+					break
+				case 'person':
+					newItem = {
+						id: itemInfo.id,
+						profile_path: itemInfo.profile_path,
+						name: itemInfo.name,
+					}
+					break
 			}
 
 			setNewCollectionItem(newItem, collection)

@@ -1,12 +1,11 @@
-import MovieCard from '../../Movie/MovieCard'
-import { IMovieCard, IPersonCard } from '../../../../interfaces'
+import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
+import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
-import PersonCard from '../../Person/PersonList/PersonCard'
 import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
@@ -24,9 +23,7 @@ const CollectionItemsList: FC<PropsType> = ({
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [lastItemId, setLastItemId] = useState<string | undefined>(undefined)
-	const [itemsToShow, setItemsToShow] = useState<
-		Array<IMovieCard | IPersonCard>
-	>([...items])
+	const [itemsToShow, setItemsToShow] = useState<Array<IItemCard>>([...items])
 	const [isShowMoreButton, setIsShowMoreButton] =
 		useState<boolean>(isMoreDataAvailable)
 	const { userId } = useAuth()
@@ -72,23 +69,15 @@ const CollectionItemsList: FC<PropsType> = ({
 		<div className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
-				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
-					if (collectionName === 'movie') {
-						return (
-							<MovieCard
-								key={item.id}
-								item={item}
-								isCollectionListItem
-							/>
-						)
-					} else
-						return (
-							<PersonCard
-								key={item.id}
-								item={item}
-								isCollectionListItem
-							/>
-						)
+				{itemsToShow.map((item: IItemCard) => {
+					return (
+						<ItemCard
+							key={item.id}
+							item={item}
+							type={collectionName}
+							isCollectionListItem
+						/>
+					)
 				})}
 			</div>
 			{isLoading && <Loader type='static' />}

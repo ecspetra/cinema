@@ -1,15 +1,13 @@
-import MovieCard from '../../../Movie/MovieCard'
-import { IMovieCard, IPersonCard, ISearchCard } from '../../../../../interfaces'
+import ItemCard from './ItemCard'
+import { IItemCard } from '../../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
-import { getMovieGenres } from '@/handlers/getMovieGenres'
 import Button from '@/app/components/UI/Button'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
-import PersonCard from '../../../Person/PersonList/PersonCard'
-import SearchCard from '@/app/components/UI/Search/SearchCard'
+import { getCardGenres } from '@/handlers/getCardGenres'
 
 type PropsType = {
-	itemsList: Array<IMovieCard> | Array<IPersonCard>
+	itemsList: Array<IItemCard>
 	type: 'movie' | 'person' | 'tv' | 'general'
 	isMoreDataAvailable: boolean
 	urlToFetchItems?: string
@@ -33,11 +31,9 @@ const ItemsList: FC<PropsType> = ({
 		useState(isMoreDataAvailable)
 
 	const getItems = () => {
-		if (type !== 'person' && type !== 'general') {
-			getMovieGenres(fetchedItems, type).then(data => {
-				setItemsToShow(prevState => [...prevState, ...data])
-			})
-		} else setItemsToShow(prevState => [...prevState, ...fetchedItems])
+		getCardGenres(fetchedItems).then(data => {
+			setItemsToShow(prevState => [...prevState, ...data])
+		})
 
 		setFetchedItems([])
 	}
@@ -97,21 +93,9 @@ const ItemsList: FC<PropsType> = ({
 	return (
 		<>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
-				{itemsToShow.map(
-					(item: IMovieCard | IPersonCard | ISearchCard) => {
-						if (type === 'general') {
-							return <SearchCard key={item.id} item={item} />
-						} else if (type !== 'person') {
-							return (
-								<MovieCard
-									key={item.id}
-									item={item}
-									isTVShow={type === 'tv'}
-								/>
-							)
-						} else return <PersonCard key={item.id} item={item} />
-					}
-				)}
+				{itemsToShow.map((item: IItemCard) => {
+					return <ItemCard key={item.id} item={item} type={type} />
+				})}
 			</div>
 			{isLoading && <Loader type='static' className='mb-4' />}
 			{isShowMoreButton && (

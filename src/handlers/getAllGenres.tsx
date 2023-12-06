@@ -1,19 +1,27 @@
 import { URL_TO_FETCH_ALL_GENRES } from '@/constants/linksToFetch'
 
-const getAllGenres = async () => {
-	const movieUrl = await fetch(
-		URL_TO_FETCH_ALL_GENRES.replace(`{queryParam}`, 'movie')
-	)
-	const tvUrl = await fetch(
-		URL_TO_FETCH_ALL_GENRES.replace(`{queryParam}`, 'tv')
-	)
-	const movieGenres = await movieUrl.json()
-	const tvGenres = await tvUrl.json()
+export const getAllGenres = async type => {
+	let genres
+	const getGenres = async type => {
+		const response = await fetch(
+			URL_TO_FETCH_ALL_GENRES.replace(`{queryParam}`, type)
+		)
+		const result = await response.json()
+		return result.genres
+	}
 
-	const allGenres = [...movieGenres.genres, ...tvGenres.genres]
-	const result = [...new Set(allGenres)]
+	switch (type) {
+		case 'movie':
+			genres = await getGenres('movie')
+			return genres
+		case 'tv':
+			genres = await getGenres('tv')
+			return genres
+		case 'all':
+			const movieGenres = await getGenres('movie')
+			const tvGenres = await getGenres('tv')
+			const allGenres = [...new Set([...movieGenres, ...tvGenres])]
 
-	return result
+			return allGenres
+	}
 }
-
-export default getAllGenres

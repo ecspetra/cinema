@@ -10,12 +10,14 @@ import { TV_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import Filter from '@/app/components/Filter'
+import Title from '@/app/components/UI/Title/Title'
 
 const TVShows = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv')
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'tv')
 	const [defaultTvShowsList, setDefaultTvShowsList] = useState(null)
 	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
+	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
 
 	useEffect(() => {
 		if (!results) {
@@ -34,12 +36,15 @@ const TVShows = ({ results }) => {
 	return (
 		<>
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
+			<Title className='text-7xl after:hidden pb-0'>TV shows</Title>
 			<Search
 				type='tv'
 				name='tvShowsSearch'
 				label='Search TV shows'
 				urlToFetch={defaultUrlToSearch}
+				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
+				isApplied={!isDefaultList}
 				isWrapped
 			/>
 			<Filter
@@ -60,7 +65,7 @@ const TVShows = ({ results }) => {
 				type='tv'
 				isMoreDataAvailable={defaultTvShowsList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
-				title='TV shows'
+				isSortable
 				isFilterable
 			/>
 		</>

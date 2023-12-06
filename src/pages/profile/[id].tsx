@@ -186,6 +186,7 @@ const Profile = ({ results }) => {
 			{!isCurrentUserProfile && (
 				<UserCollection
 					movies={collection.collectionMovies}
+					tvShows={collection.collectionTVShows}
 					persons={collection.collectionPersons}
 					marks={collection.collectionMarks}
 					reviews={collection.allCollectionReviews}

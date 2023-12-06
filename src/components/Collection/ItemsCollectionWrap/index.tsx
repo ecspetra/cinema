@@ -1,22 +1,19 @@
 import React, { FC } from 'react'
-import PersonCard from '@/components/Person/PersonList/PersonCard'
-import { IMovieCard, IPersonCard } from '../../../../interfaces'
+import { IItemCard } from '../../../../interfaces'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
-import MovieCard from '@/components/Movie/MovieCard'
+import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 
 type PropsType = {
-	items: Array<IPersonCard | IMovieCard>
+	items: Array<IItemCard>
 	type: string
 	isMoreDataAvailable: boolean
-	isPersonList?: boolean
 }
 
 const ItemsCollectionWrap: FC<PropsType> = ({
 	items,
 	type,
 	isMoreDataAvailable,
-	isPersonList = false,
 }) => {
 	const { userId } = useAuth()
 	const maxListLength = 4
@@ -26,15 +23,10 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
 				{items.map((item, idx) => {
 					if (idx <= maxListLength) {
-						return isPersonList ? (
-							<PersonCard
+						return (
+							<ItemCard
 								item={item}
-								key={idx}
-								isShowButton={false}
-							/>
-						) : (
-							<MovieCard
-								item={item}
+								type={type}
 								isShowButton={false}
 								key={idx}
 							/>

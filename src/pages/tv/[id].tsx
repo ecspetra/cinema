@@ -114,6 +114,7 @@ const TVShow = ({ tvShowFromProps }) => {
 				movieImages={movie.imagesResult.backdrops}
 				movieReviews={movie.reviews}
 				movieVideo={movieTeaser?.key}
+				type='tv'
 			/>
 			<div>
 				<MoviePersonsList

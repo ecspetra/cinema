@@ -61,13 +61,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 		})
 	}
 
-	const handleStringFieldChange = (
-		field: keyof FilterFormData,
-		value: string
-	) => {
-		setFormData(prevData => ({ ...prevData, [field]: value }))
-	}
-
 	const handleRemoveFilterTag = (tag: any) => {
 		setFormData(prevData => {
 			const currentValue = prevData[tag.field]
@@ -237,6 +230,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						tags={formData[field]}
 						onToggle={handleToggleTag}
 						name={field}
+						type={type}
 					/>
 				)
 		}
@@ -252,7 +246,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	}, [])
 
 	return (
-		<div className='mb-16 bg-gray-950 p-4'>
+		<div className='mb-16 bg-gray-950'>
 			<Title>Filter</Title>
 			<form onSubmit={handleSearch}>
 				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>

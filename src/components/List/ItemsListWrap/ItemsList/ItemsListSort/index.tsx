@@ -9,7 +9,7 @@ type PropsType = {
 
 const ItemsListSort: FC<PropsType> = ({ onChange }) => {
 	return (
-		<Select label='Sort by' onChange={onChange} className='!w-48'>
+		<Select label='Sort by' onChange={onChange} className='!w-48 ml-auto'>
 			{Object.values(SortByOption).map((item, idx) => (
 				<SelectOption
 					key={item}

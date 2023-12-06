@@ -7,22 +7,18 @@ import { IMarkFromDB } from '../../../../interfaces'
 import classNames from 'classnames'
 
 type PropsType = {
-	movieId: number
-	movieTitle: string
+	itemId: number
+	type: string
 	className: string
 }
 
-const MarkSmall: FC<PropsType> = ({ movieId, movieTitle, className }) => {
+const MarkSmall: FC<PropsType> = ({ itemId, type, className }) => {
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
 	const { isLoggedIn, userId } = useAuth()
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			const markData = {
-				movieId,
-				movieTitle,
-			}
-			getMarkForMovie(markData, userId).then(data => {
+			getMarkForMovie(itemId, userId, type).then(data => {
 				setMarkData(data)
 			})
 		}

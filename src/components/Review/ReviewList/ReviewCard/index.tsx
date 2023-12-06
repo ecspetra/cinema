@@ -22,7 +22,7 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
 import { useAuth } from '@/context/AuthProvider'
 import Link from 'next/link'
-import MovieCardSmall from '@/components/Movie/MovieCard/MovieCardSmall'
+import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 
 type PropsType = {
@@ -112,7 +112,7 @@ const ReviewCard: FC<PropsType> = ({
 				</Dropdown>
 			)}
 			{isLinkToMovie && (
-				<MovieCardSmall
+				<ItemCardSmall
 					itemId={movieId}
 					type={isTVShow ? 'tv' : 'movie'}
 				/>

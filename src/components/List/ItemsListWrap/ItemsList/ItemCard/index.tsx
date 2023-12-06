@@ -1,67 +1,79 @@
-import { IMovieCard, ITVShowCard } from '../../../../interfaces'
-import React, { FC } from 'react'
-import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
+import React, { FC, useState } from 'react'
+import defaultMovieImage from '../../../../../app/assets/images/default-movie-image.svg'
 import Link from 'next/link'
-import Image from '../../Images/Image/index'
-import Title from '../../../app/components/UI/Title/Title'
-import Tag from '../../Tag/index'
+import Image from '../../../../Images/Image'
+import Title from '../../../../../app/components/UI/Title/Title'
+import Tag from '../../../../Tag'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import MarkSmall from '@/components/Mark/MarkSmall'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
+import { IItemCard } from '../../../../../../interfaces'
 
 type PropsType = {
-	item: IMovieCard | ITVShowCard
+	item: IItemCard
+	type: string
 	isShowButton?: boolean
-	isTVShow?: boolean
 	isCollectionListItem?: boolean
+	isShowRole?: boolean
 }
 
-const MovieCard: FC<PropsType> = ({
+const ItemCard: FC<PropsType> = ({
 	item,
+	type,
 	isShowButton = true,
-	isTVShow = false,
 	isCollectionListItem = false,
+	isShowRole = false,
 }) => {
+	const {
+		id,
+		media_type,
+		genres,
+		poster_path,
+		profile_path,
+		first_air_date,
+		release_date,
+		title,
+		name,
+		job,
+		character,
+	} = item
 	const {
 		isMounted,
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(item, 'movie')
+	} = useCollectionButton(item, media_type ?? type)
 
-	const {
-		id,
-		genres,
-		poster_path,
-		first_air_date,
-		name,
-		release_date,
-		title,
-	} = item
 	const isShowTags = genres?.length > 0
+	const cardType = media_type ?? type
+	const isShowMark = cardType === 'movie' || cardType === 'tv'
+	const cardCover = poster_path ?? profile_path
+	const cardTitle = title ?? name
 
-	const movieCard = (
+	const itemCard = (
 		<div className='flex flex-col w-full max-w-[232px] mb-8 mr-auto'>
 			<Link
-				href={isTVShow ? '/tv/[id]' : '/movie/[id]'}
-				as={isTVShow ? `/tv/${id}` : `/movie/${id}`}
+				href={`/${cardType}/${id}`}
+				as={`/${cardType}/${id}`}
 				className='group relative'
 			>
-				<MarkSmall
-					movieId={id}
-					movieTitle={title ? title : name}
-					className='absolute -right-3 -top-3'
-				/>
+				{isShowMark && (
+					<MarkSmall
+						itemId={id}
+						type={type}
+						className='absolute -right-3 -top-3'
+					/>
+				)}
 				<Image
 					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
+					src={`https://image.tmdb.org/t/p/w440_and_h660_face${cardCover}`}
 					defaultImage={defaultMovieImage}
 				/>
 				<Title variant='h3'>
-					{title ? title : name}
+					{cardTitle}
 					{(release_date || first_air_date) && (
 						<span className='ml-1'>
 							(
@@ -72,6 +84,7 @@ const MovieCard: FC<PropsType> = ({
 						</span>
 					)}
 				</Title>
+				{isShowRole && <p className='text-xs'>{character ?? job}</p>}
 			</Link>
 			{isShowTags && (
 				<div className='flex flex-wrap mb-2 relative'>
@@ -104,13 +117,13 @@ const MovieCard: FC<PropsType> = ({
 					classNames='collection-card'
 					unmountOnExit
 				>
-					{movieCard}
+					{itemCard}
 				</CSSTransition>
 			) : (
-				movieCard
+				itemCard
 			)}
 		</>
 	)
 }
 
-export default MovieCard
+export default ItemCard

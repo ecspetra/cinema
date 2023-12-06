@@ -17,16 +17,17 @@ import { getUserCollection } from '@/handlers/getUserCollection'
 
 const Collection = ({ results }) => {
 	const [movies, setMovies] = useState(null)
+	const [tvShows, setTvShows] = useState(null)
 	const [persons, setPersons] = useState(null)
 	const [reviews, setReviews] = useState([])
 	const [marks, setMarks] = useState([])
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { userId } = useAuth()
-	const isCurrentUserCollection = router.query.uid === userId
 
 	useEffect(() => {
 		setMovies(results?.collectionMovies)
+		setTvShows(results?.collectionTVShows)
 		setPersons(results?.collectionPersons)
 		setReviews(results?.allCollectionReviews)
 		setMarks(results?.collectionMarks)
@@ -51,6 +52,7 @@ const Collection = ({ results }) => {
 
 			if (!userId) {
 				setMovies(null)
+				setTvShows(null)
 				setPersons(null)
 				setReviews([])
 				setMarks([])
@@ -60,11 +62,13 @@ const Collection = ({ results }) => {
 				const userCollection = await getUserCollection(userIdFromUrl)
 
 				setMovies(userCollection.collectionMovies)
+				setTvShows(userCollection.collectionTVShows)
 				setPersons(userCollection.collectionPersons)
 				setReviews(userCollection.allCollectionReviews)
 				setMarks(userCollection.collectionMarks)
 			} catch (error) {
 				setMovies(null)
+				setTvShows(null)
 				setPersons(null)
 				setReviews([])
 				setMarks([])
@@ -104,6 +108,7 @@ const Collection = ({ results }) => {
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<UserCollection
 				movies={movies}
+				tvShows={tvShows}
 				persons={persons}
 				marks={marks}
 				reviews={reviews}
@@ -153,6 +158,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			props: {
 				results: {
 					collectionMovies: userCollection.collectionMovies,
+					collectionTVShows: userCollection.collectionTVShows,
 					collectionPersons: userCollection.collectionPersons,
 					allCollectionReviews: userCollection.allCollectionReviews,
 					collectionMarks: userCollection.collectionMarks,

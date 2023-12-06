@@ -27,6 +27,7 @@ type PropsType = {
 	movieImages: Array<IBackdrop>
 	movieReviews: Array<IReviewCard | IReviewCardFromDB>
 	movieVideo: string
+	type: string
 }
 
 const MovieInfo: FC<PropsType> = ({
@@ -34,6 +35,7 @@ const MovieInfo: FC<PropsType> = ({
 	movieImages,
 	movieReviews,
 	movieVideo,
+	type,
 }) => {
 	const { userId } = useAuth()
 
@@ -54,7 +56,7 @@ const MovieInfo: FC<PropsType> = ({
 		seasons,
 	} = basicInfo
 
-	const isTVShowItem = !!(first_air_date && name)
+	const isTVShowItem = type === 'tv'
 
 	const details = [
 		isTVShowItem
@@ -85,7 +87,7 @@ const MovieInfo: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
+	} = useCollectionButton(basicInfo, type)
 
 	return (
 		<div className='flex gap-7 py-7 mb-16'>
@@ -111,9 +113,9 @@ const MovieInfo: FC<PropsType> = ({
 				<DetailsList itemsList={details} />
 				<Rating rating={vote_average} voteCount={vote_count} />
 				<Mark
-					movieId={id}
-					movieTitle={title ? title : name}
-					isTVShow={isTVShowItem}
+					itemId={id}
+					itemTitle={title ? title : name}
+					type={type}
 				/>
 				<p className='mb-6'>{overview}</p>
 				<CollectionButton

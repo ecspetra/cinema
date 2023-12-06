@@ -9,6 +9,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import HomePageSlider from '@/components/HomePageSlider'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
+import Title from '@/app/components/UI/Title/Title'
 
 const Home = ({ results }) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'multi')
@@ -16,13 +17,15 @@ const Home = ({ results }) => {
 		'{type}',
 		'movie'
 	)
-	const [defaultMovieList, setDefaultMovieList] = useState(null)
+	const [itemsList, setItemsList] = useState(null)
 	const [upcomingMovieList, setUpcomingMovieList] = useState(null)
 	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
 	const searchQuery = new URL(urlToFetch).searchParams.get('query')
-	const listTitle = urlToFetch.includes(defaultUrlToFetch)
+	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
+	const listTitle = isDefaultList
 		? 'Popular movies'
 		: `Search results for '${searchQuery}'`
+	const listType = isDefaultList ? 'movie' : 'general'
 
 	useEffect(() => {
 		if (!results) {
@@ -30,7 +33,7 @@ const Home = ({ results }) => {
 				URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'movie'),
 				1
 			).then(data => {
-				setDefaultMovieList(data)
+				setItemsList(data)
 			})
 			getResultsByPage(URL_TO_FETCH_UPCOMING_MOVIE_LIST, 1).then(data => {
 				setUpcomingMovieList(data)
@@ -39,30 +42,35 @@ const Home = ({ results }) => {
 	}, [])
 
 	useEffect(() => {
-		setDefaultMovieList(results.defaultMovies)
+		setItemsList(results.defaultMovies)
 		setUpcomingMovieList(results.upcomingMovies)
 	}, [results])
 
-	if (!defaultMovieList || !upcomingMovieList) return <Loader />
+	if (!itemsList || !upcomingMovieList) return <Loader />
 
 	return (
 		<>
 			<HomePageSlider movies={upcomingMovieList} />
+			<Title>{listTitle}</Title>
 			<Search
 				type='movie'
 				name='defaultSearch'
-				label='Search'
+				label='Search for movie, TV show or person'
 				urlToFetch={defaultUrlToSearch}
+				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
-				className='!p-0'
 				isWrapped
+				isApplied={!isDefaultList}
 			/>
+			<p>
+				Fix genres in profile, Fix search results in search select for
+				multi search, Fix collection button for Search Card
+			</p>
 			<ItemsListWrap
-				itemsList={defaultMovieList.items}
-				type='general'
-				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
+				itemsList={itemsList.items}
+				type={listType}
+				isMoreDataAvailable={itemsList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
-				title={listTitle}
 				isFilterable
 			/>
 		</>

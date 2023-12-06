@@ -9,16 +9,16 @@ import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Error from '@/app/components/UI/Error'
 import Loader from '@/components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
 
 type PropsType = {
 	name: string
 	type: string
 	label: string
 	urlToFetch: string
+	defaultUrlToFetch: string
 	onSearch: () => void
+	isApplied?: boolean
 	isWrapped?: boolean
-	className?: string
 }
 
 const Search: FC<PropsType> = ({
@@ -26,9 +26,10 @@ const Search: FC<PropsType> = ({
 	type,
 	label,
 	urlToFetch,
+	defaultUrlToFetch,
 	onSearch,
+	isApplied = false,
 	isWrapped = false,
-	className,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -42,17 +43,21 @@ const Search: FC<PropsType> = ({
 		useState<boolean>(false)
 	const { isOpen, onOpenContainer, onCloseContainer } =
 		useClickOutsideContainer(containerRef, searchQuery.length > 0)
-	const isShowClearButton = searchQuery.length > 0
-
 	const urlToFetchWithSearchQuery = urlToFetch.replace(
 		'{searchQuery}',
 		searchQuery
 	)
+	const isShowClearButton = searchQuery.length > 0 || isApplied
 
 	const handleInputChange = event => {
 		setSearchQuery(event.target.value)
 
 		if (!isTouched) setIsTouched(true)
+	}
+
+	const cancelSearch = () => {
+		resetSearch()
+		onSearch(defaultUrlToFetch)
 	}
 
 	const resetSearch = () => {
@@ -129,7 +134,7 @@ const Search: FC<PropsType> = ({
 							{isLoading ? <Loader type='static' /> : 'Submit'}
 						</Button>
 						{isShowClearButton && (
-							<Button context='icon' onClick={resetSearch}>
+							<Button context='icon' onClick={cancelSearch}>
 								<FontAwesomeIcon
 									icon={faXmark}
 									className='w-6 h-6'
@@ -157,10 +162,7 @@ const Search: FC<PropsType> = ({
 	return (
 		<>
 			{isWrapped ? (
-				<form
-					className={classNames('mb-4 bg-gray-950 p-4', className)}
-					onSubmit={handleSearch}
-				>
+				<form className='mb-4 bg-gray-950' onSubmit={handleSearch}>
 					{search}
 					{error && (
 						<Error

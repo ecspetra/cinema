@@ -1,4 +1,4 @@
-import { IMovieCard, IPersonCard } from '../../../../interfaces'
+import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
@@ -7,10 +7,10 @@ import ItemsListSort from '@/components/List/ItemsListWrap/ItemsList/ItemsListSo
 import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
 
 type PropsType = {
-	itemsList: Array<IMovieCard> | Array<IPersonCard>
+	itemsList: Array<IItemCard>
 	type: 'movie' | 'person' | 'tv'
-	title: string
 	isMoreDataAvailable: boolean
+	title?: string
 	urlToFetchItems?: string
 	isFilterable?: boolean
 	isSortable?: boolean
@@ -19,8 +19,8 @@ type PropsType = {
 const ItemsListWrap: FC<PropsType> = ({
 	itemsList,
 	type,
-	title,
 	isMoreDataAvailable,
+	title,
 	urlToFetchItems,
 	isFilterable = false,
 	isSortable = false,
@@ -49,13 +49,13 @@ const ItemsListWrap: FC<PropsType> = ({
 	}, [urlToFetchItems])
 
 	if (isShowEmptyList) {
-		return <EmptyList title={title} />
+		return <EmptyList title={title} className='text-center' />
 	}
 
 	return (
 		<div className='mb-16'>
-			<div className='flex justify-between items-start'>
-				<Title>{title}</Title>
+			<div className='flex justify-between items-start mb-4'>
+				{title && <Title className='!mb-0'>{title}</Title>}
 				{isSortable && <ItemsListSort onChange={handleSortChange} />}
 			</div>
 			<ItemsList
