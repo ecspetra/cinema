@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
-import defaultMovieImage from '../../../../../../app/assets/images/default-movie-image.svg'
+import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
+import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Link from 'next/link'
 import Image from '../../../../../Images/Image'
 import { getCover } from '@/handlers/getCover'
@@ -35,7 +36,9 @@ const ItemCardSmall: FC<PropsType> = ({
 			<Image
 				className='duration-300 mb-4 border-4'
 				src={`https://image.tmdb.org/t/p/w440_and_h660_face${itemCover}`}
-				defaultImage={defaultMovieImage}
+				defaultImage={
+					type !== 'person' ? defaultMovieImage : defaultUserImage
+				}
 			/>
 			{mark && (
 				<span className='flex justify-center items-center'>

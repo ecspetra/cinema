@@ -1,13 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-	faAt,
-	faCalendarCheck,
-	faFlag,
-} from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
-import moment from 'moment'
 import DetailsList from '@/components/Details/DetailsList'
 
 type PropsType = {

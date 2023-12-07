@@ -1,6 +1,5 @@
 import React, { FC, useRef } from 'react'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
-import { IMovieCard } from '../../../../../../interfaces'
 import Loader from '@/components/Loader'
 import SearchItemBasic from '@/app/components/UI/Search/SearchList/SearchItemBasic'
 import SearchItemLink from '@/app/components/UI/Search/SearchList/SearchItemLink'

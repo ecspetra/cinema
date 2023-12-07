@@ -1,5 +1,6 @@
-import React, { FC, useState } from 'react'
-import defaultMovieImage from '../../../../../app/assets/images/default-movie-image.svg'
+import React, { FC } from 'react'
+import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
+import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Link from 'next/link'
 import Image from '../../../../Images/Image'
 import Title from '../../../../../app/components/UI/Title/Title'
@@ -70,7 +71,11 @@ const ItemCard: FC<PropsType> = ({
 				<Image
 					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
 					src={`https://image.tmdb.org/t/p/w440_and_h660_face${cardCover}`}
-					defaultImage={defaultMovieImage}
+					defaultImage={
+						cardType !== 'person'
+							? defaultMovieImage
+							: defaultUserImage
+					}
 				/>
 				<Title variant='h3'>
 					{cardTitle}

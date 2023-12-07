@@ -64,7 +64,7 @@ const Home = ({ results }) => {
 			/>
 			<p>
 				Fix genres in profile, Fix search results in search select for
-				multi search, Fix collection button for Search Card
+				multi search
 			</p>
 			<ItemsListWrap
 				itemsList={itemsList.items}

@@ -5,6 +5,7 @@ import {
 	faFlag,
 	faBolt,
 	faAt,
+	faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment/moment'
 
@@ -15,6 +16,36 @@ type PropsType = {
 }
 
 const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
+	const emptyText = 'No info yet'
+
+	const getItemText = (text, type: string) => {
+		let itemText
+		const isTextValid = text && text.length > 0
+
+		switch (type) {
+			case 'date':
+				return (itemText = isTextValid
+					? moment(text).format('Do MMM YYYY')
+					: emptyText)
+			case 'array':
+				return (itemText =
+					isTextValid &&
+					text.map((item, idx) => {
+						return (
+							<span className='mr-1' key={item.name}>
+								{idx === text.length - 1
+									? item.name
+									: item.name + ','}
+							</span>
+						)
+					}))
+			default:
+				itemText = isTextValid ? text : emptyText
+		}
+
+		return itemText
+	}
+
 	const getDetailsItem = () => {
 		switch (type) {
 			case 'release_date':
@@ -26,7 +57,7 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 							icon={faCalendarCheck}
 						/>
 						<span className='mr-1.5 font-semibold'>{title}</span>
-						{moment(text).format('Do MMM YYYY')}
+						{getItemText(text, 'date')}
 					</>
 				)
 			case 'production_countries':
@@ -42,15 +73,7 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 							}
 						/>
 						<span className='mr-1.5 font-semibold'>{title}</span>
-						{text.map((item, idx) => {
-							return (
-								<span className='mr-1' key={item.name}>
-									{idx === text.length - 1
-										? item.name
-										: item.name + ','}
-								</span>
-							)
-						})}
+						{getItemText(text, 'array')}
 					</>
 				)
 			case 'place_of_birth':
@@ -59,7 +82,7 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 					<>
 						<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
 						<span className='mr-1.5 font-semibold'>{title}</span>
-						{text ? text : 'No info yet'}
+						{getItemText(text)}
 					</>
 				)
 			case 'birthday':
@@ -69,17 +92,15 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 							className='mr-1.5'
 							icon={faCalendarCheck}
 						/>
-						<span className='mr-1.5'>{title.birthday}</span>
+						<span className='mr-1.5 font-semibold'>
+							{title.birthday}
+						</span>
 						<span>
-							<span>
-								{moment(text.birthday).format('Do MMM YYYY')}
-							</span>
+							<span>{getItemText(text.birthday, 'date')}</span>
 							{text.deathday && (
 								<span>
 									{`— ${title.deathday}`}
-									{moment(text.deathday).format(
-										'Do MMM YYYY'
-									)}
+									{getItemText(text.deathday, 'date')}
 								</span>
 							)}
 						</span>
@@ -90,7 +111,15 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 					<>
 						<FontAwesomeIcon className='mr-1.5' icon={faAt} />
 						<span className='mr-1.5 font-semibold'>{title}</span>
-						{text}
+						{getItemText(text)}
+					</>
+				)
+			case 'gender':
+				return (
+					<>
+						<FontAwesomeIcon className='mr-1.5' icon={faUser} />
+						<span className='mr-1.5 font-semibold'>{title}</span>
+						{getItemText(text)}
 					</>
 				)
 			case 'user_date_of_birth':
@@ -101,9 +130,7 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 							icon={faCalendarCheck}
 						/>
 						<span className='mr-1.5 font-semibold'>{title}</span>
-						{text
-							? moment(text).format('Do MMM YYYY')
-							: 'No info yet'}
+						{getItemText(text, 'date')}
 					</>
 				)
 		}

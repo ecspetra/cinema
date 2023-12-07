@@ -8,14 +8,16 @@ type PropsType = {
 const DetailsList: FC<PropsType> = ({ itemsList }) => {
 	return (
 		<div className='mb-5'>
-			{itemsList.map(item => (
-				<DetailsItem
-					key={item.title}
-					type={item.type}
-					title={item.title}
-					text={item.text}
-				/>
-			))}
+			{itemsList.map(item => {
+				return (
+					<DetailsItem
+						key={item.title}
+						type={item.type}
+						title={item.title}
+						text={item.text}
+					/>
+				)
+			})}
 		</div>
 	)
 }

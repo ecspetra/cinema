@@ -7,7 +7,6 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import { fetchItemData } from '@/handlers/fetchItemData'
-import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const Person = ({ personFromProps }) => {

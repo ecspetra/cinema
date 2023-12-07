@@ -34,6 +34,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 							key={idx}
 							item={item}
 							isShowButton={false}
+							type='person'
 							isShowRole
 						/>
 					)
