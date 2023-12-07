@@ -62,10 +62,6 @@ const Home = ({ results }) => {
 				isWrapped
 				isApplied={!isDefaultList}
 			/>
-			<p>
-				Fix genres in profile, Fix search results in search select for
-				multi search
-			</p>
 			<ItemsListWrap
 				itemsList={itemsList.items}
 				type={listType}

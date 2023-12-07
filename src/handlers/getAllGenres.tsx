@@ -20,7 +20,9 @@ export const getAllGenres = async type => {
 		case 'all':
 			const movieGenres = await getGenres('movie')
 			const tvGenres = await getGenres('tv')
-			const allGenres = [...new Set([...movieGenres, ...tvGenres])]
+			const allGenres = [
+				...new Set([...movieGenres, ...tvGenres].map(JSON.stringify)),
+			].map(JSON.parse)
 
 			return allGenres
 	}

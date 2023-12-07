@@ -114,7 +114,7 @@ const Profile = ({ results }) => {
 	}, [userInfo, friends])
 
 	if (!userInfo) return <Loader />
-
+	console.log(userInfo.favoriteGenres)
 	return (
 		<>
 			<TopBanner imageSrc={PROFILE_PAGE_TOP_BANNER_IMAGE} />
