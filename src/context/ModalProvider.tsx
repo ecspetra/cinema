@@ -6,6 +6,7 @@ import React, {
 	useEffect,
 } from 'react'
 import { IModalContent } from '../../interfaces'
+import { useRouter } from 'next/router'
 
 type ModalContextType = {
 	showModal: (content: IModalContent) => void
@@ -32,6 +33,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
 	const [modalQueue, setModalQueue] = useState<ModalContextType[]>([])
 	const [currentModal, setCurrentModal] = useState<IModalContent | null>(null)
 	const [isMounted, setIsMounted] = useState(false)
+	const router = useRouter()
 
 	const showModal = (modalData: IModalContent) => {
 		setModalQueue(prevState => [...prevState, modalData])
@@ -59,6 +61,18 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
 			setIsMounted(true)
 		}
 	}, [currentModal])
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			modalQueue.forEach(modal => hideModal(modal.id))
+		}
+
+		router.events.on('beforeHistoryChange', handleRouteChange)
+
+		return () => {
+			router.events.off('beforeHistoryChange', handleRouteChange)
+		}
+	}, [modalQueue, hideModal, router])
 
 	const contextValue = {
 		showModal,

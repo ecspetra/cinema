@@ -55,7 +55,12 @@ const ItemsList: FC<PropsType> = ({
 					}
 				})
 
-				setFetchedItems(newItems)
+				if (newItems.length !== 0) {
+					setFetchedItems(newItems)
+				} else {
+					setFetchedItems(itemsToShow)
+				}
+
 				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
 			.then(() => {
