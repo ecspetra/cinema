@@ -19,7 +19,7 @@ const UserCollection: FC<PropsType> = ({
 	isCurrentUserCollection = true,
 }) => {
 	return (
-		<>
+		<div>
 			<CollectionWrap
 				title='Movies'
 				type='movie'
@@ -61,7 +61,7 @@ const UserCollection: FC<PropsType> = ({
 				isMoreDataAvailable={false}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
-		</>
+		</div>
 	)
 }
 

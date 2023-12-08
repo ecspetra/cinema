@@ -38,7 +38,7 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 				<Title className='text-7xl after:hidden pb-0'>
 					{profile?.displayName}
 				</Title>
-				<DetailsList itemsList={details} />
+				<DetailsList itemsList={details} className='!mb-8' />
 				<div className='mb-8'>
 					<Title variant='h3'>About</Title>
 					{profile?.about ? profile?.about : 'No info yet'}

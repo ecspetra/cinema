@@ -78,7 +78,7 @@ const CollectionWrap: FC<PropsType> = ({
 	}
 
 	return (
-		<div className='mb-16 last:mb-0'>
+		<div className='my-16 first:mt-0 last:mb-0'>
 			<Title>{title}</Title>
 			{getItemsList()}
 		</div>

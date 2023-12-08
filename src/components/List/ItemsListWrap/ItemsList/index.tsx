@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
-import { getCardGenres } from '@/handlers/getCardGenres'
+import { createItemCard } from '@/handlers/createItemCard'
 
 type PropsType = {
 	itemsList: Array<IItemCard>
@@ -31,7 +31,7 @@ const ItemsList: FC<PropsType> = ({
 		useState(isMoreDataAvailable)
 
 	const getItems = () => {
-		getCardGenres(fetchedItems).then(data => {
+		createItemCard(fetchedItems).then(data => {
 			setItemsToShow(prevState => [...prevState, ...data])
 		})
 

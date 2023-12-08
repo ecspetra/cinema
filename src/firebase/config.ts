@@ -36,6 +36,7 @@ import {
 } from '../../interfaces'
 import { onValue } from '@firebase/database'
 import { fetchItemData } from '@/handlers/fetchItemData'
+import { createItemCard } from '@/handlers/createItemCard'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -400,7 +401,11 @@ export const setNewCollectionItem = async (
 	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const newCollectionItemRef = ref(database, collectionPath)
 
-	await set(newCollectionItemRef, itemId)
+	const newItem = {
+		id: itemId,
+	}
+
+	await set(newCollectionItemRef, newItem)
 }
 
 export const getCollectionItem = (
@@ -450,8 +455,12 @@ export const getCollectionItemsList = async (
 	lastItemId: string | null
 ) => {
 	const collectionPath = `users/${userId}/${collectionName}/`
-
 	const userCollectionRef = ref(database, collectionPath)
+	const collectionInfo = {
+		type: collectionName,
+		ref: userCollectionRef,
+		userId: userId,
+	}
 	let paginationQuery
 
 	if (lastItemId) {
@@ -491,42 +500,43 @@ export const getCollectionItemsList = async (
 		itemIds.pop()
 	}
 
-	const getItems = async () => {
-		switch (collectionName) {
-			case 'movie':
-			case 'tv':
-			case 'person':
-				return await Promise.all(
-					itemIds.map(async itemId => {
-						const itemInfo = await fetchItemData(
-							collectionName,
-							itemId,
-							''
-						)
-						console.log(itemInfo)
-						return itemInfo
-					})
-				)
-			case 'reviews':
-			case 'replies':
-				return await Promise.all(
-					itemIds.map(async itemId => {
-						const itemSnapshot = await get(
-							child(userCollectionRef, itemId)
-						)
-						return itemSnapshot.val()
-					})
-				)
-			case 'marks':
-				return await getCollectionMarksList(userId)
-		}
-	}
-
-	const items = await getItems()
+	const items = await getCollectionItemsInfo(itemIds, collectionInfo)
 
 	return {
 		isMoreDataAvailable,
 		items,
+	}
+}
+
+export const getCollectionItemsInfo = async (itemIds, collectionInfo) => {
+	switch (collectionInfo.type) {
+		case 'movie':
+		case 'tv':
+		case 'person':
+			const itemsInfo = await Promise.all(
+				itemIds.map(async itemId => {
+					const itemInfo = await fetchItemData(
+						collectionInfo.type,
+						itemId,
+						''
+					)
+					return itemInfo
+				})
+			)
+			const items = createItemCard(itemsInfo)
+			return items
+		case 'reviews':
+		case 'replies':
+			return await Promise.all(
+				itemIds.map(async itemId => {
+					const itemSnapshot = await get(
+						child(collectionInfo.ref, itemId)
+					)
+					return itemSnapshot.val()
+				})
+			)
+		case 'marks':
+			return await getCollectionMarksList(collectionInfo.userId)
 	}
 }
 
@@ -561,32 +571,37 @@ export const collectionListener = (
 	setIsMoreDataAvailable: (arg: boolean) => void
 ) => {
 	const collectionRef = ref(database, `users/${userId}/${collectionName}`)
-	const itemsPerPage = 20
 
-	const onDataChange = (snapshot: DataSnapshot) => {
-		const data = snapshot.val()
-		const itemsFromDB = data ? Object.values(data) : []
-		const totalItemsLength = itemsFromDB.length
-		const loadedItemsLength = loadedItems.length
+	const getAllItemsFromCurrentCollection = () => {
+		return new Promise(async resolve => {
+			get(collectionRef).then(snapshot => {
+				let items = []
 
-		const newItems = itemsFromDB.filter(item =>
-			loadedItems.some(existingItem => existingItem.id === item.id)
-		)
-
-		if (!loadedItemsLength) {
-			itemsFromDB.map((item, idx) => {
-				if (idx < itemsPerPage) {
-					setItems(prevState => [...prevState, item])
+				if (snapshot.exists()) {
+					snapshot.forEach(childSnapshot => {
+						items.push(childSnapshot.val())
+					})
 				}
+
+				resolve(items)
 			})
-			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
-		} else {
-			setItems(newItems)
-			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
-		}
+		})
 	}
 
-	const unsubscribe = onValue(collectionRef, onDataChange)
+	const onItemRemoved = async (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+		const allItemsFromCurrentCollection =
+			await getAllItemsFromCurrentCollection()
+		const totalItemsLength = allItemsFromCurrentCollection.length
+		const loadedItemsLength = loadedItems.length
+		const newItems = loadedItems.filter(
+			existingItem => existingItem.id !== removedItem.id
+		)
+		setItems(newItems)
+		setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+	}
+
+	const unsubscribe = onChildRemoved(collectionRef, onItemRemoved)
 
 	return () => {
 		unsubscribe()

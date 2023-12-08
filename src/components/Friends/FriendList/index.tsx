@@ -25,7 +25,7 @@ const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 		return <EmptyList title='Friends' text='No friends yet' />
 
 	return (
-		<>
+		<div className='mb-16'>
 			<Title>Friends</Title>
 			<div className='flex justify-start items-center'>
 				<div className='flex justify-start items-center'>
@@ -53,7 +53,7 @@ const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 					</Button>
 				)}
 			</div>
-		</>
+		</div>
 	)
 }
 

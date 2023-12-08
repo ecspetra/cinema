@@ -114,7 +114,7 @@ const Profile = ({ results }) => {
 	}, [userInfo, friends])
 
 	if (!userInfo) return <Loader />
-	console.log(userInfo.favoriteGenres)
+
 	return (
 		<>
 			<TopBanner imageSrc={PROFILE_PAGE_TOP_BANNER_IMAGE} />
@@ -173,7 +173,7 @@ const Profile = ({ results }) => {
 					<TagList
 						tags={userInfo.favoriteGenres || []}
 						title='Favorite genres'
-						className='mb-16'
+						className='mb-8'
 						isEditTags={isEditTags}
 						onFormClose={setIsEditTags}
 					/>

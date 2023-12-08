@@ -35,10 +35,10 @@ export const useCollectionButton = (
 						.then(data => {
 							setIsCollectionItem(data)
 							setIsLoadingCollection(false)
-							showSuccessNotification(
-								showModal,
-								'The item was successfully added'
-							)
+							// showSuccessNotification(
+							// 	showModal,
+							// 	'The item was successfully added'
+							// )
 						})
 						.catch(() => {
 							setIsLoadingCollection(false)
@@ -65,12 +65,12 @@ export const useCollectionButton = (
 					setIsCollectionItem(false)
 					setIsLoadingCollection(false)
 				})
-				.then(() => {
-					showSuccessNotification(
-						showModal,
-						'The item was successfully removed'
-					)
-				})
+				// .then(() => {
+				// 	showSuccessNotification(
+				// 		showModal,
+				// 		'The item was successfully removed'
+				// 	)
+				// })
 				.catch(() => {
 					setIsLoadingCollection(false)
 					showErrorNotification(showModal, 'An error has occurred')
