@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import SearchList from '@/app/components/UI/Search/SearchList'
@@ -8,13 +8,16 @@ import Button from '@/app/components/UI/Button'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Error from '@/app/components/UI/Error'
 import Loader from '@/components/Loader'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type PropsType = {
 	name: string
 	type: string
 	label: string
 	urlToFetch: string
+	defaultUrlToFetch: string
 	onSearch: () => void
+	isApplied?: boolean
 	isWrapped?: boolean
 }
 
@@ -23,7 +26,9 @@ const Search: FC<PropsType> = ({
 	type,
 	label,
 	urlToFetch,
+	defaultUrlToFetch,
 	onSearch,
+	isApplied = false,
 	isWrapped = false,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
@@ -38,11 +43,11 @@ const Search: FC<PropsType> = ({
 		useState<boolean>(false)
 	const { isOpen, onOpenContainer, onCloseContainer } =
 		useClickOutsideContainer(containerRef, searchQuery.length > 0)
-
 	const urlToFetchWithSearchQuery = urlToFetch.replace(
 		'{searchQuery}',
 		searchQuery
 	)
+	const isShowClearButton = searchQuery.length > 0 || isApplied
 
 	const handleInputChange = event => {
 		setSearchQuery(event.target.value)
@@ -50,9 +55,15 @@ const Search: FC<PropsType> = ({
 		if (!isTouched) setIsTouched(true)
 	}
 
+	const cancelSearch = () => {
+		resetSearch()
+		onSearch(defaultUrlToFetch)
+	}
+
 	const resetSearch = () => {
 		onCloseContainer()
 		setResults([])
+		setSearchQuery('')
 	}
 
 	const handleSearch = async (event: React.FormEvent) => {
@@ -61,8 +72,8 @@ const Search: FC<PropsType> = ({
 		const isFormValid = searchQuery.length > 0
 
 		if (isFormValid && isTouched) {
-			resetSearch()
 			onSearch(urlToFetchWithSearchQuery)
+			resetSearch()
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
 			setIsLoading(false)
@@ -118,13 +129,19 @@ const Search: FC<PropsType> = ({
 					placeholder='Search'
 				/>
 				{isWrapped && (
-					<Button
-						type='submit'
-						context='text'
-						className='!absolute inset-y-1/2 -translate-y-1/2 right-4'
-					>
-						{isLoading ? <Loader type='static' /> : 'Submit'}
-					</Button>
+					<div className='absolute inset-y-1/2 -translate-y-1/2 right-4 flex justify-end items-center gap-4'>
+						<Button type='submit' context='text'>
+							{isLoading ? <Loader type='static' /> : 'Submit'}
+						</Button>
+						{isShowClearButton && (
+							<Button context='icon' onClick={cancelSearch}>
+								<FontAwesomeIcon
+									icon={faXmark}
+									className='w-6 h-6'
+								/>
+							</Button>
+						)}
+					</div>
 				)}
 			</div>
 			{isOpen && (
@@ -145,7 +162,7 @@ const Search: FC<PropsType> = ({
 	return (
 		<>
 			{isWrapped ? (
-				<form className='mb-4 bg-gray-950 p-4' onSubmit={handleSearch}>
+				<form className='mb-4 bg-gray-950' onSubmit={handleSearch}>
 					{search}
 					{error && (
 						<Error

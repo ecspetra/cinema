@@ -9,7 +9,6 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
-import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 
 const TVShow = ({ tvShowFromProps }) => {
@@ -115,6 +114,7 @@ const TVShow = ({ tvShowFromProps }) => {
 				movieImages={movie.imagesResult.backdrops}
 				movieReviews={movie.reviews}
 				movieVideo={movieTeaser?.key}
+				type='tv'
 			/>
 			<div>
 				<MoviePersonsList
@@ -127,7 +127,7 @@ const TVShow = ({ tvShowFromProps }) => {
 				/>
 				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
-					listName='tv'
+					type='tv'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}

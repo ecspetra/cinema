@@ -1,20 +1,13 @@
 import React, { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
-import {
-	faCalendarCheck,
-	faFlag,
-	faUser,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IPersonImage, IPersonInfo } from '../../../../interfaces'
 import Title from '../../../app/components/UI/Title/Title'
-import { useAuth } from '@/context/AuthProvider'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
-import moment from 'moment/moment'
 import { getPersonGender } from '@/handlers/getPersonGender'
 import ImagesList from '@/components/Images/ImagesList'
+import DetailsList from '@/components/Details/DetailsList'
 
 type PropsType = {
 	personInfo: IPersonInfo
@@ -39,7 +32,26 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 		gender,
 		id,
 	} = personInfo
+
 	const genderInString = getPersonGender(gender)
+
+	const details = [
+		{
+			type: 'place_of_birth',
+			title: 'Place of birth:',
+			text: place_of_birth,
+		},
+		{
+			type: 'birthday',
+			title: { birthday: 'Date of birth:', deathday: 'Date of death:' },
+			text: { birthday, deathday },
+		},
+		{
+			type: 'gender',
+			title: 'Gender:',
+			text: genderInString,
+		},
+	]
 
 	return (
 		<div className='flex gap-7 py-7 mb-16'>
@@ -56,36 +68,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 				<Title variant='h2' className='text-gray-400'>
 					{known_for_department}
 				</Title>
-				<div className='mb-5'>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
-						<span className='mr-1.5'>Place of birth:</span>
-						<span>{place_of_birth}</span>
-					</div>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon
-							className='mr-1.5'
-							icon={faCalendarCheck}
-						/>
-						<span className='mr-1.5'>Date of birth:</span>
-						<span>
-							<span>
-								{moment(birthday).format('Do MMM YYYY')}
-							</span>
-							{deathday && (
-								<span>
-									{' '}
-									— Date of death:{' '}
-									{moment(deathday).format('Do MMM YYYY')}
-								</span>
-							)}
-						</span>
-					</div>
-					<div className='flex items-center text-sm'>
-						<FontAwesomeIcon className='mr-1.5' icon={faUser} />
-						<span className='mr-1.5'>Gender: {genderInString}</span>
-					</div>
-				</div>
+				<DetailsList itemsList={details} />
 				<p className='mb-6'>{biography}</p>
 				<CollectionButton
 					className='mb-12'

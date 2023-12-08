@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { IBackdrop, IPersonImage } from '../../../../interfaces'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
@@ -8,7 +8,6 @@ import ImagesSlider from '../ImagesSlider/index'
 import { useModal } from '@/context/ModalProvider'
 import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
-import useScrollToTop from '@/hooks/useScrollToTop'
 import useItemsToShow from '@/hooks/useItemsToShow'
 import { uuidv4 } from '@firebase/util'
 

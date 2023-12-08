@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import Tag from '@/components/Tag'
 import { ITag } from '../../../../interfaces'
-import getAllGenres from '@/handlers/getAllGenres'
+import { getAllGenres } from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import Button from '@/app/components/UI/Button'
@@ -57,7 +57,7 @@ const TagList: FC<PropsType> = ({
 	useEffect(() => {
 		if (isEditTags) {
 			const getTags = async () => {
-				const allTags = await getAllGenres('movie')
+				const allTags = await getAllGenres('all')
 				setItemsList(allTags)
 			}
 
@@ -80,7 +80,7 @@ const TagList: FC<PropsType> = ({
 	return (
 		<div className={className}>
 			{title && <Title variant='h3'>{title}</Title>}
-			<div className='flex flex-wrap justify-start items-start mb-5'>
+			<div className='flex flex-wrap justify-start items-start'>
 				{itemsList.map(item => {
 					return (
 						<Tag
@@ -94,7 +94,7 @@ const TagList: FC<PropsType> = ({
 				})}
 			</div>
 			{isEditTags && (
-				<div className='flex justify-start items-center gap-2'>
+				<div className='flex justify-start items-center gap-2 mt-5'>
 					<Button onClick={handleSaveChanges}>Save</Button>
 					<Button
 						context='filledDark'

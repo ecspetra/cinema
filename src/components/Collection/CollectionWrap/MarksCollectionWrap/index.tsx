@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import Button from '@/app/components/UI/Button'
 import { IMark } from '../../../../../interfaces'
-import MovieCardSmall from '@/components/Movie/MovieCard/MovieCardSmall'
+import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import useItemsToShow from '@/hooks/useItemsToShow'
 
 type PropsType = {
@@ -25,11 +25,11 @@ const MarksCollectionWrap: FC<PropsType> = ({ items }) => {
 			>
 				{itemsToShow.map((item, idx) => {
 					return (
-						<MovieCardSmall
+						<ItemCardSmall
 							key={idx}
-							itemId={item.movieId}
+							itemId={item.itemId}
 							mark={item.mark}
-							type={item.isTVShow ? 'tv' : 'movie'}
+							type={item.type}
 							isLinkToMovie
 						/>
 					)

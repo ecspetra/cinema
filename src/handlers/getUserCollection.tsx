@@ -1,10 +1,19 @@
-import { getCollectionItemsList } from '@/firebase/config'
+import {
+	getCollectionItemsList,
+	getCollectionMarksList,
+} from '@/firebase/config'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
 
 export const getUserCollection = async userId => {
 	const collectionMovies = await getCollectionItemsList(
 		userId,
 		'movie',
+		5,
+		null
+	)
+	const collectionTVShows = await getCollectionItemsList(
+		userId,
+		'tv',
 		5,
 		null
 	)
@@ -28,7 +37,7 @@ export const getUserCollection = async userId => {
 	)
 	const collectionMarks = await getCollectionItemsList(
 		userId,
-		'movieMarks',
+		'marks',
 		null,
 		null
 	)
@@ -45,6 +54,7 @@ export const getUserCollection = async userId => {
 
 	return {
 		collectionMovies,
+		collectionTVShows,
 		collectionPersons,
 		allCollectionReviews,
 		collectionMarks: collectionMarks.items,

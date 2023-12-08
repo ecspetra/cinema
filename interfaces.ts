@@ -14,7 +14,7 @@ export interface IPersonImage {
 export interface IMarkFromDB {
 	key: string
 	data: {
-		movieMark: IMark
+		itemMark: IMark
 		userId: string
 	}
 }
@@ -58,14 +58,13 @@ export interface IMovieInfo {
 	poster_path: string
 	title: string
 	tagline: string
-	genres: Array<IGenre>
+	genres: Array<ITag>
 	release_date: string
 	production_countries: Array<object>
 	production_companies: Array<object>
 	overview: string
 	vote_average: number
 	vote_count: number
-	adult?: boolean
 }
 
 export interface ITVShowInfo {
@@ -73,7 +72,7 @@ export interface ITVShowInfo {
 	poster_path: string
 	name: string
 	tagline: string
-	genres: Array<IGenre>
+	genres: Array<ITag>
 	first_air_date: string
 	production_countries: Array<object>
 	production_companies: Array<object>
@@ -81,23 +80,22 @@ export interface ITVShowInfo {
 	vote_average: number
 	vote_count: number
 	seasons: Array<ITVSeasonCard>
-	adult?: boolean
 }
 
-export interface IMovieCard {
+export interface IItemCard {
 	id: number
-	poster_path: string
-	release_date: string
-	title: string
-	genres?: Array<IGenre>
-}
-
-export interface ITVShowCard {
-	id: number
-	poster_path: string
-	first_air_date: string
-	name: string
-	genres?: Array<IGenre>
+	media_type?: string
+	gender?: number
+	poster_path?: string
+	profile_path?: string
+	release_date?: string
+	first_air_date?: string
+	title?: string
+	name?: string
+	genres?: Array<ITag>
+	known_for_department?: string
+	character?: string
+	job?: string
 }
 
 export interface ITVSeasonCard {
@@ -108,16 +106,6 @@ export interface ITVSeasonCard {
 	air_date: string
 	poster_path: string
 	vote_average: number
-}
-
-export interface IPersonCard {
-	id: number
-	gender: number
-	profile_path: string
-	name: string
-	known_for_department: string
-	character?: string
-	job?: string
 }
 
 export interface IPersonInfo {

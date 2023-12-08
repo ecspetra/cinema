@@ -6,6 +6,7 @@ export const getResultsByPage = async (link, page, signal = null) => {
 			link.replace('{currentPage}', page),
 			options
 		)
+
 		const nextResponse = await fetch(
 			link.replace('{currentPage}', page + 1)
 		)

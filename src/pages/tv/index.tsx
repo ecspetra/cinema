@@ -1,38 +1,72 @@
-import { URL_TO_FETCH_TV_SHOWS_LIST } from '@/constants/linksToFetch'
+import {
+	URL_TO_SEARCH,
+	URL_TO_SEARCH_LIST_ITEMS,
+} from '@/constants/linksToFetch'
 import React, { useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
 import { TV_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
-import ItemsList from '../../components/List/ItemsListWrap/ItemsList'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
+import Search from '@/app/components/UI/Search'
+import Filter from '@/app/components/Filter'
+import Title from '@/app/components/UI/Title/Title'
 
-const TVShows = ({ tvShows }) => {
-	const [tvShowsList, setTvShowsList] = useState(null)
+const TVShows = ({ results }) => {
+	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv')
+	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'tv')
+	const [defaultTvShowsList, setDefaultTvShowsList] = useState(null)
+	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
+	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
 
 	useEffect(() => {
-		if (!tvShows) {
-			getResultsByPage(URL_TO_FETCH_TV_SHOWS_LIST, 1).then(data => {
-				setTvShowsList(data)
+		if (!results) {
+			getResultsByPage(urlToFetch, 1).then(data => {
+				setDefaultTvShowsList(data)
 			})
 		}
 	}, [])
 
 	useEffect(() => {
-		setTvShowsList(tvShows)
-	}, [tvShows])
+		setDefaultTvShowsList(results)
+	}, [results])
 
-	if (!tvShowsList) return <Loader />
+	if (!defaultTvShowsList) return <Loader />
 
 	return (
 		<>
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
+			<Title className='text-7xl after:hidden pb-0'>TV shows</Title>
+			<Search
+				type='tv'
+				name='tvShowsSearch'
+				label='Search TV shows'
+				urlToFetch={defaultUrlToSearch}
+				defaultUrlToFetch={defaultUrlToFetch}
+				onSearch={setUrlToFetch}
+				isApplied={!isDefaultList}
+				isWrapped
+			/>
+			<Filter
+				type='tv'
+				onApply={setUrlToFetch}
+				fields={[
+					'first_air_date_year',
+					'vote_average.lte',
+					'with_companies',
+					'with_original_language',
+					'with_keywords',
+					'with_genres',
+				]}
+				defaultUrl={defaultUrlToFetch}
+			/>
 			<ItemsListWrap
-				itemsList={tvShowsList.items}
-				listName='tv'
-				isMoreDataAvailable={tvShowsList.isMoreDataAvailable}
-				urlToFetchItems={URL_TO_FETCH_TV_SHOWS_LIST}
-				title='TV shows'
+				itemsList={defaultTvShowsList.items}
+				type='tv'
+				isMoreDataAvailable={defaultTvShowsList.isMoreDataAvailable}
+				urlToFetchItems={urlToFetch}
+				isSortable
+				isFilterable
 			/>
 		</>
 	)
@@ -40,16 +74,21 @@ const TVShows = ({ tvShows }) => {
 
 export const getServerSideProps = async () => {
 	try {
-		const tvShows = await getResultsByPage(URL_TO_FETCH_TV_SHOWS_LIST, 1)
+		const defaultTvShows = await getResultsByPage(
+			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv'),
+			1
+		)
 
 		return {
 			props: {
-				tvShows,
+				results: defaultTvShows,
 			},
 		}
 	} catch (error) {
 		return {
-			props: null,
+			props: {
+				results: null,
+			},
 		}
 	}
 }

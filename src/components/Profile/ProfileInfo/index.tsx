@@ -1,13 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-	faAt,
-	faCalendarCheck,
-	faFlag,
-} from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
-import moment from 'moment'
+import DetailsList from '@/components/Details/DetailsList'
 
 type PropsType = {
 	userInfo: object
@@ -16,17 +10,21 @@ type PropsType = {
 const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 	const [profile, setProfile] = useState(null)
 
-	const basicInfo = [
-		{ ['Email']: profile?.email, icon: faAt },
+	const details = [
 		{
-			['Date of birth']: profile?.dateOfBirth
-				? moment(profile?.dateOfBirth).format('Do MMM YYYY')
-				: 'No info yet',
-			icon: faCalendarCheck,
+			type: 'user_email',
+			title: 'Email:',
+			text: profile?.email,
 		},
 		{
-			['Country']: profile?.country ? profile?.country : 'No info yet',
-			icon: faFlag,
+			type: 'user_date_of_birth',
+			title: 'Date of birth:',
+			text: profile?.dateOfBirth,
+		},
+		{
+			type: 'user_country',
+			title: 'Country:',
+			text: profile?.country,
 		},
 	]
 
@@ -37,29 +35,11 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 	return (
 		<div className='flex flex-col justify-start items-center'>
 			<div className='w-full'>
-				<Title className='after:hidden !pb-0'>
+				<Title className='text-7xl after:hidden pb-0'>
 					{profile?.displayName}
 				</Title>
-				<div className='flex justify-start items-start gap-7 mb-8 pb-8 border-b border-slate-800'>
-					{basicInfo.map((item, idx) => {
-						return (
-							<div
-								key={idx}
-								className='flex items-center text-sm'
-							>
-								<FontAwesomeIcon
-									className='mr-1.5'
-									icon={Object.values(item)[1]}
-								/>
-								<span className='mr-1.5'>
-									{Object.keys(item)[0]}:{' '}
-									{Object.values(item)[0]}
-								</span>
-							</div>
-						)
-					})}
-				</div>
-				<div className='mb-8 pb-8 border-b border-slate-800'>
+				<DetailsList itemsList={details} className='!mb-8' />
+				<div className='mb-8'>
 					<Title variant='h3'>About</Title>
 					{profile?.about ? profile?.about : 'No info yet'}
 				</div>

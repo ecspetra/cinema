@@ -64,7 +64,7 @@ const CollectionType = ({ results }) => {
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<CollectionItemsList
-				collectionName={router.query.type}
+				type={router.query.type}
 				items={itemsList ? itemsList.items : []}
 				isMoreDataAvailable={
 					itemsList ? itemsList.isMoreDataAvailable : false

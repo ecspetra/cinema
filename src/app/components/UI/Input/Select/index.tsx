@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { useClickOutsideContainer } from '@/hooks/useClickOutsideContainer'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Button from '@/app/components/UI/Button'
 
 type PropsType = {
 	children: JSX.Element
@@ -48,20 +49,17 @@ const Select: FC<PropsType> = ({
 			ref={containerRef}
 			className={classNames('relative w-full h-16', className)}
 		>
-			<button
-				onClick={onToggleContainer}
-				className='w-full h-full text-left bg-transparent border border-gray-500 hover:border-white focus-within:border-white duration-300 block'
-			>
+			<Button context='field' onClick={onToggleContainer}>
 				<span className='text-xs text-gray-500 font-semibold absolute top-2 left-3 z-10'>
 					{label}
 				</span>
-				<span className='absolute top-7 left-3 w-[calc(100%-22px)] flex justify-between items-center'>
+				<span className='absolute top-8 left-3 w-[calc(100%-22px)] flex justify-between items-center'>
 					<span className='truncate'>{selectedOption}</span>
 					<FontAwesomeIcon icon={faChevronDown} />
 				</span>
-			</button>
+			</Button>
 			{isOpen && (
-				<div className='w-full absolute top-full flex flex-col items-center flex-none h-60 border border-gray-500 overflow-y-auto scrollbar-hide bg-gray-950 shadow-[0_35px_60px_15px_rgba(3,7,18,1)] z-10'>
+				<div className='w-full absolute top-full flex flex-col items-center flex-none h-60 border border-gray-500 overflow-y-auto scrollbar-hide bg-gray-950 shadow-[0_35px_60px_15px_rgba(3,7,18,1)] z-20'>
 					{childrenWithProps}
 				</div>
 			)}

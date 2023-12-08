@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IBackdrop, IPersonCard, ITVSeasonCard } from '../../interfaces'
+import { IBackdrop, IItemCard, ITVSeasonCard } from '../../interfaces'
 import useScrollToTop from '@/hooks/useScrollToTop'
 
 const useItemsToShow = (
@@ -8,7 +8,7 @@ const useItemsToShow = (
 	scrollHeight = 100
 ) => {
 	const [itemsToShow, setItemsToShow] = useState<
-		Array<IBackdrop | ITVSeasonCard | IPersonCard>
+		Array<IBackdrop | ITVSeasonCard | IItemCard>
 	>([])
 	const { listRef, scrollToTop } = useScrollToTop(scrollHeight)
 	const isAllDataVisible = itemsToShow.length > initialItemsLength

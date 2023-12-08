@@ -1,16 +1,17 @@
 import React, { FC, useEffect, useState } from 'react'
 import Tag from '@/components/Tag'
 import { ITag } from '../../../../interfaces'
-import getAllGenres from '@/handlers/getAllGenres'
+import { getAllGenres } from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 
 type PropsType = {
 	tags: Array<ITag>
 	onToggle: () => void
 	name: string
+	type: string
 }
 
-const FilterTagList: FC<PropsType> = ({ tags, onToggle, name }) => {
+const FilterTagList: FC<PropsType> = ({ tags, onToggle, name, type }) => {
 	const [itemsList, setItemsList] = useState<Array<ITag>>([])
 	const [selectedTags, setSelectedTags] = useState<Array<ITag>>(tags)
 
@@ -20,7 +21,7 @@ const FilterTagList: FC<PropsType> = ({ tags, onToggle, name }) => {
 
 	useEffect(() => {
 		const getTags = async () => {
-			const allTags = await getAllGenres('movie')
+			const allTags = await getAllGenres(type)
 			setItemsList(allTags)
 		}
 

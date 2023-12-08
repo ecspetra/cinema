@@ -29,13 +29,14 @@ import {
 } from 'firebase/database'
 import { uuidv4 } from '@firebase/util'
 import {
-	IGenre,
-	IMovieCard,
-	IPersonCard,
+	ITag,
+	IItemCard,
 	IReplyCard,
 	IReviewCardFromDB,
 } from '../../interfaces'
 import { onValue } from '@firebase/database'
+import { fetchItemData } from '@/handlers/fetchItemData'
+import { createItemCard } from '@/handlers/createItemCard'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -157,7 +158,7 @@ export const updateUserCredential = async (newInfo: object) => {
 	)
 }
 
-export const updateProfileGenres = async (newGenres: Array<IGenre>) => {
+export const updateProfileGenres = async (newGenres: Array<ITag>) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 	const updateFields = {
@@ -332,36 +333,38 @@ export const userContextListener = (
 // movie marks handlers
 
 export const setNewMarkForMovie = async (markData: object, userId: string) => {
-	const newMarkRef = ref(database, `users/${userId}/movieMarks/${uuidv4()}`)
+	const newMarkRef = ref(
+		database,
+		`users/${userId}/marks/${markData.type}/${uuidv4()}`
+	)
 
 	const newMarkData = {
-		movieId: markData.movieId,
-		movieTitle: markData.movieTitle,
+		itemId: markData.id,
 		mark: markData.mark,
-		isTVShow: markData.isTVShow,
+		type: markData.type,
 	}
 
 	await set(newMarkRef, newMarkData)
 }
 
-export const getMarkForMovie = (markData: object, userId: string) => {
-	const marksCollectionRef = ref(database, `users/${userId}/movieMarks`)
+export const getMarkForMovie = (
+	itemId: number,
+	userId: string,
+	type: string
+) => {
+	const marksCollectionRef = ref(database, `users/${userId}/marks/${type}`)
 
 	return new Promise(async resolve => {
 		get(marksCollectionRef).then(snapshot => {
 			let response
 
 			snapshot.forEach(childSnapshot => {
-				const movieMark = {
+				const mark = {
 					key: childSnapshot.key,
 					data: childSnapshot.val(),
 				}
 
-				if (
-					movieMark.data.movieId === markData.movieId &&
-					movieMark.data.movieTitle === markData.movieTitle
-				)
-					response = movieMark
+				if (mark.data.itemId === itemId) response = mark
 			})
 
 			resolve(response)
@@ -369,8 +372,12 @@ export const getMarkForMovie = (markData: object, userId: string) => {
 	})
 }
 
-export const removeMarkForMovie = (markKey: string, userId: string) => {
-	const markRef = ref(database, `users/${userId}/movieMarks/${markKey}`)
+export const removeMarkForMovie = (
+	markKey: string,
+	userId: string,
+	type: string
+) => {
+	const markRef = ref(database, `users/${userId}/marks/${type}/${markKey}`)
 
 	return new Promise(async resolve => {
 		let isRemoved = false
@@ -386,15 +393,19 @@ export const removeMarkForMovie = (markKey: string, userId: string) => {
 // collection handlers
 
 export const setNewCollectionItem = async (
-	item: IMovieCard | IPersonCard,
+	itemId: number,
 	collectionName: (typeof USER_COLLECTIONS)[number]
 ) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
+	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
 	const newCollectionItemRef = ref(database, collectionPath)
 
-	await set(newCollectionItemRef, item)
+	const newItem = {
+		id: itemId,
+	}
+
+	await set(newCollectionItemRef, newItem)
 }
 
 export const getCollectionItem = (
@@ -445,6 +456,11 @@ export const getCollectionItemsList = async (
 ) => {
 	const collectionPath = `users/${userId}/${collectionName}/`
 	const userCollectionRef = ref(database, collectionPath)
+	const collectionInfo = {
+		type: collectionName,
+		ref: userCollectionRef,
+		userId: userId,
+	}
 	let paginationQuery
 
 	if (lastItemId) {
@@ -484,17 +500,67 @@ export const getCollectionItemsList = async (
 		itemIds.pop()
 	}
 
-	const items = await Promise.all(
-		itemIds.map(async itemId => {
-			const itemSnapshot = await get(child(userCollectionRef, itemId))
-			return itemSnapshot.val()
-		})
-	)
+	const items = await getCollectionItemsInfo(itemIds, collectionInfo)
 
 	return {
 		isMoreDataAvailable,
 		items,
 	}
+}
+
+export const getCollectionItemsInfo = async (itemIds, collectionInfo) => {
+	switch (collectionInfo.type) {
+		case 'movie':
+		case 'tv':
+		case 'person':
+			const itemsInfo = await Promise.all(
+				itemIds.map(async itemId => {
+					const itemInfo = await fetchItemData(
+						collectionInfo.type,
+						itemId,
+						''
+					)
+					return itemInfo
+				})
+			)
+			const items = createItemCard(itemsInfo)
+			return items
+		case 'reviews':
+		case 'replies':
+			return await Promise.all(
+				itemIds.map(async itemId => {
+					const itemSnapshot = await get(
+						child(collectionInfo.ref, itemId)
+					)
+					return itemSnapshot.val()
+				})
+			)
+		case 'marks':
+			return await getCollectionMarksList(collectionInfo.userId)
+	}
+}
+
+export const getCollectionMarksList = async (userId: string) => {
+	const getMarks = async type => {
+		let items = []
+		const collectionPath = `users/${userId}/marks/${type}`
+		const collectionRef = ref(database, collectionPath)
+		const snapshot = await get(collectionRef)
+
+		if (snapshot.exists()) {
+			snapshot.forEach(childSnapshot => {
+				const item = childSnapshot.val()
+				items.push(item)
+			})
+		}
+
+		return items
+	}
+
+	const movieMarks = await getMarks('movie')
+	const tvMarks = await getMarks('tv')
+
+	return [...movieMarks, ...tvMarks]
 }
 
 export const collectionListener = (
@@ -505,32 +571,37 @@ export const collectionListener = (
 	setIsMoreDataAvailable: (arg: boolean) => void
 ) => {
 	const collectionRef = ref(database, `users/${userId}/${collectionName}`)
-	const itemsPerPage = 20
 
-	const onDataChange = (snapshot: DataSnapshot) => {
-		const data = snapshot.val()
-		const itemsFromDB = data ? Object.values(data) : []
-		const totalItemsLength = itemsFromDB.length
-		const loadedItemsLength = loadedItems.length
+	const getAllItemsFromCurrentCollection = () => {
+		return new Promise(async resolve => {
+			get(collectionRef).then(snapshot => {
+				let items = []
 
-		const newItems = itemsFromDB.filter(item =>
-			loadedItems.some(existingItem => existingItem.id === item.id)
-		)
-
-		if (!loadedItemsLength) {
-			itemsFromDB.map((item, idx) => {
-				if (idx < itemsPerPage) {
-					setItems(prevState => [...prevState, item])
+				if (snapshot.exists()) {
+					snapshot.forEach(childSnapshot => {
+						items.push(childSnapshot.val())
+					})
 				}
+
+				resolve(items)
 			})
-			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
-		} else {
-			setItems(newItems)
-			setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
-		}
+		})
 	}
 
-	const unsubscribe = onValue(collectionRef, onDataChange)
+	const onItemRemoved = async (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+		const allItemsFromCurrentCollection =
+			await getAllItemsFromCurrentCollection()
+		const totalItemsLength = allItemsFromCurrentCollection.length
+		const loadedItemsLength = loadedItems.length
+		const newItems = loadedItems.filter(
+			existingItem => existingItem.id !== removedItem.id
+		)
+		setItems(newItems)
+		setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+	}
+
+	const unsubscribe = onChildRemoved(collectionRef, onItemRemoved)
 
 	return () => {
 		unsubscribe()

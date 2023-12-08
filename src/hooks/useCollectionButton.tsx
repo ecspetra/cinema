@@ -12,10 +12,10 @@ import {
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
-import { IMovieCard, IPersonCard, ITVShowCard } from '../../interfaces'
+import { IItemCard } from '../../interfaces'
 
 export const useCollectionButton = (
-	itemInfo: IMovieCard | IPersonCard,
+	itemInfo: IItemCard,
 	collection: 'movie' | 'tv' | 'person'
 ) => {
 	const [isMounted, setIsMounted] = useState<boolean>(false)
@@ -28,42 +28,17 @@ export const useCollectionButton = (
 	const handleSetCollectionItem = () => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			let newItem: IMovieCard | ITVShowCard | IPersonCard = {}
 
-			if (collection === 'movie') {
-				newItem = {
-					id: itemInfo.id,
-					poster_path: itemInfo.poster_path,
-					release_date: itemInfo.release_date,
-					title: itemInfo.title,
-					genres: itemInfo.genres,
-				}
-			} else if (collection === 'tv') {
-				newItem = {
-					id: itemInfo.id,
-					poster_path: itemInfo.poster_path,
-					first_air_date: itemInfo.first_air_date,
-					name: itemInfo.name,
-					genres: itemInfo.genres,
-				}
-			} else {
-				newItem = {
-					id: itemInfo.id,
-					profile_path: itemInfo.profile_path,
-					name: itemInfo.name,
-				}
-			}
-
-			setNewCollectionItem(newItem, collection)
+			setNewCollectionItem(itemInfo.id, collection)
 				.then(() => {
 					getCollectionItem(itemInfo.id, collection)
 						.then(data => {
 							setIsCollectionItem(data)
 							setIsLoadingCollection(false)
-							showSuccessNotification(
-								showModal,
-								'The item was successfully added'
-							)
+							// showSuccessNotification(
+							// 	showModal,
+							// 	'The item was successfully added'
+							// )
 						})
 						.catch(() => {
 							setIsLoadingCollection(false)
@@ -90,12 +65,12 @@ export const useCollectionButton = (
 					setIsCollectionItem(false)
 					setIsLoadingCollection(false)
 				})
-				.then(() => {
-					showSuccessNotification(
-						showModal,
-						'The item was successfully removed'
-					)
-				})
+				// .then(() => {
+				// 	showSuccessNotification(
+				// 		showModal,
+				// 		'The item was successfully removed'
+				// 	)
+				// })
 				.catch(() => {
 					setIsLoadingCollection(false)
 					showErrorNotification(showModal, 'An error has occurred')

@@ -51,7 +51,7 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 				unmountOnExit
 			>
 				<span className='w-52 relative right-0 pt-14 block'>
-					<span className='w-full p-2 rounded-md bg-gray-600'>
+					<span className='w-full p-2 rounded-md bg-gray-600 block'>
 						{childrenWithProps}
 					</span>
 				</span>

@@ -16,10 +16,10 @@ type PropsType = {
 		| 'icon'
 		| 'text'
 		| 'listItem'
-		| 'link'
 		| 'tag'
+		| 'field'
 	className?: string
-	type?: 'submit' | 'reset' | 'button' | 'link'
+	type?: 'submit' | 'reset' | 'button'
 }
 
 const Button: FC<PropsType> = ({
@@ -38,7 +38,7 @@ const Button: FC<PropsType> = ({
 	const emptyButtonClassNames =
 		'w-72 border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center'
 	const collectionButtonClassNames =
-		'w-72 min-h-[48px] border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-rose-400 hover:text-rose-500 p-3 flex justify-center items-center'
+		'w-72 min-h-[48px] border-2 border-rose-600 text-rose-600 rounded-3xl hover:border-rose-500 hover:text-rose-500 p-3 flex justify-center items-center'
 	const imageButtonClassNames = 'flex justify-center items-center'
 	const textButtonClassNames =
 		'inline-flex h-fit text-rose-600 hover:text-rose-500'
@@ -50,6 +50,8 @@ const Button: FC<PropsType> = ({
 		'w-full py-1 px-2 flex justify-start items-center hover:bg-rose-600 hover:text-white leading-normal'
 	const tagButtonClassNames =
 		'bg-gray-800 rounded flex justify-center items-center text-xs leading-none px-2 py-1 my-0 mr-1 mb-1 duration-300 last:mr-0'
+	const fieldButtonClassNames =
+		'w-full h-full text-left bg-transparent border border-gray-500 hover:border-white focus-within:border-white !font-light block'
 
 	const getButtonClassNames = () => {
 		switch (context) {
@@ -73,11 +75,13 @@ const Button: FC<PropsType> = ({
 				return listItemButtonClassNames
 			case 'tag':
 				return tagButtonClassNames
+			case 'field':
+				return fieldButtonClassNames
 		}
 	}
 
 	const handleOnClick = event => {
-		if (type !== 'submit' && type !== 'link') {
+		if (type !== 'submit') {
 			event.preventDefault()
 			if (onClick) onClick(event)
 		}

@@ -2,12 +2,6 @@ import React, { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
-	faBolt,
-	faCalendarCheck,
-	faFlag,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
 	IBackdrop,
 	IMovieInfo,
 	IReviewCard,
@@ -25,14 +19,15 @@ import CollectionButton from '../../../app/components/UI/Button/CollectionButton
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
 import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
-import moment from 'moment'
 import TagList from '@/components/Tag/TagList'
+import DetailsList from '@/components/Details/DetailsList'
 
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
 	movieImages: Array<IBackdrop>
 	movieReviews: Array<IReviewCard | IReviewCardFromDB>
 	movieVideo: string
+	type: string
 }
 
 const MovieInfo: FC<PropsType> = ({
@@ -40,6 +35,7 @@ const MovieInfo: FC<PropsType> = ({
 	movieImages,
 	movieReviews,
 	movieVideo,
+	type,
 }) => {
 	const { userId } = useAuth()
 
@@ -50,7 +46,6 @@ const MovieInfo: FC<PropsType> = ({
 		genres,
 		overview,
 		production_companies,
-		adult,
 		tagline,
 		poster_path,
 		production_countries,
@@ -61,14 +56,38 @@ const MovieInfo: FC<PropsType> = ({
 		seasons,
 	} = basicInfo
 
-	const isTVShowItem = !!(first_air_date && name)
+	const isTVShowItem = type === 'tv'
+
+	const details = [
+		isTVShowItem
+			? first_air_date && {
+					type: 'first_air_date',
+					title: 'First air date:',
+					text: first_air_date,
+			  }
+			: {
+					type: 'release_date',
+					title: 'Release date:',
+					text: release_date,
+			  },
+		{
+			type: 'production_countries',
+			title: 'Production countries:',
+			text: production_countries,
+		},
+		{
+			type: 'production_companies',
+			title: 'Production companies:',
+			text: production_companies,
+		},
+	]
 
 	const {
 		isLoadingCollection,
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(basicInfo, isTVShowItem ? 'tv' : 'movie')
+	} = useCollectionButton(basicInfo, type)
 
 	return (
 		<div className='flex gap-7 py-7 mb-16'>
@@ -90,69 +109,13 @@ const MovieInfo: FC<PropsType> = ({
 						{tagline}
 					</Title>
 				)}
-				<TagList tags={genres} />
-				{adult && (
-					<span className='bg-red-600 p-2 mb-4 font-semibold inline-block rounded-full'>
-						18+
-					</span>
-				)}
-				<div className='mb-5'>
-					{(release_date || first_air_date) && (
-						<div className='flex items-center text-sm'>
-							<FontAwesomeIcon
-								className='mr-1.5'
-								icon={faCalendarCheck}
-							/>
-							<span className='mr-1.5'>
-								{release_date
-									? 'Release date:'
-									: 'First air date:'}
-							</span>
-							{moment(
-								release_date ? release_date : first_air_date
-							).format('Do MMM YYYY')}
-						</div>
-					)}
-					{production_countries.length > 0 && (
-						<div className='flex items-center text-sm'>
-							<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
-							<span className='mr-1.5'>
-								Production countries:
-							</span>
-							{production_countries.map((item, idx) => {
-								return (
-									<span className='mr-1' key={item.name}>
-										{idx === production_countries.length - 1
-											? item.name
-											: item.name + ','}
-									</span>
-								)
-							})}
-						</div>
-					)}
-					{production_companies.length > 0 && (
-						<div className='flex items-center text-sm flex-wrap'>
-							<FontAwesomeIcon className='mr-1.5' icon={faBolt} />
-							<span className='mr-1.5'>
-								Production companies:
-							</span>
-							{production_companies.map((item, idx) => {
-								return (
-									<span className='mr-1' key={item.name}>
-										{idx === production_companies.length - 1
-											? item.name
-											: item.name + ','}
-									</span>
-								)
-							})}
-						</div>
-					)}
-				</div>
+				<TagList tags={genres} className='mb-5' />
+				<DetailsList itemsList={details} />
 				<Rating rating={vote_average} voteCount={vote_count} />
 				<Mark
-					movieId={id}
-					movieTitle={title ? title : name}
-					isTVShow={isTVShowItem}
+					itemId={id}
+					itemTitle={title ? title : name}
+					type={type}
 				/>
 				<p className='mb-6'>{overview}</p>
 				<CollectionButton

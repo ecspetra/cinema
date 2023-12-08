@@ -1,9 +1,8 @@
 import React, { FC, useRef } from 'react'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
-import { IMovieCard } from '../../../../../../interfaces'
 import Loader from '@/components/Loader'
 import SearchItemBasic from '@/app/components/UI/Search/SearchList/SearchItemBasic'
-import SearchItemMovie from '@/app/components/UI/Search/SearchList/SearchItemMovie'
+import SearchItemLink from '@/app/components/UI/Search/SearchList/SearchItemLink'
 
 type PropsType = {
 	itemsList: Array<IMovieCard>
@@ -64,13 +63,12 @@ const SearchList: FC<PropsType> = ({
 								)
 							case 'movie':
 							case 'tv':
+							case 'person':
 								return (
-									<SearchItemMovie
+									<SearchItemLink
 										key={item.id}
 										item={item}
 										type={type}
-										fieldName={name}
-										onSelect={handleSelectBasicListItem}
 									/>
 								)
 						}

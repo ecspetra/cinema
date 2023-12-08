@@ -1,55 +1,51 @@
-import MovieCard from '../../Movie/MovieCard'
-import { IMovieCard, IPersonCard } from '../../../../interfaces'
+import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
+import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
-import PersonCard from '../../Person/PersonList/PersonCard'
 import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
-	collectionName: 'movie' | 'person'
-	items: Array<IMovieCard>
+	type: 'movie' | 'person' | 'tv'
+	items: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	title: string
 }
 
 const CollectionItemsList: FC<PropsType> = ({
-	collectionName,
+	type,
 	items,
 	isMoreDataAvailable,
 	title,
 }) => {
+	const [isFirstRender, setIsFirstRender] = useState<boolean>(true)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [lastItemId, setLastItemId] = useState<string | undefined>(undefined)
-	const [itemsToShow, setItemsToShow] = useState<
-		Array<IMovieCard | IPersonCard>
-	>([...items])
-	const [isShowMoreButton, setIsShowMoreButton] =
-		useState<boolean>(isMoreDataAvailable)
+	const [itemsToShow, setItemsToShow] = useState<Array<IItemCard>>([])
+	const [isShowMoreButton, setIsShowMoreButton] = useState<boolean>(false)
 	const { userId } = useAuth()
 
 	const getMoreCollectionItems = async () => {
 		setIsLoading(true)
 		const result = await getCollectionItemsList(
 			userId,
-			collectionName,
+			type,
 			20,
 			lastItemId
 		)
-		result.items.map(item => {
-			setItemsToShow(prevState => [...prevState, item])
-		})
+		setItemsToShow(prevState => [...prevState, ...result.items])
 		setIsShowMoreButton(result.isMoreDataAvailable)
 		setIsLoading(false)
+		setLastItemId(undefined)
 	}
 
 	useEffect(() => {
 		const unsubscribe = collectionListener(
 			userId,
-			collectionName,
+			type,
 			itemsToShow,
 			setItemsToShow,
 			setIsShowMoreButton
@@ -61,8 +57,21 @@ const CollectionItemsList: FC<PropsType> = ({
 	}, [itemsToShow])
 
 	useEffect(() => {
-		if (lastItemId) getMoreCollectionItems()
-	}, [lastItemId])
+		if (
+			lastItemId ||
+			(!itemsToShow.length && isShowMoreButton && !isFirstRender)
+		) {
+			getMoreCollectionItems()
+		}
+	}, [lastItemId, itemsToShow, isShowMoreButton])
+
+	useEffect(() => {
+		setItemsToShow(items)
+		setTimeout(() => {
+			setIsShowMoreButton(isMoreDataAvailable)
+		}, 1500)
+		setIsFirstRender(false)
+	}, [items])
 
 	if (!itemsToShow.length) {
 		return <EmptyList title={title} />
@@ -72,27 +81,19 @@ const CollectionItemsList: FC<PropsType> = ({
 		<div className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,232px)] gap-x-5 justify-center'>
-				{itemsToShow.map((item: IMovieCard | IPersonCard) => {
-					if (collectionName === 'movie') {
-						return (
-							<MovieCard
-								key={item.id}
-								item={item}
-								isCollectionListItem
-							/>
-						)
-					} else
-						return (
-							<PersonCard
-								key={item.id}
-								item={item}
-								isCollectionListItem
-							/>
-						)
+				{itemsToShow.map((item: IItemCard) => {
+					return (
+						<ItemCard
+							key={item.id}
+							item={item}
+							type={type}
+							isCollectionListItem
+						/>
+					)
 				})}
 			</div>
 			{isLoading && <Loader type='static' />}
-			{isShowMoreButton && (
+			{itemsToShow.length > 0 && isShowMoreButton && (
 				<Button
 					className='mx-auto'
 					context='empty'

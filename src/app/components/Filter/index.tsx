@@ -12,10 +12,11 @@ import { generateYearsList } from '@/handlers/generateYearsList'
 import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
 import { getCountriesList } from '@/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
+import { generateRatingList } from '@/handlers/generateRatingList'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
-	type: 'movie' | 'person'
+	type: 'movie' | 'tv'
 	fields: (keyof FilterFormData)[]
 	defaultUrl: string
 }
@@ -23,7 +24,7 @@ type PropsType = {
 interface FilterFormData {
 	primary_release_year: number
 	first_air_date_year: number
-	vote_average: number
+	'vote_average.lte': number
 	with_people: Array<string>
 	with_companies: Array<string>
 	with_genres: Array<string>
@@ -36,7 +37,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
 	const [countryList, setCountryList] = useState([])
-	const releaseYearsList = generateYearsList(1930)
 
 	const handleResetFilter = () => {
 		setFormData({})
@@ -59,13 +59,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 				: [value]
 			return { ...prevData, [field]: updatedArray }
 		})
-	}
-
-	const handleStringFieldChange = (
-		field: keyof FilterFormData,
-		value: string
-	) => {
-		setFormData(prevData => ({ ...prevData, [field]: value }))
 	}
 
 	const handleRemoveFilterTag = (tag: any) => {
@@ -123,13 +116,29 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 					queryArray.push(
 						`${key}=${value.map(item => item?.id).join(',')}`
 					)
-				} else if (typeof value === 'string') {
+				} else if (
+					typeof value === 'string' ||
+					typeof value === 'number'
+				) {
 					queryArray.push(`${key}=${value || ''}`)
 				}
 			}
 		}
 
 		return `&${queryArray.join('&').replace(/\s/g, '')}`
+	}
+
+	const getSelectOptions = field => {
+		let options = []
+		switch (field) {
+			case 'primary_release_year':
+			case 'first_air_date_year':
+				options = generateYearsList(1930)
+				return options
+			case 'vote_average.lte':
+				options = generateRatingList(10)
+				return options
+		}
 	}
 
 	const handleSearch = async (event: React.FormEvent) => {
@@ -155,19 +164,20 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	const groupedFields = [
 		'primary_release_year',
 		'first_air_date_year',
-		'vote_average',
+		'vote_average.lte',
 		'with_people',
 		'with_companies',
 		'with_original_language',
 		'with_keywords',
 	]
-
 	const ungroupedFields = ['with_genres']
 
 	const getField = (field: keyof FilterFormData) => {
 		switch (field) {
 			case 'primary_release_year':
 			case 'first_air_date_year':
+			case 'vote_average.lte':
+				const options = getSelectOptions(field)
 				return (
 					<Select
 						key={field}
@@ -175,7 +185,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						name={field}
 						onChange={handleSelectChange}
 					>
-						{releaseYearsList.map((item, idx) => (
+						{options.map((item, idx) => (
 							<SelectOption
 								key={item}
 								value={item}
@@ -213,18 +223,6 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						onSearch={handleArrayFieldChange}
 					/>
 				)
-			case 'vote_average':
-				return (
-					<InputField
-						key={field}
-						id={field}
-						label={FilterFields[field]}
-						value={formData[field] || ''}
-						onChange={(e: ChangeEvent<HTMLInputElement>) =>
-							handleStringFieldChange(field, e.target.value)
-						}
-					/>
-				)
 			case 'with_genres':
 				return (
 					<FilterTagList
@@ -232,6 +230,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						tags={formData[field]}
 						onToggle={handleToggleTag}
 						name={field}
+						type={type}
 					/>
 				)
 		}
@@ -247,7 +246,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 	}, [])
 
 	return (
-		<div className='mb-16 bg-gray-950 p-4'>
+		<div className='mb-16 bg-gray-950'>
 			<Title>Filter</Title>
 			<form onSubmit={handleSearch}>
 				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>

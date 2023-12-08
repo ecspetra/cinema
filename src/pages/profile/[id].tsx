@@ -8,10 +8,9 @@ import {
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
-import Title from '@/app/components/UI/Title/Title'
 import ProfileInfo from '@/components/Profile/ProfileInfo'
 import EditProfileForm from '@/components/Profile/Form/EditProfileForm'
-import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
+import { PROFILE_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import TopBanner from '@/components/TopBanner'
 import ProfileIcon from '@/components/Profile/ProfileInfo/ProfileIcon'
 import TagList from '@/components/Tag/TagList'
@@ -118,9 +117,9 @@ const Profile = ({ results }) => {
 
 	return (
 		<>
-			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
-			<div className='w-full max-w-2xl mx-auto'>
-				<div className='mb-16 relative w-[232px] mx-auto'>
+			<TopBanner imageSrc={PROFILE_PAGE_TOP_BANNER_IMAGE} />
+			<div className='flex justify-start items-start gap-14'>
+				<div className='mb-16 relative'>
 					<ProfileIcon
 						photoURL={userInfo.photoURL}
 						isCurrentUserProfile={isCurrentUserProfile}
@@ -132,7 +131,7 @@ const Profile = ({ results }) => {
 							isCollectionItem={isFriend}
 							onClick={
 								isFriend
-									? openConfirmationPopup
+									? () => openConfirmationPopup(userInfo)
 									: handleSetNewFriend
 							}
 							collectionName='friends'
@@ -160,39 +159,39 @@ const Profile = ({ results }) => {
 						</Dropdown>
 					)}
 				</div>
-				{isEditInfo ? (
-					<EditProfileForm
-						userInfo={userInfo}
-						onFormClose={setIsEditInfo}
+				<div className='w-full'>
+					{isEditInfo ? (
+						<EditProfileForm
+							userInfo={userInfo}
+							onFormClose={setIsEditInfo}
+						/>
+					) : isEditCredential ? (
+						<EditCredentialForm onFormClose={setIsEditCredential} />
+					) : (
+						<ProfileInfo userInfo={userInfo} />
+					)}
+					<TagList
+						tags={userInfo.favoriteGenres || []}
+						title='Favorite genres'
+						className='mb-8'
+						isEditTags={isEditTags}
+						onFormClose={setIsEditTags}
 					/>
-				) : isEditCredential ? (
-					<EditCredentialForm onFormClose={setIsEditCredential} />
-				) : (
-					<ProfileInfo userInfo={userInfo} />
-				)}
-				<TagList
-					tags={userInfo.favoriteTags || []}
-					title='Favorite genres'
-					className='mb-8 pb-8'
-					isEditTags={isEditTags}
-					onFormClose={setIsEditTags}
-				/>
-				<FriendList
-					friends={friends || []}
-					onRemove={openConfirmationPopup}
-				/>
-			</div>
-			{!isCurrentUserProfile && (
-				<div>
-					<Title>{userInfo.displayName} collection</Title>
-					<UserCollection
-						movies={collection.collectionMovies}
-						persons={collection.collectionPersons}
-						marks={collection.collectionMarks}
-						reviews={collection.allCollectionReviews}
-						isCurrentUserCollection={isCurrentUserProfile}
+					<FriendList
+						friends={friends || []}
+						onRemove={openConfirmationPopup}
 					/>
 				</div>
+			</div>
+			{!isCurrentUserProfile && (
+				<UserCollection
+					movies={collection.collectionMovies}
+					tvShows={collection.collectionTVShows}
+					persons={collection.collectionPersons}
+					marks={collection.collectionMarks}
+					reviews={collection.allCollectionReviews}
+					isCurrentUserCollection={isCurrentUserProfile}
+				/>
 			)}
 		</>
 	)
