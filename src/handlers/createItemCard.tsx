@@ -1,21 +1,31 @@
 import { IItemCard, ITag } from '../../interfaces'
 import { getAllGenres } from '@/handlers/getAllGenres'
 
-export const createItemCard = items => {
+export const createItemCard = (items: IItemCard[]) => {
 	return new Promise(async resolve => {
-		const allGenres = await getAllGenres('all')
-		let cards: Array<IItemCard> = []
+		const allGenres: ITag[] = await getAllGenres('all')
+		let cards: IItemCard[] = []
+
 		items.map(item => {
-			const itemGenres = item.genre_ids ?? item.genres
-			let genresNames: Array<ITag> = []
+			const itemGenres: number[] | ITag[] | undefined =
+				item.genre_ids ?? item.genres
+			let genresNames: ITag[] = []
 			let card: IItemCard
 
 			if (itemGenres) {
 				itemGenres.map(genre => {
-					const equalGenre = allGenres.find(
-						genreFromDB => genreFromDB.id === genre.id
-					)
-					genresNames.push(equalGenre)
+					let equalGenre: ITag | undefined
+					if (typeof genre === 'number') {
+						equalGenre = allGenres.find(
+							genreFromDB => genreFromDB.id === genre
+						)
+					} else {
+						equalGenre = allGenres.find(
+							genreFromDB => genreFromDB.id === genre.id
+						)
+					}
+
+					if (equalGenre) genresNames.push(equalGenre)
 				})
 			}
 

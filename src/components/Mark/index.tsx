@@ -12,7 +12,7 @@ import {
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
-import { IMarkFromDB } from '../../../interfaces'
+import { IMark, IMarkFromDB } from '../../../interfaces'
 
 type PropsType = {
 	itemId: number
@@ -33,7 +33,7 @@ const Mark: FC<PropsType> = ({ itemId, type }) => {
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
 			setIsLoadingMark(true)
-			const itemData = {
+			const itemData: IMark = {
 				id: itemId,
 				mark: mark,
 				type: type,

@@ -1,8 +1,6 @@
-export const generateYearsList = startYear => {
+export const generateYearsList = (startYear: number) => {
 	const currentYear = new Date().getFullYear()
-	startYear = startYear || 1930
-
-	const yearsList = []
+	const yearsList: number[] = []
 	for (let year = startYear; year <= currentYear; year++) {
 		yearsList.push(year)
 	}

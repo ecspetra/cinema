@@ -74,7 +74,7 @@ const Collection = ({ results }) => {
 				setMarks([])
 			}
 		}
-
+		getCollection()
 		if (!results) getCollection()
 	}, [])
 

@@ -31,8 +31,9 @@ import { uuidv4 } from '@firebase/util'
 import {
 	ITag,
 	IItemCard,
-	IReplyCard,
-	IReviewCardFromDB,
+	IReviewCard,
+	IFetchedResult,
+	IMark,
 } from '../../interfaces'
 import { onValue } from '@firebase/database'
 import { fetchItemData } from '@/handlers/fetchItemData'
@@ -453,7 +454,7 @@ export const getCollectionItemsList = async (
 	collectionName: (typeof USER_COLLECTIONS)[number],
 	itemsPerPage: number | null,
 	lastItemId: string | null
-) => {
+): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
 	const collectionPath = `users/${userId}/${collectionName}/`
 	const userCollectionRef = ref(database, collectionPath)
 	const collectionInfo = {
@@ -611,7 +612,7 @@ export const collectionListener = (
 // review handlers
 
 export const setNewReviewItem = async (
-	item: IReviewCardFromDB | IReplyCard,
+	item: IReviewCard,
 	userId: string,
 	movieId: number,
 	collectionName: 'reviews' | 'replies'
@@ -626,7 +627,7 @@ export const setNewReviewItem = async (
 }
 
 export const updateReviewItem = async (
-	item: IReviewCardFromDB | IReplyCard,
+	item: IReviewCard,
 	userId: string,
 	movieId: number,
 	collectionName: 'reviews' | 'replies'
@@ -765,7 +766,7 @@ export const getDBReviewsList = async (
 
 export const reviewsListener = (
 	collectionId: number | string,
-	loadedItems: Array<IReviewCardFromDB>,
+	loadedItems: IReviewCard[],
 	setItems: ([]) => void,
 	collectionName: 'movie' | 'users'
 ) => {
@@ -816,7 +817,7 @@ export const reviewsListener = (
 export const repliesListener = (
 	movieId: number,
 	reviewId: string,
-	loadedItems: Array<IReplyCard>,
+	loadedItems: IReviewCard[],
 	setItems: ([]) => void
 ) => {
 	const repliesRef = ref(database, `movies/${movieId}/replies/`)

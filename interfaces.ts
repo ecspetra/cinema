@@ -1,3 +1,8 @@
+export interface IFetchedResult<T> {
+	isMoreDataAvailable: boolean
+	items: T[]
+}
+
 export interface ITag {
 	id: number
 	name: string
@@ -21,36 +26,48 @@ export interface IMarkFromDB {
 
 export interface IMark {
 	mark: number
-	movieId: number
-	isTVShow: boolean
+	itemId: number
+	type: 'movie' | 'tv'
 }
 
 export interface IReviewCard {
-	author: string
 	id: string
 	content: string
 	created_at: string
-	avatar_path: string
+	author?: string
+	avatar_path?: string
+	movieId?: number
+	authorId?: string
+	isTVShow?: boolean
+	replyTo?: string
+	reviewId?: string
 }
 
-export interface IReviewCardFromDB {
-	movieId: number
-	id: string
-	content: string
-	created_at: string
-	authorId: string
-	isTVShow: boolean
+export interface IItemCard {
+	id: number
+	media_type?: string
+	gender?: number
+	poster_path?: string
+	profile_path?: string
+	release_date?: string
+	first_air_date?: string
+	title?: string
+	name?: string
+	genres?: Array<ITag>
+	genre_ids?: Array<number>
+	known_for_department?: string
+	character?: string
+	job?: string
 }
 
-export interface IReplyCard {
-	movieId: number
-	replyTo: string
-	reviewId: string
-	id: string
-	content: string
-	created_at: string
-	authorId: string
-	isTVShow: boolean
+export interface ITVSeasonCard {
+	id: number
+	name: string
+	episode_count: number
+	overview: string
+	air_date: string
+	poster_path: string
+	vote_average: number
 }
 
 export interface IMovieInfo {
@@ -82,32 +99,6 @@ export interface ITVShowInfo {
 	seasons: Array<ITVSeasonCard>
 }
 
-export interface IItemCard {
-	id: number
-	media_type?: string
-	gender?: number
-	poster_path?: string
-	profile_path?: string
-	release_date?: string
-	first_air_date?: string
-	title?: string
-	name?: string
-	genres?: Array<ITag>
-	known_for_department?: string
-	character?: string
-	job?: string
-}
-
-export interface ITVSeasonCard {
-	id: number
-	name: string
-	episode_count: number
-	overview: string
-	air_date: string
-	poster_path: string
-	vote_average: number
-}
-
 export interface IPersonInfo {
 	id: number
 	profile_path: string
@@ -122,12 +113,36 @@ export interface IPersonInfo {
 
 export interface IModalContent {
 	id: string
-	modalTitle: string
-	modalText: string
-	modalClassName: string
-	modalContent: JSX.Element | null
-	alertInfo: {
+	modalTitle?: string
+	modalText?: string
+	modalClassName?: string
+	modalContent?: JSX.Element | null
+	alertInfo?: {
 		isAlert: boolean
-		type: 'success' | 'error' | ''
+		type: 'success' | 'error'
 	} | null
+}
+
+export interface ICountry {
+	iso_3166_1: string
+	english_name: string
+	native_name: string
+}
+
+export interface IDefaultImage {
+	src: string
+}
+
+export interface IUser {
+	id: string
+	displayName: string
+	email: string
+	photoURL: string
+	favoriteGenres?: ITag[]
+}
+
+export interface IFriendInfo {
+	friends: string
+	info: IUser
+	reviews: IReviewCard[]
 }

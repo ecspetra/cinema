@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { IReplyCard } from '../../../../../interfaces'
+import { IReviewCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
@@ -15,7 +15,7 @@ import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/Profi
 type PropsType = {
 	movieId: number
 	userId: string
-	reply: IReplyCard
+	reply: IReviewCard
 	onReply: (userName: string) => void
 	isCollectionItem?: boolean
 }

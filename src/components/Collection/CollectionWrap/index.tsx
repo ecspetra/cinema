@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import { USER_COLLECTIONS } from '@/firebase/config'
-import { IMark, IItemCard, IReviewCardFromDB } from '../../../../interfaces'
+import { IMark, IItemCard, IReviewCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
 import MarksCollectionWrap from '@/components/Collection/CollectionWrap/MarksCollectionWrap'
@@ -10,7 +10,7 @@ import ItemsCollectionWrap from '@/components/Collection/ItemsCollectionWrap'
 type PropsType = {
 	title: string
 	type: (typeof USER_COLLECTIONS)[number]
-	items: Array<IItemCard> | Array<IReviewCardFromDB> | Array<IMark>
+	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
 	isMoreDataAvailable: boolean
 	isCurrentUserCollection: boolean
 }

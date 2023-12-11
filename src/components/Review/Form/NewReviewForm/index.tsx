@@ -8,7 +8,7 @@ import moment from 'moment'
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { IReplyCard, IReviewCardFromDB } from '../../../../../interfaces'
+import { IReviewCard } from '../../../../../interfaces'
 
 type PropsType = {
 	movieId: number
@@ -46,7 +46,7 @@ const NewReviewForm: FC<PropsType> = ({
 			if (userId) {
 				setError('')
 
-				let newItem: IReviewCardFromDB | IReplyCard
+				let newItem: IReviewCard
 
 				if (isReply) {
 					newItem = {

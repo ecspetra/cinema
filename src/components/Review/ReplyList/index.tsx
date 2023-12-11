@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { IReplyCard } from '../../../../interfaces'
+import { IReviewCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
 import { repliesListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/ReplyList/ReplyCard'
@@ -8,7 +8,7 @@ type PropsType = {
 	movieId: number
 	userId: string
 	reviewId: string
-	replies: Array<IReplyCard>
+	replies: IReviewCard[]
 	onReply: (userName: string) => void
 	isCollectionList?: boolean
 }
@@ -24,7 +24,7 @@ const ReplyList: FC<PropsType> = ({
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
-	const [itemsToShow, setItemsToShow] = useState<Array<IReplyCard>>([])
+	const [itemsToShow, setItemsToShow] = useState<IReviewCard[]>([])
 	const isMoreDataAvailable = maxReviewsLength < itemsToShow.length
 	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'

@@ -3,23 +3,28 @@ import React from 'react'
 import Button from '@/app/components/UI/Button'
 import { uuidv4 } from '@firebase/util'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
+import { IFriendInfo, IModalContent, IUser } from '../../interfaces'
 
-export const openLoginModal = showModal => {
+type ShowModalFunction = (options: IModalContent) => void
+type CloseModalFunction = (modalId: string) => void
+
+export const openLoginModal = (showModal: ShowModalFunction): void => {
 	const modalId = uuidv4()
 	showModal({
 		id: modalId,
-		modalClassName: '',
 		modalContent: <AuthForm />,
-		alertInfo: null,
 	})
 }
 
-export const openFriendsModal = (showModal, itemsList, onRemove) => {
+export const openFriendsModal = (
+	showModal: ShowModalFunction,
+	itemsList: IFriendInfo[],
+	onRemove: (info: IUser, modalId: string) => void
+) => {
 	const modalId = uuidv4()
 	showModal({
 		id: modalId,
 		modalTitle: 'Friends',
-		modalClassName: '',
 		modalContent: (
 			<>
 				{itemsList.map(item => {
@@ -49,23 +54,20 @@ export const openFriendsModal = (showModal, itemsList, onRemove) => {
 				})}
 			</>
 		),
-		alertInfo: null,
 	})
 }
 
 export const openRemoveFriendModal = (
-	showModal,
-	onClose,
-	onRemove,
-	itemName,
-	itemId
+	showModal: ShowModalFunction,
+	onClose: CloseModalFunction,
+	onRemove: (itemId: string, modalId: string) => void,
+	itemName: string,
+	itemId: string
 ) => {
 	const modalId = uuidv4()
 	showModal({
 		id: modalId,
 		modalTitle: `Are you sure you want to remove ${itemName} from your friends?`,
-		modalText: '',
-		modalClassName: '',
 		modalContent: (
 			<div className='flex justify-between items-center gap-4'>
 				<Button onClick={() => onRemove(itemId, modalId)}>
@@ -76,17 +78,19 @@ export const openRemoveFriendModal = (
 				</Button>
 			</div>
 		),
-		alertInfo: null,
 	})
 }
 
-export const openRemoveModal = (showModal, onClose, onRemove, itemName) => {
+export const openRemoveModal = (
+	showModal: ShowModalFunction,
+	onClose: CloseModalFunction,
+	onRemove: (modalId: string) => void,
+	itemName: string
+) => {
 	const modalId = uuidv4()
 	showModal({
 		id: modalId,
 		modalTitle: `Are you sure you want to remove ${itemName} from your collection?`,
-		modalText: '',
-		modalClassName: '',
 		modalContent: (
 			<div className='flex justify-between items-center gap-4'>
 				<Button onClick={() => onRemove(modalId)}>Confirm</Button>
@@ -95,18 +99,17 @@ export const openRemoveModal = (showModal, onClose, onRemove, itemName) => {
 				</Button>
 			</div>
 		),
-		alertInfo: null,
 	})
 }
 
-export const showSuccessNotification = (showModal, text) => {
+export const showSuccessNotification = (
+	showModal: ShowModalFunction,
+	text: string
+) => {
 	const modalId = uuidv4()
 	showModal({
 		id: modalId,
-		modalTitle: ``,
 		modalText: text,
-		modalClassName: '',
-		modalContent: null,
 		alertInfo: {
 			isAlert: true,
 			type: 'success',
@@ -114,14 +117,14 @@ export const showSuccessNotification = (showModal, text) => {
 	})
 }
 
-export const showErrorNotification = (showModal, text) => {
+export const showErrorNotification = (
+	showModal: ShowModalFunction,
+	text: string
+) => {
 	const modalId = uuidv4()
 	showModal({
 		id: modalId,
-		modalTitle: ``,
 		modalText: text,
-		modalClassName: '',
-		modalContent: null,
 		alertInfo: {
 			isAlert: true,
 			type: 'error',

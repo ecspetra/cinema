@@ -6,7 +6,7 @@ export const fetchItemData = async (
 	queryParam: string
 ) => {
 	const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace('{listName}', listName)
-		.replace('{itemId}', itemId)
+		.replace('{itemId}', itemId.toString())
 		.replace('{queryParam}', queryParam)
 
 	const response = await fetch(urlToFetch)

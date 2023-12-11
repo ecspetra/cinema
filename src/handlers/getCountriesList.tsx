@@ -2,13 +2,14 @@ import {
 	URL_TO_FETCH_COUNTRIES,
 	URL_TO_SEARCH_LIST_ITEMS,
 } from '@/constants/linksToFetch'
+import { ICountry } from '../../interfaces'
 
-export const getCountriesList = async type => {
+export const getCountriesList = async (type: string) => {
 	const response = await fetch(URL_TO_FETCH_COUNTRIES)
 	const result = await response.json()
 
 	const countryList = await Promise.all(
-		result.map(async item => {
+		result.map(async (item: ICountry) => {
 			const response = await fetch(
 				URL_TO_SEARCH_LIST_ITEMS.replace('{type}', type).replace(
 					'{searchQuery}',

@@ -8,6 +8,7 @@ import {
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
+import { IUser } from '../../interfaces'
 
 export const useFriendsCollection = (itemInfo: object) => {
 	const [isFriend, setIsFriend] = useState<boolean>(false)
@@ -67,7 +68,10 @@ export const useFriendsCollection = (itemInfo: object) => {
 		}, 500)
 	}
 
-	const openConfirmationPopup = (userInfo, modalId = null) => {
+	const openConfirmationPopup = (
+		userInfo: IUser,
+		modalId: string | null = null
+	) => {
 		if (modalId) {
 			hideModal(modalId)
 		}

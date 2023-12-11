@@ -23,7 +23,7 @@ const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 
 	if (!itemsList.length)
 		return <EmptyList title='Friends' text='No friends yet' />
-
+	console.log(itemsList)
 	return (
 		<div className='mb-16'>
 			<Title>Friends</Title>

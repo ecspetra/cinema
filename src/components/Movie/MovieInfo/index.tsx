@@ -5,7 +5,6 @@ import {
 	IBackdrop,
 	IMovieInfo,
 	IReviewCard,
-	IReviewCardFromDB,
 	ITVShowInfo,
 } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
@@ -25,7 +24,7 @@ import DetailsList from '@/components/Details/DetailsList'
 type PropsType = {
 	basicInfo: IMovieInfo | ITVShowInfo
 	movieImages: Array<IBackdrop>
-	movieReviews: Array<IReviewCard | IReviewCardFromDB>
+	movieReviews: IReviewCard[]
 	movieVideo: string
 	type: string
 }
