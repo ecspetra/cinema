@@ -1,11 +1,14 @@
 import { URL_TO_FETCH_ITEM_DATA } from '@/constants/linksToFetch'
 
 export const fetchItemData = async (
-	listName: string,
+	collectionType: string,
 	itemId: number,
 	queryParam: string
-) => {
-	const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace('{listName}', listName)
+): Promise<any> => {
+	const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace(
+		'{collectionType}',
+		collectionType
+	)
 		.replace('{itemId}', itemId.toString())
 		.replace('{queryParam}', queryParam)
 

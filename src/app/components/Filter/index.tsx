@@ -13,10 +13,11 @@ import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
 import { getCountriesList } from '@/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 import { generateRatingList } from '@/handlers/generateRatingList'
+import { UserCollectionType } from '@/firebase/config'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
-	type: 'movie' | 'tv'
+	collectionType: Extract<UserCollectionType, 'movie' | 'tv'>
 	fields: (keyof FilterFormData)[]
 	defaultUrl: string
 }
@@ -32,7 +33,12 @@ interface FilterFormData {
 	with_keywords: Array<string>
 }
 
-const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
+const Filter: FC<PropsType> = ({
+	onApply,
+	collectionType,
+	fields,
+	defaultUrl,
+}) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
@@ -230,7 +236,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						tags={formData[field]}
 						onToggle={handleToggleTag}
 						name={field}
-						type={type}
+						type={collectionType}
 					/>
 				)
 		}
@@ -238,7 +244,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 
 	useEffect(() => {
 		const fetchCountriesList = async () => {
-			const countryList = await getCountriesList(type)
+			const countryList = await getCountriesList(collectionType)
 			setCountryList(countryList)
 		}
 

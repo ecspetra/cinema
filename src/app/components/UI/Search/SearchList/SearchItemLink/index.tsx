@@ -5,12 +5,12 @@ import Link from 'next/link'
 
 type PropsType = {
 	item: object
-	type: string
+	collectionType: string
 }
 
-const SearchItemLink: FC<PropsType> = ({ item, type }) => {
+const SearchItemLink: FC<PropsType> = ({ item, collectionType }) => {
 	const { id, title, name, release_date, first_air_date, media_type } = item
-	const itemType = media_type ?? type
+	const itemType = media_type ?? collectionType
 
 	return (
 		<Link

@@ -5,10 +5,14 @@ import EmptyList from '@/components/List/EmptyList'
 import { SortByOption } from '@/constants/enum'
 import ItemsListSort from '@/components/List/ItemsListWrap/ItemsList/ItemsListSort'
 import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
+import { UserCollectionType } from '@/firebase/config'
 
 type PropsType = {
 	itemsList: Array<IItemCard>
-	type: 'movie' | 'person' | 'tv'
+	collectionType: Extract<
+		UserCollectionType,
+		'movie' | 'tv' | 'person' | 'basic'
+	>
 	isMoreDataAvailable: boolean
 	title?: string
 	urlToFetchItems?: string
@@ -18,7 +22,7 @@ type PropsType = {
 
 const ItemsListWrap: FC<PropsType> = ({
 	itemsList,
-	type,
+	collectionType,
 	isMoreDataAvailable,
 	title,
 	urlToFetchItems,
@@ -60,7 +64,7 @@ const ItemsListWrap: FC<PropsType> = ({
 			</div>
 			<ItemsList
 				itemsList={itemsList}
-				type={type}
+				collectionType={collectionType}
 				isMoreDataAvailable={isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable={isFilterable}

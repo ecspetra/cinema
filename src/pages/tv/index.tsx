@@ -38,7 +38,7 @@ const TVShows = ({ results }) => {
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>TV shows</Title>
 			<Search
-				type='tv'
+				collectionType='tv'
 				name='tvShowsSearch'
 				label='Search TV shows'
 				urlToFetch={defaultUrlToSearch}
@@ -48,7 +48,7 @@ const TVShows = ({ results }) => {
 				isWrapped
 			/>
 			<Filter
-				type='tv'
+				collectionType='tv'
 				onApply={setUrlToFetch}
 				fields={[
 					'first_air_date_year',
@@ -62,7 +62,7 @@ const TVShows = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultTvShowsList.items}
-				type='tv'
+				collectionType='tv'
 				isMoreDataAvailable={defaultTvShowsList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isSortable

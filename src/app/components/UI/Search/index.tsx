@@ -1,4 +1,11 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import {
+	FC,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import { faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
@@ -12,18 +19,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type PropsType = {
 	name: string
-	type: string
+	collectionType: string
 	label: string
 	urlToFetch: string
 	defaultUrlToFetch: string
-	onSearch: () => void
+	onSearch: Dispatch<SetStateAction<string>>
 	isApplied?: boolean
 	isWrapped?: boolean
 }
 
 const Search: FC<PropsType> = ({
 	name,
-	type,
+	collectionType,
 	label,
 	urlToFetch,
 	defaultUrlToFetch,
@@ -146,7 +153,7 @@ const Search: FC<PropsType> = ({
 			</div>
 			{isOpen && (
 				<SearchList
-					type={type}
+					collectionType={collectionType}
 					itemsList={results}
 					isMoreDataAvailable={isMoreDataAvailable}
 					urlToFetch={urlToFetchWithSearchQuery}

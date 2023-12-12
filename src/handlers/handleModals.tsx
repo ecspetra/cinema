@@ -1,5 +1,4 @@
 import AuthForm from '@/app/components/Auth/AuthForm'
-import React from 'react'
 import Button from '@/app/components/UI/Button'
 import { uuidv4 } from '@firebase/util'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'

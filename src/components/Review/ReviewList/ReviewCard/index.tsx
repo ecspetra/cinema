@@ -176,7 +176,7 @@ const ReviewCard: FC<PropsType> = ({
 								movieId={defaultCardMovieId ?? movieId}
 								userId={userId}
 								onReply={() => setIsShowReplyForm(true)}
-								collectionName='reviews'
+								collectionType='reviews'
 							/>
 							<RepliesList
 								movieId={defaultCardMovieId ?? movieId}

@@ -16,10 +16,10 @@ import { IMark, IMarkFromDB } from '../../../interfaces'
 
 type PropsType = {
 	itemId: number
-	type: string
+	collectionType: string
 }
 
-const Mark: FC<PropsType> = ({ itemId, type }) => {
+const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
@@ -36,11 +36,11 @@ const Mark: FC<PropsType> = ({ itemId, type }) => {
 			const itemData: IMark = {
 				id: itemId,
 				mark: mark,
-				type: type,
+				type: collectionType,
 			}
 			setNewMarkForMovie(itemData, userId)
 				.then(() => {
-					getMarkForMovie(itemId, userId, type)
+					getMarkForMovie(itemId, userId, collectionType)
 						.then(data => {
 							setMarkData(data)
 							setIsLoadingMark(false)
@@ -129,7 +129,7 @@ const Mark: FC<PropsType> = ({ itemId, type }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, type).then(data => {
+			getMarkForMovie(itemId, userId, collectionType).then(data => {
 				setMarkData(data)
 			})
 		} else getEmptyMarkIcons()

@@ -74,7 +74,7 @@ const Person = ({ personFromProps }) => {
 			<PersonInfo personInfo={person} personImages={images} />
 			<ItemsListWrap
 				itemsList={movies}
-				type='movie'
+				collectionType='movie'
 				isMoreDataAvailable={
 					personFromProps.moviesWithPerson.isMoreDataAvailable
 				}

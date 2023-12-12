@@ -134,7 +134,7 @@ const Profile = ({ results }) => {
 									? () => openConfirmationPopup(userInfo)
 									: handleSetNewFriend
 							}
-							collectionName='friends'
+							collectionType='friends'
 						/>
 					)}
 					{isCurrentUserProfile && (

@@ -3,16 +3,21 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import Loader from '@/components/Loader'
 import SearchItemBasic from '@/app/components/UI/Search/SearchList/SearchItemBasic'
 import SearchItemLink from '@/app/components/UI/Search/SearchList/SearchItemLink'
+import { IItemCard } from '../../../../../../interfaces'
+import { UserCollectionType } from '@/firebase/config'
 
 type PropsType = {
-	itemsList: Array<IMovieCard>
+	itemsList: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	isSearchQueryUpdate: boolean
 	urlToFetch: string
 	onSearch: () => void
 	onClose: () => void
 	name: string
-	type?: 'basic' | 'movie' | 'tv' | 'person'
+	collectionType?: Extract<
+		UserCollectionType,
+		'movie' | 'tv' | 'person' | 'basic'
+	>
 }
 
 const SearchList: FC<PropsType> = ({
@@ -23,7 +28,7 @@ const SearchList: FC<PropsType> = ({
 	onSearch,
 	onClose,
 	name,
-	type = 'basic',
+	collectionType = 'basic',
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const { isLoading, items } = useInfiniteScroll(
@@ -68,7 +73,7 @@ const SearchList: FC<PropsType> = ({
 									<SearchItemLink
 										key={item.id}
 										item={item}
-										type={type}
+										type={collectionType}
 									/>
 								)
 						}

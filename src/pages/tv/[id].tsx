@@ -16,7 +16,7 @@ const TVShow = ({ tvShowFromProps }) => {
 	const [movie, setMovie] = useState(null)
 	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] = useState(
 		URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
-			'{listName}',
+			'{collectionType}',
 			'tv'
 		)
 	)
@@ -36,7 +36,7 @@ const TVShow = ({ tvShowFromProps }) => {
 				URL_TO_FETCH_SIMILAR_LIST.replace(
 					'{itemId}',
 					router.query.id
-				).replace('{listName}', 'tv')
+				).replace('{collectionType}', 'tv')
 			)
 
 			try {
@@ -114,7 +114,7 @@ const TVShow = ({ tvShowFromProps }) => {
 				movieImages={movie.imagesResult.backdrops}
 				movieReviews={movie.reviews}
 				movieVideo={movieTeaser?.key}
-				type='tv'
+				collectionType='tv'
 			/>
 			<div>
 				<MoviePersonsList
@@ -127,7 +127,7 @@ const TVShow = ({ tvShowFromProps }) => {
 				/>
 				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
-					type='tv'
+					collectionType='tv'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}
@@ -144,7 +144,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		const urlToFetchSimilarShows = URL_TO_FETCH_SIMILAR_LIST.replace(
 			'{itemId}',
 			ctx.query.id
-		).replace('{listName}', 'tv')
+		).replace('{collectionType}', 'tv')
 
 		const getMovieReviews = async () => {
 			const collectionReviews = await getDBReviewsList(

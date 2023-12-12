@@ -12,7 +12,7 @@ import useItemsToShow from '@/hooks/useItemsToShow'
 import { uuidv4 } from '@firebase/util'
 
 type PropsType = {
-	images: Array<IBackdrop> | Array<IPersonImage>
+	images: IBackdrop[] | IPersonImage[]
 	isPersonImages?: boolean
 	className?: string
 }

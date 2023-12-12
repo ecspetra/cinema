@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 
 type ModalContextType = {
 	showModal: (content: IModalContent) => void
-	hideModal: () => void
+	hideModal: (modalId: string) => void
 	currentModal: IModalContent
 	isMounted: boolean
 }

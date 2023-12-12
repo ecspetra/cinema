@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, RefObject } from 'react'
 
-export const useClickOutsideContainer = (ref, isContainerOpen = false) => {
-	const [isOpen, setIsOpen] = useState(isContainerOpen)
+export const useClickOutsideContainer = (
+	ref: RefObject<HTMLDivElement>,
+	isContainerOpen: boolean = false
+) => {
+	const [isOpen, setIsOpen] = useState<boolean>(isContainerOpen)
 
 	const onToggleContainer = () => {
 		setIsOpen(!isOpen)
@@ -16,8 +19,8 @@ export const useClickOutsideContainer = (ref, isContainerOpen = false) => {
 	}
 
 	useEffect(() => {
-		const handleClickOutside = event => {
-			if (ref.current && !ref.current.contains(event.target)) {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (ref.current && !ref.current.contains(event.target as Node)) {
 				onCloseContainer()
 			}
 		}

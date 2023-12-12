@@ -1,3 +1,5 @@
+import { UserCollectionType } from '@/firebase/config'
+
 export interface IFetchedResult<T> {
 	isMoreDataAvailable: boolean
 	items: T[]
@@ -10,6 +12,11 @@ export interface ITag {
 
 export interface IBackdrop {
 	file_path: string
+}
+
+export interface IVideoData {
+	type: string
+	site: string
 }
 
 export interface IPersonImage {
@@ -27,7 +34,7 @@ export interface IMarkFromDB {
 export interface IMark {
 	mark: number
 	itemId: number
-	type: 'movie' | 'tv'
+	type: Extract<UserCollectionType, 'movie' | 'tv'>
 }
 
 export interface IReviewCard {
@@ -58,6 +65,13 @@ export interface IItemCard {
 	known_for_department?: string
 	character?: string
 	job?: string
+}
+
+export interface IUpcomingMovieItem {
+	id: number
+	release_date?: string
+	title?: string
+	genres?: Array<ITag>
 }
 
 export interface ITVSeasonCard {

@@ -3,6 +3,7 @@ import {
 	getCollectionItem,
 	removeCollectionItem,
 	setNewCollectionItem,
+	UserCollectionType,
 } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
@@ -16,7 +17,7 @@ import { IItemCard } from '../../interfaces'
 
 export const useCollectionButton = (
 	itemInfo: IItemCard,
-	collection: 'movie' | 'tv' | 'person'
+	collectionType: Extract<UserCollectionType, 'movie' | 'tv' | 'person'>
 ) => {
 	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)
@@ -29,16 +30,16 @@ export const useCollectionButton = (
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
 
-			setNewCollectionItem(itemInfo.id, collection)
+			setNewCollectionItem(itemInfo.id, collectionType)
 				.then(() => {
-					getCollectionItem(itemInfo.id, collection)
+					getCollectionItem(itemInfo.id, collectionType)
 						.then(data => {
 							setIsCollectionItem(data)
 							setIsLoadingCollection(false)
-							// showSuccessNotification(
-							// 	showModal,
-							// 	'The item was successfully added'
-							// )
+							showSuccessNotification(
+								showModal,
+								'The item was successfully added'
+							)
 						})
 						.catch(() => {
 							setIsLoadingCollection(false)
@@ -54,23 +55,23 @@ export const useCollectionButton = (
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveCollectionItem = modalId => {
+	const handleRemoveCollectionItem = (modalId: string) => {
 		hideModal(modalId)
 		setIsLoadingCollection(true)
 		setIsMounted(false)
 
 		setTimeout(() => {
-			removeCollectionItem(itemInfo.id, collection)
+			removeCollectionItem(itemInfo.id, collectionType)
 				.then(() => {
 					setIsCollectionItem(false)
 					setIsLoadingCollection(false)
 				})
-				// .then(() => {
-				// 	showSuccessNotification(
-				// 		showModal,
-				// 		'The item was successfully removed'
-				// 	)
-				// })
+				.then(() => {
+					showSuccessNotification(
+						showModal,
+						'The item was successfully removed'
+					)
+				})
 				.catch(() => {
 					setIsLoadingCollection(false)
 					showErrorNotification(showModal, 'An error has occurred')
@@ -79,7 +80,7 @@ export const useCollectionButton = (
 	}
 
 	const openConfirmationPopup = () => {
-		const itemName = itemInfo.title ? itemInfo.title : itemInfo.name
+		const itemName = itemInfo.title ?? itemInfo.name ?? 'this item'
 		openRemoveModal(
 			showModal,
 			hideModal,
@@ -91,7 +92,7 @@ export const useCollectionButton = (
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			getCollectionItem(itemInfo.id, collection)
+			getCollectionItem(itemInfo.id, collectionType)
 				.then(data => {
 					setIsCollectionItem(data)
 					setIsLoadingCollection(false)

@@ -167,7 +167,7 @@ const ReplyCard: FC<PropsType> = ({
 								reviewId={id}
 								movieId={movieId}
 								userId={userId}
-								collectionName='replies'
+								collectionType='replies'
 								onReply={() => onReply(authorInfo.displayName)}
 							/>
 						</>

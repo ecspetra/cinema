@@ -16,7 +16,7 @@ const Movie = ({ movieFromProps }) => {
 	const [movie, setMovie] = useState(null)
 	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] = useState(
 		URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
-			'{listName}',
+			'{collectionType}',
 			'movie'
 		)
 	)
@@ -36,10 +36,11 @@ const Movie = ({ movieFromProps }) => {
 				URL_TO_FETCH_SIMILAR_LIST.replace(
 					'{itemId}',
 					router.query.id
-				).replace('{listName}', 'movie')
+				).replace('{collectionType}', 'movie')
 			)
 
 			try {
+				const collectionTypeToFetch = 'movie'
 				const getMovieReviews = async () => {
 					const collectionReviews = await getDBReviewsList(
 						router.query.id,
@@ -58,11 +59,27 @@ const Movie = ({ movieFromProps }) => {
 					reviewsFromDB,
 					similarMoviesResult,
 				] = await Promise.all([
-					fetchItemData('movie', router.query.id, ''),
-					fetchItemData('movie', router.query.id, '/credits'),
-					fetchItemData('movie', router.query.id, '/images'),
-					fetchItemData('movie', router.query.id, '/reviews'),
-					fetchItemData('movie', router.query.id, '/videos'),
+					fetchItemData(collectionTypeToFetch, router.query.id, ''),
+					fetchItemData(
+						collectionTypeToFetch,
+						router.query.id,
+						'/credits'
+					),
+					fetchItemData(
+						collectionTypeToFetch,
+						router.query.id,
+						'/images'
+					),
+					fetchItemData(
+						collectionTypeToFetch,
+						router.query.id,
+						'/reviews'
+					),
+					fetchItemData(
+						collectionTypeToFetch,
+						router.query.id,
+						'/videos'
+					),
 					getMovieReviews(),
 					getResultsByPage(urlToFetchSimilarMovies, 1),
 				])
@@ -114,7 +131,7 @@ const Movie = ({ movieFromProps }) => {
 				movieImages={movie.imagesResult.backdrops}
 				movieReviews={movie.reviews}
 				movieVideo={movieTeaser?.key}
-				type='movie'
+				collectionType='movie'
 			/>
 			<div>
 				<MoviePersonsList
@@ -127,7 +144,7 @@ const Movie = ({ movieFromProps }) => {
 				/>
 				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
-					type='movie'
+					collectionType='movie'
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}
@@ -141,10 +158,11 @@ const Movie = ({ movieFromProps }) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
+		const collectionTypeToFetch = 'movie'
 		const urlToFetchSimilarMovies = URL_TO_FETCH_SIMILAR_LIST.replace(
 			'{itemId}',
 			ctx.query.id
-		).replace('{listName}', 'movie')
+		).replace('{collectionType}', 'movie')
 
 		const getMovieReviews = async () => {
 			const collectionReviews = await getDBReviewsList(
@@ -163,11 +181,11 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 			reviewsFromDB,
 			similarMoviesResult,
 		] = await Promise.all([
-			fetchItemData('movie', ctx.query.id, ''),
-			fetchItemData('movie', ctx.query.id, '/credits'),
-			fetchItemData('movie', ctx.query.id, '/images'),
-			fetchItemData('movie', ctx.query.id, '/reviews'),
-			fetchItemData('movie', ctx.query.id, '/videos'),
+			fetchItemData(collectionTypeToFetch, ctx.query.id, ''),
+			fetchItemData(collectionTypeToFetch, ctx.query.id, '/credits'),
+			fetchItemData(collectionTypeToFetch, ctx.query.id, '/images'),
+			fetchItemData(collectionTypeToFetch, ctx.query.id, '/reviews'),
+			fetchItemData(collectionTypeToFetch, ctx.query.id, '/videos'),
 			getMovieReviews(),
 			getResultsByPage(urlToFetchSimilarMovies, 1),
 		])

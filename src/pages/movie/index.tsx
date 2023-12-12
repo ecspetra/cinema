@@ -41,7 +41,7 @@ const Movies = ({ results }) => {
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>Movies</Title>
 			<Search
-				type='movie'
+				collectionType='movie'
 				name='movieSearch'
 				label='Search movie'
 				urlToFetch={defaultUrlToSearch}
@@ -51,7 +51,7 @@ const Movies = ({ results }) => {
 				isWrapped
 			/>
 			<Filter
-				type='movie'
+				collectionType='movie'
 				onApply={setUrlToFetch}
 				fields={[
 					'primary_release_year',
@@ -66,7 +66,7 @@ const Movies = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
-				type='movie'
+				collectionType='movie'
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable

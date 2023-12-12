@@ -1,16 +1,16 @@
-import { IItemCard, ITag } from '../../interfaces'
+import { IItemCard, ITag, IUpcomingMovieItem } from '../../interfaces'
 import { getAllGenres } from '@/handlers/getAllGenres'
 
 export const createItemCard = (items: IItemCard[]) => {
 	return new Promise(async resolve => {
 		const allGenres: ITag[] = await getAllGenres('all')
-		let cards: IItemCard[] = []
+		let cards: IItemCard[] | IUpcomingMovieItem[] = []
 
 		items.map(item => {
 			const itemGenres: number[] | ITag[] | undefined =
 				item.genre_ids ?? item.genres
 			let genresNames: ITag[] = []
-			let card: IItemCard
+			let card: IItemCard | IUpcomingMovieItem
 
 			if (itemGenres) {
 				itemGenres.map(genre => {

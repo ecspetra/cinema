@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { USER_COLLECTIONS } from '@/firebase/config'
+import { USER_COLLECTIONS, UserCollectionType } from '@/firebase/config'
 import { IMark, IItemCard, IReviewCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
@@ -9,7 +9,7 @@ import ItemsCollectionWrap from '@/components/Collection/ItemsCollectionWrap'
 
 type PropsType = {
 	title: string
-	type: (typeof USER_COLLECTIONS)[number]
+	type: UserCollectionType
 	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
 	isMoreDataAvailable: boolean
 	isCurrentUserCollection: boolean

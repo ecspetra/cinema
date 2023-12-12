@@ -6,13 +6,13 @@ import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 
 type PropsType = {
 	items: Array<IItemCard>
-	type: string
+	collectionType: string
 	isMoreDataAvailable: boolean
 }
 
 const ItemsCollectionWrap: FC<PropsType> = ({
 	items,
-	type,
+	collectionType,
 	isMoreDataAvailable,
 }) => {
 	const { userId } = useAuth()
@@ -26,7 +26,7 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 						return (
 							<ItemCard
 								item={item}
-								type={type}
+								collectionType={collectionType}
 								isShowButton={false}
 								key={idx}
 							/>
@@ -36,8 +36,8 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 			</div>
 			{isMoreDataAvailable && (
 				<Link
-					href={`/collection/[type]?uid=${userId}&type=${type}`}
-					as={`/collection/${type}?uid=${userId}&type=${type}`}
+					href={`/collection/[type]?uid=${userId}&type=${collectionType}`}
+					as={`/collection/${collectionType}?uid=${userId}&type=${collectionType}`}
 					className='w-72 border-2 border-rose-600 duration-300 font-semibold leading-none text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center mx-auto mt-8'
 				>
 					View all

@@ -1,9 +1,10 @@
 import { useEffect, RefObject, useState } from 'react'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
+import { IItemCard } from '../../interfaces'
 
 export const useInfiniteScroll = (
 	containerRef: RefObject<HTMLElement>,
-	itemsList: Array<any>,
+	itemsList: IItemCard[],
 	isMoreDataAvailable: boolean,
 	urlToFetch: string
 ) => {
@@ -11,16 +12,20 @@ export const useInfiniteScroll = (
 	const [isMoreItemsAvailable, setIsMoreItemsAvailable] =
 		useState<boolean>(isMoreDataAvailable)
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [items, setItems] = useState([])
+	const [items, setItems] = useState<IItemCard[]>([])
 
 	const getMoreItems = async () => {
 		if (currentPage === 1) setItems([])
 
-		getResultsByPage(urlToFetch, currentPage).then(data => {
-			setItems(prevState => [...prevState, ...data.items])
-			setIsMoreItemsAvailable(data.isMoreDataAvailable)
-			setIsLoading(false)
-		})
+		getResultsByPage(urlToFetch, currentPage)
+			.then(data => {
+				setItems(prevState => [...prevState, ...data.items])
+				setIsMoreItemsAvailable(data.isMoreDataAvailable)
+				setIsLoading(false)
+			})
+			.catch(() => {
+				setIsLoading(false)
+			})
 	}
 
 	useEffect(() => {

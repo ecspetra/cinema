@@ -36,7 +36,7 @@ const Persons = ({ results }) => {
 			<TopBanner imageSrc={PERSON_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>Persons</Title>
 			<Search
-				type='person'
+				collectionType='person'
 				name='personSearch'
 				label='Search person'
 				urlToFetch={defaultUrlToSearch}
@@ -47,7 +47,7 @@ const Persons = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultPersonList.items}
-				type='person'
+				collectionType='person'
 				isMoreDataAvailable={defaultPersonList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable

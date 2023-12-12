@@ -2,21 +2,25 @@ import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
-import { collectionListener, getCollectionItemsList } from '@/firebase/config'
+import {
+	collectionListener,
+	getCollectionItemsList,
+	UserCollectionType,
+} from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
 import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
-	type: 'movie' | 'person' | 'tv'
+	collectionType: Extract<UserCollectionType, 'movie' | 'tv' | 'person'>
 	items: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	title: string
 }
 
 const CollectionItemsList: FC<PropsType> = ({
-	type,
+	collectionType,
 	items,
 	isMoreDataAvailable,
 	title,
@@ -32,7 +36,7 @@ const CollectionItemsList: FC<PropsType> = ({
 		setIsLoading(true)
 		const result = await getCollectionItemsList(
 			userId,
-			type,
+			collectionType,
 			20,
 			lastItemId
 		)
@@ -45,7 +49,7 @@ const CollectionItemsList: FC<PropsType> = ({
 	useEffect(() => {
 		const unsubscribe = collectionListener(
 			userId,
-			type,
+			collectionType,
 			itemsToShow,
 			setItemsToShow,
 			setIsShowMoreButton
@@ -86,7 +90,7 @@ const CollectionItemsList: FC<PropsType> = ({
 						<ItemCard
 							key={item.id}
 							item={item}
-							type={type}
+							collectionType={collectionType}
 							isCollectionListItem
 						/>
 					)

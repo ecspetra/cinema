@@ -1,8 +1,10 @@
 import { URL_TO_FETCH_ALL_GENRES } from '@/constants/linksToFetch'
 
-export const getAllGenres = async (type: string) => {
+type GenresType = 'movie' | 'tv' | 'all'
+
+export const getAllGenres = async (type: GenresType) => {
 	let genres
-	const getGenres = async (type: string) => {
+	const getGenres = async (type: GenresType) => {
 		const response = await fetch(
 			URL_TO_FETCH_ALL_GENRES.replace(`{queryParam}`, type)
 		)

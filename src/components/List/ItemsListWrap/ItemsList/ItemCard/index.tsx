@@ -14,7 +14,7 @@ import { IItemCard } from '../../../../../../interfaces'
 
 type PropsType = {
 	item: IItemCard
-	type: string
+	collectionType: string
 	isShowButton?: boolean
 	isCollectionListItem?: boolean
 	isShowRole?: boolean
@@ -22,7 +22,7 @@ type PropsType = {
 
 const ItemCard: FC<PropsType> = ({
 	item,
-	type,
+	collectionType,
 	isShowButton = true,
 	isCollectionListItem = false,
 	isShowRole = false,
@@ -46,10 +46,10 @@ const ItemCard: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(item, media_type ?? type)
+	} = useCollectionButton(item, media_type ?? collectionType)
 
 	const isShowTags = genres?.length > 0
-	const cardType = media_type ?? type
+	const cardType = media_type ?? collectionType
 	const isShowMark = cardType === 'movie' || cardType === 'tv'
 	const cardCover = poster_path ?? profile_path
 	const cardTitle = title ?? name
@@ -64,7 +64,7 @@ const ItemCard: FC<PropsType> = ({
 				{isShowMark && (
 					<MarkSmall
 						itemId={id}
-						type={type}
+						collectionType={collectionType}
 						className='absolute -right-3 -top-3'
 					/>
 				)}
