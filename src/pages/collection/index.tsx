@@ -4,7 +4,6 @@ import Button from '@/app/components/UI/Button'
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
-import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
 import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
@@ -13,70 +12,67 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import UserCollection from '@/components/Collection'
-import { getUserCollection } from '@/handlers/getUserCollection'
+import { getCollectionGeneralPage } from '@/handlers/getCollectionGeneralPage'
+import {
+	IFetchedResult,
+	IItemCard,
+	IMark,
+	IReviewCard,
+} from '../../../interfaces'
 
-const Collection = ({ results }) => {
-	const [movies, setMovies] = useState(null)
-	const [tvShows, setTvShows] = useState(null)
-	const [persons, setPersons] = useState(null)
-	const [reviews, setReviews] = useState([])
-	const [marks, setMarks] = useState([])
+interface IResults {
+	collectionMovies: IFetchedResult<IItemCard>
+	collectionTVShows: IFetchedResult<IItemCard>
+	collectionPersons: IFetchedResult<IItemCard>
+	allCollectionReviews: IReviewCard[]
+	collectionMarks: IMark[]
+}
+
+const Collection = ({ results }: { results: IResults }) => {
+	const [movies, setMovies] = useState<IFetchedResult<IItemCard> | null>(null)
+	const [tvShows, setTvShows] = useState<IFetchedResult<IItemCard> | null>(
+		null
+	)
+	const [persons, setPersons] = useState<IFetchedResult<IItemCard> | null>(
+		null
+	)
+	const [reviews, setReviews] = useState<
+		IFetchedResult<IReviewCard>['items']
+	>([])
+	const [marks, setMarks] = useState<IFetchedResult<IMark>['items']>([])
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { userId } = useAuth()
 
 	useEffect(() => {
-		setMovies(results?.collectionMovies)
-		setTvShows(results?.collectionTVShows)
-		setPersons(results?.collectionPersons)
-		setReviews(results?.allCollectionReviews)
-		setMarks(results?.collectionMarks)
-	}, [results])
-
-	useEffect(() => {
 		const getCollection = async () => {
-			const userIdFromUrl = router.query.uid || null
+			const userIdFromUrl = router.query.uid as string
 
-			if (
-				(userId && userIdFromUrl && userId !== userIdFromUrl) ||
-				(!userId && userIdFromUrl)
-			) {
-				await router.push('/404')
-			}
+			const generalCollection = await getCollectionGeneralPage(
+				userIdFromUrl,
+				userId,
+				url => {
+					router.push(url)
+				}
+			)
 
-			if (userId && !userIdFromUrl) {
-				await router.push(
-					CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
-				)
-			}
-
-			if (!userId) {
-				setMovies(null)
-				setTvShows(null)
-				setPersons(null)
-				setReviews([])
-				setMarks([])
-			}
-
-			try {
-				const userCollection = await getUserCollection(userIdFromUrl)
-
-				setMovies(userCollection.collectionMovies)
-				setTvShows(userCollection.collectionTVShows)
-				setPersons(userCollection.collectionPersons)
-				setReviews(userCollection.allCollectionReviews)
-				setMarks(userCollection.collectionMarks)
-			} catch (error) {
-				setMovies(null)
-				setTvShows(null)
-				setPersons(null)
-				setReviews([])
-				setMarks([])
+			if (generalCollection) {
+				setMovies(generalCollection.collectionMovies)
+				setTvShows(generalCollection.collectionTVShows)
+				setPersons(generalCollection.collectionPersons)
+				setReviews(generalCollection.allCollectionReviews)
+				setMarks(generalCollection.collectionMarks)
 			}
 		}
-		getCollection()
-		if (!results) getCollection()
-	}, [])
+
+		if (results) {
+			setMovies(results?.collectionMovies)
+			setTvShows(results?.collectionTVShows)
+			setPersons(results?.collectionPersons)
+			setReviews(results?.allCollectionReviews)
+			setMarks(results?.collectionMarks)
+		} else getCollection()
+	}, [results])
 
 	if (!userId) {
 		return (
@@ -118,59 +114,23 @@ const Collection = ({ results }) => {
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	const userIdFromUrl = ctx.query.uid || null
-	const cookies = parseCookies(ctx.req)
+	const userIdFromUrl = ctx.query.uid as string
+	const cookies = parseCookies(ctx.req!)
 	const userId = cookies.uid
 
-	if (
-		(userId && userIdFromUrl && userId !== userIdFromUrl) ||
-		(!userId && userIdFromUrl)
-	) {
-		return {
-			notFound: true,
+	const generalCollection = await getCollectionGeneralPage(
+		userIdFromUrl,
+		userId,
+		url => {
+			ctx.res?.writeHead(302, { Location: url })
+			ctx.res?.end()
 		}
-	}
+	)
 
-	if (userId && !userIdFromUrl) {
-		return {
-			redirect: {
-				destination: CURRENT_USER_COLLECTION_PAGE.replace(
-					'{userId}',
-					userId
-				),
-				permanent: true,
-			},
-		}
-	}
-
-	if (!userId) {
-		return {
-			props: {
-				results: null,
-			},
-		}
-	}
-
-	try {
-		const userCollection = await getUserCollection(userIdFromUrl)
-
-		return {
-			props: {
-				results: {
-					collectionMovies: userCollection.collectionMovies,
-					collectionTVShows: userCollection.collectionTVShows,
-					collectionPersons: userCollection.collectionPersons,
-					allCollectionReviews: userCollection.allCollectionReviews,
-					collectionMarks: userCollection.collectionMarks,
-				},
-			},
-		}
-	} catch (error) {
-		return {
-			props: {
-				results: null,
-			},
-		}
+	return {
+		props: {
+			results: generalCollection,
+		},
 	}
 }
 

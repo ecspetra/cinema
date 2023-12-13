@@ -11,6 +11,7 @@ import Filter from '@/app/components/Filter'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import Title from '@/app/components/UI/Title/Title'
+import { UserCollections } from '@/constants/enum'
 
 const Movies = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
@@ -41,7 +42,7 @@ const Movies = ({ results }) => {
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>Movies</Title>
 			<Search
-				collectionType='movie'
+				collectionType={UserCollections.movie}
 				name='movieSearch'
 				label='Search movie'
 				urlToFetch={defaultUrlToSearch}
@@ -51,7 +52,7 @@ const Movies = ({ results }) => {
 				isWrapped
 			/>
 			<Filter
-				collectionType='movie'
+				collectionType={UserCollections.movie}
 				onApply={setUrlToFetch}
 				fields={[
 					'primary_release_year',
@@ -66,7 +67,7 @@ const Movies = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
-				collectionType='movie'
+				collectionType={UserCollections.movie}
 				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable

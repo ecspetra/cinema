@@ -32,6 +32,8 @@ const Header = () => {
 		}
 	}
 
+	if (pathname === '/404') return null
+
 	return (
 		<header className='fixed top-0 left-0 w-full z-20 bg-gray-950'>
 			<div className='max-w-screen-xl mx-auto py-3 px-5'>

@@ -10,6 +10,7 @@ import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import { PERSON_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Title from '@/app/components/UI/Title/Title'
+import { UserCollections } from '@/constants/enum'
 
 const Persons = ({ results }) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
@@ -36,7 +37,7 @@ const Persons = ({ results }) => {
 			<TopBanner imageSrc={PERSON_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>Persons</Title>
 			<Search
-				collectionType='person'
+				collectionType={UserCollections.person}
 				name='personSearch'
 				label='Search person'
 				urlToFetch={defaultUrlToSearch}
@@ -47,7 +48,7 @@ const Persons = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultPersonList.items}
-				collectionType='person'
+				collectionType={UserCollections.person}
 				isMoreDataAvailable={defaultPersonList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable

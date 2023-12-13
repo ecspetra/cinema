@@ -49,4 +49,5 @@ export enum UserCollections {
 	marks = 'marks',
 	users = 'users',
 	basic = 'basic',
+	friends = 'friends',
 }

@@ -71,7 +71,7 @@ const Home = ({ results }: { results: IResults }) => {
 			<HomePageSlider itemsList={upcomingMovieList} />
 			<Title>{listTitle}</Title>
 			<Search
-				collectionType='movie'
+				collectionType={UserCollections.movie}
 				name='defaultSearch'
 				label='Search for movie, TV show or person'
 				urlToFetch={defaultUrlToSearch}

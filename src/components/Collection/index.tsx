@@ -1,12 +1,19 @@
 import CollectionWrap from '@/components/Collection/CollectionWrap'
 import React, { FC } from 'react'
+import {
+	IFetchedResult,
+	IItemCard,
+	IMark,
+	IReviewCard,
+} from '../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	movies: object
-	tvShows: object
-	persons: object
-	marks: object
-	reviews: object
+	movies: IFetchedResult<IItemCard> | null
+	tvShows: IFetchedResult<IItemCard> | null
+	persons: IFetchedResult<IItemCard> | null
+	marks: IFetchedResult<IMark>['items']
+	reviews: IFetchedResult<IReviewCard>['items']
 	isCurrentUserCollection?: boolean
 }
 
@@ -22,7 +29,7 @@ const UserCollection: FC<PropsType> = ({
 		<div>
 			<CollectionWrap
 				title='Movies'
-				type='movie'
+				collectionType={UserCollections.movie}
 				items={movies ? movies.items : []}
 				isMoreDataAvailable={
 					movies ? movies.isMoreDataAvailable : false
@@ -31,7 +38,7 @@ const UserCollection: FC<PropsType> = ({
 			/>
 			<CollectionWrap
 				title='TV shows'
-				type='tv'
+				collectionType={UserCollections.tv}
 				items={tvShows ? tvShows.items : []}
 				isMoreDataAvailable={
 					tvShows ? tvShows.isMoreDataAvailable : false
@@ -40,7 +47,7 @@ const UserCollection: FC<PropsType> = ({
 			/>
 			<CollectionWrap
 				title='Persons'
-				type='person'
+				collectionType={UserCollections.person}
 				items={persons ? persons.items : []}
 				isMoreDataAvailable={
 					persons ? persons.isMoreDataAvailable : false
@@ -49,14 +56,14 @@ const UserCollection: FC<PropsType> = ({
 			/>
 			<CollectionWrap
 				title='Marks'
-				type='marks'
+				collectionType={UserCollections.marks}
 				items={marks ? marks : []}
 				isMoreDataAvailable={false}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
 			<CollectionWrap
 				title='Reviews'
-				type='reviews'
+				collectionType={UserCollections.reviews}
 				items={reviews ? reviews : []}
 				isMoreDataAvailable={false}
 				isCurrentUserCollection={isCurrentUserCollection}

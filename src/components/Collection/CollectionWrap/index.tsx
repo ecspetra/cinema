@@ -9,7 +9,7 @@ import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	title: string
-	type: UserCollections
+	collectionType: UserCollections
 	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
 	isMoreDataAvailable: boolean
 	isCurrentUserCollection: boolean

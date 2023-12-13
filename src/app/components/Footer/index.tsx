@@ -1,22 +1,15 @@
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
-import Button from '@/app/components/UI/Button'
-import { signOutUser } from '@/firebase/config'
-import Image from '@/components/Images/Image'
-import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
-import React, { useEffect, useMemo } from 'react'
-import { useRouter } from 'next/router'
-import { AUTH_PAGE, COLLECTION_PAGE, PROFILE_PAGE } from '@/constants/paths'
-import Breadcrumbs from '@/app/components/Breadcrumbs'
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { createRoutes } from '@/constants/routes'
 import Logo from '@/app/components/Logo'
 
 const Footer = () => {
 	const { userId } = useAuth()
+	const pathname = usePathname()
 	const ROUTES = createRoutes(userId)
+
+	if (pathname === '/404') return null
 
 	return (
 		<footer className='w-full z-20 bg-gray-950 py-4'>

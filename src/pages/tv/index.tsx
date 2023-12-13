@@ -11,6 +11,7 @@ import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import Filter from '@/app/components/Filter'
 import Title from '@/app/components/UI/Title/Title'
+import { UserCollections } from '@/constants/enum'
 
 const TVShows = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv')
@@ -38,7 +39,7 @@ const TVShows = ({ results }) => {
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>TV shows</Title>
 			<Search
-				collectionType='tv'
+				collectionType={UserCollections.tv}
 				name='tvShowsSearch'
 				label='Search TV shows'
 				urlToFetch={defaultUrlToSearch}
@@ -48,7 +49,7 @@ const TVShows = ({ results }) => {
 				isWrapped
 			/>
 			<Filter
-				collectionType='tv'
+				collectionType={UserCollections.tv}
 				onApply={setUrlToFetch}
 				fields={[
 					'first_air_date_year',
@@ -62,7 +63,7 @@ const TVShows = ({ results }) => {
 			/>
 			<ItemsListWrap
 				itemsList={defaultTvShowsList.items}
-				collectionType='tv'
+				collectionType={UserCollections.tv}
 				isMoreDataAvailable={defaultTvShowsList.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isSortable

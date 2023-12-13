@@ -28,6 +28,7 @@ import { useFriendsCollection } from '@/hooks/useFriendsCollection'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
 import UserCollection from '@/components/Collection'
 import { getUserCollection } from '@/handlers/getUserCollection'
+import { UserCollections } from '@/constants/enum'
 
 const Profile = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
@@ -134,7 +135,7 @@ const Profile = ({ results }) => {
 									? () => openConfirmationPopup(userInfo)
 									: handleSetNewFriend
 							}
-							collectionType='friends'
+							collectionType={UserCollections.friends}
 						/>
 					)}
 					{isCurrentUserProfile && (

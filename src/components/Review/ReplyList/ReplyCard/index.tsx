@@ -11,6 +11,7 @@ import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	movieId: number
@@ -167,7 +168,7 @@ const ReplyCard: FC<PropsType> = ({
 								reviewId={id}
 								movieId={movieId}
 								userId={userId}
-								collectionType='replies'
+								collectionType={UserCollections.replies}
 								onReply={() => onReply(authorInfo.displayName)}
 							/>
 						</>

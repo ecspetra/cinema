@@ -10,6 +10,7 @@ import TopBanner from '@/components/TopBanner'
 import { getDBReviewsList } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
+import { UserCollections } from '@/constants/enum'
 
 const Movie = ({ movieFromProps }) => {
 	const router = useRouter()
@@ -131,7 +132,7 @@ const Movie = ({ movieFromProps }) => {
 				movieImages={movie.imagesResult.backdrops}
 				movieReviews={movie.reviews}
 				movieVideo={movieTeaser?.key}
-				collectionType='movie'
+				collectionType={UserCollections.movie}
 			/>
 			<div>
 				<MoviePersonsList
@@ -144,7 +145,7 @@ const Movie = ({ movieFromProps }) => {
 				/>
 				<ItemsListWrap
 					itemsList={movie.similarMoviesResult.items}
-					collectionType='movie'
+					collectionType={UserCollections.movie}
 					isMoreDataAvailable={
 						movie.similarMoviesResult.isMoreDataAvailable
 					}

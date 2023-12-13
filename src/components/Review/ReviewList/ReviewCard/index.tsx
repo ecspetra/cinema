@@ -20,6 +20,7 @@ import { useAuth } from '@/context/AuthProvider'
 import Link from 'next/link'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	defaultCardMovieId: number
@@ -176,7 +177,7 @@ const ReviewCard: FC<PropsType> = ({
 								movieId={defaultCardMovieId ?? movieId}
 								userId={userId}
 								onReply={() => setIsShowReplyForm(true)}
-								collectionType='reviews'
+								collectionType={UserCollections.reviews}
 							/>
 							<RepliesList
 								movieId={defaultCardMovieId ?? movieId}

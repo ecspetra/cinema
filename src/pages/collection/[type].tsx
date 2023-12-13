@@ -8,7 +8,7 @@ import TopBanner from '@/components/TopBanner'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import { IFetchedResult, IItemCard } from '../../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { getCollectionBasicData } from '@/handlers/getCollectionBasicData'
+import { getCollectionTypePage } from '@/handlers/getCollectionTypePage'
 import Loader from '@/components/Loader'
 
 const CollectionType = ({
@@ -33,7 +33,7 @@ const CollectionType = ({
 		const getCollection = async () => {
 			const userIdFromUrl = router.query.uid as string
 
-			const fetchResult = await getCollectionBasicData(
+			const collectionItemsList = await getCollectionTypePage(
 				userIdFromUrl,
 				collectionType,
 				userId,
@@ -41,7 +41,7 @@ const CollectionType = ({
 					router.push(url)
 				}
 			)
-			setItemsList(fetchResult as IFetchedResult<IItemCard>)
+			setItemsList(collectionItemsList as IFetchedResult<IItemCard>)
 		}
 
 		if (results) {
@@ -76,7 +76,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	const cookies = parseCookies(ctx.req!)
 	const userId = cookies.uid
 
-	const fetchResult = await getCollectionBasicData(
+	const collectionItemsList = await getCollectionTypePage(
 		userIdFromUrl,
 		collectionType,
 		userId,
@@ -88,7 +88,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 
 	return {
 		props: {
-			results: fetchResult,
+			results: collectionItemsList,
 		},
 	}
 }

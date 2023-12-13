@@ -3,7 +3,15 @@ import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionRev
 import { IFetchedResult, IItemCard, IMark, IReviewCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
 
-export const getUserCollection = async (userId: string) => {
+export const getUserCollection = async (
+	userId: string
+): Promise<{
+	collectionMovies: IFetchedResult<IItemCard>
+	collectionTVShows: IFetchedResult<IItemCard>
+	collectionPersons: IFetchedResult<IItemCard>
+	allCollectionReviews: IReviewCard[]
+	collectionMarks: IMark[]
+} | null> => {
 	const collectionMovies = (await getCollectionItemsList(
 		userId,
 		UserCollections.movie,
