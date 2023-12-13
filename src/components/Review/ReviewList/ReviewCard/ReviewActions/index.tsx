@@ -5,10 +5,10 @@ import {
 	removeReviewReaction,
 	reviewReactionsListener,
 	setNewReviewReaction,
-	UserCollectionType,
 } from '@/firebase/config'
-import { handleModals, openLoginModal } from '@/handlers/handleModals'
+import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	reviewId: string
@@ -17,7 +17,7 @@ type PropsType = {
 	onReply:
 		| React.Dispatch<React.SetStateAction<boolean>>
 		| ((userName: string) => void)
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 }
 
 const ReviewActions: FC<PropsType> = ({
@@ -42,7 +42,7 @@ const ReviewActions: FC<PropsType> = ({
 	const handleReaction = async (
 		event,
 		reactionType: 'like' | 'dislike',
-		collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+		collectionType: UserCollections.reviews | UserCollections.replies
 	) => {
 		if (userId) {
 			if (isCurrentUserReaction(reactionType)) {

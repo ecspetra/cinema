@@ -1,41 +1,42 @@
 import { getCollectionItemsList } from '@/firebase/config'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
 import { IFetchedResult, IItemCard, IMark, IReviewCard } from '../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 export const getUserCollection = async (userId: string) => {
 	const collectionMovies = (await getCollectionItemsList(
 		userId,
-		'movie',
+		UserCollections.movie,
 		5,
 		null
 	)) as IFetchedResult<IItemCard>
 	const collectionTVShows = (await getCollectionItemsList(
 		userId,
-		'tv',
+		UserCollections.tv,
 		5,
 		null
 	)) as IFetchedResult<IItemCard>
 	const collectionPersons = (await getCollectionItemsList(
 		userId,
-		'person',
+		UserCollections.person,
 		5,
 		null
 	)) as IFetchedResult<IItemCard>
 	const collectionReviews = (await getCollectionItemsList(
 		userId,
-		'reviews',
+		UserCollections.reviews,
 		null,
 		null
 	)) as IFetchedResult<IReviewCard>
 	const collectionReplies = (await getCollectionItemsList(
 		userId,
-		'replies',
+		UserCollections.replies,
 		null,
 		null
 	)) as IFetchedResult<IReviewCard>
 	const collectionMarks = (await getCollectionItemsList(
 		userId,
-		'marks',
+		UserCollections.marks,
 		null,
 		null
 	)) as IFetchedResult<IMark>

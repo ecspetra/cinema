@@ -2,17 +2,17 @@ import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
-import { SortByOption } from '@/constants/enum'
+import { SortByOption, UserCollections } from '@/constants/enum'
 import ItemsListSort from '@/components/List/ItemsListWrap/ItemsList/ItemsListSort'
 import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
-import { UserCollectionType } from '@/firebase/config'
 
 type PropsType = {
 	itemsList: Array<IItemCard>
-	collectionType: Extract<
-		UserCollectionType,
-		'movie' | 'tv' | 'person' | 'basic'
-	>
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.basic
 	isMoreDataAvailable: boolean
 	title?: string
 	urlToFetchItems?: string

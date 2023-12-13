@@ -3,7 +3,6 @@ import {
 	getCollectionItem,
 	removeCollectionItem,
 	setNewCollectionItem,
-	UserCollectionType,
 } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
@@ -14,10 +13,14 @@ import {
 	showSuccessNotification,
 } from '@/handlers/handleModals'
 import { IItemCard } from '../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 export const useCollectionButton = (
 	itemInfo: IItemCard,
-	collectionType: Extract<UserCollectionType, 'movie' | 'tv' | 'person'>
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 ) => {
 	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const [isCollectionItem, setIsCollectionItem] = useState<boolean>(false)

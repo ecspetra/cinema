@@ -1,4 +1,4 @@
-import { UserCollectionType } from '@/firebase/config'
+import { UserCollections } from '@/constants/enum'
 
 export interface IFetchedResult<T> {
 	isMoreDataAvailable: boolean
@@ -34,7 +34,7 @@ export interface IMarkFromDB {
 export interface IMark {
 	mark: number
 	itemId: number
-	type: Extract<UserCollectionType, 'movie' | 'tv'>
+	type: UserCollections.movie | UserCollections.tv
 }
 
 export interface IReviewCard {

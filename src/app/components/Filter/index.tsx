@@ -1,6 +1,5 @@
 import Title from '@/app/components/UI/Title/Title'
-import InputField from '@/app/components/UI/Input/InputField'
-import React, { ChangeEvent, FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
@@ -9,15 +8,18 @@ import Select from '@/app/components/UI/Input/Select'
 import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
 import { generateYearsList } from '@/handlers/generateYearsList'
-import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
+import {
+	FilterFields,
+	FilterUrlToSearch,
+	UserCollections,
+} from '@/constants/enum'
 import { getCountriesList } from '@/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 import { generateRatingList } from '@/handlers/generateRatingList'
-import { UserCollectionType } from '@/firebase/config'
 
 type PropsType = {
 	onApply: (formData: FilterFormData) => void
-	collectionType: Extract<UserCollectionType, 'movie' | 'tv'>
+	collectionType: UserCollections.movie | UserCollections.tv
 	fields: (keyof FilterFormData)[]
 	defaultUrl: string
 }

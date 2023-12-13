@@ -21,7 +21,7 @@ const SearchItemLink: FC<PropsType> = ({ item, collectionType }) => {
 			<ItemCardSmall
 				itemId={id}
 				className='!w-16 !h-24'
-				type={itemType}
+				collectionType={itemType}
 			/>
 			<span>
 				<span className='flex flex-col justify-start items-start'>

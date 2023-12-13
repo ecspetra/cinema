@@ -1,15 +1,15 @@
 import React, { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { USER_COLLECTIONS, UserCollectionType } from '@/firebase/config'
 import { IMark, IItemCard, IReviewCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
 import MarksCollectionWrap from '@/components/Collection/CollectionWrap/MarksCollectionWrap'
 import ItemsCollectionWrap from '@/components/Collection/ItemsCollectionWrap'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	title: string
-	type: UserCollectionType
+	type: UserCollections
 	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
 	isMoreDataAvailable: boolean
 	isCurrentUserCollection: boolean
@@ -17,13 +17,13 @@ type PropsType = {
 
 const CollectionWrap: FC<PropsType> = ({
 	title,
-	type,
+	collectionType,
 	items,
 	isMoreDataAvailable,
 	isCurrentUserCollection,
 }) => {
 	const getItemsList = () => {
-		switch (type) {
+		switch (collectionType) {
 			case 'reviews':
 				return (
 					<ReviewList
@@ -41,7 +41,7 @@ const CollectionWrap: FC<PropsType> = ({
 				return (
 					<ItemsCollectionWrap
 						items={items}
-						type={type}
+						collectionType={collectionType}
 						isMoreDataAvailable={isMoreDataAvailable}
 					/>
 				)
@@ -49,10 +49,10 @@ const CollectionWrap: FC<PropsType> = ({
 	}
 
 	const getEmptyCollectionText = () => {
-		switch (type) {
+		switch (collectionType) {
 			case 'movie':
 			case 'person':
-				return `Please add some ${type} to your collection before you can see it here`
+				return `Please add some ${collectionType} to your collection before you can see it here`
 			case 'tv':
 				return `Please add some TV show to your collection before you can see it here`
 			case 'marks':

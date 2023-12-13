@@ -38,6 +38,7 @@ import {
 import { onValue } from '@firebase/database'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { createItemCard } from '@/handlers/createItemCard'
+import { UserCollections } from '@/constants/enum'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -62,19 +63,6 @@ export interface AuthContextType {
 	userName: string
 	updateUserProfile: () => void
 }
-
-export const USER_COLLECTIONS = [
-	'movie',
-	'tv',
-	'person',
-	'reviews',
-	'replies',
-	'marks',
-	'users',
-	'basic',
-] as const
-
-export type UserCollectionType = (typeof USER_COLLECTIONS)[number]
 
 // auth handlers
 
@@ -405,7 +393,7 @@ export const removeMarkForMovie = (
 
 export const setNewCollectionItem = async (
 	itemId: number,
-	collectionType: UserCollectionType
+	collectionType: UserCollections
 ) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
@@ -421,7 +409,7 @@ export const setNewCollectionItem = async (
 
 export const getCollectionItem = (
 	itemId: number,
-	collectionType: UserCollectionType
+	collectionType: UserCollections
 ): Promise<boolean> => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
@@ -441,7 +429,7 @@ export const getCollectionItem = (
 
 export const removeCollectionItem = (
 	itemId: number,
-	collectionType: UserCollectionType
+	collectionType: UserCollections
 ) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
@@ -461,7 +449,7 @@ export const removeCollectionItem = (
 
 export const getCollectionItemsList = async (
 	userId: string,
-	collectionType: UserCollectionType,
+	collectionType: UserCollections,
 	itemsPerPage: number | null,
 	lastItemId: string | null
 ): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
@@ -515,7 +503,7 @@ export const getCollectionItemsList = async (
 
 	return {
 		isMoreDataAvailable,
-		items,
+		items: items as (IItemCard | IReviewCard | IMark)[],
 	}
 }
 
@@ -576,7 +564,7 @@ export const getCollectionMarksList = async (userId: string) => {
 
 export const collectionListener = (
 	userId: string,
-	collectionType: UserCollectionType,
+	collectionType: UserCollections,
 	loadedItems: Array<any>,
 	setItems: ([]) => void,
 	setIsMoreDataAvailable: (arg: boolean) => void
@@ -625,7 +613,7 @@ export const setNewReviewItem = async (
 	item: IReviewCard,
 	userId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const collectionPath = `users/${userId}/${collectionType}/${item.id}`
 	const generalCollectionPath = `movies/${movieId}/${collectionType}/${item.id}`
@@ -640,7 +628,7 @@ export const updateReviewItem = async (
 	item: IReviewCard,
 	userId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const itemId = item.id
 	const collectionPath = `users/${userId}/${collectionType}/${itemId}`
@@ -662,7 +650,7 @@ export const removeReviewItem = async (
 	itemId: string,
 	movieId: number,
 	userId: string,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const collectionPath = `users/${userId}/${collectionType}/${itemId}`
 	const generalCollectionPath = `movies/${movieId}/${collectionType}/${itemId}`
@@ -754,7 +742,7 @@ export const getDBRepliesList = async (movieId: number, reviewId: string) => {
 
 export const getDBReviewsList = async (
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const collectionPath = `movies/${movieId}/${collectionType}/`
 	const reviewsCollectionRef = ref(database, collectionPath)
@@ -778,7 +766,7 @@ export const reviewsListener = (
 	collectionId: number | string,
 	loadedItems: IReviewCard[],
 	setItems: ([]) => void,
-	collectionType: Extract<UserCollectionType, 'movie' | 'users'>
+	collectionType: UserCollections.movie | UserCollections.users
 ) => {
 	let reviewsRef
 	if (collectionType === 'users') {
@@ -899,7 +887,7 @@ export const setNewReviewReaction = async (
 	userId: string,
 	itemId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>,
+	collectionType: UserCollections.reviews | UserCollections.replies,
 	action: 'like' | 'dislike'
 ) => {
 	const collectionPath = `users/${userId}/${collectionType}/${itemId}/${
@@ -931,7 +919,7 @@ export const removeReviewReaction = (
 	userId: string,
 	reviewId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>,
+	collectionType: UserCollections.reviews | UserCollections.replies,
 	action: 'like' | 'dislike'
 ) => {
 	const itemId = userId
@@ -962,7 +950,7 @@ export const removeAllReactions = (
 	userId: string,
 	itemId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const collectionPath = `users/${userId}/${collectionType}/${itemId}`
 	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}`
@@ -986,7 +974,7 @@ export const removeAllReactions = (
 export const reviewReactionsListener = (
 	reviewId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>,
+	collectionType: UserCollections.reviews | UserCollections.replies,
 	setItems: ({ likes: [], dislikes: [] }) => void
 ) => {
 	const likesCollectionRef = ref(
@@ -1044,7 +1032,7 @@ export const reviewReactionsListener = (
 export const getReviewReactions = async (
 	itemId: string,
 	movieId: number,
-	collectionType: Extract<UserCollectionType, 'reviews' | 'replies'>
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const likesCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}/likes/`
 	const dislikesCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}/dislikes/`

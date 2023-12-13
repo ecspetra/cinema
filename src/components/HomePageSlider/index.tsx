@@ -22,11 +22,10 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 	)
 	const [imageSrc, setImageSrc] = useState<string>('')
 	const [videoSrc, setVideoSrc] = useState<string>('')
-	const { id } = selectedItem
 
 	const getSelectedItemImageSrc = async () => {
-		const images = await fetchItemData('movie', id, '/images')
-		const videos = await fetchItemData('movie', id, '/videos')
+		const images = await fetchItemData('movie', selectedItem.id, '/images')
+		const videos = await fetchItemData('movie', selectedItem.id, '/videos')
 		const movieTeaser =
 			videos.results.length &&
 			videos.results.find(
@@ -43,7 +42,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 	}
 
 	useEffect(() => {
-		getSelectedItemImageSrc()
+		if (selectedItem) getSelectedItemImageSrc()
 	}, [selectedItem])
 
 	return (
@@ -71,7 +70,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 				<HomePageSliderItemsList
 					itemsList={itemsList.items}
 					isMoreDataAvailable={itemsList.isMoreDataAvailable}
-					selectedItemId={id}
+					selectedItemId={selectedItem ? selectedItem.id : undefined}
 					onSelectItem={setSelectedItem}
 				/>
 			</div>

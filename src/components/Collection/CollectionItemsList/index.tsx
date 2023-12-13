@@ -2,18 +2,18 @@ import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
-import {
-	collectionListener,
-	getCollectionItemsList,
-	UserCollectionType,
-} from '@/firebase/config'
+import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
 import EmptyList from '@/components/List/EmptyList'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	collectionType: Extract<UserCollectionType, 'movie' | 'tv' | 'person'>
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 	items: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	title: string

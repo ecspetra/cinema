@@ -8,19 +8,30 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
+import { IFetchedResult, IItemCard } from '../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
-const CollectionType = ({ results }) => {
-	const [itemsList, setItemsList] = useState(null)
+const CollectionType = ({
+	results,
+}: {
+	results: IFetchedResult<IItemCard>
+}) => {
+	const [itemsList, setItemsList] =
+		useState<IFetchedResult<IItemCard> | null>(null)
 	const router = useRouter()
 	const { userId } = useAuth()
 	const listTitle =
-		router.query.type === 'movie'
+		router.query.type === UserCollections.movie
 			? 'Movies from your collection'
 			: 'Persons from your collection'
+	const collectionType = router.query.type as
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 
 	useEffect(() => {
 		const getCollection = async () => {
-			const userIdFromUrl = router.query.uid || null
+			const userIdFromUrl = router.query.uid as string
 
 			if (
 				(userId && userIdFromUrl && userId !== userIdFromUrl) ||
@@ -36,7 +47,7 @@ const CollectionType = ({ results }) => {
 			try {
 				const collectionItems = await getCollectionItemsList(
 					userIdFromUrl,
-					router.query.type,
+					collectionType,
 					20,
 					null
 				)
@@ -46,25 +57,23 @@ const CollectionType = ({ results }) => {
 						CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
 					)
 				} else {
-					setItemsList(collectionItems)
+					setItemsList(collectionItems as IFetchedResult<IItemCard>)
 				}
 			} catch (error) {
 				setItemsList(null)
 			}
 		}
 
-		if (!results) getCollection()
-	}, [])
-
-	useEffect(() => {
-		setItemsList(results)
+		if (results) {
+			setItemsList(results)
+		} else getCollection()
 	}, [results])
 
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<CollectionItemsList
-				type={router.query.type}
+				collectionType={collectionType}
 				items={itemsList ? itemsList.items : []}
 				isMoreDataAvailable={
 					itemsList ? itemsList.isMoreDataAvailable : false
@@ -76,8 +85,13 @@ const CollectionType = ({ results }) => {
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	const userIdFromUrl = ctx.query.uid || null
-	const cookies = parseCookies(ctx.req)
+	const userIdFromUrl = ctx.query.uid as string
+	const collectionType = ctx.query.type as
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+
+	const cookies = parseCookies(ctx.req!)
 	const userId = cookies.uid
 
 	if (
@@ -100,7 +114,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	try {
 		const result = await getCollectionItemsList(
 			userIdFromUrl,
-			ctx.query.type,
+			collectionType,
 			20,
 			null
 		)

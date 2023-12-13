@@ -7,11 +7,14 @@ import { getCover } from '@/handlers/getCover'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import { UserCollectionType } from '@/firebase/config'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	itemId: number
-	collectionType: Extract<UserCollectionType, 'movie' | 'tv' | 'person'>
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 	mark?: number
 	isLinkToMovie?: boolean
 	className?: string

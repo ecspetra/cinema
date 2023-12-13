@@ -5,6 +5,7 @@ import {
 	useEffect,
 	useRef,
 	useState,
+	FormEvent,
 } from 'react'
 import { faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
@@ -73,7 +74,7 @@ const Search: FC<PropsType> = ({
 		setSearchQuery('')
 	}
 
-	const handleSearch = async (event: React.FormEvent) => {
+	const handleSearch = async (event: FormEvent) => {
 		event.preventDefault()
 
 		const isFormValid = searchQuery.length > 0

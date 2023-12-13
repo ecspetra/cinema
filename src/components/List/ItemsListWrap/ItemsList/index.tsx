@@ -4,15 +4,15 @@ import React, { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
-import { createItemCard } from '@/handlers/createItemCard'
-import { UserCollectionType } from '@/firebase/config'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	itemsList: Array<IItemCard>
-	collectionType: Extract<
-		UserCollectionType,
-		'movie' | 'tv' | 'person' | 'basic'
-	>
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.basic
 	isMoreDataAvailable: boolean
 	urlToFetchItems?: string
 	onEmptyList: () => void
