@@ -27,7 +27,6 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 							<ItemCard
 								item={item}
 								collectionType={collectionType}
-								isShowButton={false}
 								key={idx}
 							/>
 						)

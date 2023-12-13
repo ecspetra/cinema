@@ -40,11 +40,6 @@ export const getResultsByPage = async (
 			}
 		}
 	} catch (error) {
-		console.log('here')
 		throw error
-		// return {
-		// 	items: [],
-		// 	isMoreDataAvailable: false,
-		// }
 	}
 }

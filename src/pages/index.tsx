@@ -63,7 +63,8 @@ const Home = ({ results }: { results: IResults }) => {
 				})
 	}, [results])
 
-	if (!defaultMovieList || !upcomingMovieList) return <Loader />
+	if (!defaultMovieList || !upcomingMovieList)
+		return <Loader className='bg-transparent' />
 
 	return (
 		<>
