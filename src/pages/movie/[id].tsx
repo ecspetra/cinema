@@ -1,153 +1,126 @@
 import { NextPageContext } from 'next'
 import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
 import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
-import MovieInfo from '../../components/Movie/MovieInfo'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
-import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
-import { getDBReviewsList } from '@/firebase/config'
-import { fetchItemData } from '@/handlers/fetchItemData'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import { UserCollections } from '@/constants/enum'
+import { getMovieOrTvShowData } from '@/handlers/getMovieOrTvShowData'
+import {
+	IBackdrop,
+	IFetchedResult,
+	IItemCard,
+	IMovieOrTVShowBasicInfo,
+	IReviewCard,
+	IVideoData,
+} from '../../../interfaces'
+import { showErrorNotification } from '@/handlers/handleModals'
+import { useModal } from '@/context/ModalProvider'
+import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
+import MovieOrTVShowBasicInfo from '@/components/Movie/MovieOrTVShowBasicInfo'
 
-const Movie = ({ movieFromProps }) => {
+interface IMoviePageProps {
+	basicInfo: IMovieOrTVShowBasicInfo
+	credits: { cast: IItemCard[]; crew: IItemCard[] }
+	images: IBackdrop[]
+	video: IVideoData[]
+	reviewsFromAPIAndStorage: IReviewCard[]
+	similarItemsList: IFetchedResult<IItemCard>
+}
+
+const MoviePage = ({ moviePageProps }: { moviePageProps: IMoviePageProps }) => {
+	const { showModal } = useModal()
 	const router = useRouter()
-	const [movie, setMovie] = useState(null)
-	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] = useState(
-		URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', router.query.id).replace(
-			'{collectionType}',
-			'movie'
+	const movieId = router.query.id as string
+	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [movie, setMovie] = useState<IMoviePageProps | null>(null)
+	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] =
+		useState<string>(
+			URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', movieId).replace(
+				'{collectionType}',
+				UserCollections.movie
+			)
 		)
-	)
 	const movieTeaser =
-		movie &&
-		movie.videosResult.results.find(
-			item =>
-				(item.type === 'Teaser' || item.type === 'Trailer') &&
-				item.site === 'YouTube'
-		)
+		movie?.video && movie.video.length > 0
+			? movie.video.find(
+					item =>
+						(item.type === 'Teaser' || item.type === 'Trailer') &&
+						item.site === 'YouTube'
+			  )
+			: null
+	const movieTeaserKey = movieTeaser?.key || ''
 
 	useEffect(() => {
-		const fetchData = async () => {
+		const getMovieData = async () => {
+			const movieId = router.query.id as string
+
+			setIsLoading(true)
 			setMovie(null)
 
 			setUrlToFetchSimilarMovies(
-				URL_TO_FETCH_SIMILAR_LIST.replace(
-					'{itemId}',
-					router.query.id
-				).replace('{collectionType}', 'movie')
+				URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', movieId).replace(
+					'{collectionType}',
+					UserCollections.movie
+				)
 			)
 
-			try {
-				const collectionTypeToFetch = 'movie'
-				const getMovieReviews = async () => {
-					const collectionReviews = await getDBReviewsList(
-						router.query.id,
-						'reviews'
-					)
-
-					return collectionReviews
-				}
-
-				const [
-					basicInfoResult,
-					creditsResult,
-					imagesResult,
-					reviewsResult,
-					videosResult,
-					reviewsFromDB,
-					similarMoviesResult,
-				] = await Promise.all([
-					fetchItemData(collectionTypeToFetch, router.query.id, ''),
-					fetchItemData(
-						collectionTypeToFetch,
-						router.query.id,
-						'/credits'
-					),
-					fetchItemData(
-						collectionTypeToFetch,
-						router.query.id,
-						'/images'
-					),
-					fetchItemData(
-						collectionTypeToFetch,
-						router.query.id,
-						'/reviews'
-					),
-					fetchItemData(
-						collectionTypeToFetch,
-						router.query.id,
-						'/videos'
-					),
-					getMovieReviews(),
-					getResultsByPage(urlToFetchSimilarMovies, 1),
-				])
-
-				const reviews = [...reviewsResult.results, ...reviewsFromDB]
-
-				setMovie({
-					basicInfoResult,
-					creditsResult,
-					imagesResult,
-					reviewsResult,
-					videosResult,
-					reviews,
-					similarMoviesResult,
+			getMovieOrTvShowData(movieId, UserCollections.movie)
+				.then(data => {
+					setMovie(data)
 				})
-			} catch (error) {
-				setMovie(null)
-			}
+				.catch(() => {
+					showErrorNotification(showModal, 'An error has occurred')
+				})
+				.finally(() => {
+					setIsLoading(false)
+				})
 		}
 
-		if (!movieFromProps) {
-			fetchData()
-		}
+		if (!moviePageProps) {
+			getMovieData()
+		} else setMovie(moviePageProps)
 	}, [router.query.id])
 
-	useEffect(() => {
-		setMovie(movieFromProps)
-	}, [movieFromProps])
-
-	if (
-		!movie ||
-		![
-			'basicInfoResult',
-			'creditsResult',
-			'imagesResult',
-			'reviewsResult',
-			'videosResult',
-			'similarMoviesResult',
-		].every(prop => movie[prop])
-	) {
-		return <Loader className='bg-transparent' />
+	if (!movie) {
+		if (isLoading) {
+			return <Loader className='bg-transparent' />
+		} else {
+			return (
+				<ErrorScreen
+					title='Something went wrong'
+					text='No data found'
+				/>
+			)
+		}
 	}
 
 	return (
 		<>
-			<TopBanner imageSrc={movie.imagesResult.backdrops[0]?.file_path} />
-			<MovieInfo
-				basicInfo={movie.basicInfoResult}
-				movieImages={movie.imagesResult.backdrops}
-				movieReviews={movie.reviews}
-				movieVideo={movieTeaser?.key}
+			<TopBanner imageSrc={movie?.images[0]?.file_path} />
+			<MovieOrTVShowBasicInfo
+				basicInfo={movie?.basicInfo}
+				movieImages={movie?.images}
+				movieReviews={movie?.reviewsFromAPIAndStorage}
+				movieVideo={movieTeaserKey}
 				collectionType={UserCollections.movie}
 			/>
 			<div>
 				<MoviePersonsList
-					personsFromProps={movie.creditsResult.cast}
+					itemsList={movie?.credits.cast}
 					title='Cast'
 				/>
 				<MoviePersonsList
-					personsFromProps={movie.creditsResult.crew}
+					itemsList={movie?.credits.crew}
 					title='Crew'
 				/>
 				<ItemsListWrap
-					itemsList={movie.similarMoviesResult.items}
+					itemsList={movie?.similarItemsList.items}
 					collectionType={UserCollections.movie}
 					isMoreDataAvailable={
-						movie.similarMoviesResult.isMoreDataAvailable
+						movie?.similarItemsList.isMoreDataAvailable
 					}
 					urlToFetchItems={urlToFetchSimilarMovies}
 					title='Similar movies'
@@ -158,61 +131,22 @@ const Movie = ({ movieFromProps }) => {
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	try {
-		const collectionTypeToFetch = 'movie'
-		const urlToFetchSimilarMovies = URL_TO_FETCH_SIMILAR_LIST.replace(
-			'{itemId}',
-			ctx.query.id
-		).replace('{collectionType}', 'movie')
-
-		const getMovieReviews = async () => {
-			const collectionReviews = await getDBReviewsList(
-				ctx.query.id,
-				'reviews'
-			)
-			return collectionReviews
-		}
-
-		const [
-			basicInfoResult,
-			creditsResult,
-			imagesResult,
-			reviewsResult,
-			videosResult,
-			reviewsFromDB,
-			similarMoviesResult,
-		] = await Promise.all([
-			fetchItemData(collectionTypeToFetch, ctx.query.id, ''),
-			fetchItemData(collectionTypeToFetch, ctx.query.id, '/credits'),
-			fetchItemData(collectionTypeToFetch, ctx.query.id, '/images'),
-			fetchItemData(collectionTypeToFetch, ctx.query.id, '/reviews'),
-			fetchItemData(collectionTypeToFetch, ctx.query.id, '/videos'),
-			getMovieReviews(),
-			getResultsByPage(urlToFetchSimilarMovies, 1),
-		])
-
-		const reviews = [...reviewsResult.results, ...reviewsFromDB]
-
-		return {
-			props: {
-				movieFromProps: {
-					basicInfoResult,
-					creditsResult,
-					imagesResult,
-					reviewsResult,
-					videosResult,
-					reviews,
-					similarMoviesResult,
+	const movieId = ctx.query.id as string
+	return getMovieOrTvShowData(movieId, UserCollections.movie)
+		.then(data => {
+			return {
+				props: {
+					moviePageProps: data,
 				},
-			},
-		}
-	} catch (error) {
-		return {
-			props: {
-				movieFromProps: null,
-			},
-		}
-	}
+			}
+		})
+		.catch(() => {
+			return {
+				props: {
+					moviePageProps: null,
+				},
+			}
+		})
 }
 
-export default Movie
+export default MoviePage

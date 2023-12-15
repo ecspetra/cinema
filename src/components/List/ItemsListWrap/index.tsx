@@ -53,7 +53,7 @@ const ItemsListWrap: FC<PropsType> = ({
 	}, [urlToFetchItems])
 
 	if (isShowEmptyList) {
-		return <EmptyList title={title} className='text-center' />
+		return <EmptyList title={title} />
 	}
 
 	return (

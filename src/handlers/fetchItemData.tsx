@@ -2,7 +2,7 @@ import { URL_TO_FETCH_ITEM_DATA } from '@/constants/linksToFetch'
 
 export const fetchItemData = async (
 	collectionType: string,
-	itemId: number,
+	itemId: number | string,
 	queryParam: string
 ): Promise<any> => {
 	const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace(

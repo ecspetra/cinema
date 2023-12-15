@@ -3,9 +3,8 @@ import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
 	IBackdrop,
-	IMovieInfo,
+	IMovieOrTVShowBasicInfo,
 	IReviewCard,
-	ITVShowInfo,
 } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
@@ -17,19 +16,19 @@ import { useAuth } from '@/context/AuthProvider'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
-import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
+import TVSeasonsList from '@/components/Movie/MovieOrTVShowBasicInfo/TVSeasonList'
 import TagList from '@/components/Tag/TagList'
 import DetailsList from '@/components/Details/DetailsList'
 
 type PropsType = {
-	basicInfo: IMovieInfo | ITVShowInfo
+	basicInfo: IMovieOrTVShowBasicInfo
 	movieImages: Array<IBackdrop>
 	movieReviews: IReviewCard[]
 	movieVideo: string
 	collectionType: string
 }
 
-const MovieInfo: FC<PropsType> = ({
+const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 	basicInfo,
 	movieImages,
 	movieReviews,
@@ -151,4 +150,4 @@ const MovieInfo: FC<PropsType> = ({
 	)
 }
 
-export default MovieInfo
+export default MovieOrTVShowBasicInfo

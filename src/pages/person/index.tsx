@@ -12,11 +12,11 @@ import { PERSON_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Title from '@/app/components/UI/Title/Title'
 import { UserCollections } from '@/constants/enum'
 
-const Persons = ({ results }) => {
+const GeneralPersonListPage = ({ results }) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
 	const [defaultPersonList, setDefaultPersonList] = useState(null)
 	const [urlToFetch, setUrlToFetch] = useState(URL_TO_FETCH_PERSON_LIST)
-	const isDefaultList = urlToFetch.includes(URL_TO_FETCH_PERSON_LIST)
+	const isDefaultListPresented = urlToFetch.includes(URL_TO_FETCH_PERSON_LIST)
 
 	useEffect(() => {
 		if (!results) {
@@ -43,8 +43,8 @@ const Persons = ({ results }) => {
 				urlToFetch={defaultUrlToSearch}
 				defaultUrlToFetch={URL_TO_FETCH_PERSON_LIST}
 				onSearch={setUrlToFetch}
-				isApplied={!isDefaultList}
-				isWrapped
+				isSearchApplied={!isDefaultListPresented}
+				isSearchFieldWrapped
 			/>
 			<ItemsListWrap
 				itemsList={defaultPersonList.items}
@@ -78,4 +78,4 @@ export const getServerSideProps = async () => {
 	}
 }
 
-export default Persons
+export default GeneralPersonListPage

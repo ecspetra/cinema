@@ -5,6 +5,8 @@ import Button from '@/app/components/UI/Button'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
 import { UserCollections } from '@/constants/enum'
+import { useModal } from '@/context/ModalProvider'
+import { showErrorNotification } from '@/handlers/handleModals'
 
 type PropsType = {
 	itemsList: Array<IItemCard>
@@ -27,6 +29,7 @@ const ItemsList: FC<PropsType> = ({
 	onEmptyList,
 	isFilterable = false,
 }) => {
+	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [itemsToShow, setItemsToShow] = useState([])
@@ -58,7 +61,11 @@ const ItemsList: FC<PropsType> = ({
 
 				setIsShowMoreButton(data.isMoreDataAvailable)
 			})
-			.then(() => {
+			.catch(() => {
+				showErrorNotification(showModal, 'An error has occurred')
+				onEmptyList(true)
+			})
+			.finally(() => {
 				setIsLoading(false)
 			})
 	}

@@ -17,7 +17,7 @@ type PropsType = {
 	isCurrentUserCollection?: boolean
 }
 
-const UserCollection: FC<PropsType> = ({
+const GeneralUserCollection: FC<PropsType> = ({
 	movies,
 	tvShows,
 	persons,
@@ -72,4 +72,4 @@ const UserCollection: FC<PropsType> = ({
 	)
 }
 
-export default UserCollection
+export default GeneralUserCollection

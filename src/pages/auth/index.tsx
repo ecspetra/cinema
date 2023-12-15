@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthProvider'
 import Loader from '@/components/Loader'
 import AuthForm from '@/app/components/Auth/AuthForm'
 
-const Auth = () => {
+const AuthPage = () => {
 	const router = useRouter()
 	const { isLoggedIn } = useAuth()
 
@@ -15,4 +15,4 @@ const Auth = () => {
 	return <AuthForm />
 }
 
-export default Auth
+export default AuthPage

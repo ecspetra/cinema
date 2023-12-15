@@ -15,6 +15,7 @@ export interface IBackdrop {
 }
 
 export interface IVideoData {
+	key: string
 	type: string
 	site: string
 }
@@ -84,33 +85,21 @@ export interface ITVSeasonCard {
 	vote_average: number
 }
 
-export interface IMovieInfo {
+export interface IMovieOrTVShowBasicInfo {
 	id: number
 	poster_path: string
-	title: string
 	tagline: string
 	genres: Array<ITag>
-	release_date: string
 	production_countries: Array<object>
 	production_companies: Array<object>
 	overview: string
 	vote_average: number
 	vote_count: number
-}
-
-export interface ITVShowInfo {
-	id: number
-	poster_path: string
-	name: string
-	tagline: string
-	genres: Array<ITag>
-	first_air_date: string
-	production_countries: Array<object>
-	production_companies: Array<object>
-	overview: string
-	vote_average: number
-	vote_count: number
-	seasons: Array<ITVSeasonCard>
+	release_date?: string
+	first_air_date?: string
+	title?: string
+	name?: string
+	seasons?: Array<ITVSeasonCard>
 }
 
 export interface IPersonInfo {

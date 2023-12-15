@@ -11,8 +11,8 @@ import { useAuth } from '@/context/AuthProvider'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
-import UserCollection from '@/components/Collection'
-import { getCollectionGeneralPage } from '@/handlers/getCollectionGeneralPage'
+import GeneralUserCollection from '@/components/Collection'
+import { getGeneralCollectionPage } from '@/handlers/getGeneralCollectionPage'
 import {
 	IFetchedResult,
 	IItemCard,
@@ -20,7 +20,7 @@ import {
 	IReviewCard,
 } from '../../../interfaces'
 
-interface IResults {
+interface IGeneralCollectionPageProps {
 	collectionMovies: IFetchedResult<IItemCard>
 	collectionTVShows: IFetchedResult<IItemCard>
 	collectionPersons: IFetchedResult<IItemCard>
@@ -28,7 +28,11 @@ interface IResults {
 	collectionMarks: IMark[]
 }
 
-const Collection = ({ results }: { results: IResults }) => {
+const GeneralCollectionPage = ({
+	generalCollectionPageProps,
+}: {
+	generalCollectionPageProps: IGeneralCollectionPageProps
+}) => {
 	const [movies, setMovies] = useState<IFetchedResult<IItemCard> | null>(null)
 	const [tvShows, setTvShows] = useState<IFetchedResult<IItemCard> | null>(
 		null
@@ -45,10 +49,10 @@ const Collection = ({ results }: { results: IResults }) => {
 	const { userId } = useAuth()
 
 	useEffect(() => {
-		const getCollection = async () => {
+		const getGeneralCollection = async () => {
 			const userIdFromUrl = router.query.uid as string
 
-			const generalCollection = await getCollectionGeneralPage(
+			const generalCollection = await getGeneralCollectionPage(
 				userIdFromUrl,
 				userId,
 				url => {
@@ -65,14 +69,14 @@ const Collection = ({ results }: { results: IResults }) => {
 			}
 		}
 
-		if (results) {
-			setMovies(results?.collectionMovies)
-			setTvShows(results?.collectionTVShows)
-			setPersons(results?.collectionPersons)
-			setReviews(results?.allCollectionReviews)
-			setMarks(results?.collectionMarks)
-		} else getCollection()
-	}, [results])
+		if (generalCollectionPageProps) {
+			setMovies(generalCollectionPageProps?.collectionMovies)
+			setTvShows(generalCollectionPageProps?.collectionTVShows)
+			setPersons(generalCollectionPageProps?.collectionPersons)
+			setReviews(generalCollectionPageProps?.allCollectionReviews)
+			setMarks(generalCollectionPageProps?.collectionMarks)
+		} else getGeneralCollection()
+	}, [generalCollectionPageProps])
 
 	if (!userId) {
 		return (
@@ -102,7 +106,7 @@ const Collection = ({ results }: { results: IResults }) => {
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
-			<UserCollection
+			<GeneralUserCollection
 				movies={movies}
 				tvShows={tvShows}
 				persons={persons}
@@ -118,7 +122,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	const cookies = parseCookies(ctx.req!)
 	const userId = cookies.uid
 
-	const generalCollection = await getCollectionGeneralPage(
+	const generalCollection = await getGeneralCollectionPage(
 		userIdFromUrl,
 		userId,
 		url => {
@@ -129,9 +133,9 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 
 	return {
 		props: {
-			results: generalCollection,
+			generalCollectionPageProps: generalCollection,
 		},
 	}
 }
 
-export default Collection
+export default GeneralCollectionPage

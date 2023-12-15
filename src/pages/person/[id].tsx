@@ -10,7 +10,7 @@ import { fetchItemData } from '@/handlers/fetchItemData'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import { UserCollections } from '@/constants/enum'
 
-const Person = ({ personFromProps }) => {
+const PersonPage = ({ personFromProps }) => {
 	const [person, setPerson] = useState(null)
 	const [images, setImages] = useState([])
 	const [movies, setMovies] = useState([])
@@ -125,4 +125,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default Person
+export default PersonPage

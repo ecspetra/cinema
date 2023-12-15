@@ -740,8 +740,8 @@ export const getDBRepliesList = async (movieId: number, reviewId: string) => {
 	}
 }
 
-export const getDBReviewsList = async (
-	movieId: number,
+export const getReviewListFromStorage = async (
+	movieId: string,
 	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const collectionPath = `movies/${movieId}/${collectionType}/`

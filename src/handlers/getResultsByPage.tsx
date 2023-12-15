@@ -18,7 +18,7 @@ export const getResultsByPage = async (
 		)
 
 		if (!basicResponse.ok) {
-			throw new Error(`Failed to fetch: ${basicResponse.statusText}`)
+			throw `Failed to fetch: ${basicResponse.statusText}`
 		}
 
 		const basicResult = await basicResponse.json()
@@ -34,10 +34,7 @@ export const getResultsByPage = async (
 				isMoreDataAvailable: !!nextResult.results.length,
 			}
 		} catch (error) {
-			return {
-				items: [],
-				isMoreDataAvailable: false,
-			}
+			throw error
 		}
 	} catch (error) {
 		throw error

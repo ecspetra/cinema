@@ -13,7 +13,7 @@ import Search from '@/app/components/UI/Search'
 import Title from '@/app/components/UI/Title/Title'
 import { UserCollections } from '@/constants/enum'
 
-const Movies = ({ results }) => {
+const GeneralMovieListPage = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
 		'{type}',
 		'movie'
@@ -21,7 +21,7 @@ const Movies = ({ results }) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'movie')
 	const [defaultMovieList, setDefaultMovieList] = useState(null)
 	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
-	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
+	const isDefaultListPresented = urlToFetch.includes(defaultUrlToFetch)
 
 	useEffect(() => {
 		if (!results) {
@@ -48,8 +48,8 @@ const Movies = ({ results }) => {
 				urlToFetch={defaultUrlToSearch}
 				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
-				isApplied={!isDefaultList}
-				isWrapped
+				isSearchApplied={!isDefaultListPresented}
+				isSearchFieldWrapped
 			/>
 			<Filter
 				collectionType={UserCollections.movie}
@@ -98,4 +98,4 @@ export const getServerSideProps = async () => {
 	}
 }
 
-export default Movies
+export default GeneralMovieListPage

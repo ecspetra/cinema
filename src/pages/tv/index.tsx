@@ -13,12 +13,12 @@ import Filter from '@/app/components/Filter'
 import Title from '@/app/components/UI/Title/Title'
 import { UserCollections } from '@/constants/enum'
 
-const TVShows = ({ results }) => {
+const GeneralTVShowListPage = ({ results }) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv')
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'tv')
 	const [defaultTvShowsList, setDefaultTvShowsList] = useState(null)
 	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
-	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
+	const isDefaultListPresented = urlToFetch.includes(defaultUrlToFetch)
 
 	useEffect(() => {
 		if (!results) {
@@ -45,8 +45,8 @@ const TVShows = ({ results }) => {
 				urlToFetch={defaultUrlToSearch}
 				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
-				isApplied={!isDefaultList}
-				isWrapped
+				isSearchApplied={!isDefaultListPresented}
+				isSearchFieldWrapped
 			/>
 			<Filter
 				collectionType={UserCollections.tv}
@@ -94,4 +94,4 @@ export const getServerSideProps = async () => {
 	}
 }
 
-export default TVShows
+export default GeneralTVShowListPage

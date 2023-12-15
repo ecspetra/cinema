@@ -26,11 +26,11 @@ import FriendList from '@/components/Friends/FriendList'
 import EditCredentialForm from '@/components/Profile/Form/EditCredentialForm'
 import { useFriendsCollection } from '@/hooks/useFriendsCollection'
 import CollectionButton from '@/app/components/UI/Button/CollectionButton'
-import UserCollection from '@/components/Collection'
+import GeneralUserCollection from '@/components/Collection'
 import { getUserCollection } from '@/handlers/getUserCollection'
 import { UserCollections } from '@/constants/enum'
 
-const Profile = ({ results }) => {
+const UserProfilePage = ({ results }) => {
 	const [userInfo, setUserInfo] = useState(null)
 	const [friends, setFriends] = useState([])
 	const [collection, setCollection] = useState(null)
@@ -185,7 +185,7 @@ const Profile = ({ results }) => {
 				</div>
 			</div>
 			{!isCurrentUserProfile && (
-				<UserCollection
+				<GeneralUserCollection
 					movies={collection.collectionMovies}
 					tvShows={collection.collectionTVShows}
 					persons={collection.collectionPersons}
@@ -228,4 +228,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	}
 }
 
-export default Profile
+export default UserProfilePage

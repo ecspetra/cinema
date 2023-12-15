@@ -3,7 +3,7 @@ import { getCollectionItemsList } from '@/firebase/config'
 import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
 import { IFetchedResult, IItemCard } from '../../interfaces'
 
-export const getCollectionTypePage = async (
+export const getSpecificCollectionPage = async (
 	userIdFromUrl: string,
 	collectionType: UserCollections,
 	userId: string | undefined,

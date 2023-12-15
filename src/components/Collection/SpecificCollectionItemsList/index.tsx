@@ -19,7 +19,7 @@ type PropsType = {
 	title: string
 }
 
-const CollectionItemsList: FC<PropsType> = ({
+const SpecificCollectionItemsList: FC<PropsType> = ({
 	collectionType,
 	items,
 	isMoreDataAvailable,
@@ -114,4 +114,4 @@ const CollectionItemsList: FC<PropsType> = ({
 	)
 }
 
-export default CollectionItemsList
+export default SpecificCollectionItemsList

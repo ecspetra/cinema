@@ -1,6 +1,6 @@
 import { NextPageContext } from 'next'
 import { parseCookies } from '@/handlers/handleCookies'
-import CollectionItemsList from '../../components/Collection/CollectionItemsList'
+import SpecificCollectionItemsList from '../../components/Collection/SpecificCollectionItemsList'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
@@ -8,13 +8,13 @@ import TopBanner from '@/components/TopBanner'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import { IFetchedResult, IItemCard } from '../../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { getCollectionTypePage } from '@/handlers/getCollectionTypePage'
+import { getSpecificCollectionPage } from '@/handlers/getSpecificCollectionPage'
 import Loader from '@/components/Loader'
 
-const CollectionType = ({
-	results,
+const SpecificCollectionPage = ({
+	specificCollectionPageProps,
 }: {
-	results: IFetchedResult<IItemCard>
+	specificCollectionPageProps: IFetchedResult<IItemCard>
 }) => {
 	const [itemsList, setItemsList] =
 		useState<IFetchedResult<IItemCard> | null>(null)
@@ -30,10 +30,10 @@ const CollectionType = ({
 		| UserCollections.person
 
 	useEffect(() => {
-		const getCollection = async () => {
+		const getCollectionItemsList = async () => {
 			const userIdFromUrl = router.query.uid as string
 
-			const collectionItemsList = await getCollectionTypePage(
+			const collectionItemsList = await getSpecificCollectionPage(
 				userIdFromUrl,
 				collectionType,
 				userId,
@@ -44,17 +44,17 @@ const CollectionType = ({
 			setItemsList(collectionItemsList as IFetchedResult<IItemCard>)
 		}
 
-		if (results) {
-			setItemsList(results)
-		} else getCollection()
-	}, [results])
+		if (specificCollectionPageProps) {
+			setItemsList(specificCollectionPageProps)
+		} else getCollectionItemsList()
+	}, [specificCollectionPageProps])
 
 	if (!itemsList) return <Loader className='bg-transparent' />
 
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
-			<CollectionItemsList
+			<SpecificCollectionItemsList
 				collectionType={collectionType}
 				items={itemsList ? itemsList.items : []}
 				isMoreDataAvailable={
@@ -76,7 +76,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 	const cookies = parseCookies(ctx.req!)
 	const userId = cookies.uid
 
-	const collectionItemsList = await getCollectionTypePage(
+	const collectionItemsList = await getSpecificCollectionPage(
 		userIdFromUrl,
 		collectionType,
 		userId,
@@ -88,9 +88,9 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 
 	return {
 		props: {
-			results: collectionItemsList,
+			specificCollectionPageProps: collectionItemsList,
 		},
 	}
 }
 
-export default CollectionType
+export default SpecificCollectionPage

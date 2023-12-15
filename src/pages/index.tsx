@@ -14,36 +14,39 @@ import { useModal } from '@/context/ModalProvider'
 import { UserCollections } from '@/constants/enum'
 import { getHomePageData } from '@/handlers/getHomePageData'
 
-interface IResults {
+interface IHomePageProps {
 	defaultMovies: IFetchedResult<IItemCard> | null
 	upcomingMovies: IFetchedResult<IUpcomingMovieItem> | null
 }
 
-const Home = ({ results }: { results: IResults }) => {
+const HomePage = ({ homePageProps }: { homePageProps: IHomePageProps }) => {
 	const { showModal } = useModal()
-	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'multi')
-	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
+	const defaultUrlToSearchItems = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		'multi'
+	)
+	const defaultUrlToFetchItems = URL_TO_SEARCH_LIST_ITEMS.replace(
 		'{type}',
 		'movie'
 	)
 	const [defaultMovieList, setDefaultMovieList] =
-		useState<IResults['defaultMovies']>(null)
+		useState<IHomePageProps['defaultMovies']>(null)
 	const [upcomingMovieList, setUpcomingMovieList] =
-		useState<IResults['upcomingMovies']>(null)
-	const [urlToFetch, setUrlToFetch] = useState<string>(defaultUrlToFetch)
+		useState<IHomePageProps['upcomingMovies']>(null)
+	const [urlToFetch, setUrlToFetch] = useState<string>(defaultUrlToFetchItems)
 	const searchQuery = new URL(urlToFetch).searchParams.get('query')
-	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
-	const listTitle = isDefaultList
+	const isDefaultListPresented = urlToFetch.includes(defaultUrlToFetchItems)
+	const listTitle = isDefaultListPresented
 		? 'Popular movies'
 		: `Search results for '${searchQuery}'`
-	const collectionType = isDefaultList
+	const collectionType = isDefaultListPresented
 		? UserCollections.movie
 		: UserCollections.basic
 
 	useEffect(() => {
-		if (results) {
-			setDefaultMovieList(results.defaultMovies)
-			setUpcomingMovieList(results.upcomingMovies)
+		if (homePageProps) {
+			setDefaultMovieList(homePageProps.defaultMovies)
+			setUpcomingMovieList(homePageProps.upcomingMovies)
 		} else
 			getHomePageData()
 				.then(data => {
@@ -61,7 +64,7 @@ const Home = ({ results }: { results: IResults }) => {
 						isMoreDataAvailable: false,
 					})
 				})
-	}, [results])
+	}, [homePageProps])
 
 	if (!defaultMovieList || !upcomingMovieList)
 		return <Loader className='bg-transparent' />
@@ -74,11 +77,11 @@ const Home = ({ results }: { results: IResults }) => {
 				collectionType={UserCollections.movie}
 				name='defaultSearch'
 				label='Search for movie, TV show or person'
-				urlToFetch={defaultUrlToSearch}
-				defaultUrlToFetch={defaultUrlToFetch}
+				urlToFetch={defaultUrlToSearchItems}
+				defaultUrlToFetch={defaultUrlToFetchItems}
 				onSearch={setUrlToFetch}
-				isWrapped
-				isApplied={!isDefaultList}
+				isSearchFieldWrapped
+				isSearchApplied={!isDefaultListPresented}
 			/>
 			<ItemsListWrap
 				itemsList={defaultMovieList.items}
@@ -96,7 +99,7 @@ export const getServerSideProps = async () => {
 		.then(data => {
 			return {
 				props: {
-					results: {
+					homePageProps: {
 						defaultMovies: data.defaultMoviesData,
 						upcomingMovies: data.upcomingMoviesData,
 					},
@@ -106,10 +109,10 @@ export const getServerSideProps = async () => {
 		.catch(() => {
 			return {
 				props: {
-					results: null,
+					homePageProps: null,
 				},
 			}
 		})
 }
 
-export default Home
+export default HomePage

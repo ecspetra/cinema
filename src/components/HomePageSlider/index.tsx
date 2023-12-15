@@ -27,7 +27,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 		const images = await fetchItemData('movie', selectedItem.id, '/images')
 		const videos = await fetchItemData('movie', selectedItem.id, '/videos')
 		const movieTeaser =
-			videos.results.length &&
+			videos.results.length > 0 &&
 			videos.results.find(
 				(item: IVideoData) =>
 					(item.type === 'Teaser' || item.type === 'Trailer') &&
