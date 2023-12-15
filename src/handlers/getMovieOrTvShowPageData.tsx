@@ -6,12 +6,11 @@ import { UserCollections } from '@/constants/enum'
 import { IMovieOrTVShowData, IItemCard } from '../../interfaces'
 import { createItemCard } from '@/handlers/createItemCard'
 
-export const getMovieOrTvShowData = async (
+export const getMovieOrTvShowPageData = async (
 	itemId: string,
 	collectionType: UserCollections
 ): Promise<IMovieOrTVShowData> => {
 	try {
-		const collectionTypeToFetch = collectionType
 		const urlToFetchSimilarMovies = URL_TO_FETCH_SIMILAR_LIST.replace(
 			'{itemId}',
 			itemId
@@ -34,11 +33,11 @@ export const getMovieOrTvShowData = async (
 			reviewListFromStorage,
 			similarItemsList,
 		] = await Promise.all([
-			fetchItemData(collectionTypeToFetch, itemId, ''),
-			fetchItemData(collectionTypeToFetch, itemId, '/credits'),
-			fetchItemData(collectionTypeToFetch, itemId, '/images'),
-			fetchItemData(collectionTypeToFetch, itemId, '/reviews'),
-			fetchItemData(collectionTypeToFetch, itemId, '/videos'),
+			fetchItemData(collectionType, itemId, ''),
+			fetchItemData(collectionType, itemId, '/credits'),
+			fetchItemData(collectionType, itemId, '/images'),
+			fetchItemData(collectionType, itemId, '/reviews'),
+			fetchItemData(collectionType, itemId, '/videos'),
 			fetchReviewListFromStorage(),
 			getResultsByPage(urlToFetchSimilarMovies, 1),
 		])

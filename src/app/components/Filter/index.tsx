@@ -1,5 +1,5 @@
 import Title from '@/app/components/UI/Title/Title'
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, Dispatch, useState, SetStateAction } from 'react'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
@@ -18,7 +18,7 @@ import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 import { generateRatingList } from '@/handlers/generateRatingList'
 
 type PropsType = {
-	onApply: (formData: FilterFormData) => void
+	onApplyFilter: Dispatch<SetStateAction<string>>
 	collectionType: UserCollections.movie | UserCollections.tv
 	fields: (keyof FilterFormData)[]
 	defaultUrl: string
@@ -36,7 +36,7 @@ interface FilterFormData {
 }
 
 const Filter: FC<PropsType> = ({
-	onApply,
+	onApplyFilter,
 	collectionType,
 	fields,
 	defaultUrl,
@@ -48,7 +48,7 @@ const Filter: FC<PropsType> = ({
 
 	const handleResetFilter = () => {
 		setFormData({})
-		onApply(defaultUrl)
+		onApplyFilter(defaultUrl)
 	}
 
 	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
@@ -155,10 +155,10 @@ const Filter: FC<PropsType> = ({
 
 		try {
 			if (Object.keys(formData).length === 0) {
-				onApply(defaultUrl)
+				onApplyFilter(defaultUrl)
 			} else {
 				const query = getQuery()
-				onApply(defaultUrl.concat(query))
+				onApplyFilter(defaultUrl.concat(query))
 			}
 
 			setError('')

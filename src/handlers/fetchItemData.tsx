@@ -5,13 +5,22 @@ export const fetchItemData = async (
 	itemId: number | string,
 	queryParam: string
 ): Promise<any> => {
-	const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace(
-		'{collectionType}',
-		collectionType
-	)
-		.replace('{itemId}', itemId.toString())
-		.replace('{queryParam}', queryParam)
+	try {
+		const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace(
+			'{collectionType}',
+			collectionType
+		)
+			.replace('{itemId}', itemId.toString())
+			.replace('{queryParam}', queryParam)
 
-	const response = await fetch(urlToFetch)
-	return await response.json()
+		const response = await fetch(urlToFetch)
+
+		if (!response.ok) {
+			throw `Failed to fetch`
+		}
+
+		return await response.json()
+	} catch (error) {
+		throw error
+	}
 }

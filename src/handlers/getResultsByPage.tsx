@@ -18,7 +18,7 @@ export const getResultsByPage = async (
 		)
 
 		if (!basicResponse.ok) {
-			throw `Failed to fetch: ${basicResponse.statusText}`
+			throw `Failed to fetch`
 		}
 
 		const basicResult = await basicResponse.json()

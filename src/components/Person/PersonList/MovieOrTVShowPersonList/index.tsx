@@ -12,7 +12,7 @@ type PropsType = {
 	title: string
 }
 
-const MoviePersonsList: FC<PropsType> = ({ itemsList, title }) => {
+const MovieOrTVShowPersonList: FC<PropsType> = ({ itemsList, title }) => {
 	const {
 		itemsToShow,
 		getItemsToShow,
@@ -54,4 +54,4 @@ const MoviePersonsList: FC<PropsType> = ({ itemsList, title }) => {
 	)
 }
 
-export default MoviePersonsList
+export default MovieOrTVShowPersonList

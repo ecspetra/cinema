@@ -11,7 +11,7 @@ type PropsType = {
 	isMoreDataAvailable: boolean
 	isSearchQueryUpdate: boolean
 	urlToFetch: string
-	onSearch: () => void
+	onSelectItem: () => void
 	onClose: () => void
 	name: string
 	collectionType?:
@@ -26,7 +26,7 @@ const SearchList: FC<PropsType> = ({
 	isMoreDataAvailable,
 	isSearchQueryUpdate,
 	urlToFetch,
-	onSearch,
+	onSelectItem,
 	onClose,
 	name,
 	collectionType = 'basic',
@@ -40,7 +40,7 @@ const SearchList: FC<PropsType> = ({
 	)
 
 	const handleSelectBasicListItem = (fieldName, { id, name }) => {
-		onSearch(fieldName, { id, name })
+		onSelectItem(fieldName, { id, name })
 		onClose()
 	}
 

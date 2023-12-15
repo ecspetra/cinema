@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, FC, useState } from 'react'
+import { ChangeEventHandler, KeyboardEvent, FC, useState } from 'react'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'

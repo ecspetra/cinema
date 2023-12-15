@@ -3,7 +3,7 @@ import { showErrorNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { UserCollections } from '@/constants/enum'
 import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
-import { getMovieOrTvShowData } from '@/handlers/getMovieOrTvShowData'
+import { getMovieOrTvShowPageData } from '@/handlers/getMovieOrTvShowPageData'
 import { IMovieOrTVShowData } from '../../interfaces'
 
 const useFetchData = (
@@ -19,11 +19,11 @@ const useFetchData = (
 		itemId
 	).replace('{collectionType}', collectionType)
 
-	const fetchMovieOrTVShowData = async () => {
+	const fetchMovieOrTVShowPageData = async () => {
 		setIsLoading(true)
 		setData(null)
 
-		getMovieOrTvShowData(itemId, collectionType)
+		getMovieOrTvShowPageData(itemId, collectionType)
 			.then(data => {
 				setData(data)
 			})
@@ -37,7 +37,7 @@ const useFetchData = (
 
 	useEffect(() => {
 		if (!movieOrTVShowFromProps) {
-			fetchMovieOrTVShowData()
+			fetchMovieOrTVShowPageData()
 		} else setData(movieOrTVShowFromProps)
 	}, [itemId])
 

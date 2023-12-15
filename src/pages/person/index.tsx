@@ -2,7 +2,7 @@ import {
 	URL_TO_FETCH_PERSON_LIST,
 	URL_TO_SEARCH,
 } from '@/constants/linksToFetch'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
@@ -11,26 +11,34 @@ import Search from '@/app/components/UI/Search'
 import { PERSON_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Title from '@/app/components/UI/Title/Title'
 import { UserCollections } from '@/constants/enum'
+import useGeneralListPageFetch from '@/hooks/useGeneralListPageFetch'
+import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
+import { IFetchedResult, IItemCard } from '../../../interfaces'
 
-const GeneralPersonListPage = ({ results }) => {
+const GeneralPersonListPage = ({
+	personListFromProps,
+}: {
+	personListFromProps: IFetchedResult<IItemCard>
+}) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
-	const [defaultPersonList, setDefaultPersonList] = useState(null)
-	const [urlToFetch, setUrlToFetch] = useState(URL_TO_FETCH_PERSON_LIST)
+
+	const [urlToFetch, setUrlToFetch] = useState<string>(
+		URL_TO_FETCH_PERSON_LIST
+	)
 	const isDefaultListPresented = urlToFetch.includes(URL_TO_FETCH_PERSON_LIST)
 
-	useEffect(() => {
-		if (!results) {
-			getResultsByPage(urlToFetch, 1).then(data => {
-				setDefaultPersonList(data)
-			})
-		}
-	}, [])
+	const { items, isLoading } = useGeneralListPageFetch(
+		personListFromProps,
+		urlToFetch
+	)
 
-	useEffect(() => {
-		setDefaultPersonList(results)
-	}, [results])
-
-	if (!defaultPersonList) return <Loader />
+	if (!items) {
+		return isLoading ? (
+			<Loader className='bg-transparent' />
+		) : (
+			<ErrorScreen title='Something went wrong' text='No data found' />
+		)
+	}
 
 	return (
 		<>
@@ -47,9 +55,9 @@ const GeneralPersonListPage = ({ results }) => {
 				isSearchFieldWrapped
 			/>
 			<ItemsListWrap
-				itemsList={defaultPersonList.items}
+				itemsList={items.items}
 				collectionType={UserCollections.person}
-				isMoreDataAvailable={defaultPersonList.isMoreDataAvailable}
+				isMoreDataAvailable={items.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable
 			/>

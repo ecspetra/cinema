@@ -1,10 +1,10 @@
 import { NextPageContext } from 'next'
-import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
+import MovieOrTVShowPersonList from '../../components/Person/PersonList/MovieOrTVShowPersonList'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import { UserCollections } from '@/constants/enum'
-import { getMovieOrTvShowData } from '@/handlers/getMovieOrTvShowData'
+import { getMovieOrTvShowPageData } from '@/handlers/getMovieOrTvShowPageData'
 import { IMovieOrTVShowData } from '../../../interfaces'
 import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
 import MovieOrTVShowBasicInfo from '@/components/Movie/MovieOrTVShowBasicInfo'
@@ -35,16 +35,11 @@ const MoviePage = ({
 	const movieTeaserKey = movieTeaser?.key || ''
 
 	if (!movie) {
-		if (isLoading) {
-			return <Loader className='bg-transparent' />
-		} else {
-			return (
-				<ErrorScreen
-					title='Something went wrong'
-					text='No data found'
-				/>
-			)
-		}
+		return isLoading ? (
+			<Loader className='bg-transparent' />
+		) : (
+			<ErrorScreen title='Something went wrong' text='No data found' />
+		)
 	}
 
 	return (
@@ -58,11 +53,11 @@ const MoviePage = ({
 				collectionType={UserCollections.movie}
 			/>
 			<div>
-				<MoviePersonsList
+				<MovieOrTVShowPersonList
 					itemsList={movie?.credits.cast}
 					title='Cast'
 				/>
-				<MoviePersonsList
+				<MovieOrTVShowPersonList
 					itemsList={movie?.credits.crew}
 					title='Crew'
 				/>
@@ -82,7 +77,7 @@ const MoviePage = ({
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const movieId = ctx.query.id as string
-	return getMovieOrTvShowData(movieId, UserCollections.movie)
+	return getMovieOrTvShowPageData(movieId, UserCollections.movie)
 		.then(data => {
 			return {
 				props: {
