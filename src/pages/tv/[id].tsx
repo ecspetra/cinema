@@ -1,52 +1,29 @@
 import { NextPageContext } from 'next'
-import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
 import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import { UserCollections } from '@/constants/enum'
 import MovieOrTVShowBasicInfo from '@/components/Movie/MovieOrTVShowBasicInfo'
-import {
-	IBackdrop,
-	IFetchedResult,
-	IItemCard,
-	IMovieOrTVShowBasicInfo,
-	IReviewCard,
-	IVideoData,
-} from '../../../interfaces'
+import { IMovieOrTVShowData } from '../../../interfaces'
 import { getMovieOrTvShowData } from '@/handlers/getMovieOrTvShowData'
-import { showErrorNotification } from '@/handlers/handleModals'
-import { useModal } from '@/context/ModalProvider'
 import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
-
-interface ITVShowPageProps {
-	basicInfo: IMovieOrTVShowBasicInfo
-	credits: { cast: IItemCard[]; crew: IItemCard[] }
-	images: IBackdrop[]
-	video: IVideoData[]
-	reviewsFromAPIAndStorage: IReviewCard[]
-	similarItemsList: IFetchedResult<IItemCard>
-}
+import useMovieOrTVShowFetch from '@/hooks/useMovieOrTVShowFetch'
+import { useRouter } from 'next/router'
 
 const TVShowPage = ({
 	tvShowFromProps,
 }: {
-	tvShowFromProps: ITVShowPageProps
+	tvShowFromProps: IMovieOrTVShowData
 }) => {
-	const { showModal } = useModal()
 	const router = useRouter()
-	const tvShowId = router.query.id as string
-	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [tvShow, setTVShow] = useState<ITVShowPageProps | null>(null)
-	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] =
-		useState<string>(
-			URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', tvShowId).replace(
-				'{collectionType}',
-				UserCollections.tv
-			)
-		)
+	const itemId = router.query.id as string
+	const {
+		data: tvShow,
+		isLoading,
+		urlToFetchSimilarItems,
+	} = useMovieOrTVShowFetch(tvShowFromProps, itemId, UserCollections.tv)
+
 	const tvShowTeaser =
 		tvShow?.video && tvShow.video.length > 0
 			? tvShow.video.find(
@@ -56,37 +33,6 @@ const TVShowPage = ({
 			  )
 			: null
 	const tvShowTeaserKey = tvShowTeaser?.key || ''
-
-	useEffect(() => {
-		const getTVShowData = async () => {
-			const tvShowId = router.query.id as string
-
-			setIsLoading(true)
-			setTVShow(null)
-
-			setUrlToFetchSimilarMovies(
-				URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', tvShowId).replace(
-					'{collectionType}',
-					UserCollections.tv
-				)
-			)
-
-			getMovieOrTvShowData(tvShowId, UserCollections.movie)
-				.then(data => {
-					setTVShow(data)
-				})
-				.catch(() => {
-					showErrorNotification(showModal, 'An error has occurred')
-				})
-				.finally(() => {
-					setIsLoading(false)
-				})
-		}
-
-		if (!tvShowFromProps) {
-			getTVShowData()
-		} else setTVShow(tvShowFromProps)
-	}, [router.query.id])
 
 	if (!tvShow) {
 		if (isLoading) {
@@ -126,7 +72,7 @@ const TVShowPage = ({
 					isMoreDataAvailable={
 						tvShow?.similarItemsList.isMoreDataAvailable
 					}
-					urlToFetchItems={urlToFetchSimilarMovies}
+					urlToFetchItems={urlToFetchSimilarItems}
 					title='Similar movies'
 				/>
 			</div>

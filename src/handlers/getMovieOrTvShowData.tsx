@@ -3,28 +3,13 @@ import { getReviewListFromStorage } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import { UserCollections } from '@/constants/enum'
-import {
-	IBackdrop,
-	IFetchedResult,
-	IItemCard,
-	IReviewCard,
-	IVideoData,
-} from '../../interfaces'
+import { IMovieOrTVShowData, IItemCard } from '../../interfaces'
 import { createItemCard } from '@/handlers/createItemCard'
-
-interface MovieOrTvShowData {
-	basicInfo: IMovieInfo
-	credits: { cast: IItemCard[]; crew: IItemCard[] }
-	images: IBackdrop[]
-	video: IVideoData[]
-	reviewsFromAPIAndStorage: IReviewCard[]
-	similarItemsList: IFetchedResult<IItemCard>
-}
 
 export const getMovieOrTvShowData = async (
 	itemId: string,
 	collectionType: UserCollections
-): Promise<MovieOrTvShowData> => {
+): Promise<IMovieOrTVShowData> => {
 	try {
 		const collectionTypeToFetch = collectionType
 		const urlToFetchSimilarMovies = URL_TO_FETCH_SIMILAR_LIST.replace(

@@ -149,3 +149,12 @@ export interface IFriendInfo {
 	info: IUser
 	reviews: IReviewCard[]
 }
+
+export interface IMovieOrTVShowData {
+	basicInfo: IMovieOrTVShowBasicInfo
+	credits: { cast: IItemCard[]; crew: IItemCard[] }
+	images: IBackdrop[]
+	video: IVideoData[]
+	reviewsFromAPIAndStorage: IReviewCard[]
+	similarItemsList: IFetchedResult<IItemCard>
+}

@@ -1,48 +1,29 @@
 import { NextPageContext } from 'next'
-import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
 import MoviePersonsList from '../../components/Person/PersonList/MoviePersonList'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
 import TopBanner from '@/components/TopBanner'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import { UserCollections } from '@/constants/enum'
 import { getMovieOrTvShowData } from '@/handlers/getMovieOrTvShowData'
-import {
-	IBackdrop,
-	IFetchedResult,
-	IItemCard,
-	IMovieOrTVShowBasicInfo,
-	IReviewCard,
-	IVideoData,
-} from '../../../interfaces'
-import { showErrorNotification } from '@/handlers/handleModals'
-import { useModal } from '@/context/ModalProvider'
+import { IMovieOrTVShowData } from '../../../interfaces'
 import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
 import MovieOrTVShowBasicInfo from '@/components/Movie/MovieOrTVShowBasicInfo'
+import useMovieOrTVShowFetch from '@/hooks/useMovieOrTVShowFetch'
+import { useRouter } from 'next/router'
 
-interface IMoviePageProps {
-	basicInfo: IMovieOrTVShowBasicInfo
-	credits: { cast: IItemCard[]; crew: IItemCard[] }
-	images: IBackdrop[]
-	video: IVideoData[]
-	reviewsFromAPIAndStorage: IReviewCard[]
-	similarItemsList: IFetchedResult<IItemCard>
-}
-
-const MoviePage = ({ moviePageProps }: { moviePageProps: IMoviePageProps }) => {
-	const { showModal } = useModal()
+const MoviePage = ({
+	moviePageProps,
+}: {
+	moviePageProps: IMovieOrTVShowData
+}) => {
 	const router = useRouter()
 	const movieId = router.query.id as string
-	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [movie, setMovie] = useState<IMoviePageProps | null>(null)
-	const [urlToFetchSimilarMovies, setUrlToFetchSimilarMovies] =
-		useState<string>(
-			URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', movieId).replace(
-				'{collectionType}',
-				UserCollections.movie
-			)
-		)
+	const {
+		data: movie,
+		isLoading,
+		urlToFetchSimilarItems,
+	} = useMovieOrTVShowFetch(moviePageProps, movieId, UserCollections.movie)
+
 	const movieTeaser =
 		movie?.video && movie.video.length > 0
 			? movie.video.find(
@@ -52,37 +33,6 @@ const MoviePage = ({ moviePageProps }: { moviePageProps: IMoviePageProps }) => {
 			  )
 			: null
 	const movieTeaserKey = movieTeaser?.key || ''
-
-	useEffect(() => {
-		const getMovieData = async () => {
-			const movieId = router.query.id as string
-
-			setIsLoading(true)
-			setMovie(null)
-
-			setUrlToFetchSimilarMovies(
-				URL_TO_FETCH_SIMILAR_LIST.replace('{itemId}', movieId).replace(
-					'{collectionType}',
-					UserCollections.movie
-				)
-			)
-
-			getMovieOrTvShowData(movieId, UserCollections.movie)
-				.then(data => {
-					setMovie(data)
-				})
-				.catch(() => {
-					showErrorNotification(showModal, 'An error has occurred')
-				})
-				.finally(() => {
-					setIsLoading(false)
-				})
-		}
-
-		if (!moviePageProps) {
-			getMovieData()
-		} else setMovie(moviePageProps)
-	}, [router.query.id])
 
 	if (!movie) {
 		if (isLoading) {
@@ -122,7 +72,7 @@ const MoviePage = ({ moviePageProps }: { moviePageProps: IMoviePageProps }) => {
 					isMoreDataAvailable={
 						movie?.similarItemsList.isMoreDataAvailable
 					}
-					urlToFetchItems={urlToFetchSimilarMovies}
+					urlToFetchItems={urlToFetchSimilarItems}
 					title='Similar movies'
 				/>
 			</div>
