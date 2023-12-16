@@ -453,113 +453,140 @@ export const getCollectionItemsList = async (
 	itemsPerPage: number | null,
 	lastItemId: string | null
 ): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
-	const collectionPath = `users/${userId}/${collectionType}/`
-	const userCollectionRef = ref(database, collectionPath)
-	const collectionInfo = {
-		type: collectionType,
-		ref: userCollectionRef,
-		userId: userId,
-	}
-	let paginationQuery
+	try {
+		const userPath = `users/${userId}/`
+		const userRef = ref(database, userPath)
+		const userSnapshot = await get(userRef)
 
-	if (lastItemId) {
-		if (itemsPerPage !== null) {
-			paginationQuery = query(
-				userCollectionRef,
-				orderByKey(),
-				startAfter(lastItemId),
-				limitToFirst(itemsPerPage + 1)
-			)
-		} else {
-			paginationQuery = query(
-				userCollectionRef,
-				orderByKey(),
-				startAfter(lastItemId)
-			)
+		if (!userSnapshot.exists()) {
+			throw `Failed to fetch`
 		}
-	} else {
-		if (itemsPerPage !== null) {
-			paginationQuery = query(
-				userCollectionRef,
-				orderByKey(),
-				limitToFirst(itemsPerPage + 1)
-			)
-		} else {
-			paginationQuery = query(userCollectionRef, orderByKey())
+
+		const collectionPath = `users/${userId}/${collectionType}/`
+		const userCollectionRef = ref(database, collectionPath)
+		const collectionInfo = {
+			type: collectionType,
+			ref: userCollectionRef,
+			userId: userId,
 		}
-	}
+		let paginationQuery
 
-	const snapshot = await get(paginationQuery)
-	const data = snapshot.val() || {}
-	const itemIds = Object.keys(data)
-	let isMoreDataAvailable = false
+		if (lastItemId) {
+			if (itemsPerPage !== null) {
+				paginationQuery = query(
+					userCollectionRef,
+					orderByKey(),
+					startAfter(lastItemId),
+					limitToFirst(itemsPerPage + 1)
+				)
+			} else {
+				paginationQuery = query(
+					userCollectionRef,
+					orderByKey(),
+					startAfter(lastItemId)
+				)
+			}
+		} else {
+			if (itemsPerPage !== null) {
+				paginationQuery = query(
+					userCollectionRef,
+					orderByKey(),
+					limitToFirst(itemsPerPage + 1)
+				)
+			} else {
+				paginationQuery = query(userCollectionRef, orderByKey())
+			}
+		}
 
-	if (itemsPerPage !== null && itemIds.length > itemsPerPage) {
-		isMoreDataAvailable = true
-		itemIds.pop()
-	}
+		const snapshot = await get(paginationQuery)
+		const data = snapshot.val() || {}
+		const itemIds = Object.keys(data)
+		let isMoreDataAvailable = false
 
-	const items = await getCollectionItemsInfo(itemIds, collectionInfo)
+		if (itemsPerPage !== null && itemIds.length > itemsPerPage) {
+			isMoreDataAvailable = true
+			itemIds.pop()
+		}
 
-	return {
-		isMoreDataAvailable,
-		items: items as (IItemCard | IReviewCard | IMark)[],
+		if (!itemIds.length) {
+			return {
+				isMoreDataAvailable,
+				items: [],
+			}
+		}
+
+		const items = await getCollectionItemsInfo(itemIds, collectionInfo)
+
+		return {
+			isMoreDataAvailable,
+			items: items as (IItemCard | IReviewCard | IMark)[],
+		}
+	} catch (error) {
+		throw error
 	}
 }
 
 export const getCollectionItemsInfo = async (itemIds, collectionInfo) => {
-	switch (collectionInfo.type) {
-		case 'movie':
-		case 'tv':
-		case 'person':
-			const itemsInfo = await Promise.all(
-				itemIds.map(async itemId => {
-					const itemInfo = await fetchItemData(
-						collectionInfo.type,
-						itemId,
-						''
-					)
-					return itemInfo
-				})
-			)
-			const items = createItemCard(itemsInfo)
-			return items
-		case 'reviews':
-		case 'replies':
-			return await Promise.all(
-				itemIds.map(async itemId => {
-					const itemSnapshot = await get(
-						child(collectionInfo.ref, itemId)
-					)
-					return itemSnapshot.val()
-				})
-			)
-		case 'marks':
-			return await getCollectionMarksList(collectionInfo.userId)
+	try {
+		switch (collectionInfo.type) {
+			case 'movie':
+			case 'tv':
+			case 'person':
+				const itemsInfo = await Promise.all(
+					itemIds.map(async itemId => {
+						const itemInfo = await fetchItemData(
+							collectionInfo.type,
+							itemId,
+							''
+						)
+						return itemInfo
+					})
+				)
+				const items = createItemCard(itemsInfo)
+				return items
+			case 'reviews':
+			case 'replies':
+				return await Promise.all(
+					itemIds.map(async itemId => {
+						const itemSnapshot = await get(
+							child(collectionInfo.ref, itemId)
+						)
+						return itemSnapshot.val()
+					})
+				)
+			case 'marks':
+				return await getCollectionMarksList(collectionInfo.userId)
+		}
+	} catch (error) {
+		throw error
 	}
 }
 
 export const getCollectionMarksList = async (userId: string) => {
-	const getMarks = async type => {
-		let items = []
-		const collectionPath = `users/${userId}/marks/${type}`
-		const collectionRef = ref(database, collectionPath)
-		const snapshot = await get(collectionRef)
+	try {
+		const getMarks = async type => {
+			let items = []
+			const collectionPath = `users/${userId}/marks/${type}`
+			const collectionRef = ref(database, collectionPath)
+			const snapshot = await get(collectionRef)
 
-		if (snapshot.exists()) {
-			snapshot.forEach(childSnapshot => {
-				const item = childSnapshot.val()
-				items.push(item)
-			})
+			if (snapshot.exists()) {
+				snapshot.forEach(childSnapshot => {
+					const item = childSnapshot.val()
+					items.push(item)
+				})
+			}
+
+			return items
 		}
 
-		return items
+		const movieMarks = await getMarks('movie')
+		const tvMarks = await getMarks('tv')
+
+		return [...movieMarks, ...tvMarks]
+	} catch (error) {
+		throw error
 	}
-
-	const movieMarks = await getMarks('movie')
-	const tvMarks = await getMarks('tv')
-
-	return [...movieMarks, ...tvMarks]
 }
 
 export const collectionListener = (

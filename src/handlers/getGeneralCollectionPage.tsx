@@ -7,9 +7,9 @@ export const getGeneralCollectionPage = async (
 	userId: string | undefined,
 	redirect: (url: string) => void
 ): Promise<{
-	collectionMovies: IFetchedResult<IItemCard>
-	collectionTVShows: IFetchedResult<IItemCard>
-	collectionPersons: IFetchedResult<IItemCard>
+	collectionMovies: IItemCard[]
+	collectionTVShows: IItemCard[]
+	collectionPersons: IItemCard[]
 	allCollectionReviews: IReviewCard[]
 	collectionMarks: IMark[]
 } | null> => {
@@ -32,20 +32,20 @@ export const getGeneralCollectionPage = async (
 	}
 
 	try {
-		const userCollection = await getUserCollection(userIdFromUrl)
+		const generalCollection = await getUserCollection(userIdFromUrl)
 
-		if (!userCollection) {
+		if (!generalCollection) {
 			return null
 		}
 
 		return {
-			collectionMovies: userCollection.collectionMovies,
-			collectionTVShows: userCollection.collectionTVShows,
-			collectionPersons: userCollection.collectionPersons,
-			allCollectionReviews: userCollection.allCollectionReviews,
-			collectionMarks: userCollection.collectionMarks,
+			collectionMovies: generalCollection.collectionMovies,
+			collectionTVShows: generalCollection.collectionTVShows,
+			collectionPersons: generalCollection.collectionPersons,
+			allCollectionReviews: generalCollection.allCollectionReviews,
+			collectionMarks: generalCollection.collectionMarks,
 		}
 	} catch (error) {
-		return null
+		throw error
 	}
 }

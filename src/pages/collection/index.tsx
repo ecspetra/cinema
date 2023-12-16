@@ -1,14 +1,14 @@
 import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import { openLoginModal } from '@/handlers/handleModals'
+import { openLoginModal, showErrorNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { parseCookies } from '@/handlers/handleCookies'
 import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '@/context/AuthProvider'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import GeneralUserCollection from '@/components/Collection'
@@ -19,11 +19,13 @@ import {
 	IMark,
 	IReviewCard,
 } from '../../../interfaces'
+import Loader from '@/components/Loader'
+import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
 
 interface IGeneralCollectionPageProps {
-	collectionMovies: IFetchedResult<IItemCard>
-	collectionTVShows: IFetchedResult<IItemCard>
-	collectionPersons: IFetchedResult<IItemCard>
+	collectionMovies: IItemCard[]
+	collectionTVShows: IItemCard[]
+	collectionPersons: IItemCard[]
 	allCollectionReviews: IReviewCard[]
 	collectionMarks: IMark[]
 }
@@ -33,50 +35,38 @@ const GeneralCollectionPage = ({
 }: {
 	generalCollectionPageProps: IGeneralCollectionPageProps
 }) => {
-	const [movies, setMovies] = useState<IFetchedResult<IItemCard> | null>(null)
-	const [tvShows, setTvShows] = useState<IFetchedResult<IItemCard> | null>(
-		null
-	)
-	const [persons, setPersons] = useState<IFetchedResult<IItemCard> | null>(
-		null
-	)
-	const [reviews, setReviews] = useState<
-		IFetchedResult<IReviewCard>['items']
-	>([])
-	const [marks, setMarks] = useState<IFetchedResult<IMark>['items']>([])
+	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [generalCollection, setGeneralCollection] =
+		useState<IGeneralCollectionPageProps | null>(null)
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { userId } = useAuth()
 
 	useEffect(() => {
 		const getGeneralCollection = async () => {
+			setIsLoading(true)
 			const userIdFromUrl = router.query.uid as string
 
-			const generalCollection = await getGeneralCollectionPage(
-				userIdFromUrl,
-				userId,
-				url => {
-					router.push(url)
-				}
-			)
-
-			if (generalCollection) {
-				setMovies(generalCollection.collectionMovies)
-				setTvShows(generalCollection.collectionTVShows)
-				setPersons(generalCollection.collectionPersons)
-				setReviews(generalCollection.allCollectionReviews)
-				setMarks(generalCollection.collectionMarks)
-			}
+			getGeneralCollectionPage(userIdFromUrl, userId, url => {
+				router.push(url)
+			})
+				.then(data => {
+					setGeneralCollection(data)
+				})
+				.catch(() => {
+					showErrorNotification(showModal, 'An error has occurred')
+				})
+				.finally(() => {
+					setIsLoading(false)
+				})
 		}
 
-		if (generalCollectionPageProps) {
-			setMovies(generalCollectionPageProps?.collectionMovies)
-			setTvShows(generalCollectionPageProps?.collectionTVShows)
-			setPersons(generalCollectionPageProps?.collectionPersons)
-			setReviews(generalCollectionPageProps?.allCollectionReviews)
-			setMarks(generalCollectionPageProps?.collectionMarks)
-		} else getGeneralCollection()
-	}, [generalCollectionPageProps])
+		if (userId) {
+			generalCollectionPageProps
+				? setGeneralCollection(generalCollectionPageProps)
+				: getGeneralCollection()
+		}
+	}, [generalCollectionPageProps, userId])
 
 	if (!userId) {
 		return (
@@ -103,15 +93,23 @@ const GeneralCollectionPage = ({
 		)
 	}
 
+	if (!generalCollection) {
+		return isLoading ? (
+			<Loader className='bg-transparent' />
+		) : (
+			<ErrorScreen title='Something went wrong' text='No data found' />
+		)
+	}
+
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
 			<GeneralUserCollection
-				movies={movies}
-				tvShows={tvShows}
-				persons={persons}
-				marks={marks}
-				reviews={reviews}
+				movies={generalCollection.collectionMovies}
+				tvShows={generalCollection.collectionTVShows}
+				persons={generalCollection.collectionPersons}
+				marks={generalCollection.collectionMarks}
+				reviews={generalCollection.allCollectionReviews}
 			/>
 		</>
 	)

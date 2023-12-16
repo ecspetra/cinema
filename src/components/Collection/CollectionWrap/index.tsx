@@ -11,7 +11,6 @@ type PropsType = {
 	title: string
 	collectionType: UserCollections
 	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
-	isMoreDataAvailable: boolean
 	isCurrentUserCollection: boolean
 }
 
@@ -19,7 +18,6 @@ const CollectionWrap: FC<PropsType> = ({
 	title,
 	collectionType,
 	items,
-	isMoreDataAvailable,
 	isCurrentUserCollection,
 }) => {
 	const getItemsList = () => {
@@ -42,7 +40,6 @@ const CollectionWrap: FC<PropsType> = ({
 					<ItemsCollectionWrap
 						items={items}
 						collectionType={collectionType}
-						isMoreDataAvailable={isMoreDataAvailable}
 					/>
 				)
 		}

@@ -116,7 +116,7 @@ const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 
 	const handleRemoveMyMark = (markKey: string, userId: string) => {
 		setIsLoadingMark(true)
-		removeMarkForMovie(markKey, userId, type)
+		removeMarkForMovie(markKey, userId, collectionType)
 			.then(() => {
 				setMarkData(null)
 				getEmptyMarkIcons()
