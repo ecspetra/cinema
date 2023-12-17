@@ -103,7 +103,7 @@ export interface IMovieOrTVShowBasicInfo {
 }
 
 export interface IPersonInfo {
-	id: number
+	id: string
 	profile_path: string
 	known_for_department: string
 	name: string
@@ -136,18 +136,29 @@ export interface IDefaultImage {
 	src: string
 }
 
+export interface IGeneralCollection {
+	collectionMovies: IItemCard[]
+	collectionTVShows: IItemCard[]
+	collectionPersons: IItemCard[]
+	allCollectionReviews: IReviewCard[]
+	collectionMarks: IMark[]
+}
+
 export interface IUser {
 	id: string
 	displayName: string
 	email: string
 	photoURL: string
+	country?: string
+	dateOfBirth?: string
+	about?: string
 	favoriteGenres?: ITag[]
 }
 
-export interface IFriendInfo {
-	friends: string
+export interface IFullUserInfo {
+	friends: IFullUserInfo[]
 	info: IUser
-	reviews: IReviewCard[]
+	collection: IGeneralCollection | null
 }
 
 export interface IMovieOrTVShowData {

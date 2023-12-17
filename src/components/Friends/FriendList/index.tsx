@@ -5,10 +5,11 @@ import EmptyList from '@/components/List/EmptyList'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 import { useModal } from '@/context/ModalProvider'
 import { openFriendsModal } from '@/handlers/handleModals'
+import { IUser } from '../../../../interfaces'
 
 type PropsType = {
 	friends: Array<any>
-	onRemove: () => void
+	onRemove: (profileInfo: IUser, modalId?: string | null) => void
 }
 
 const FriendList: FC<PropsType> = ({ friends, onRemove }) => {

@@ -44,9 +44,9 @@ const SpecificCollectionPage = ({
 			setItemsList(collectionItemsList as IFetchedResult<IItemCard>)
 		}
 
-		if (specificCollectionPageProps) {
-			setItemsList(specificCollectionPageProps)
-		} else getCollectionItemsList()
+		if (!specificCollectionPageProps) {
+			getCollectionItemsList()
+		} else setItemsList(specificCollectionPageProps)
 	}, [specificCollectionPageProps])
 
 	if (!itemsList) return <Loader className='bg-transparent' />

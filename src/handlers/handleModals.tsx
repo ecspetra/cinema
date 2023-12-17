@@ -2,7 +2,7 @@ import AuthForm from '@/app/components/Auth/AuthForm'
 import Button from '@/app/components/UI/Button'
 import { uuidv4 } from '@firebase/util'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
-import { IFriendInfo, IModalContent, IUser } from '../../interfaces'
+import { IFullUserInfo, IModalContent, IUser } from '../../interfaces'
 
 type ShowModalFunction = (options: IModalContent) => void
 type CloseModalFunction = (modalId: string) => void
@@ -17,7 +17,7 @@ export const openLoginModal = (showModal: ShowModalFunction): void => {
 
 export const openFriendsModal = (
 	showModal: ShowModalFunction,
-	itemsList: IFriendInfo[],
+	itemsList: IFullUserInfo[],
 	onRemove: (info: IUser, modalId: string) => void
 ) => {
 	const modalId = uuidv4()

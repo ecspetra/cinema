@@ -8,9 +8,11 @@ import {
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
-import { IFriendInfo, IUser } from '../../interfaces'
+import { IFullUserInfo, IUser } from '../../interfaces'
 
-export const useFriendsCollection = (itemInfo: IFriendInfo['info']) => {
+export const useFriendsCollection = (
+	itemInfo: IFullUserInfo['info'] | null
+) => {
 	const [isFriend, setIsFriend] = useState<boolean>(false)
 	const [isLoadingFriends, setIsLoadingFriends] = useState<boolean>(true)
 	const { showModal, hideModal } = useModal()

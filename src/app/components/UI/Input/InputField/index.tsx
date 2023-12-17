@@ -41,7 +41,7 @@ const InputField: FC<PropsType> = ({
 			<label
 				htmlFor={id}
 				className={classNames(
-					'w-full h-full bg-transparent pt-1 px-3 pb-2 border border-gray-500 hover:border-white focus-within:border-white duration-300 block',
+					'w-full h-full bg-gray-950 pt-1 px-3 pb-2 border border-gray-500 hover:border-white focus-within:border-white duration-300 block',
 					className,
 					error && '!border-rose-600'
 				)}

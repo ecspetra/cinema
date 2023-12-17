@@ -1,17 +1,17 @@
 import { getCollectionItemsList } from '@/firebase/config'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
-import { IFetchedResult, IItemCard, IMark, IReviewCard } from '../../interfaces'
+import {
+	IFetchedResult,
+	IGeneralCollection,
+	IItemCard,
+	IMark,
+	IReviewCard,
+} from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
 
 export const getUserCollection = async (
 	userId: string
-): Promise<{
-	collectionMovies: IItemCard[]
-	collectionTVShows: IItemCard[]
-	collectionPersons: IItemCard[]
-	allCollectionReviews: IReviewCard[]
-	collectionMarks: IMark[]
-} | null> => {
+): Promise<IGeneralCollection | null> => {
 	try {
 		const collectionMovies = (await getCollectionItemsList(
 			userId,

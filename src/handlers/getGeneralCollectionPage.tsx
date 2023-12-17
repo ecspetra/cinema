@@ -1,18 +1,18 @@
 import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
-import { IFetchedResult, IItemCard, IMark, IReviewCard } from '../../interfaces'
+import {
+	IFetchedResult,
+	IGeneralCollection,
+	IItemCard,
+	IMark,
+	IReviewCard,
+} from '../../interfaces'
 import { getUserCollection } from '@/handlers/getUserCollection'
 
 export const getGeneralCollectionPage = async (
 	userIdFromUrl: string,
 	userId: string | undefined,
 	redirect: (url: string) => void
-): Promise<{
-	collectionMovies: IItemCard[]
-	collectionTVShows: IItemCard[]
-	collectionPersons: IItemCard[]
-	allCollectionReviews: IReviewCard[]
-	collectionMarks: IMark[]
-} | null> => {
+): Promise<IGeneralCollection | null> => {
 	const isUserIdNotPresented = !userId
 
 	if (isUserIdNotPresented) {

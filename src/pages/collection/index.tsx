@@ -13,31 +13,18 @@ import { useRouter } from 'next/router'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import GeneralUserCollection from '@/components/Collection'
 import { getGeneralCollectionPage } from '@/handlers/getGeneralCollectionPage'
-import {
-	IFetchedResult,
-	IItemCard,
-	IMark,
-	IReviewCard,
-} from '../../../interfaces'
+import { IGeneralCollection } from '../../../interfaces'
 import Loader from '@/components/Loader'
 import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
-
-interface IGeneralCollectionPageProps {
-	collectionMovies: IItemCard[]
-	collectionTVShows: IItemCard[]
-	collectionPersons: IItemCard[]
-	allCollectionReviews: IReviewCard[]
-	collectionMarks: IMark[]
-}
 
 const GeneralCollectionPage = ({
 	generalCollectionPageProps,
 }: {
-	generalCollectionPageProps: IGeneralCollectionPageProps
+	generalCollectionPageProps: IGeneralCollection
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [generalCollection, setGeneralCollection] =
-		useState<IGeneralCollectionPageProps | null>(null)
+		useState<IGeneralCollection | null>(null)
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { userId } = useAuth()

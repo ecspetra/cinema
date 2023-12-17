@@ -9,6 +9,7 @@ import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { IReviewCard } from '../../../../../interfaces'
+import Loader from '@/components/Loader'
 
 type PropsType = {
 	movieId: number
@@ -29,10 +30,15 @@ const NewReviewForm: FC<PropsType> = ({
 	isReply = false,
 	onFormClose,
 }) => {
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [textareaValue, setTextareaValue] = useState<string>('')
 	const [error, setError] = useState<string>('')
 	const { showModal } = useModal()
-	const buttonText = isReply ? 'Submit reply' : 'Submit review'
+	const buttonText = isLoading ? (
+		<Loader type='static' />
+	) : (
+		<>{`${isReply ? 'Submit reply' : 'Submit review'}`}</>
+	)
 
 	const handleTextareaChange = newValue => {
 		setTextareaValue(newValue)
@@ -41,6 +47,7 @@ const NewReviewForm: FC<PropsType> = ({
 
 	const handleSubmit = async event => {
 		event.preventDefault()
+		setIsLoading(true)
 
 		if (textareaValue.trim() !== '') {
 			if (userId) {
@@ -83,6 +90,8 @@ const NewReviewForm: FC<PropsType> = ({
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
 		}
+
+		setIsLoading(false)
 	}
 
 	useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useState } from 'react'
+import { Dispatch, SetStateAction, ChangeEvent, FC, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
@@ -7,10 +7,10 @@ import { faCalendarCheck, faUser } from '@fortawesome/free-solid-svg-icons'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { updateUserInfo } from '@/firebase/config'
-import moment from 'moment'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
 import CustomDatepicker from '@/app/components/UI/Datepicker'
+import { IUser } from '../../../../../interfaces'
 
 interface EditProfileFormData {
 	name: {
@@ -35,28 +35,29 @@ interface EditProfileFormData {
 }
 
 type PropsType = {
-	onFormClose: React.Dispatch<React.SetStateAction<boolean>>
+	profileInfo: IUser
+	onFormClose: Dispatch<SetStateAction<boolean>>
 }
 
-const EditProfileForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
+const EditProfileForm: FC<PropsType> = ({ profileInfo, onFormClose }) => {
 	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isTouched, setIsTouched] = useState<boolean>(false)
 	const [formData, setFormData] = useState<EditProfileFormData>({
 		name: {
-			value: userInfo.displayName,
+			value: profileInfo.displayName,
 			error: '',
 		},
 		country: {
-			value: userInfo.country || '',
+			value: profileInfo.country || '',
 			error: '',
 		},
 		dateOfBirth: {
-			value: userInfo.dateOfBirth || '',
+			value: profileInfo.dateOfBirth || '',
 			error: '',
 		},
 		about: {
-			value: userInfo.about || '',
+			value: profileInfo.about || '',
 			error: '',
 		},
 		formError: {
