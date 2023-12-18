@@ -28,6 +28,6 @@ export const removeCookie = (name: string, options: CookieOptions = {}) => {
 	}`
 }
 
-export function parseCookies(req: { headers: { cookie?: string } }) {
+export function parseCookies(req?: { headers: { cookie?: string } }) {
 	return parse(req ? req.headers.cookie || '' : document.cookie)
 }

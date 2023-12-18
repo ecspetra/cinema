@@ -106,7 +106,7 @@ const LoginForm = () => {
 				clearForm()
 				hideModal(id)
 
-				let target
+				let target: string = ''
 
 				switch (true) {
 					case pathname === AUTH_PAGE:
@@ -125,7 +125,7 @@ const LoginForm = () => {
 				}
 
 				if (target !== null) {
-					router.push(target)
+					await router.push(target)
 				}
 			} catch (error: any) {
 				updateFormError(error.toString())
