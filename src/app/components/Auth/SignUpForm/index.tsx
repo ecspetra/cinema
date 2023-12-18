@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useMemo, useState } from 'react'
+import { ChangeEvent, useMemo, useReducer, FormEvent } from 'react'
 import { signUp } from '@/firebase/config'
 import Button from '../../UI/Button/index'
 import InputField from '../../UI/Input/InputField/index'
@@ -28,10 +28,21 @@ interface SignUpFormData {
 	}
 }
 
-const SignUpForm = () => {
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isTouched, setIsTouched] = useState<boolean>(false)
-	const [formData, setFormData] = useState<SignUpFormData>({
+interface State {
+	isLoading: boolean
+	isTouched: boolean
+	formData: SignUpFormData
+}
+
+interface Action {
+	type: string
+	payload?: any
+}
+
+const initialState: State = {
+	isLoading: false,
+	isTouched: false,
+	formData: {
 		name: {
 			value: '',
 			error: '',
@@ -47,15 +58,40 @@ const SignUpForm = () => {
 		formError: {
 			error: '',
 		},
-	})
+	},
+}
+
+const signUpFormReducer = (state: State, action: Action): State => {
+	switch (action.type) {
+		case 'SET_FORM_DATA':
+			return { ...state, formData: action.payload }
+		case 'SET_LOADING':
+			return {
+				...state,
+				isLoading: action.payload,
+			}
+		case 'SET_TOUCHED':
+			return {
+				...state,
+				isTouched: true,
+			}
+		case 'CLEAR_FORM':
+			return initialState
+		default:
+			return state
+	}
+}
+
+const SignUpForm = () => {
+	const [state, dispatch] = useReducer(signUpFormReducer, initialState)
 	const router = useRouter()
 	const pathname = usePathname()
 	const { hideModal, currentModal } = useModal()
 	const { id } = currentModal || {}
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
-	const isNameValid = formData.name.value.trim() !== ''
-	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
-	const isPasswordValid = formData.password.value.length >= 8
+	const isNameValid = state.formData.name.value.trim() !== ''
+	const isEmailValid = /\S+@\S+\.\S+/.test(state.formData.email.value)
+	const isPasswordValid = state.formData.password.value.length >= 8
 
 	const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
@@ -80,42 +116,45 @@ const SignUpForm = () => {
 		value: string,
 		error: string = ''
 	) => {
-		setFormData(prevState => ({
-			...prevState,
-			[fieldName]: { ...prevState[fieldName], value, error },
-		}))
+		dispatch({
+			type: 'SET_FORM_DATA',
+			payload: {
+				...state.formData,
+				[fieldName]: { ...state.formData[fieldName], value, error },
+			},
+		})
 
-		if (!isTouched) setIsTouched(true)
+		if (!state.isTouched) {
+			dispatch({ type: 'SET_TOUCHED', payload: true })
+		}
 	}
 
 	const updateFormError = (error: string) => {
-		setFormData(prevState => ({
-			...prevState,
-			formError: { error },
-		}))
-	}
-
-	const clearForm = () => {
-		setFormData({
-			name: { value: '', error: '' },
-			email: { value: '', error: '' },
-			password: { value: '', error: '' },
-			formError: { error: '' },
+		dispatch({
+			type: 'SET_FORM_DATA',
+			payload: {
+				...state.formData,
+				formError: { error },
+			},
 		})
 	}
 
-	const handleSignUp = async (event: React.FormEvent) => {
+	const clearForm = () => {
+		dispatch({ type: 'CLEAR_FORM' })
+	}
+
+	const handleSignUp = async (event: FormEvent) => {
 		event.preventDefault()
-		setIsLoading(true)
+		dispatch({ type: 'SET_LOADING', payload: true })
 
 		const isFormValid = isNameValid && isEmailValid && isPasswordValid
 
-		if (isFormValid && isTouched) {
+		if (isFormValid && state.isTouched) {
 			try {
 				await signUp(
-					formData.email.value,
-					formData.password.value,
-					formData.name.value
+					state.formData.email.value,
+					state.formData.password.value,
+					state.formData.name.value
 				)
 				updateFormError('')
 				clearForm()
@@ -124,27 +163,30 @@ const SignUpForm = () => {
 			} catch (error: any) {
 				updateFormError(error.toString())
 			} finally {
-				setIsLoading(false)
+				dispatch({ type: 'SET_LOADING', payload: false })
 			}
 		} else {
-			setFormData(prevState => ({
-				...prevState,
-				name: {
-					...prevState.name,
-					error: isNameValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
+			dispatch({
+				type: 'SET_FORM_DATA',
+				payload: {
+					...state.formData,
+					name: {
+						...state.formData.name,
+						error: isNameValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
+					},
+					email: {
+						...state.formData.email,
+						error: isEmailValid ? '' : ERROR_MESSAGES.INVALID_EMAIL,
+					},
+					password: {
+						...state.formData.password,
+						error: isPasswordValid
+							? ''
+							: ERROR_MESSAGES.REQUIRED_FIELD,
+					},
 				},
-				email: {
-					...prevState.email,
-					error: isEmailValid ? '' : ERROR_MESSAGES.INVALID_EMAIL,
-				},
-				password: {
-					...prevState.password,
-					error: isPasswordValid
-						? ''
-						: ERROR_MESSAGES.INVALID_PASSWORD,
-				},
-			}))
-			setIsLoading(false)
+			})
+			dispatch({ type: 'SET_LOADING', payload: false })
 		}
 	}
 
@@ -159,8 +201,8 @@ const SignUpForm = () => {
 					<InputField
 						id='userName'
 						label='Name'
-						value={formData.name.value}
-						error={formData.name.error}
+						value={state.formData.name.value}
+						error={state.formData.name.error}
 						onChange={handleNameChange}
 						icon={faUser}
 						required
@@ -169,8 +211,8 @@ const SignUpForm = () => {
 					<InputField
 						id='userEmail'
 						label='Email'
-						value={formData.email.value}
-						error={formData.email.error}
+						value={state.formData.email.value}
+						error={state.formData.email.error}
 						onChange={handleEmailChange}
 						icon={faAt}
 						required
@@ -179,22 +221,22 @@ const SignUpForm = () => {
 					<InputField
 						id='userPassword'
 						label='Password'
-						value={formData.password.value}
-						error={formData.password.error}
+						value={state.formData.password.value}
+						error={state.formData.password.error}
 						onChange={handlePasswordChange}
 						icon={faKey}
 						required
 						type='password'
 						placeholder='Password'
 					/>
-					{formData.formError.error && (
+					{state.formData.formError.error && (
 						<Error
 							className='px-4 py-2 bg-rose-600/20 w-full rounded-md'
-							error={formData.formError.error}
+							error={state.formData.formError.error}
 						/>
 					)}
 					<Button className='mt-8 w-full' type='submit'>
-						{isLoading ? (
+						{state.isLoading ? (
 							<span className='flex justify-center items-center'>
 								Loading{' '}
 								<Loader type='static' className='ml-2' />

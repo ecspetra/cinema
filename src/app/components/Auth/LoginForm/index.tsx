@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useReducer, Dispatch, FormEvent } from 'react'
 import { signIn } from '@/firebase/config'
 import InputField from '../../UI/Input/InputField/index'
 import Button from '../../UI/Button/index'
@@ -16,6 +16,42 @@ import {
 import { parseCookies } from '@/handlers/handleCookies'
 import { useRouter } from 'next/router'
 
+interface Action {
+	type: string
+	payload?: any
+}
+
+interface State {
+	isLoading: boolean
+	isTouched: boolean
+	formData: LoginFormData
+}
+
+const initialState: State = {
+	isLoading: false,
+	isTouched: false,
+	formData: {
+		email: { value: '', error: '' },
+		password: { value: '', error: '' },
+		formError: { error: '' },
+	},
+}
+
+const loginFormReducer = (state: State, action: Action): State => {
+	switch (action.type) {
+		case 'SET_LOADING':
+			return { ...state, isLoading: action.payload }
+		case 'SET_TOUCHED':
+			return { ...state, isTouched: action.payload }
+		case 'SET_FORM_DATA':
+			return { ...state, formData: action.payload }
+		case 'CLEAR_FORM':
+			return initialState
+		default:
+			return state
+	}
+}
+
 interface LoginFormData {
 	email: {
 		value: string
@@ -31,27 +67,13 @@ interface LoginFormData {
 }
 
 const LoginForm = () => {
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isTouched, setIsTouched] = useState<boolean>(false)
-	const [formData, setFormData] = useState<LoginFormData>({
-		email: {
-			value: '',
-			error: '',
-		},
-		password: {
-			value: '',
-			error: '',
-		},
-		formError: {
-			error: '',
-		},
-	})
+	const [state, dispatch] = useReducer(loginFormReducer, initialState)
 	const pathname = usePathname()
 	const { hideModal, currentModal } = useModal()
 	const { id } = currentModal || {}
 	const router = useRouter()
-	const isEmailValid = /\S+@\S+\.\S+/.test(formData.email.value)
-	const isPasswordValid = formData.password.value.length > 0
+	const isEmailValid = /\S+@\S+\.\S+/.test(state.formData.email.value)
+	const isPasswordValid = state.formData.password.value.length > 0
 
 	const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
@@ -70,38 +92,45 @@ const LoginForm = () => {
 		value: string,
 		error: string = ''
 	) => {
-		setFormData(prevState => ({
-			...prevState,
-			[fieldName]: { ...prevState[fieldName], value, error },
-		}))
+		dispatch({
+			type: 'SET_FORM_DATA',
+			payload: {
+				...state.formData,
+				[fieldName]: { ...state.formData[fieldName], value, error },
+			},
+		})
 
-		if (!isTouched) setIsTouched(true)
+		if (!state.isTouched) {
+			dispatch({ type: 'SET_TOUCHED', payload: true })
+		}
 	}
 
 	const updateFormError = (error: string) => {
-		setFormData(prevState => ({
-			...prevState,
-			formError: { error },
-		}))
-	}
-
-	const clearForm = () => {
-		setFormData({
-			email: { value: '', error: '' },
-			password: { value: '', error: '' },
-			formError: { error: '' },
+		dispatch({
+			type: 'SET_FORM_DATA',
+			payload: {
+				...state.formData,
+				formError: { error },
+			},
 		})
 	}
 
-	const handleLogin = async (event: React.FormEvent) => {
+	const clearForm = () => {
+		dispatch({ type: 'CLEAR_FORM' })
+	}
+
+	const handleLogin = async (event: FormEvent) => {
 		event.preventDefault()
-		setIsLoading(true)
+		dispatch({ type: 'SET_LOADING', payload: true })
 
 		const isFormValid = isEmailValid && isPasswordValid
 
-		if (isFormValid && isTouched) {
+		if (isFormValid && state.isTouched) {
 			try {
-				await signIn(formData.email.value, formData.password.value)
+				await signIn(
+					state.formData.email.value,
+					state.formData.password.value
+				)
 				updateFormError('')
 				clearForm()
 				hideModal(id)
@@ -130,21 +159,26 @@ const LoginForm = () => {
 			} catch (error: any) {
 				updateFormError(error.toString())
 			} finally {
-				setIsLoading(false)
+				dispatch({ type: 'SET_LOADING', payload: false })
 			}
 		} else {
-			setFormData(prevState => ({
-				...prevState,
-				email: {
-					...prevState.email,
-					error: isEmailValid ? '' : ERROR_MESSAGES.INVALID_EMAIL,
+			dispatch({
+				type: 'SET_FORM_DATA',
+				payload: {
+					...state.formData,
+					email: {
+						...state.formData.email,
+						error: isEmailValid ? '' : ERROR_MESSAGES.INVALID_EMAIL,
+					},
+					password: {
+						...state.formData.password,
+						error: isPasswordValid
+							? ''
+							: ERROR_MESSAGES.REQUIRED_FIELD,
+					},
 				},
-				password: {
-					...prevState.password,
-					error: isPasswordValid ? '' : ERROR_MESSAGES.REQUIRED_FIELD,
-				},
-			}))
-			setIsLoading(false)
+			})
+			dispatch({ type: 'SET_LOADING', payload: false })
 		}
 	}
 
@@ -158,8 +192,8 @@ const LoginForm = () => {
 					<InputField
 						id='userEmail'
 						label='Email'
-						value={formData.email.value}
-						error={formData.email.error}
+						value={state.formData.email.value}
+						error={state.formData.email.error}
 						onChange={handleEmailChange}
 						icon={faAt}
 						required
@@ -168,22 +202,22 @@ const LoginForm = () => {
 					<InputField
 						id='userPassword'
 						label='Password'
-						value={formData.password.value}
-						error={formData.password.error}
+						value={state.formData.password.value}
+						error={state.formData.password.error}
 						onChange={handlePasswordChange}
 						icon={faKey}
 						required
 						type='password'
 						placeholder='Password'
 					/>
-					{formData.formError.error && (
+					{state.formData.formError.error && (
 						<Error
 							className='px-4 py-2 bg-rose-600/20 w-full rounded-md'
-							error={formData.formError.error}
+							error={state.formData.formError.error}
 						/>
 					)}
 					<Button className='mt-8 w-full' type='submit'>
-						{isLoading ? (
+						{state.isLoading ? (
 							<Loader isShowText type='static' />
 						) : (
 							'Submit'
