@@ -1,9 +1,9 @@
-import React, { FC, useState } from 'react'
+import { FC, Dispatch, SetStateAction } from 'react'
 import Error from '@/app/components/UI/Error'
 import classNames from 'classnames'
 
 type PropsType = {
-	onChange: React.Dispatch<React.SetStateAction<string>>
+	onChange: Dispatch<SetStateAction<string>>
 	value: string
 	error?: string
 	placeholder?: string

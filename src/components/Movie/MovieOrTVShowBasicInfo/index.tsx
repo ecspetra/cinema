@@ -3,10 +3,8 @@ import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
 	IBackdrop,
-	IMovieInfo,
+	IMovieOrTVShowBasicInfo,
 	IReviewCard,
-	IReviewCardFromDB,
-	ITVShowInfo,
 } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
@@ -18,24 +16,24 @@ import { useAuth } from '@/context/AuthProvider'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
 import ReactPlayer from 'react-player'
-import TVSeasonsList from '@/components/Movie/MovieInfo/TVSeasonsList'
+import TVSeasonsList from '@/components/Movie/MovieOrTVShowBasicInfo/TVSeasonList'
 import TagList from '@/components/Tag/TagList'
 import DetailsList from '@/components/Details/DetailsList'
 
 type PropsType = {
-	basicInfo: IMovieInfo | ITVShowInfo
+	basicInfo: IMovieOrTVShowBasicInfo
 	movieImages: Array<IBackdrop>
-	movieReviews: Array<IReviewCard | IReviewCardFromDB>
+	movieReviews: IReviewCard[]
 	movieVideo: string
-	type: string
+	collectionType: string
 }
 
-const MovieInfo: FC<PropsType> = ({
+const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 	basicInfo,
 	movieImages,
 	movieReviews,
 	movieVideo,
-	type,
+	collectionType,
 }) => {
 	const { userId } = useAuth()
 
@@ -56,7 +54,7 @@ const MovieInfo: FC<PropsType> = ({
 		seasons,
 	} = basicInfo
 
-	const isTVShowItem = type === 'tv'
+	const isTVShowItem = collectionType === 'tv'
 
 	const details = [
 		isTVShowItem
@@ -87,7 +85,7 @@ const MovieInfo: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(basicInfo, type)
+	} = useCollectionButton(basicInfo, collectionType)
 
 	return (
 		<div className='flex gap-7 py-7 mb-16'>
@@ -115,7 +113,7 @@ const MovieInfo: FC<PropsType> = ({
 				<Mark
 					itemId={id}
 					itemTitle={title ? title : name}
-					type={type}
+					collectionType={collectionType}
 				/>
 				<p className='mb-6'>{overview}</p>
 				<CollectionButton
@@ -152,4 +150,4 @@ const MovieInfo: FC<PropsType> = ({
 	)
 }
 
-export default MovieInfo
+export default MovieOrTVShowBasicInfo

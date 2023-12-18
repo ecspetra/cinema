@@ -2,10 +2,11 @@ import { FC, useState } from 'react'
 import { getDefaultImage } from '@/handlers/getDefaultImage'
 import Loader from '../../../components/Loader'
 import classNames from 'classnames'
+import { IDefaultImage } from '../../../../interfaces'
 
 type PropsType = {
 	src: string
-	defaultImage: JSX.Element
+	defaultImage: IDefaultImage
 	className?: string
 	loaderClassName?: string
 }

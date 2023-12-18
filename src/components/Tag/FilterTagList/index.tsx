@@ -12,8 +12,8 @@ type PropsType = {
 }
 
 const FilterTagList: FC<PropsType> = ({ tags, onToggle, name, type }) => {
-	const [itemsList, setItemsList] = useState<Array<ITag>>([])
-	const [selectedTags, setSelectedTags] = useState<Array<ITag>>(tags)
+	const [itemsList, setItemsList] = useState<ITag[]>([])
+	const [selectedTags, setSelectedTags] = useState<ITag[]>(tags)
 
 	const onToggleTag = (tag, isChecked) => {
 		onToggle(name, tag, isChecked)

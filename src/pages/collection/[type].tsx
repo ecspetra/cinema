@@ -1,70 +1,61 @@
 import { NextPageContext } from 'next'
 import { parseCookies } from '@/handlers/handleCookies'
-import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
-import { getCollectionItemsList } from '@/firebase/config'
-import CollectionItemsList from '../../components/Collection/CollectionItemsList'
+import SpecificCollectionItemsList from '../../components/Collection/SpecificCollectionItemsList'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/AuthProvider'
 import TopBanner from '@/components/TopBanner'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
+import { IFetchedResult, IItemCard } from '../../../interfaces'
+import { UserCollections } from '@/constants/enum'
+import { getSpecificCollectionPage } from '@/handlers/getSpecificCollectionPage'
+import Loader from '@/components/Loader'
 
-const CollectionType = ({ results }) => {
-	const [itemsList, setItemsList] = useState(null)
+const SpecificCollectionPage = ({
+	specificCollectionPageProps,
+}: {
+	specificCollectionPageProps: IFetchedResult<IItemCard>
+}) => {
+	const [itemsList, setItemsList] =
+		useState<IFetchedResult<IItemCard> | null>(null)
 	const router = useRouter()
 	const { userId } = useAuth()
 	const listTitle =
-		router.query.type === 'movie'
+		router.query.type === UserCollections.movie
 			? 'Movies from your collection'
 			: 'Persons from your collection'
+	const collectionType = router.query.type as
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 
 	useEffect(() => {
-		const getCollection = async () => {
-			const userIdFromUrl = router.query.uid || null
+		const getCollectionItemsList = async () => {
+			const userIdFromUrl = router.query.uid as string
 
-			if (
-				(userId && userIdFromUrl && userId !== userIdFromUrl) ||
-				(!userId && userIdFromUrl)
-			) {
-				await router.push('/404')
-			}
-
-			if (!userId) {
-				setItemsList(null)
-			}
-
-			try {
-				const collectionItems = await getCollectionItemsList(
-					userIdFromUrl,
-					router.query.type,
-					20,
-					null
-				)
-
-				if (!collectionItems.items.length) {
-					await router.push(
-						CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
-					)
-				} else {
-					setItemsList(collectionItems)
+			const collectionItemsList = await getSpecificCollectionPage(
+				userIdFromUrl,
+				collectionType,
+				userId,
+				url => {
+					router.push(url)
 				}
-			} catch (error) {
-				setItemsList(null)
-			}
+			)
+			setItemsList(collectionItemsList as IFetchedResult<IItemCard>)
 		}
 
-		if (!results) getCollection()
-	}, [])
+		if (!specificCollectionPageProps) {
+			getCollectionItemsList()
+		} else setItemsList(specificCollectionPageProps)
+	}, [specificCollectionPageProps])
 
-	useEffect(() => {
-		setItemsList(results)
-	}, [results])
+	if (!itemsList) return <Loader className='bg-transparent' />
 
 	return (
 		<>
 			<TopBanner imageSrc={COLLECTION_PAGE_TOP_BANNER_IMAGE} />
-			<CollectionItemsList
-				type={router.query.type}
+			<SpecificCollectionItemsList
+				collectionType={collectionType}
 				items={itemsList ? itemsList.items : []}
 				isMoreDataAvailable={
 					itemsList ? itemsList.isMoreDataAvailable : false
@@ -76,59 +67,30 @@ const CollectionType = ({ results }) => {
 }
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-	const userIdFromUrl = ctx.query.uid || null
-	const cookies = parseCookies(ctx.req)
+	const userIdFromUrl = ctx.query.uid as string
+	const collectionType = ctx.query.type as
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+
+	const cookies = parseCookies(ctx.req!)
 	const userId = cookies.uid
 
-	if (
-		(userId && userIdFromUrl && userId !== userIdFromUrl) ||
-		(!userId && userIdFromUrl)
-	) {
-		return {
-			notFound: true,
+	const collectionItemsList = await getSpecificCollectionPage(
+		userIdFromUrl,
+		collectionType,
+		userId,
+		url => {
+			ctx.res?.writeHead(302, { Location: url })
+			ctx.res?.end()
 		}
-	}
+	)
 
-	if (!userId) {
-		return {
-			props: {
-				results: null,
-			},
-		}
-	}
-
-	try {
-		const result = await getCollectionItemsList(
-			userIdFromUrl,
-			ctx.query.type,
-			20,
-			null
-		)
-
-		if (!result.items.length) {
-			return {
-				redirect: {
-					destination: CURRENT_USER_COLLECTION_PAGE.replace(
-						'{userId}',
-						userId
-					),
-					permanent: true,
-				},
-			}
-		} else {
-			return {
-				props: {
-					results: result,
-				},
-			}
-		}
-	} catch (error) {
-		return {
-			props: {
-				results: null,
-			},
-		}
+	return {
+		props: {
+			specificCollectionPageProps: collectionItemsList,
+		},
 	}
 }
 
-export default CollectionType
+export default SpecificCollectionPage

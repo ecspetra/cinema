@@ -4,7 +4,7 @@ export const getCollectionLink = userId => {
 
 export const createRoutes = userId => [
 	{
-		name: 'Favorite',
+		name: 'Library',
 		href: getCollectionLink(userId),
 	},
 	{

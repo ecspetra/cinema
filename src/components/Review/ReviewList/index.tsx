@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { IReviewCard, IReviewCardFromDB } from '../../../../interfaces'
+import { IReviewCard } from '../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 import { collectionRepliesListener, reviewsListener } from '@/firebase/config'
@@ -10,7 +10,7 @@ import useScrollToTop from '@/hooks/useScrollToTop'
 import classNames from 'classnames'
 
 type PropsType = {
-	reviews: Array<IReviewCard | IReviewCardFromDB>
+	reviews: IReviewCard[]
 	movieId?: number
 	isCollectionList?: boolean
 	className?: string
@@ -58,7 +58,7 @@ const ReviewList: FC<PropsType> = ({
 	}
 
 	const defineReviewSrc = () => {
-		const itemsFromDB: IReviewCardFromDB[] = []
+		const itemsFromDB: IReviewCard[] = []
 		const defaultItems: IReviewCard[] = []
 
 		reviews.forEach(item => {

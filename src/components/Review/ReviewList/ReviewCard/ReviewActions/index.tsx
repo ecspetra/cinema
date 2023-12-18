@@ -6,8 +6,9 @@ import {
 	reviewReactionsListener,
 	setNewReviewReaction,
 } from '@/firebase/config'
-import { handleModals, openLoginModal } from '@/handlers/handleModals'
+import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	reviewId: string
@@ -16,7 +17,7 @@ type PropsType = {
 	onReply:
 		| React.Dispatch<React.SetStateAction<boolean>>
 		| ((userName: string) => void)
-	collectionName: 'reviews' | 'replies'
+	collectionType: UserCollections.reviews | UserCollections.replies
 }
 
 const ReviewActions: FC<PropsType> = ({
@@ -24,7 +25,7 @@ const ReviewActions: FC<PropsType> = ({
 	movieId,
 	userId,
 	onReply,
-	collectionName,
+	collectionType,
 }) => {
 	const { showModal } = useModal()
 	const [reactions, setReactions] = useState({
@@ -41,7 +42,7 @@ const ReviewActions: FC<PropsType> = ({
 	const handleReaction = async (
 		event,
 		reactionType: 'like' | 'dislike',
-		collectionName: 'reviews' | 'replies'
+		collectionType: UserCollections.reviews | UserCollections.replies
 	) => {
 		if (userId) {
 			if (isCurrentUserReaction(reactionType)) {
@@ -49,7 +50,7 @@ const ReviewActions: FC<PropsType> = ({
 					userId,
 					reviewId,
 					movieId,
-					collectionName,
+					collectionType,
 					reactionType
 				)
 			} else {
@@ -57,7 +58,7 @@ const ReviewActions: FC<PropsType> = ({
 					userId,
 					reviewId,
 					movieId,
-					collectionName,
+					collectionType,
 					reactionType
 				)
 			}
@@ -74,7 +75,7 @@ const ReviewActions: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		getReviewReactions(reviewId, movieId, collectionName).then(data => {
+		getReviewReactions(reviewId, movieId, collectionType).then(data => {
 			setReactions({
 				likes: data.likes,
 				dislikes: data.dislikes,
@@ -87,7 +88,7 @@ const ReviewActions: FC<PropsType> = ({
 			const unsubscribe = reviewReactionsListener(
 				reviewId,
 				movieId,
-				collectionName,
+				collectionType,
 				setReactions
 			)
 
@@ -102,7 +103,7 @@ const ReviewActions: FC<PropsType> = ({
 			<ReviewActionButton
 				title='Like'
 				action='like'
-				onClick={event => handleReaction(event, 'like', collectionName)}
+				onClick={event => handleReaction(event, 'like', collectionType)}
 				counter={reactions.likes.length}
 				isCurrentUserReaction={isCurrentUserLike}
 			/>
@@ -110,7 +111,7 @@ const ReviewActions: FC<PropsType> = ({
 				title='Dislike'
 				action='dislike'
 				onClick={event =>
-					handleReaction(event, 'dislike', collectionName)
+					handleReaction(event, 'dislike', collectionType)
 				}
 				counter={reactions.dislikes.length}
 				isCurrentUserReaction={isCurrentUserDislike}

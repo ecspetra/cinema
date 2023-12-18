@@ -7,10 +7,14 @@ import { getCover } from '@/handlers/getCover'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	itemId: number
-	type: 'movie' | 'tv' | 'person'
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 	mark?: number
 	isLinkToMovie?: boolean
 	className?: string
@@ -18,7 +22,7 @@ type PropsType = {
 
 const ItemCardSmall: FC<PropsType> = ({
 	itemId,
-	type,
+	collectionType,
 	mark,
 	isLinkToMovie = false,
 	className = false,
@@ -26,7 +30,7 @@ const ItemCardSmall: FC<PropsType> = ({
 	const [itemCover, setItemCover] = useState<string>('')
 
 	useEffect(() => {
-		getCover(itemId, type).then(data => {
+		getCover(itemId, collectionType).then(data => {
 			setItemCover(data)
 		})
 	}, [])
@@ -37,7 +41,9 @@ const ItemCardSmall: FC<PropsType> = ({
 				className='duration-300 mb-4 border-4'
 				src={`https://image.tmdb.org/t/p/w440_and_h660_face${itemCover}`}
 				defaultImage={
-					type !== 'person' ? defaultMovieImage : defaultUserImage
+					collectionType !== 'person'
+						? defaultMovieImage
+						: defaultUserImage
 				}
 			/>
 			{mark && (
@@ -54,7 +60,10 @@ const ItemCardSmall: FC<PropsType> = ({
 			className={classNames(!mark && 'w-24 h-36', 'flex-none', className)}
 		>
 			{isLinkToMovie ? (
-				<Link href={`/${type}/[id]`} as={`/${type}/${itemId}`}>
+				<Link
+					href={`/${collectionType}/[id]`}
+					as={`/${collectionType}/${itemId}`}
+				>
 					{itemCard}
 				</Link>
 			) : (

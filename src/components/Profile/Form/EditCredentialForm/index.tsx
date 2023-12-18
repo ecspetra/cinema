@@ -32,7 +32,7 @@ type PropsType = {
 	onFormClose: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const EditCredentialForm: FC<PropsType> = ({ userInfo, onFormClose }) => {
+const EditCredentialForm: FC<PropsType> = ({ onFormClose }) => {
 	const initialDateValue = new Date()
 	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)

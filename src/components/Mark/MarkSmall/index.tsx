@@ -8,17 +8,17 @@ import classNames from 'classnames'
 
 type PropsType = {
 	itemId: number
-	type: string
+	collectionType: string
 	className: string
 }
 
-const MarkSmall: FC<PropsType> = ({ itemId, type, className }) => {
+const MarkSmall: FC<PropsType> = ({ itemId, collectionType, className }) => {
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
 	const { isLoggedIn, userId } = useAuth()
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, type).then(data => {
+			getMarkForMovie(itemId, userId, collectionType).then(data => {
 				setMarkData(data)
 			})
 		}

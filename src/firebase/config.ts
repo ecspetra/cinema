@@ -31,12 +31,17 @@ import { uuidv4 } from '@firebase/util'
 import {
 	ITag,
 	IItemCard,
-	IReplyCard,
-	IReviewCardFromDB,
+	IReviewCard,
+	IFetchedResult,
+	IMark,
+	IFullUserInfo,
+	IUser,
 } from '../../interfaces'
 import { onValue } from '@firebase/database'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { createItemCard } from '@/handlers/createItemCard'
+import { UserCollections } from '@/constants/enum'
+import { Dispatch, SetStateAction } from 'react'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -61,15 +66,6 @@ export interface AuthContextType {
 	userName: string
 	updateUserProfile: () => void
 }
-
-export const USER_COLLECTIONS = [
-	'movie',
-	'tv',
-	'person',
-	'reviews',
-	'replies',
-	'marks',
-]
 
 // auth handlers
 
@@ -206,7 +202,7 @@ export const signOutUser = async () => {
 	}
 }
 
-export const getUserInfo = async (userId: string) => {
+export const getUserInfo = async (userId: string): Promise<IFullUserInfo> => {
 	const infoPath = `users/${userId}`
 	const itemRef = ref(database, infoPath)
 
@@ -222,9 +218,9 @@ export const getUserInfo = async (userId: string) => {
 	})
 }
 
-export const getUserFriends = friendIdList => {
+export const getUserFriends = (friendIdList): Promise<IFullUserInfo[]> => {
 	return new Promise(async resolve => {
-		let friendsInfo = []
+		let friendsInfo: IFullUserInfo[] = []
 
 		const promises = Object.keys(friendIdList).map(async (id: string) => {
 			const friend = await getUserInfo(id)
@@ -237,7 +233,7 @@ export const getUserFriends = friendIdList => {
 	})
 }
 
-export const getIsFriend = (itemId: string) => {
+export const getIsFriend = (itemId: string): Promise<boolean> => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 	const collectionPath = `users/${userId}/friends/${itemId}`
@@ -254,7 +250,10 @@ export const getIsFriend = (itemId: string) => {
 	})
 }
 
-export const userInfoListener = (userId: string, setProfile: ([]) => void) => {
+export const userInfoListener = (
+	userId: string,
+	setProfile: Dispatch<SetStateAction<IFullUserInfo['info'] | null>>
+) => {
 	const userRef = ref(database, `users/${userId}/info`)
 
 	const onInfoChanged = (snapshot: DataSnapshot) => {
@@ -271,7 +270,7 @@ export const userInfoListener = (userId: string, setProfile: ([]) => void) => {
 export const userFriendsListener = (
 	userId: string,
 	loadedItems: Array<object>,
-	setFriends: ([]) => void
+	setFriends: Dispatch<SetStateAction<IFullUserInfo[]>>
 ) => {
 	const userRef = ref(database, `users/${userId}/friends`)
 
@@ -335,7 +334,7 @@ export const userContextListener = (
 export const setNewMarkForMovie = async (markData: object, userId: string) => {
 	const newMarkRef = ref(
 		database,
-		`users/${userId}/marks/${markData.type}/${uuidv4()}`
+		`users/${userId}/collection/marks/${markData.type}/${uuidv4()}`
 	)
 
 	const newMarkData = {
@@ -350,9 +349,12 @@ export const setNewMarkForMovie = async (markData: object, userId: string) => {
 export const getMarkForMovie = (
 	itemId: number,
 	userId: string,
-	type: string
+	collectionType: string
 ) => {
-	const marksCollectionRef = ref(database, `users/${userId}/marks/${type}`)
+	const marksCollectionRef = ref(
+		database,
+		`users/${userId}/collection/marks/${collectionType}`
+	)
 
 	return new Promise(async resolve => {
 		get(marksCollectionRef).then(snapshot => {
@@ -375,9 +377,12 @@ export const getMarkForMovie = (
 export const removeMarkForMovie = (
 	markKey: string,
 	userId: string,
-	type: string
+	collectionType: string
 ) => {
-	const markRef = ref(database, `users/${userId}/marks/${type}/${markKey}`)
+	const markRef = ref(
+		database,
+		`users/${userId}/collection/marks/${collectionType}/${markKey}`
+	)
 
 	return new Promise(async resolve => {
 		let isRemoved = false
@@ -394,11 +399,11 @@ export const removeMarkForMovie = (
 
 export const setNewCollectionItem = async (
 	itemId: number,
-	collectionName: (typeof USER_COLLECTIONS)[number]
+	collectionType: UserCollections
 ) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
+	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}`
 	const newCollectionItemRef = ref(database, collectionPath)
 
 	const newItem = {
@@ -410,11 +415,11 @@ export const setNewCollectionItem = async (
 
 export const getCollectionItem = (
 	itemId: number,
-	collectionName: (typeof USER_COLLECTIONS)[number]
-) => {
+	collectionType: UserCollections
+): Promise<boolean> => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
+	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
 	return new Promise(async resolve => {
@@ -430,11 +435,11 @@ export const getCollectionItem = (
 
 export const removeCollectionItem = (
 	itemId: number,
-	collectionName: (typeof USER_COLLECTIONS)[number]
+	collectionType: UserCollections
 ) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
+	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 
 	return new Promise(async resolve => {
@@ -450,127 +455,157 @@ export const removeCollectionItem = (
 
 export const getCollectionItemsList = async (
 	userId: string,
-	collectionName: (typeof USER_COLLECTIONS)[number],
+	collectionType: UserCollections,
 	itemsPerPage: number | null,
 	lastItemId: string | null
-) => {
-	const collectionPath = `users/${userId}/${collectionName}/`
-	const userCollectionRef = ref(database, collectionPath)
-	const collectionInfo = {
-		type: collectionName,
-		ref: userCollectionRef,
-		userId: userId,
-	}
-	let paginationQuery
+): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
+	try {
+		const userPath = `users/${userId}/`
+		const userRef = ref(database, userPath)
+		const userSnapshot = await get(userRef)
 
-	if (lastItemId) {
-		if (itemsPerPage !== null) {
-			paginationQuery = query(
-				userCollectionRef,
-				orderByKey(),
-				startAfter(lastItemId),
-				limitToFirst(itemsPerPage + 1)
-			)
-		} else {
-			paginationQuery = query(
-				userCollectionRef,
-				orderByKey(),
-				startAfter(lastItemId)
-			)
+		if (!userSnapshot.exists()) {
+			throw `Failed to fetch`
 		}
-	} else {
-		if (itemsPerPage !== null) {
-			paginationQuery = query(
-				userCollectionRef,
-				orderByKey(),
-				limitToFirst(itemsPerPage + 1)
-			)
-		} else {
-			paginationQuery = query(userCollectionRef, orderByKey())
+
+		const collectionPath = `users/${userId}/collection/${collectionType}/`
+		const userCollectionRef = ref(database, collectionPath)
+		const collectionInfo = {
+			type: collectionType,
+			ref: userCollectionRef,
+			userId: userId,
 		}
-	}
+		let paginationQuery
 
-	const snapshot = await get(paginationQuery)
-	const data = snapshot.val() || {}
-	const itemIds = Object.keys(data)
-	let isMoreDataAvailable = false
+		if (lastItemId) {
+			if (itemsPerPage !== null) {
+				paginationQuery = query(
+					userCollectionRef,
+					orderByKey(),
+					startAfter(lastItemId),
+					limitToFirst(itemsPerPage + 1)
+				)
+			} else {
+				paginationQuery = query(
+					userCollectionRef,
+					orderByKey(),
+					startAfter(lastItemId)
+				)
+			}
+		} else {
+			if (itemsPerPage !== null) {
+				paginationQuery = query(
+					userCollectionRef,
+					orderByKey(),
+					limitToFirst(itemsPerPage + 1)
+				)
+			} else {
+				paginationQuery = query(userCollectionRef, orderByKey())
+			}
+		}
 
-	if (itemsPerPage !== null && itemIds.length > itemsPerPage) {
-		isMoreDataAvailable = true
-		itemIds.pop()
-	}
+		const snapshot = await get(paginationQuery)
+		const data = snapshot.val() || {}
+		const itemIds = Object.keys(data)
+		let isMoreDataAvailable = false
 
-	const items = await getCollectionItemsInfo(itemIds, collectionInfo)
+		if (itemsPerPage !== null && itemIds.length > itemsPerPage) {
+			isMoreDataAvailable = true
+			itemIds.pop()
+		}
 
-	return {
-		isMoreDataAvailable,
-		items,
+		if (!itemIds.length) {
+			return {
+				isMoreDataAvailable,
+				items: [],
+			}
+		}
+
+		const items = await getCollectionItemsInfo(itemIds, collectionInfo)
+
+		return {
+			isMoreDataAvailable,
+			items: items as (IItemCard | IReviewCard | IMark)[],
+		}
+	} catch (error) {
+		throw error
 	}
 }
 
 export const getCollectionItemsInfo = async (itemIds, collectionInfo) => {
-	switch (collectionInfo.type) {
-		case 'movie':
-		case 'tv':
-		case 'person':
-			const itemsInfo = await Promise.all(
-				itemIds.map(async itemId => {
-					const itemInfo = await fetchItemData(
-						collectionInfo.type,
-						itemId,
-						''
-					)
-					return itemInfo
-				})
-			)
-			const items = createItemCard(itemsInfo)
-			return items
-		case 'reviews':
-		case 'replies':
-			return await Promise.all(
-				itemIds.map(async itemId => {
-					const itemSnapshot = await get(
-						child(collectionInfo.ref, itemId)
-					)
-					return itemSnapshot.val()
-				})
-			)
-		case 'marks':
-			return await getCollectionMarksList(collectionInfo.userId)
+	try {
+		switch (collectionInfo.type) {
+			case 'movie':
+			case 'tv':
+			case 'person':
+				const itemsInfo = await Promise.all(
+					itemIds.map(async itemId => {
+						const itemInfo = await fetchItemData(
+							collectionInfo.type,
+							itemId,
+							''
+						)
+						return itemInfo
+					})
+				)
+				const items = createItemCard(itemsInfo)
+				return items
+			case 'reviews':
+			case 'replies':
+				return await Promise.all(
+					itemIds.map(async itemId => {
+						const itemSnapshot = await get(
+							child(collectionInfo.ref, itemId)
+						)
+						return itemSnapshot.val()
+					})
+				)
+			case 'marks':
+				return await getCollectionMarksList(collectionInfo.userId)
+		}
+	} catch (error) {
+		throw error
 	}
 }
 
 export const getCollectionMarksList = async (userId: string) => {
-	const getMarks = async type => {
-		let items = []
-		const collectionPath = `users/${userId}/marks/${type}`
-		const collectionRef = ref(database, collectionPath)
-		const snapshot = await get(collectionRef)
+	try {
+		const getMarks = async type => {
+			let items = []
+			const collectionPath = `users/${userId}/collection/marks/${type}`
+			const collectionRef = ref(database, collectionPath)
+			const snapshot = await get(collectionRef)
 
-		if (snapshot.exists()) {
-			snapshot.forEach(childSnapshot => {
-				const item = childSnapshot.val()
-				items.push(item)
-			})
+			if (snapshot.exists()) {
+				snapshot.forEach(childSnapshot => {
+					const item = childSnapshot.val()
+					items.push(item)
+				})
+			}
+
+			return items
 		}
 
-		return items
+		const movieMarks = await getMarks('movie')
+		const tvMarks = await getMarks('tv')
+
+		return [...movieMarks, ...tvMarks]
+	} catch (error) {
+		throw error
 	}
-
-	const movieMarks = await getMarks('movie')
-	const tvMarks = await getMarks('tv')
-
-	return [...movieMarks, ...tvMarks]
 }
 
 export const collectionListener = (
 	userId: string,
-	collectionName: (typeof USER_COLLECTIONS)[number],
+	collectionType: UserCollections,
 	loadedItems: Array<any>,
 	setItems: ([]) => void,
 	setIsMoreDataAvailable: (arg: boolean) => void
 ) => {
-	const collectionRef = ref(database, `users/${userId}/${collectionName}`)
+	const collectionRef = ref(
+		database,
+		`users/${userId}/collection/${collectionType}`
+	)
 
 	const getAllItemsFromCurrentCollection = () => {
 		return new Promise(async resolve => {
@@ -611,13 +646,13 @@ export const collectionListener = (
 // review handlers
 
 export const setNewReviewItem = async (
-	item: IReviewCardFromDB | IReplyCard,
+	item: IReviewCard,
 	userId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies'
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
-	const collectionPath = `users/${userId}/${collectionName}/${item.id}`
-	const generalCollectionPath = `movies/${movieId}/${collectionName}/${item.id}`
+	const collectionPath = `users/${userId}/collection/${collectionType}/${item.id}`
+	const generalCollectionPath = `movies/${movieId}/${collectionType}/${item.id}`
 	const newCollectionItemRef = ref(database, collectionPath)
 	const newGeneralCollectionItemRef = ref(database, generalCollectionPath)
 
@@ -626,14 +661,14 @@ export const setNewReviewItem = async (
 }
 
 export const updateReviewItem = async (
-	item: IReviewCardFromDB | IReplyCard,
+	item: IReviewCard,
 	userId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies'
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	const itemId = item.id
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
-	const generalCollectionPath = `movies/${movieId}/${collectionName}/${itemId}`
+	const collectionPath = `users/${userId}/${collectionType}/${itemId}`
+	const generalCollectionPath = `movies/${movieId}/${collectionType}/${itemId}`
 	const itemRef = ref(database, collectionPath)
 	const generalItemRef = ref(database, generalCollectionPath)
 	const itemSnapshot = await get(itemRef)
@@ -651,10 +686,10 @@ export const removeReviewItem = async (
 	itemId: string,
 	movieId: number,
 	userId: string,
-	collectionName: 'reviews' | 'replies'
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
-	const generalCollectionPath = `movies/${movieId}/${collectionName}/${itemId}`
+	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}`
+	const generalCollectionPath = `movies/${movieId}/${collectionType}/${itemId}`
 
 	const itemRef = ref(database, collectionPath)
 	const generalCollectionItemRef = ref(database, generalCollectionPath)
@@ -662,8 +697,8 @@ export const removeReviewItem = async (
 	return new Promise(async resolve => {
 		let isRemoved = false
 
-		if (collectionName === 'reviews') {
-			const repliesCollectionPath = `users/${userId}/replies/`
+		if (collectionType === 'reviews') {
+			const repliesCollectionPath = `users/${userId}/collection/replies/`
 			const repliesGeneralCollectionPath = `movies/${movieId}/replies/`
 
 			const repliesCollectionRef = ref(database, repliesCollectionPath)
@@ -679,7 +714,7 @@ export const removeReviewItem = async (
 					snapshot.forEach(childSnapshot => {
 						const reply = childSnapshot.val()
 						if (reply.reviewId === itemId) {
-							const replyPath = `users/${userId}/replies/${childSnapshot.key}`
+							const replyPath = `users/${userId}/collection/replies/${childSnapshot.key}`
 							const replyRef = ref(database, replyPath)
 							remove(replyRef)
 						}
@@ -709,7 +744,7 @@ export const removeReviewItem = async (
 		remove(itemRef).then(() => {
 			remove(generalCollectionItemRef)
 				.then(() =>
-					removeAllReactions(userId, itemId, movieId, collectionName)
+					removeAllReactions(userId, itemId, movieId, collectionType)
 				)
 				.then(() => {
 					isRemoved = true
@@ -741,11 +776,11 @@ export const getDBRepliesList = async (movieId: number, reviewId: string) => {
 	}
 }
 
-export const getDBReviewsList = async (
-	movieId: number,
-	collectionName: 'reviews' | 'replies'
+export const getReviewListFromStorage = async (
+	movieId: string,
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
-	const collectionPath = `movies/${movieId}/${collectionName}/`
+	const collectionPath = `movies/${movieId}/${collectionType}/`
 	const reviewsCollectionRef = ref(database, collectionPath)
 
 	try {
@@ -765,13 +800,13 @@ export const getDBReviewsList = async (
 
 export const reviewsListener = (
 	collectionId: number | string,
-	loadedItems: Array<IReviewCardFromDB>,
+	loadedItems: IReviewCard[],
 	setItems: ([]) => void,
-	collectionName: 'movie' | 'users'
+	collectionType: UserCollections.movie | UserCollections.users
 ) => {
 	let reviewsRef
-	if (collectionName === 'users') {
-		reviewsRef = ref(database, `users/${collectionId}/reviews/`)
+	if (collectionType === 'users') {
+		reviewsRef = ref(database, `users/${collectionId}/collection/reviews/`)
 	} else reviewsRef = ref(database, `movies/${collectionId}/reviews/`)
 
 	const onReviewAdded = (childSnapshot: DataSnapshot) => {
@@ -816,7 +851,7 @@ export const reviewsListener = (
 export const repliesListener = (
 	movieId: number,
 	reviewId: string,
-	loadedItems: Array<IReplyCard>,
+	loadedItems: IReviewCard[],
 	setItems: ([]) => void
 ) => {
 	const repliesRef = ref(database, `movies/${movieId}/replies/`)
@@ -867,7 +902,7 @@ export const collectionRepliesListener = (
 	userId: string,
 	setItems: ([]) => void
 ) => {
-	const repliesRef = ref(database, `users/${userId}/replies/`)
+	const repliesRef = ref(database, `users/${userId}/collection/replies/`)
 
 	const onReplyRemoved = (childSnapshot: DataSnapshot) => {
 		const removedItem = childSnapshot.val()
@@ -888,13 +923,13 @@ export const setNewReviewReaction = async (
 	userId: string,
 	itemId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies',
+	collectionType: UserCollections.reviews | UserCollections.replies,
 	action: 'like' | 'dislike'
 ) => {
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}/${
+	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${userId}`
-	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}/${
+	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${userId}`
 
@@ -911,7 +946,7 @@ export const setNewReviewReaction = async (
 		userId,
 		itemId,
 		movieId,
-		collectionName,
+		collectionType,
 		action === 'like' ? 'dislike' : 'like'
 	)
 }
@@ -920,14 +955,14 @@ export const removeReviewReaction = (
 	userId: string,
 	reviewId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies',
+	collectionType: UserCollections.reviews | UserCollections.replies,
 	action: 'like' | 'dislike'
 ) => {
 	const itemId = userId
-	const collectionPath = `users/${userId}/${collectionName}/${reviewId}/${
+	const collectionPath = `users/${userId}/collection/${collectionType}/${reviewId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${itemId}`
-	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${reviewId}/${
+	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${reviewId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${itemId}`
 
@@ -951,10 +986,10 @@ export const removeAllReactions = (
 	userId: string,
 	itemId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies'
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
-	const collectionPath = `users/${userId}/${collectionName}/${itemId}`
-	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}`
+	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}`
+	const generalCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}`
 
 	const itemRef = ref(database, collectionPath)
 	const generalCollectionItemRef = ref(database, generalCollectionPath)
@@ -975,16 +1010,16 @@ export const removeAllReactions = (
 export const reviewReactionsListener = (
 	reviewId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies',
+	collectionType: UserCollections.reviews | UserCollections.replies,
 	setItems: ({ likes: [], dislikes: [] }) => void
 ) => {
 	const likesCollectionRef = ref(
 		database,
-		`reviewsReactions/${movieId}/${collectionName}/${reviewId}/likes`
+		`reviewsReactions/${movieId}/${collectionType}/${reviewId}/likes`
 	)
 	const dislikesCollectionRef = ref(
 		database,
-		`reviewsReactions/${movieId}/${collectionName}/${reviewId}/dislikes`
+		`reviewsReactions/${movieId}/${collectionType}/${reviewId}/dislikes`
 	)
 
 	const likes = []
@@ -1033,10 +1068,10 @@ export const reviewReactionsListener = (
 export const getReviewReactions = async (
 	itemId: string,
 	movieId: number,
-	collectionName: 'reviews' | 'replies'
+	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
-	const likesCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}/likes/`
-	const dislikesCollectionPath = `reviewsReactions/${movieId}/${collectionName}/${itemId}/dislikes/`
+	const likesCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}/likes/`
+	const dislikesCollectionPath = `reviewsReactions/${movieId}/${collectionType}/${itemId}/dislikes/`
 	const likesCollectionRef = ref(database, likesCollectionPath)
 	const dislikesCollectionRef = ref(database, dislikesCollectionPath)
 
@@ -1099,7 +1134,7 @@ export const setNewFriend = async (newFriendId: string) => {
 	await set(friendItemRef, userId)
 }
 
-export const removeFriend = (itemId: string) => {
+export const removeFriend = (itemId: string): Promise<boolean> => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 

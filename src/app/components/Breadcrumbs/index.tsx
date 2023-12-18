@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import classNames from 'classnames'
 import { getUserInfo } from '@/firebase/config'
+import { usePathname } from 'next/navigation'
 
 const Breadcrumbs = () => {
 	const router = useRouter()
+	const pathname = usePathname()
 	const [breadcrumbs, setBreadcrumbs] = useState([])
 
 	useEffect(() => {

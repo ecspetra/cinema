@@ -29,7 +29,7 @@ const MarksCollectionWrap: FC<PropsType> = ({ items }) => {
 							key={idx}
 							itemId={item.itemId}
 							mark={item.mark}
-							type={item.type}
+							collectionType={item.type}
 							isLinkToMovie
 						/>
 					)

@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react'
-import { IMovieCard } from '../../../interfaces'
 import HomePageSliderItemsList from '@/components/HomePageSlider/HomePageSliderItemsList'
 import Image from '@/components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
@@ -7,14 +6,19 @@ import TopBanner from '@/components/TopBanner'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import Title from '@/app/components/UI/Title/Title'
 import ReactPlayer from 'react-player'
+import {
+	IFetchedResult,
+	IUpcomingMovieItem,
+	IVideoData,
+} from '../../../interfaces'
 
 type PropsType = {
-	movies: Array<IMovieCard>
+	itemsList: IFetchedResult<IUpcomingMovieItem>
 }
 
-const HomePageSlider: FC<PropsType> = ({ movies }) => {
-	const [selectedItem, setSelectedItem] = useState<IMovieCard>(
-		movies.items[0]
+const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
+	const [selectedItem, setSelectedItem] = useState<IUpcomingMovieItem>(
+		itemsList.items[0]
 	)
 	const [imageSrc, setImageSrc] = useState<string>('')
 	const [videoSrc, setVideoSrc] = useState<string>('')
@@ -23,20 +27,22 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 		const images = await fetchItemData('movie', selectedItem.id, '/images')
 		const videos = await fetchItemData('movie', selectedItem.id, '/videos')
 		const movieTeaser =
-			videos.results.length &&
+			videos.results.length > 0 &&
 			videos.results.find(
-				item =>
+				(item: IVideoData) =>
 					(item.type === 'Teaser' || item.type === 'Trailer') &&
 					item.site === 'YouTube'
 			)
-		setImageSrc(
-			images.backdrops.length ? images.backdrops[0].file_path : ''
-		)
-		setVideoSrc(movieTeaser ? movieTeaser.key : '')
+		const image = images.backdrops[0]?.file_path
+		const imageSrc = image || ''
+		const videoSrc = movieTeaser.key || ''
+
+		setImageSrc(imageSrc)
+		setVideoSrc(videoSrc)
 	}
 
 	useEffect(() => {
-		getSelectedItemImageSrc()
+		if (selectedItem) getSelectedItemImageSrc()
 	}, [selectedItem])
 
 	return (
@@ -62,9 +68,9 @@ const HomePageSlider: FC<PropsType> = ({ movies }) => {
 					/>
 				)}
 				<HomePageSliderItemsList
-					itemsList={movies.items}
-					isMoreDataAvailable={movies.isMoreDataAvailable}
-					selectedItemId={selectedItem.id}
+					itemsList={itemsList.items}
+					isMoreDataAvailable={itemsList.isMoreDataAvailable}
+					selectedItemId={selectedItem ? selectedItem.id : undefined}
 					onSelectItem={setSelectedItem}
 				/>
 			</div>

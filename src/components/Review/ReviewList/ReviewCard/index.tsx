@@ -1,9 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import {
-	IReplyCard,
-	IReviewCard,
-	IReviewCardFromDB,
-} from '../../../../../interfaces'
+import { IReviewCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
@@ -24,10 +20,11 @@ import { useAuth } from '@/context/AuthProvider'
 import Link from 'next/link'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	defaultCardMovieId: number
-	review: IReviewCard | IReviewCardFromDB
+	review: IReviewCard
 	isLinkToMovie?: boolean
 	isCollectionItem?: boolean
 }
@@ -49,7 +46,7 @@ const ReviewCard: FC<PropsType> = ({
 		movieId,
 		isTVShow,
 	} = review
-	const [replies, setReplies] = useState<Array<IReplyCard>>([])
+	const [replies, setReplies] = useState<IReviewCard[]>([])
 	const [authorInfo, setAuthorInfo] = useState({
 		userId: '',
 		photoURL: '',
@@ -180,7 +177,7 @@ const ReviewCard: FC<PropsType> = ({
 								movieId={defaultCardMovieId ?? movieId}
 								userId={userId}
 								onReply={() => setIsShowReplyForm(true)}
-								collectionName='reviews'
+								collectionType={UserCollections.reviews}
 							/>
 							<RepliesList
 								movieId={defaultCardMovieId ?? movieId}

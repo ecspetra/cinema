@@ -2,13 +2,17 @@ import { IItemCard } from '../../../../interfaces'
 import React, { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
-import { SortByOption } from '@/constants/enum'
+import { SortByOption, UserCollections } from '@/constants/enum'
 import ItemsListSort from '@/components/List/ItemsListWrap/ItemsList/ItemsListSort'
 import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
 
 type PropsType = {
 	itemsList: Array<IItemCard>
-	type: 'movie' | 'person' | 'tv'
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.basic
 	isMoreDataAvailable: boolean
 	title?: string
 	urlToFetchItems?: string
@@ -18,7 +22,7 @@ type PropsType = {
 
 const ItemsListWrap: FC<PropsType> = ({
 	itemsList,
-	type,
+	collectionType,
 	isMoreDataAvailable,
 	title,
 	urlToFetchItems,
@@ -49,7 +53,7 @@ const ItemsListWrap: FC<PropsType> = ({
 	}, [urlToFetchItems])
 
 	if (isShowEmptyList) {
-		return <EmptyList title={title} className='text-center' />
+		return <EmptyList title={title} />
 	}
 
 	return (
@@ -60,7 +64,7 @@ const ItemsListWrap: FC<PropsType> = ({
 			</div>
 			<ItemsList
 				itemsList={itemsList}
-				type={type}
+				collectionType={collectionType}
 				isMoreDataAvailable={isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable={isFilterable}

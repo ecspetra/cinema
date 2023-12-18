@@ -1,8 +1,5 @@
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import classNames from 'classnames'
-import { faDoorOpen } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { IconProp } from '@fortawesome/fontawesome-svg-core'
 
 type PropsType = {
 	error: string

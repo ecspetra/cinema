@@ -6,15 +6,10 @@ import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 
 type PropsType = {
 	items: Array<IItemCard>
-	type: string
-	isMoreDataAvailable: boolean
+	collectionType: string
 }
 
-const ItemsCollectionWrap: FC<PropsType> = ({
-	items,
-	type,
-	isMoreDataAvailable,
-}) => {
+const ItemsCollectionWrap: FC<PropsType> = ({ items, collectionType }) => {
 	const { userId } = useAuth()
 	const maxListLength = 4
 
@@ -26,23 +21,21 @@ const ItemsCollectionWrap: FC<PropsType> = ({
 						return (
 							<ItemCard
 								item={item}
-								type={type}
-								isShowButton={false}
+								collectionType={collectionType}
 								key={idx}
+								isShowButton={false}
 							/>
 						)
 					}
 				})}
 			</div>
-			{isMoreDataAvailable && (
-				<Link
-					href={`/collection/[type]?uid=${userId}&type=${type}`}
-					as={`/collection/${type}?uid=${userId}&type=${type}`}
-					className='w-72 border-2 border-rose-600 duration-300 font-semibold leading-none text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center mx-auto mt-8'
-				>
-					View all
-				</Link>
-			)}
+			<Link
+				href={`/collection/[type]?uid=${userId}&type=${collectionType}`}
+				as={`/collection/${collectionType}?uid=${userId}&type=${collectionType}`}
+				className='w-72 border-2 border-rose-600 duration-300 font-semibold leading-none text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center mx-auto mt-8'
+			>
+				{`View ${collectionType} collection`}
+			</Link>
 		</>
 	)
 }

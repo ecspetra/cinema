@@ -1,6 +1,5 @@
 import Title from '@/app/components/UI/Title/Title'
-import InputField from '@/app/components/UI/Input/InputField'
-import React, { ChangeEvent, FC, useEffect, useState } from 'react'
+import { FC, useEffect, Dispatch, useState, SetStateAction } from 'react'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
@@ -9,14 +8,18 @@ import Select from '@/app/components/UI/Input/Select'
 import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
 import { generateYearsList } from '@/handlers/generateYearsList'
-import { FilterFields, FilterUrlToSearch } from '@/constants/enum'
+import {
+	FilterFields,
+	FilterUrlToSearch,
+	UserCollections,
+} from '@/constants/enum'
 import { getCountriesList } from '@/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
 import { generateRatingList } from '@/handlers/generateRatingList'
 
 type PropsType = {
-	onApply: (formData: FilterFormData) => void
-	type: 'movie' | 'tv'
+	onApplyFilter: Dispatch<SetStateAction<string>>
+	collectionType: UserCollections.movie | UserCollections.tv
 	fields: (keyof FilterFormData)[]
 	defaultUrl: string
 }
@@ -32,7 +35,12 @@ interface FilterFormData {
 	with_keywords: Array<string>
 }
 
-const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
+const Filter: FC<PropsType> = ({
+	onApplyFilter,
+	collectionType,
+	fields,
+	defaultUrl,
+}) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
@@ -40,7 +48,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 
 	const handleResetFilter = () => {
 		setFormData({})
-		onApply(defaultUrl)
+		onApplyFilter(defaultUrl)
 	}
 
 	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
@@ -147,10 +155,10 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 
 		try {
 			if (Object.keys(formData).length === 0) {
-				onApply(defaultUrl)
+				onApplyFilter(defaultUrl)
 			} else {
 				const query = getQuery()
-				onApply(defaultUrl.concat(query))
+				onApplyFilter(defaultUrl.concat(query))
 			}
 
 			setError('')
@@ -230,7 +238,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 						tags={formData[field]}
 						onToggle={handleToggleTag}
 						name={field}
-						type={type}
+						type={collectionType}
 					/>
 				)
 		}
@@ -238,7 +246,7 @@ const Filter: FC<PropsType> = ({ onApply, type, fields, defaultUrl }) => {
 
 	useEffect(() => {
 		const fetchCountriesList = async () => {
-			const countryList = await getCountriesList(type)
+			const countryList = await getCountriesList(collectionType)
 			setCountryList(countryList)
 		}
 

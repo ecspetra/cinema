@@ -1,16 +1,23 @@
 import CollectionWrap from '@/components/Collection/CollectionWrap'
 import React, { FC } from 'react'
+import {
+	IFetchedResult,
+	IItemCard,
+	IMark,
+	IReviewCard,
+} from '../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	movies: object
-	tvShows: object
-	persons: object
-	marks: object
-	reviews: object
+	movies: IFetchedResult<IItemCard>['items'] | null
+	tvShows: IFetchedResult<IItemCard>['items'] | null
+	persons: IFetchedResult<IItemCard>['items'] | null
+	marks: IFetchedResult<IMark>['items']
+	reviews: IFetchedResult<IReviewCard>['items']
 	isCurrentUserCollection?: boolean
 }
 
-const UserCollection: FC<PropsType> = ({
+const GeneralUserCollection: FC<PropsType> = ({
 	movies,
 	tvShows,
 	persons,
@@ -22,47 +29,36 @@ const UserCollection: FC<PropsType> = ({
 		<div>
 			<CollectionWrap
 				title='Movies'
-				type='movie'
-				items={movies ? movies.items : []}
-				isMoreDataAvailable={
-					movies ? movies.isMoreDataAvailable : false
-				}
+				collectionType={UserCollections.movie}
+				items={movies ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
 			<CollectionWrap
 				title='TV shows'
-				type='tv'
-				items={tvShows ? tvShows.items : []}
-				isMoreDataAvailable={
-					tvShows ? tvShows.isMoreDataAvailable : false
-				}
+				collectionType={UserCollections.tv}
+				items={tvShows ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
 			<CollectionWrap
 				title='Persons'
-				type='person'
-				items={persons ? persons.items : []}
-				isMoreDataAvailable={
-					persons ? persons.isMoreDataAvailable : false
-				}
+				collectionType={UserCollections.person}
+				items={persons ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
 			<CollectionWrap
 				title='Marks'
-				type='marks'
-				items={marks ? marks : []}
-				isMoreDataAvailable={false}
+				collectionType={UserCollections.marks}
+				items={marks ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
 			<CollectionWrap
 				title='Reviews'
-				type='reviews'
-				items={reviews ? reviews : []}
-				isMoreDataAvailable={false}
+				collectionType={UserCollections.reviews}
+				items={reviews ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
 			/>
 		</div>
 	)
 }
 
-export default UserCollection
+export default GeneralUserCollection

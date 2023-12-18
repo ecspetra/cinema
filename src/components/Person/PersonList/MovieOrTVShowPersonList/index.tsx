@@ -5,20 +5,21 @@ import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import useItemsToShow from '@/hooks/useItemsToShow'
 import ItemCard from '@/components/List/ItemsListWrap/ItemsList/ItemCard'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	personsFromProps: Array<IItemCard>
+	itemsList: IItemCard[]
 	title: string
 }
 
-const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
+const MovieOrTVShowPersonList: FC<PropsType> = ({ itemsList, title }) => {
 	const {
 		itemsToShow,
 		getItemsToShow,
 		isShowMoreButton,
 		buttonText,
 		listRef,
-	} = useItemsToShow(personsFromProps, 8)
+	} = useItemsToShow(itemsList, 8)
 
 	if (!itemsToShow.length) {
 		return <EmptyList title={title} />
@@ -34,7 +35,7 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 							key={idx}
 							item={item}
 							isShowButton={false}
-							type='person'
+							collectionType={UserCollections.person}
 							isShowRole
 						/>
 					)
@@ -53,4 +54,4 @@ const MoviePersonsList: FC<PropsType> = ({ personsFromProps, title }) => {
 	)
 }
 
-export default MoviePersonsList
+export default MovieOrTVShowPersonList

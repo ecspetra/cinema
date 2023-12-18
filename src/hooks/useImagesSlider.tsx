@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { IBackdrop } from '../../interfaces'
 
-const useImagesSlider = (initialImages, initialIdx) => {
-	const [currentImageIdx, setCurrentImageIdx] = useState(initialIdx)
+const useImagesSlider = (initialImages: IBackdrop[], initialIdx: number) => {
+	const [currentImageIdx, setCurrentImageIdx] = useState<number>(initialIdx)
 
 	const showNextImage = () => {
 		setCurrentImageIdx(prevIdx =>

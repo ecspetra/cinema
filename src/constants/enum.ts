@@ -39,3 +39,15 @@ export enum FilterUrlToSearch {
 		FilterFields.with_keywords.toLowerCase()
 	),
 }
+
+export enum UserCollections {
+	movie = 'movie',
+	tv = 'tv',
+	person = 'person',
+	reviews = 'reviews',
+	replies = 'replies',
+	marks = 'marks',
+	users = 'users',
+	basic = 'basic',
+	friends = 'friends',
+}

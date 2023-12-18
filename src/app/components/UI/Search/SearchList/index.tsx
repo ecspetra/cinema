@@ -3,16 +3,22 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import Loader from '@/components/Loader'
 import SearchItemBasic from '@/app/components/UI/Search/SearchList/SearchItemBasic'
 import SearchItemLink from '@/app/components/UI/Search/SearchList/SearchItemLink'
+import { IItemCard } from '../../../../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	itemsList: Array<IMovieCard>
+	itemsList: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	isSearchQueryUpdate: boolean
 	urlToFetch: string
-	onSearch: () => void
+	onSelectItem: () => void
 	onClose: () => void
 	name: string
-	type?: 'basic' | 'movie' | 'tv' | 'person'
+	collectionType?:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.basic
 }
 
 const SearchList: FC<PropsType> = ({
@@ -20,10 +26,10 @@ const SearchList: FC<PropsType> = ({
 	isMoreDataAvailable,
 	isSearchQueryUpdate,
 	urlToFetch,
-	onSearch,
+	onSelectItem,
 	onClose,
 	name,
-	type = 'basic',
+	collectionType = 'basic',
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const { isLoading, items } = useInfiniteScroll(
@@ -34,7 +40,7 @@ const SearchList: FC<PropsType> = ({
 	)
 
 	const handleSelectBasicListItem = (fieldName, { id, name }) => {
-		onSearch(fieldName, { id, name })
+		onSelectItem(fieldName, { id, name })
 		onClose()
 	}
 
@@ -51,7 +57,7 @@ const SearchList: FC<PropsType> = ({
 						<span className='mt-4 mx-auto'>No results found</span>
 					)}
 					{items.map(item => {
-						switch (type) {
+						switch (collectionType) {
 							case 'basic':
 								return (
 									<SearchItemBasic
@@ -68,7 +74,7 @@ const SearchList: FC<PropsType> = ({
 									<SearchItemLink
 										key={item.id}
 										item={item}
-										type={type}
+										collectionType={collectionType}
 									/>
 								)
 						}

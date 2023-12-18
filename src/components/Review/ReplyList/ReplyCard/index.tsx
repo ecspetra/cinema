@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { IReplyCard } from '../../../../../interfaces'
+import { IReviewCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
@@ -11,11 +11,12 @@ import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	movieId: number
 	userId: string
-	reply: IReplyCard
+	reply: IReviewCard
 	onReply: (userName: string) => void
 	isCollectionItem?: boolean
 }
@@ -167,7 +168,7 @@ const ReplyCard: FC<PropsType> = ({
 								reviewId={id}
 								movieId={movieId}
 								userId={userId}
-								collectionName='replies'
+								collectionType={UserCollections.replies}
 								onReply={() => onReply(authorInfo.displayName)}
 							/>
 						</>

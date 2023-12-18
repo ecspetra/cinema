@@ -1,4 +1,12 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import {
+	FC,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useRef,
+	useState,
+	FormEvent,
+} from 'react'
 import { faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
@@ -12,24 +20,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type PropsType = {
 	name: string
-	type: string
+	collectionType: string
 	label: string
 	urlToFetch: string
 	defaultUrlToFetch: string
-	onSearch: () => void
-	isApplied?: boolean
-	isWrapped?: boolean
+	onSearch: Dispatch<SetStateAction<string>>
+	isSearchApplied?: boolean
+	isSearchFieldWrapped?: boolean
 }
 
 const Search: FC<PropsType> = ({
 	name,
-	type,
+	collectionType,
 	label,
 	urlToFetch,
 	defaultUrlToFetch,
 	onSearch,
-	isApplied = false,
-	isWrapped = false,
+	isSearchApplied = false,
+	isSearchFieldWrapped = false,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -47,7 +55,7 @@ const Search: FC<PropsType> = ({
 		'{searchQuery}',
 		searchQuery
 	)
-	const isShowClearButton = searchQuery.length > 0 || isApplied
+	const isShowClearButton = searchQuery.length > 0 || isSearchApplied
 
 	const handleInputChange = event => {
 		setSearchQuery(event.target.value)
@@ -66,7 +74,7 @@ const Search: FC<PropsType> = ({
 		setSearchQuery('')
 	}
 
-	const handleSearch = async (event: React.FormEvent) => {
+	const handleSearch = async (event: FormEvent) => {
 		event.preventDefault()
 
 		const isFormValid = searchQuery.length > 0
@@ -128,7 +136,7 @@ const Search: FC<PropsType> = ({
 					icon={faMagnifyingGlass}
 					placeholder='Search'
 				/>
-				{isWrapped && (
+				{isSearchFieldWrapped && (
 					<div className='absolute inset-y-1/2 -translate-y-1/2 right-4 flex justify-end items-center gap-4'>
 						<Button type='submit' context='text'>
 							{isLoading ? <Loader type='static' /> : 'Submit'}
@@ -146,11 +154,11 @@ const Search: FC<PropsType> = ({
 			</div>
 			{isOpen && (
 				<SearchList
-					type={type}
+					collectionType={collectionType}
 					itemsList={results}
 					isMoreDataAvailable={isMoreDataAvailable}
 					urlToFetch={urlToFetchWithSearchQuery}
-					onSearch={onSearch}
+					onSelectItem={onSearch}
 					name={name}
 					onClose={resetSearch}
 					isSearchQueryUpdate={isSearchQueryUpdate}
@@ -161,7 +169,7 @@ const Search: FC<PropsType> = ({
 
 	return (
 		<>
-			{isWrapped ? (
+			{isSearchFieldWrapped ? (
 				<form className='mb-4 bg-gray-950' onSubmit={handleSearch}>
 					{search}
 					{error && (

@@ -1,27 +1,42 @@
-export const getResultsByPage = async (link, page, signal = null) => {
+import { IFetchedResult, IItemCard, IUpcomingMovieItem } from '../../interfaces'
+import { createItemCard } from '@/handlers/createItemCard'
+
+export const getResultsByPage = async (
+	url: string,
+	page: number,
+	signal = null
+): Promise<IFetchedResult<IItemCard>> => {
 	const options = signal ? { signal } : {}
 
 	try {
-		const defaultResponse = await fetch(
-			link.replace('{currentPage}', page),
+		const basicResponse = await fetch(
+			url.replace('{currentPage}', page.toString()),
 			options
 		)
-
 		const nextResponse = await fetch(
-			link.replace('{currentPage}', page + 1)
+			url.replace('{currentPage}', (page + 1).toString())
 		)
 
-		const result = await defaultResponse.json()
+		if (!basicResponse.ok) {
+			throw `Failed to fetch`
+		}
+
+		const basicResult = await basicResponse.json()
 		const nextResult = await nextResponse.json()
 
-		return {
-			items: result.results,
-			isMoreDataAvailable: !!nextResult.results.length,
+		try {
+			const resultCards = (await createItemCard(
+				basicResult.results
+			)) as IItemCard[]
+
+			return {
+				items: resultCards,
+				isMoreDataAvailable: !!nextResult.results.length,
+			}
+		} catch (error) {
+			throw error
 		}
 	} catch (error) {
-		return {
-			items: [],
-			isMoreDataAvailable: false,
-		}
+		throw error
 	}
 }

@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { IBackdrop, IItemCard, ITVSeasonCard } from '../../interfaces'
+import { IBackdrop, ITVSeasonCard } from '../../interfaces'
 import useScrollToTop from '@/hooks/useScrollToTop'
 
+type ItemsType = IBackdrop[] | ITVSeasonCard[]
+
 const useItemsToShow = (
-	initialItems,
-	initialItemsLength,
-	scrollHeight = 100
+	initialItems: ItemsType,
+	initialItemsLength: number,
+	scrollHeight: number = 100
 ) => {
-	const [itemsToShow, setItemsToShow] = useState<
-		Array<IBackdrop | ITVSeasonCard | IItemCard>
-	>([])
+	const [itemsToShow, setItemsToShow] = useState<ItemsType>([])
 	const { listRef, scrollToTop } = useScrollToTop(scrollHeight)
 	const isAllDataVisible = itemsToShow.length > initialItemsLength
 	const isShowMoreButton = initialItems.length > initialItemsLength

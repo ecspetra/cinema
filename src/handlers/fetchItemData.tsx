@@ -1,14 +1,26 @@
 import { URL_TO_FETCH_ITEM_DATA } from '@/constants/linksToFetch'
 
 export const fetchItemData = async (
-	listName: string,
-	itemId: number,
+	collectionType: string,
+	itemId: number | string,
 	queryParam: string
-) => {
-	const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace('{listName}', listName)
-		.replace('{itemId}', itemId)
-		.replace('{queryParam}', queryParam)
+): Promise<any> => {
+	try {
+		const urlToFetch = URL_TO_FETCH_ITEM_DATA.replace(
+			'{collectionType}',
+			collectionType
+		)
+			.replace('{itemId}', itemId.toString())
+			.replace('{queryParam}', queryParam)
 
-	const response = await fetch(urlToFetch)
-	return await response.json()
+		const response = await fetch(urlToFetch)
+
+		if (!response.ok) {
+			throw `Failed to fetch`
+		}
+
+		return await response.json()
+	} catch (error) {
+		throw error
+	}
 }

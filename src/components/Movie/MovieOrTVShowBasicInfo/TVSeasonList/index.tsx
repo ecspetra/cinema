@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { ITVSeasonCard } from '../../../../../interfaces'
-import TVSeasonCard from '@/components/Movie/MovieInfo/TVSeasonsList/TVSeasonCard'
+import TVSeasonCard from './TVSeasonCard'
 import Title from '@/app/components/UI/Title/Title'
 import useItemsToShow from '@/hooks/useItemsToShow'
 import Button from '@/app/components/UI/Button'

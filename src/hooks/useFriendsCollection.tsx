@@ -8,8 +8,11 @@ import {
 	showErrorNotification,
 	showSuccessNotification,
 } from '@/handlers/handleModals'
+import { IFullUserInfo, IUser } from '../../interfaces'
 
-export const useFriendsCollection = (itemInfo: object) => {
+export const useFriendsCollection = (
+	itemInfo: IFullUserInfo['info'] | null
+) => {
 	const [isFriend, setIsFriend] = useState<boolean>(false)
 	const [isLoadingFriends, setIsLoadingFriends] = useState<boolean>(true)
 	const { showModal, hideModal } = useModal()
@@ -44,7 +47,7 @@ export const useFriendsCollection = (itemInfo: object) => {
 		} else openLoginModal(showModal)
 	}
 
-	const handleRemoveFriend = (userId, modalId) => {
+	const handleRemoveFriend = (userId: string, modalId: string) => {
 		hideModal(modalId)
 		setIsLoadingFriends(true)
 
@@ -67,7 +70,10 @@ export const useFriendsCollection = (itemInfo: object) => {
 		}, 500)
 	}
 
-	const openConfirmationPopup = (userInfo, modalId = null) => {
+	const openConfirmationPopup = (
+		userInfo: IUser,
+		modalId: string | null = null
+	) => {
 		if (modalId) {
 			hideModal(modalId)
 		}

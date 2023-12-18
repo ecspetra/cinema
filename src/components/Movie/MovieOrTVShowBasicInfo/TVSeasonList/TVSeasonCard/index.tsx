@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import defaultMovieImage from '../../../../../app/assets/images/default-movie-image.svg'
-import Image from '../../../../Images/Image/index'
+import Image from '../../../../Images/Image'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ITVSeasonCard } from '../../../../../../interfaces'

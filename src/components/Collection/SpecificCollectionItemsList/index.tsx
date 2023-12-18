@@ -7,16 +7,20 @@ import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
 import EmptyList from '@/components/List/EmptyList'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	type: 'movie' | 'person' | 'tv'
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 	items: Array<IItemCard>
 	isMoreDataAvailable: boolean
 	title: string
 }
 
-const CollectionItemsList: FC<PropsType> = ({
-	type,
+const SpecificCollectionItemsList: FC<PropsType> = ({
+	collectionType,
 	items,
 	isMoreDataAvailable,
 	title,
@@ -32,7 +36,7 @@ const CollectionItemsList: FC<PropsType> = ({
 		setIsLoading(true)
 		const result = await getCollectionItemsList(
 			userId,
-			type,
+			collectionType,
 			20,
 			lastItemId
 		)
@@ -45,7 +49,7 @@ const CollectionItemsList: FC<PropsType> = ({
 	useEffect(() => {
 		const unsubscribe = collectionListener(
 			userId,
-			type,
+			collectionType,
 			itemsToShow,
 			setItemsToShow,
 			setIsShowMoreButton
@@ -86,7 +90,7 @@ const CollectionItemsList: FC<PropsType> = ({
 						<ItemCard
 							key={item.id}
 							item={item}
-							type={type}
+							collectionType={collectionType}
 							isCollectionListItem
 						/>
 					)
@@ -110,4 +114,4 @@ const CollectionItemsList: FC<PropsType> = ({
 	)
 }
 
-export default CollectionItemsList
+export default SpecificCollectionItemsList

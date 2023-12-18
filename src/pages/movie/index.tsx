@@ -2,7 +2,7 @@ import {
 	URL_TO_SEARCH,
 	URL_TO_SEARCH_LIST_ITEMS,
 } from '@/constants/linksToFetch'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
@@ -11,48 +11,58 @@ import Filter from '@/app/components/Filter'
 import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import Title from '@/app/components/UI/Title/Title'
+import { UserCollections } from '@/constants/enum'
+import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
+import { IFetchedResult, IItemCard } from '../../../interfaces'
+import useGeneralListPageFetch from '@/hooks/useGeneralListPageFetch'
 
-const Movies = ({ results }) => {
+const GeneralMovieListPage = ({
+	movieListFromProps,
+}: {
+	movieListFromProps: IFetchedResult<IItemCard>
+}) => {
 	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
 		'{type}',
-		'movie'
+		UserCollections.movie
 	)
-	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'movie')
-	const [defaultMovieList, setDefaultMovieList] = useState(null)
-	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
-	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
+	const defaultUrlToSearch = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		UserCollections.movie
+	)
 
-	useEffect(() => {
-		if (!results) {
-			getResultsByPage(urlToFetch, 1).then(data => {
-				setDefaultMovieList(data)
-			})
-		}
-	}, [])
+	const [urlToFetch, setUrlToFetch] = useState<string>(defaultUrlToFetch)
+	const isDefaultListPresented = urlToFetch.includes(defaultUrlToFetch)
 
-	useEffect(() => {
-		setDefaultMovieList(results)
-	}, [results])
+	const { items, isLoading } = useGeneralListPageFetch(
+		movieListFromProps,
+		urlToFetch
+	)
 
-	if (!defaultMovieList) return <Loader />
+	if (!items) {
+		return isLoading ? (
+			<Loader className='bg-transparent' />
+		) : (
+			<ErrorScreen title='Something went wrong' text='No data found' />
+		)
+	}
 
 	return (
 		<>
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>Movies</Title>
 			<Search
-				type='movie'
+				collectionType={UserCollections.movie}
 				name='movieSearch'
 				label='Search movie'
 				urlToFetch={defaultUrlToSearch}
 				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
-				isApplied={!isDefaultList}
-				isWrapped
+				isSearchApplied={!isDefaultListPresented}
+				isSearchFieldWrapped
 			/>
 			<Filter
-				type='movie'
-				onApply={setUrlToFetch}
+				collectionType={UserCollections.movie}
+				onApplyFilter={setUrlToFetch}
 				fields={[
 					'primary_release_year',
 					'vote_average.lte',
@@ -65,9 +75,9 @@ const Movies = ({ results }) => {
 				defaultUrl={defaultUrlToFetch}
 			/>
 			<ItemsListWrap
-				itemsList={defaultMovieList.items}
-				type='movie'
-				isMoreDataAvailable={defaultMovieList.isMoreDataAvailable}
+				itemsList={items.items}
+				collectionType={UserCollections.movie}
+				isMoreDataAvailable={items.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable
 				isSortable
@@ -79,22 +89,22 @@ const Movies = ({ results }) => {
 export const getServerSideProps = async () => {
 	try {
 		const defaultMovies = await getResultsByPage(
-			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'movie'),
+			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', UserCollections.movie),
 			1
 		)
 
 		return {
 			props: {
-				results: defaultMovies,
+				movieListFromProps: defaultMovies,
 			},
 		}
 	} catch (error) {
 		return {
 			props: {
-				results: null,
+				movieListFromProps: null,
 			},
 		}
 	}
 }
 
-export default Movies
+export default GeneralMovieListPage

@@ -3,10 +3,10 @@ import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { updateReviewItem } from '@/firebase/config'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { IReplyCard, IReviewCardFromDB } from '../../../../../interfaces'
+import { IReviewCard } from '../../../../../interfaces'
 
 type PropsType = {
-	item: IReviewCardFromDB | IReplyCard
+	item: IReviewCard
 	movieId: number
 	onFormClose: React.Dispatch<React.SetStateAction<boolean>>
 	isReply?: boolean
@@ -33,7 +33,7 @@ const EditReviewForm: FC<PropsType> = ({
 		if (textareaValue.trim() !== '') {
 			setError('')
 
-			let updatedItem: IReviewCardFromDB | IReplyCard
+			let updatedItem: IReviewCard
 
 			if (isReply) {
 				updatedItem = {

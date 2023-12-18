@@ -12,14 +12,14 @@ import {
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
-import { IMarkFromDB } from '../../../interfaces'
+import { IMark, IMarkFromDB } from '../../../interfaces'
 
 type PropsType = {
 	itemId: number
-	type: string
+	collectionType: string
 }
 
-const Mark: FC<PropsType> = ({ itemId, type }) => {
+const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
@@ -33,14 +33,14 @@ const Mark: FC<PropsType> = ({ itemId, type }) => {
 	const handleSetNewMark = (mark: number) => {
 		if (isLoggedIn) {
 			setIsLoadingMark(true)
-			const itemData = {
+			const itemData: IMark = {
 				id: itemId,
 				mark: mark,
-				type: type,
+				type: collectionType,
 			}
 			setNewMarkForMovie(itemData, userId)
 				.then(() => {
-					getMarkForMovie(itemId, userId, type)
+					getMarkForMovie(itemId, userId, collectionType)
 						.then(data => {
 							setMarkData(data)
 							setIsLoadingMark(false)
@@ -116,7 +116,7 @@ const Mark: FC<PropsType> = ({ itemId, type }) => {
 
 	const handleRemoveMyMark = (markKey: string, userId: string) => {
 		setIsLoadingMark(true)
-		removeMarkForMovie(markKey, userId, type)
+		removeMarkForMovie(markKey, userId, collectionType)
 			.then(() => {
 				setMarkData(null)
 				getEmptyMarkIcons()
@@ -129,7 +129,7 @@ const Mark: FC<PropsType> = ({ itemId, type }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, type).then(data => {
+			getMarkForMovie(itemId, userId, collectionType).then(data => {
 				setMarkData(data)
 			})
 		} else getEmptyMarkIcons()

@@ -1,8 +1,11 @@
 import { URL_TO_FETCH_ALL_GENRES } from '@/constants/linksToFetch'
+import { ITag } from '../../interfaces'
 
-export const getAllGenres = async type => {
+type GenresType = 'movie' | 'tv' | 'all'
+
+export const getAllGenres = async (type: GenresType) => {
 	let genres
-	const getGenres = async type => {
+	const getGenres = async (type: GenresType) => {
 		const response = await fetch(
 			URL_TO_FETCH_ALL_GENRES.replace(`{queryParam}`, type)
 		)
@@ -20,10 +23,17 @@ export const getAllGenres = async type => {
 		case 'all':
 			const movieGenres = await getGenres('movie')
 			const tvGenres = await getGenres('tv')
-			const allGenres = [
-				...new Set([...movieGenres, ...tvGenres].map(JSON.stringify)),
-			].map(JSON.parse)
-
-			return allGenres
+			const mergedGenres = [
+				...movieGenres,
+				...tvGenres.filter(
+					(tvGenre: ITag) =>
+						!movieGenres.some(
+							(movieGenre: ITag) => tvGenre.id === movieGenre.id
+						)
+				),
+			]
+			return mergedGenres.map((genre: any) =>
+				JSON.parse(JSON.stringify(genre))
+			)
 	}
 }

@@ -2,7 +2,7 @@ import {
 	URL_TO_SEARCH,
 	URL_TO_SEARCH_LIST_ITEMS,
 } from '@/constants/linksToFetch'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
@@ -11,45 +11,58 @@ import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import Filter from '@/app/components/Filter'
 import Title from '@/app/components/UI/Title/Title'
+import { UserCollections } from '@/constants/enum'
+import { IFetchedResult, IItemCard } from '../../../interfaces'
+import useGeneralListPageFetch from '@/hooks/useGeneralListPageFetch'
+import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
 
-const TVShows = ({ results }) => {
-	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv')
-	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'tv')
-	const [defaultTvShowsList, setDefaultTvShowsList] = useState(null)
-	const [urlToFetch, setUrlToFetch] = useState(defaultUrlToFetch)
-	const isDefaultList = urlToFetch.includes(defaultUrlToFetch)
+const GeneralTVShowListPage = ({
+	tvShowListFromProps,
+}: {
+	tvShowListFromProps: IFetchedResult<IItemCard>
+}) => {
+	const defaultUrlToFetch = URL_TO_SEARCH_LIST_ITEMS.replace(
+		'{type}',
+		UserCollections.tv
+	)
+	const defaultUrlToSearch = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		UserCollections.tv
+	)
 
-	useEffect(() => {
-		if (!results) {
-			getResultsByPage(urlToFetch, 1).then(data => {
-				setDefaultTvShowsList(data)
-			})
-		}
-	}, [])
+	const [urlToFetch, setUrlToFetch] = useState<string>(defaultUrlToFetch)
+	const isDefaultListPresented = urlToFetch.includes(defaultUrlToFetch)
 
-	useEffect(() => {
-		setDefaultTvShowsList(results)
-	}, [results])
+	const { items, isLoading } = useGeneralListPageFetch(
+		tvShowListFromProps,
+		urlToFetch
+	)
 
-	if (!defaultTvShowsList) return <Loader />
+	if (!items) {
+		return isLoading ? (
+			<Loader className='bg-transparent' />
+		) : (
+			<ErrorScreen title='Something went wrong' text='No data found' />
+		)
+	}
 
 	return (
 		<>
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>TV shows</Title>
 			<Search
-				type='tv'
+				collectionType={UserCollections.tv}
 				name='tvShowsSearch'
 				label='Search TV shows'
 				urlToFetch={defaultUrlToSearch}
 				defaultUrlToFetch={defaultUrlToFetch}
 				onSearch={setUrlToFetch}
-				isApplied={!isDefaultList}
-				isWrapped
+				isSearchApplied={!isDefaultListPresented}
+				isSearchFieldWrapped
 			/>
 			<Filter
-				type='tv'
-				onApply={setUrlToFetch}
+				collectionType={UserCollections.tv}
+				onApplyFilter={setUrlToFetch}
 				fields={[
 					'first_air_date_year',
 					'vote_average.lte',
@@ -61,9 +74,9 @@ const TVShows = ({ results }) => {
 				defaultUrl={defaultUrlToFetch}
 			/>
 			<ItemsListWrap
-				itemsList={defaultTvShowsList.items}
-				type='tv'
-				isMoreDataAvailable={defaultTvShowsList.isMoreDataAvailable}
+				itemsList={items.items}
+				collectionType={UserCollections.tv}
+				isMoreDataAvailable={items.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isSortable
 				isFilterable
@@ -93,4 +106,4 @@ export const getServerSideProps = async () => {
 	}
 }
 
-export default TVShows
+export default GeneralTVShowListPage

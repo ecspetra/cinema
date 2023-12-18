@@ -1,3 +1,10 @@
+import { UserCollections } from '@/constants/enum'
+
+export interface IFetchedResult<T> {
+	isMoreDataAvailable: boolean
+	items: T[]
+}
+
 export interface ITag {
 	id: number
 	name: string
@@ -5,6 +12,12 @@ export interface ITag {
 
 export interface IBackdrop {
 	file_path: string
+}
+
+export interface IVideoData {
+	key: string
+	type: string
+	site: string
 }
 
 export interface IPersonImage {
@@ -21,65 +34,21 @@ export interface IMarkFromDB {
 
 export interface IMark {
 	mark: number
-	movieId: number
-	isTVShow: boolean
+	itemId: number
+	type: UserCollections.movie | UserCollections.tv
 }
 
 export interface IReviewCard {
-	author: string
 	id: string
 	content: string
 	created_at: string
-	avatar_path: string
-}
-
-export interface IReviewCardFromDB {
-	movieId: number
-	id: string
-	content: string
-	created_at: string
-	authorId: string
-	isTVShow: boolean
-}
-
-export interface IReplyCard {
-	movieId: number
-	replyTo: string
-	reviewId: string
-	id: string
-	content: string
-	created_at: string
-	authorId: string
-	isTVShow: boolean
-}
-
-export interface IMovieInfo {
-	id: number
-	poster_path: string
-	title: string
-	tagline: string
-	genres: Array<ITag>
-	release_date: string
-	production_countries: Array<object>
-	production_companies: Array<object>
-	overview: string
-	vote_average: number
-	vote_count: number
-}
-
-export interface ITVShowInfo {
-	id: number
-	poster_path: string
-	name: string
-	tagline: string
-	genres: Array<ITag>
-	first_air_date: string
-	production_countries: Array<object>
-	production_companies: Array<object>
-	overview: string
-	vote_average: number
-	vote_count: number
-	seasons: Array<ITVSeasonCard>
+	author?: string
+	avatar_path?: string
+	movieId?: number
+	authorId?: string
+	isTVShow?: boolean
+	replyTo?: string
+	reviewId?: string
 }
 
 export interface IItemCard {
@@ -93,9 +62,17 @@ export interface IItemCard {
 	title?: string
 	name?: string
 	genres?: Array<ITag>
+	genre_ids?: Array<number>
 	known_for_department?: string
 	character?: string
 	job?: string
+}
+
+export interface IUpcomingMovieItem {
+	id: number
+	release_date?: string
+	title?: string
+	genres?: Array<ITag>
 }
 
 export interface ITVSeasonCard {
@@ -108,8 +85,25 @@ export interface ITVSeasonCard {
 	vote_average: number
 }
 
-export interface IPersonInfo {
+export interface IMovieOrTVShowBasicInfo {
 	id: number
+	poster_path: string
+	tagline: string
+	genres: Array<ITag>
+	production_countries: Array<object>
+	production_companies: Array<object>
+	overview: string
+	vote_average: number
+	vote_count: number
+	release_date?: string
+	first_air_date?: string
+	title?: string
+	name?: string
+	seasons?: Array<ITVSeasonCard>
+}
+
+export interface IPersonInfo {
+	id: string
 	profile_path: string
 	known_for_department: string
 	name: string
@@ -122,12 +116,56 @@ export interface IPersonInfo {
 
 export interface IModalContent {
 	id: string
-	modalTitle: string
-	modalText: string
-	modalClassName: string
-	modalContent: JSX.Element | null
-	alertInfo: {
+	modalTitle?: string
+	modalText?: string
+	modalClassName?: string
+	modalContent?: JSX.Element | null
+	alertInfo?: {
 		isAlert: boolean
-		type: 'success' | 'error' | ''
+		type: 'success' | 'error'
 	} | null
+}
+
+export interface ICountry {
+	iso_3166_1: string
+	english_name: string
+	native_name: string
+}
+
+export interface IDefaultImage {
+	src: string
+}
+
+export interface IGeneralCollection {
+	collectionMovies: IItemCard[]
+	collectionTVShows: IItemCard[]
+	collectionPersons: IItemCard[]
+	allCollectionReviews: IReviewCard[]
+	collectionMarks: IMark[]
+}
+
+export interface IUser {
+	id: string
+	displayName: string
+	email: string
+	photoURL: string
+	country?: string
+	dateOfBirth?: string
+	about?: string
+	favoriteGenres?: ITag[]
+}
+
+export interface IFullUserInfo {
+	friends: IFullUserInfo[]
+	info: IUser
+	collection: IGeneralCollection | null
+}
+
+export interface IMovieOrTVShowData {
+	basicInfo: IMovieOrTVShowBasicInfo
+	credits: { cast: IItemCard[]; crew: IItemCard[] }
+	images: IBackdrop[]
+	video: IVideoData[]
+	reviewsFromAPIAndStorage: IReviewCard[]
+	similarItemsList: IFetchedResult<IItemCard>
 }

@@ -2,7 +2,7 @@ import {
 	URL_TO_FETCH_PERSON_LIST,
 	URL_TO_SEARCH,
 } from '@/constants/linksToFetch'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Loader from '@/components/Loader'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import TopBanner from '@/components/TopBanner'
@@ -10,45 +10,54 @@ import ItemsListWrap from '@/components/List/ItemsListWrap'
 import Search from '@/app/components/UI/Search'
 import { PERSON_LIST_TOP_BANNER_IMAGE } from '@/constants/images'
 import Title from '@/app/components/UI/Title/Title'
+import { UserCollections } from '@/constants/enum'
+import useGeneralListPageFetch from '@/hooks/useGeneralListPageFetch'
+import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
+import { IFetchedResult, IItemCard } from '../../../interfaces'
 
-const Persons = ({ results }) => {
+const GeneralPersonListPage = ({
+	personListFromProps,
+}: {
+	personListFromProps: IFetchedResult<IItemCard>
+}) => {
 	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
-	const [defaultPersonList, setDefaultPersonList] = useState(null)
-	const [urlToFetch, setUrlToFetch] = useState(URL_TO_FETCH_PERSON_LIST)
-	const isDefaultList = urlToFetch.includes(URL_TO_FETCH_PERSON_LIST)
 
-	useEffect(() => {
-		if (!results) {
-			getResultsByPage(urlToFetch, 1).then(data => {
-				setDefaultPersonList(data)
-			})
-		}
-	}, [])
+	const [urlToFetch, setUrlToFetch] = useState<string>(
+		URL_TO_FETCH_PERSON_LIST
+	)
+	const isDefaultListPresented = urlToFetch.includes(URL_TO_FETCH_PERSON_LIST)
 
-	useEffect(() => {
-		setDefaultPersonList(results)
-	}, [results])
+	const { items, isLoading } = useGeneralListPageFetch(
+		personListFromProps,
+		urlToFetch
+	)
 
-	if (!defaultPersonList) return <Loader />
+	if (!items) {
+		return isLoading ? (
+			<Loader className='bg-transparent' />
+		) : (
+			<ErrorScreen title='Something went wrong' text='No data found' />
+		)
+	}
 
 	return (
 		<>
 			<TopBanner imageSrc={PERSON_LIST_TOP_BANNER_IMAGE} />
 			<Title className='text-7xl after:hidden pb-0'>Persons</Title>
 			<Search
-				type='person'
+				collectionType={UserCollections.person}
 				name='personSearch'
 				label='Search person'
 				urlToFetch={defaultUrlToSearch}
 				defaultUrlToFetch={URL_TO_FETCH_PERSON_LIST}
 				onSearch={setUrlToFetch}
-				isApplied={!isDefaultList}
-				isWrapped
+				isSearchApplied={!isDefaultListPresented}
+				isSearchFieldWrapped
 			/>
 			<ItemsListWrap
-				itemsList={defaultPersonList.items}
-				type='person'
-				isMoreDataAvailable={defaultPersonList.isMoreDataAvailable}
+				itemsList={items.items}
+				collectionType={UserCollections.person}
+				isMoreDataAvailable={items.isMoreDataAvailable}
 				urlToFetchItems={urlToFetch}
 				isFilterable
 			/>
@@ -77,4 +86,4 @@ export const getServerSideProps = async () => {
 	}
 }
 
-export default Persons
+export default GeneralPersonListPage
