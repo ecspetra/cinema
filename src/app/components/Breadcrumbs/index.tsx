@@ -5,6 +5,7 @@ import { fetchItemData } from '@/handlers/fetchItemData'
 import classNames from 'classnames'
 import { getUserInfo } from '@/firebase/config'
 import { usePathname } from 'next/navigation'
+import { AUTH_PAGE } from '@/constants/paths'
 
 const Breadcrumbs = () => {
 	const router = useRouter()
@@ -66,10 +67,10 @@ const Breadcrumbs = () => {
 		getBreadcrumbs()
 	}, [router.asPath, router.query.id])
 
-	if (breadcrumbs.length === 1) return null
+	if (breadcrumbs.length === 1 || pathname === AUTH_PAGE) return null
 
 	return (
-		<nav>
+		<nav className='mt-2'>
 			{breadcrumbs.map((item, idx) => (
 				<span
 					key={idx}

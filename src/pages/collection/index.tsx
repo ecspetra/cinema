@@ -28,7 +28,6 @@ const GeneralCollectionPage = ({
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { userId } = useAuth()
-
 	useEffect(() => {
 		const getGeneralCollection = async () => {
 			setIsLoading(true)
@@ -53,7 +52,7 @@ const GeneralCollectionPage = ({
 				? setGeneralCollection(generalCollectionPageProps)
 				: getGeneralCollection()
 		}
-	}, [generalCollectionPageProps, userId])
+	}, [generalCollectionPageProps, router.query.uid])
 
 	if (!userId) {
 		return (
@@ -104,7 +103,7 @@ const GeneralCollectionPage = ({
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const userIdFromUrl = ctx.query.uid as string
-	const cookies = parseCookies(ctx.req!)
+	const cookies = await parseCookies(ctx.req!)
 	const userId = cookies.uid
 
 	const generalCollection = await getGeneralCollectionPage(

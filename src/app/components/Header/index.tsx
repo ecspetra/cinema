@@ -25,18 +25,21 @@ const Header = () => {
 
 	const handleSignOutUser = async () => {
 		await signOutUser()
+
 		if (pathname.startsWith(COLLECTION_PAGE)) {
 			await router.push(COLLECTION_PAGE)
 		} else if (pathname === PROFILE_PAGE.replace('{userId}', userId)) {
 			await router.push(AUTH_PAGE)
+		} else {
+			router.reload()
 		}
 	}
 
 	if (pathname === '/404') return null
 
 	return (
-		<header className='fixed top-0 left-0 w-full z-20 bg-gray-950'>
-			<div className='max-w-screen-xl mx-auto py-3 px-5'>
+		<header className='min-h-[68px] fixed top-0 left-0 w-full z-20 bg-gray-950 flex items-center justify-between'>
+			<div className='w-full max-w-screen-xl mx-auto py-3 px-5'>
 				<div className='flex justify-between items-center gap-4'>
 					<Logo />
 					<div className='flex justify-center items-center gap-4'>

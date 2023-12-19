@@ -73,7 +73,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
 		| UserCollections.tv
 		| UserCollections.person
 
-	const cookies = parseCookies(ctx.req!)
+	const cookies = await parseCookies(ctx.req!)
 	const userId = cookies.uid
 
 	const collectionItemsList = await getSpecificCollectionPage(

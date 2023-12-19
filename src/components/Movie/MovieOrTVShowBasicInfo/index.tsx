@@ -19,13 +19,14 @@ import ReactPlayer from 'react-player'
 import TVSeasonsList from '@/components/Movie/MovieOrTVShowBasicInfo/TVSeasonList'
 import TagList from '@/components/Tag/TagList'
 import DetailsList from '@/components/Details/DetailsList'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	basicInfo: IMovieOrTVShowBasicInfo
 	movieImages: Array<IBackdrop>
 	movieReviews: IReviewCard[]
 	movieVideo: string
-	collectionType: string
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
 const MovieOrTVShowBasicInfo: FC<PropsType> = ({

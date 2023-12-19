@@ -1,8 +1,15 @@
-export const getCollectionLink = userId => {
-	return userId ? `/collection?uid=${userId}` : `/collection`
+import {
+	COLLECTION_PAGE,
+	CURRENT_USER_COLLECTION_PAGE,
+} from '@/constants/paths'
+
+export const getCollectionLink = (userId: string | undefined) => {
+	return userId === undefined
+		? COLLECTION_PAGE
+		: CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId)
 }
 
-export const createRoutes = userId => [
+export const createRoutes = (userId: string | undefined) => [
 	{
 		name: 'Library',
 		href: getCollectionLink(userId),

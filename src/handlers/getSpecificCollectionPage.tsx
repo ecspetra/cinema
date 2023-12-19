@@ -12,18 +12,18 @@ export const getSpecificCollectionPage = async (
 	const areBothIdsNotPresented = !userId && !userIdFromUrl
 
 	if (areBothIdsNotPresented) {
-		return null
+		redirect('/404')
 	}
 
 	const isOneOfIdsNotPresented = !userId || !userIdFromUrl
 	const areUserIdsPresentedButDifferent =
 		userId && userIdFromUrl && userId !== userIdFromUrl
 
-	const isShowNotFoundPage =
+	const isRedirectToGeneralCollectionPage =
 		areUserIdsPresentedButDifferent || isOneOfIdsNotPresented
 
-	if (isShowNotFoundPage) {
-		redirect('/404')
+	if (isRedirectToGeneralCollectionPage) {
+		redirect(CURRENT_USER_COLLECTION_PAGE.replace('{userId}', userId!))
 	}
 
 	try {
