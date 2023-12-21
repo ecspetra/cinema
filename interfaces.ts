@@ -169,3 +169,8 @@ export interface IMovieOrTVShowData {
 	reviewsFromAPIAndStorage: IReviewCard[]
 	similarItemsList: IFetchedResult<IItemCard>
 }
+
+export interface IItemCountry {
+	iso_3166_1: string
+	english_name: string
+}

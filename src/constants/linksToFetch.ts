@@ -8,3 +8,4 @@ export const URL_TO_FETCH_MOVIES_WITH_PERSONS = `https://api.themoviedb.org/3/di
 export const URL_TO_FETCH_COUNTRIES = `https://api.themoviedb.org/3/configuration/countries?api_key=${API_KEY}&language=en-US`
 export const URL_TO_SEARCH = `https://api.themoviedb.org/3/search/{fieldName}?api_key=${API_KEY}&query={searchQuery}&page={currentPage}`
 export const URL_TO_SEARCH_LIST_ITEMS = `https://api.themoviedb.org/3/discover/{type}?api_key=${API_KEY}&page={currentPage}&sort_by=popularity.desc`
+export const URL_TO_FETCH_COUNTRY_MOVIE_LIST = `https://api.themoviedb.org/3/discover/{type}?api_key=${API_KEY}&with_original_language={country}`

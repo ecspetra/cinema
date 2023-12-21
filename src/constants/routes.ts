@@ -23,7 +23,7 @@ export const createRoutes = (userId: string | undefined) => [
 		href: '/movie',
 	},
 	{
-		name: 'TV',
+		name: 'TV shows',
 		href: '/tv',
 	},
 ]

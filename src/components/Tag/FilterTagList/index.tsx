@@ -3,10 +3,15 @@ import Tag from '@/components/Tag'
 import { ITag } from '../../../../interfaces'
 import { getAllGenres } from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
-	tags: Array<ITag>
-	onToggle: () => void
+	tags: ITag[]
+	onToggle: (
+		field: keyof FilterFormData,
+		tag: any,
+		isChecked: boolean
+	) => void
 	name: string
 	type: string
 }

@@ -1,15 +1,17 @@
-import React, { JSX, useState, FC, useRef } from 'react'
+import React, { JSX, useState, FC, useRef, ReactNode, useEffect } from 'react'
 import classNames from 'classnames'
 import { useClickOutsideContainer } from '@/hooks/useClickOutsideContainer'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Button from '@/app/components/UI/Button'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
-	children: JSX.Element
+	children: ReactNode[]
 	name: string
 	label: string
-	onChange: () => void
+	onChange: (field: keyof FilterFormData, value: any) => void
+	defaultValue: string
 	className?: string
 }
 
@@ -18,10 +20,11 @@ const Select: FC<PropsType> = ({
 	name,
 	label,
 	onChange,
+	defaultValue,
 	className,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
-	const [selectedOption, setSelectedOption] = useState('Select')
+	const [selectedOption, setSelectedOption] = useState(defaultValue)
 	const { isOpen, onToggleContainer, onCloseContainer } =
 		useClickOutsideContainer(containerRef)
 
@@ -44,6 +47,12 @@ const Select: FC<PropsType> = ({
 		return child
 	})
 
+	useEffect(() => {
+		if (defaultValue) {
+			setSelectedOption(defaultValue)
+		}
+	}, [defaultValue])
+
 	return (
 		<div
 			ref={containerRef}
@@ -53,8 +62,8 @@ const Select: FC<PropsType> = ({
 				<span className='text-xs text-gray-500 font-semibold absolute top-2 left-3 z-10'>
 					{label}
 				</span>
-				<span className='absolute top-8 left-3 w-[calc(100%-22px)] flex justify-between items-center'>
-					<span className='truncate'>{selectedOption}</span>
+				<span className='absolute top-7 left-3 w-[calc(100%-22px)] flex justify-between items-center'>
+					<span className='truncate leading-5'>{selectedOption}</span>
 					<FontAwesomeIcon icon={faChevronDown} />
 				</span>
 			</Button>

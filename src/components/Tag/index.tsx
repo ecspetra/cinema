@@ -4,9 +4,10 @@ import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import Button from '@/app/components/UI/Button'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
-	tag: ITag
+	tag: ITag | { name: string; field: keyof FilterFormData }
 	isEdit?: boolean
 	isSelected?: boolean
 	onToggle?: (tag: ITag, isChecked: boolean) => void

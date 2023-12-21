@@ -17,25 +17,28 @@ import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Error from '@/app/components/UI/Error'
 import Loader from '@/components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
 	name: string
-	collectionType: string
 	label: string
 	urlToFetch: string
-	defaultUrlToFetch: string
-	onSearch: Dispatch<SetStateAction<string>>
+	onSearch:
+		| Dispatch<SetStateAction<string>>
+		| ((field: keyof FilterFormData, value: object) => void)
+	collectionType?: string
+	defaultUrlToFetch?: string
 	isSearchApplied?: boolean
 	isSearchFieldWrapped?: boolean
 }
 
 const Search: FC<PropsType> = ({
 	name,
-	collectionType,
 	label,
 	urlToFetch,
-	defaultUrlToFetch,
 	onSearch,
+	collectionType,
+	defaultUrlToFetch,
 	isSearchApplied = false,
 	isSearchFieldWrapped = false,
 }) => {

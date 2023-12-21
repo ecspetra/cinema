@@ -6,10 +6,15 @@ import { usePathname } from 'next/navigation'
 import { AUTH_PAGE } from '@/constants/paths'
 import { getBreadcrumbsList } from '@/handlers/getBreadcrumbsList'
 
+type Breadcrumb = {
+	href: string
+	label: string
+}
+
 const Breadcrumbs = () => {
 	const router = useRouter()
 	const pathname = usePathname()
-	const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
+	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([])
 
 	useEffect(() => {
 		const getBreadcrumbs = async () => {
