@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ITVSeasonCard } from '../../../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import moment from 'moment/moment'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	season: ITVSeasonCard
@@ -25,7 +26,7 @@ const TVSeasonCard: FC<PropsType> = ({ season }) => {
 		<div className='flex justify-start items-start gap-4 mb-4 last:mb-0'>
 			<Image
 				className='!w-24 !h-36 flex-none duration-300 mb-4 group-hover:border-rose-600 border-4'
-				src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
+				src={CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)}
 				defaultImage={defaultMovieImage}
 			/>
 			<div>

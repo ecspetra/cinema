@@ -8,6 +8,7 @@ import { useCollectionButton } from '@/hooks/useCollectionButton'
 import { getPersonGender } from '@/handlers/getPersonGender'
 import ImagesList from '@/components/Images/ImagesList'
 import DetailsList from '@/components/Details/DetailsList'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	personInfo: IPersonInfo
@@ -58,7 +59,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-8'>
 					<Image
-						src={`https://image.tmdb.org/t/p/w440_and_h660_face${profile_path}`}
+						src={CARD_IMAGE_SRC.replace('{imageSrc}', profile_path)}
 						defaultImage={defaultMovieImage}
 					/>
 				</div>

@@ -12,6 +12,7 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition } from 'react-transition-group'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 import { UserCollections } from '@/constants/enum'
+import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/formatReviewTextWithHtmlTags'
 
 type PropsType = {
 	movieId: number
@@ -152,7 +153,17 @@ const ReplyCard: FC<PropsType> = ({
 										)}
 									>
 										<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
-										{content}
+										<span
+											dangerouslySetInnerHTML={{
+												__html: formatReviewTextWithHtmlTags(
+													content
+												),
+											}}
+											className={classNames(
+												isShowTruncateDots &&
+													'line-clamp-2'
+											)}
+										></span>
 									</span>
 								</span>
 								{isLongReviewContent && (

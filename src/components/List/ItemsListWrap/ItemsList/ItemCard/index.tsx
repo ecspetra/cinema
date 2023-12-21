@@ -11,6 +11,7 @@ import MarkSmall from '@/components/Mark/MarkSmall'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import { IItemCard } from '../../../../../../interfaces'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	item: IItemCard
@@ -51,7 +52,11 @@ const ItemCard: FC<PropsType> = ({
 	const isShowTags = genres?.length > 0
 	const cardType = media_type ?? collectionType
 	const isShowMark = cardType === 'movie' || cardType === 'tv'
-	const cardCover = poster_path ?? profile_path
+	const cardCoverSrc = poster_path ?? profile_path
+	const cardCoverFullSrc =
+		cardCoverSrc !== undefined
+			? CARD_IMAGE_SRC.replace('{imageSrc}', cardCoverSrc)
+			: ''
 	const cardTitle = title ?? name
 
 	const itemCard = (
@@ -70,7 +75,7 @@ const ItemCard: FC<PropsType> = ({
 				)}
 				<Image
 					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${cardCover}`}
+					src={cardCoverFullSrc}
 					defaultImage={
 						cardType !== 'person'
 							? defaultMovieImage

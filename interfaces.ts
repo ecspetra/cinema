@@ -126,12 +126,6 @@ export interface IModalContent {
 	} | null
 }
 
-export interface ICountry {
-	iso_3166_1: string
-	english_name: string
-	native_name: string
-}
-
 export interface IDefaultImage {
 	src: string
 }
@@ -173,4 +167,5 @@ export interface IMovieOrTVShowData {
 export interface IItemCountry {
 	iso_3166_1: string
 	english_name: string
+	native_name: string
 }

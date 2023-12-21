@@ -11,6 +11,7 @@ import {
 	IUpcomingMovieItem,
 	IVideoData,
 } from '../../../interfaces'
+import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	itemsList: IFetchedResult<IUpcomingMovieItem>
@@ -48,7 +49,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 	return (
 		<>
 			<TopBanner
-				imageSrc={`https://image.tmdb.org/t/p/original${imageSrc}`}
+				imageSrc={ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)}
 				className='-mb-72 after:h-full'
 			/>
 			<Title>Upcoming movies</Title>
@@ -62,7 +63,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 					/>
 				) : (
 					<Image
-						src={`https://image.tmdb.org/t/p/original${imageSrc}`}
+						src={ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)}
 						defaultImage={defaultMovieImage}
 						className='aspect-[215/121]'
 					/>

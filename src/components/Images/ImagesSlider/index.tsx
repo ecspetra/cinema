@@ -9,6 +9,7 @@ import { IBackdrop } from '../../../../interfaces'
 import useImagesSlider from '../../../hooks/useImagesSlider'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Image from '../Image/index'
+import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	images: Array<IBackdrop>
@@ -30,7 +31,10 @@ const ImagesSlider: FC<PropsType> = ({
 		<div>
 			<Image
 				className={isPersonImages ? 'aspect-[2/3]' : 'aspect-[215/121]'}
-				src={`https://image.tmdb.org/t/p/original${images[currentImageIdx].file_path}`}
+				src={ORIGINAL_IMAGE_SRC.replace(
+					'{imageSrc}',
+					images[currentImageIdx].file_path
+				)}
 				defaultImage={defaultMovieImage}
 			/>
 			<Button

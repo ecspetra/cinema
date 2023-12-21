@@ -2,14 +2,14 @@ import Tag from '@/components/Tag'
 import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import { ITag } from '../../../../../interfaces'
+import { IItemCountry, ITag } from '../../../../../interfaces'
 import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
 	formData: FilterFormData
 	onRemove: (tag: ITag) => void
 	onReset: () => void
-	countryList: Array<any>
+	countryList: IItemCountry[]
 }
 
 const SelectedFilters: FC<PropsType> = ({
@@ -69,7 +69,7 @@ const SelectedFilters: FC<PropsType> = ({
 								item =>
 									item.iso_3166_1.toLowerCase() ===
 									formData[field]
-							)
+							) as IItemCountry
 							const countryName = country.english_name
 							return (
 								<Tag

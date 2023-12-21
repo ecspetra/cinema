@@ -8,6 +8,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { UserCollections } from '@/constants/enum'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	itemId: number
@@ -39,7 +40,7 @@ const ItemCardSmall: FC<PropsType> = ({
 		<>
 			<Image
 				className='duration-300 mb-4 border-4'
-				src={`https://image.tmdb.org/t/p/w440_and_h660_face${itemCover}`}
+				src={CARD_IMAGE_SRC.replace('{imageSrc}', itemCover)}
 				defaultImage={
 					collectionType !== 'person'
 						? defaultMovieImage

@@ -2,7 +2,7 @@ import {
 	URL_TO_FETCH_COUNTRY_MOVIE_LIST,
 	URL_TO_FETCH_COUNTRIES,
 } from '@/constants/linksToFetch'
-import { ICountry, IItemCountry } from '../../../../../interfaces'
+import { IItemCountry } from '../../../../../interfaces'
 
 export const getCountriesList = async (
 	type: string
@@ -10,22 +10,22 @@ export const getCountriesList = async (
 	const allCountries = await fetch(URL_TO_FETCH_COUNTRIES)
 	const allCountriesResult = await allCountries.json()
 
-	const countriesWhichHaveAvailableResults = await Promise.all(
-		allCountriesResult.map(async (item: ICountry) => {
-			await new Promise(resolve => setTimeout(resolve, 1000))
-			const responseForCountry = await fetch(
-				URL_TO_FETCH_COUNTRY_MOVIE_LIST.replace('{type}', type).replace(
-					'{country}',
-					item.iso_3166_1.toLowerCase()
-				)
+	const requests = allCountriesResult.map(async (item: IItemCountry) => {
+		return await fetch(
+			URL_TO_FETCH_COUNTRY_MOVIE_LIST.replace('{type}', type).replace(
+				'{country}',
+				item.iso_3166_1.toLowerCase()
 			)
-			const resultForCountry = await responseForCountry.json()
+		).then(response => response.json())
+	})
 
-			if (resultForCountry.results.length > 0) {
-				return item
-			}
-		})
+	const responses = await Promise.all(requests)
+
+	const countriesWhichHaveAvailableResults = allCountriesResult.filter(
+		(item: IItemCountry, idx: number) => {
+			return responses[idx].results.length > 0
+		}
 	)
 
-	return countriesWhichHaveAvailableResults.filter(Boolean)
+	return countriesWhichHaveAvailableResults
 }

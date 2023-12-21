@@ -20,6 +20,7 @@ import TVSeasonsList from '@/components/Movie/MovieOrTVShowBasicInfo/TVSeasonLis
 import TagList from '@/components/Tag/TagList'
 import DetailsList from '@/components/Details/DetailsList'
 import { UserCollections } from '@/constants/enum'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	basicInfo: IMovieOrTVShowBasicInfo
@@ -93,7 +94,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-28'>
 					<Image
-						src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
+						src={CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)}
 						defaultImage={defaultMovieImage}
 						className='border-4'
 					/>

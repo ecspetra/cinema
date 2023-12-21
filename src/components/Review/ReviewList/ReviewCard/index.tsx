@@ -21,6 +21,8 @@ import Link from 'next/link'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 import { UserCollections } from '@/constants/enum'
+import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/formatReviewTextWithHtmlTags'
+import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	defaultCardMovieId: number
@@ -122,7 +124,10 @@ const ReviewCard: FC<PropsType> = ({
 							photoURL={
 								isItemFromDB
 									? authorInfo.photoURL
-									: `https://image.tmdb.org/t/p/original${avatar_path}`
+									: ORIGINAL_IMAGE_SRC.replace(
+											'{imageSrc}',
+											avatar_path
+									  )
 							}
 							isLinkToProfile={isItemFromDB && !isLinkToMovie}
 						/>
@@ -156,12 +161,15 @@ const ReviewCard: FC<PropsType> = ({
 									className='overflow-hidden transition-[max-height] duration-500 block'
 								>
 									<span
+										dangerouslySetInnerHTML={{
+											__html: formatReviewTextWithHtmlTags(
+												content
+											),
+										}}
 										className={classNames(
 											isShowTruncateDots && 'line-clamp-2'
 										)}
-									>
-										{content}
-									</span>
+									></span>
 								</span>
 								{isLongReviewContent && (
 									<Button
