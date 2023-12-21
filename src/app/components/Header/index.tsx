@@ -5,7 +5,7 @@ import { signOutUser } from '@/firebase/config'
 import Image from '@/components/Images/Image'
 import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { AUTH_PAGE, COLLECTION_PAGE, PROFILE_PAGE } from '@/constants/paths'
 import Breadcrumbs from '@/app/components/Breadcrumbs'
@@ -17,7 +17,7 @@ import Logo from '@/app/components/Logo'
 const Header = () => {
 	const { userId, photoURL, isLoggedIn } = useAuth()
 	const router = useRouter()
-	const pathname = usePathname()
+	const pathname = usePathname() ?? ''
 	const ROUTES = createRoutes(userId)
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isShowUserMenu = !isAuthPage && isLoggedIn

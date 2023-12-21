@@ -82,7 +82,7 @@ const EditProfileForm: FC<PropsType> = ({ profileInfo, onFormClose }) => {
 		if (!date) {
 			formattedDate = ''
 		} else {
-			formattedDate = date
+			formattedDate = date.startDate
 		}
 
 		updateField('dateOfBirth', formattedDate, '')

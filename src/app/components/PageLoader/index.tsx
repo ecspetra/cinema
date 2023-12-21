@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { FC, useEffect, useState, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
 
-const PageLoader = ({ children }) => {
+type PropsType = {
+	children: ReactNode
+}
+
+const PageLoader: FC<PropsType> = ({ children }) => {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 

@@ -4,7 +4,7 @@ import { faCircleCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 type PropsType = {
 	modalText: string
-	type: 'success' | 'error' | '' | undefined
+	type: 'success' | 'error'
 }
 
 const Alert: FC<PropsType> = ({ modalText, type }) => {

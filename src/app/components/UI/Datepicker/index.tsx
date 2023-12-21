@@ -1,11 +1,14 @@
 import React, { FC, useEffect, useState } from 'react'
-import Datepicker from 'react-tailwindcss-datepicker'
+import Datepicker, { DateValueType } from 'react-tailwindcss-datepicker'
 import moment from 'moment'
 
 type PropsType = {
 	initialDateValue: string
 	label: string
-	onChange: (event) => void
+	onChange: (
+		value: DateValueType,
+		e?: HTMLInputElement | null | undefined
+	) => void
 	required?: boolean
 }
 
@@ -15,14 +18,24 @@ const CustomDatepicker: FC<PropsType> = ({
 	onChange,
 	required,
 }) => {
-	const [value, setValue] = useState({
+	const [value, setValue] = useState<DateValueType | null>({
 		startDate: moment(initialDateValue, 'YYYY-MM-DD').toDate(),
 		endDate: moment(initialDateValue, 'YYYY-MM-DD').toDate(),
 	})
 
-	const handleValueChange = newValue => {
-		onChange(newValue.startDate)
-		setValue(newValue)
+	const handleValueChange = (
+		value: DateValueType,
+		e?: HTMLInputElement | null | undefined
+	) => {
+		if (value) {
+			const dateValueType: DateValueType = {
+				startDate: value.startDate,
+				endDate: value.endDate,
+			}
+
+			onChange(dateValueType, e)
+			setValue(value)
+		}
 	}
 
 	return (

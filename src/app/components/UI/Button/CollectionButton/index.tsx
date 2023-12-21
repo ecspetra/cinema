@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Button from '@/app/components/UI/Button'
 import Loader from '@/components/Loader'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
@@ -19,9 +19,11 @@ const CollectionButton: FC<PropsType> = ({
 	className,
 	collectionType = 'collection',
 }) => {
+	const collectionButtonContext = isCollectionItem ? 'collection' : 'filled'
+
 	return (
 		<Button
-			context={isCollectionItem ? 'collection' : 'filled'}
+			context={collectionButtonContext}
 			className={className}
 			onClick={onClick}
 		>

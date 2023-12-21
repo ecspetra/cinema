@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
+import { FC, MouseEvent, MouseEventHandler, ReactNode } from 'react'
 import classNames from 'classnames'
 
 type PropsType = {
-	onClick?: React.MouseEventHandler
-	onMouseEnter?: React.MouseEventHandler
-	onMouseLeave?: React.MouseEventHandler
-	children?: string | JSX.Element | JSX.Element[]
+	onClick?: MouseEventHandler<HTMLButtonElement>
+	onMouseEnter?: MouseEventHandler<HTMLButtonElement>
+	onMouseLeave?: MouseEventHandler<HTMLButtonElement>
+	children?: ReactNode
 	context?:
 		| 'filled'
 		| 'filledDark'
@@ -80,7 +80,7 @@ const Button: FC<PropsType> = ({
 		}
 	}
 
-	const handleOnClick = event => {
+	const handleOnClick = (event: MouseEvent<HTMLButtonElement>) => {
 		if (type !== 'submit') {
 			event.preventDefault()
 			if (onClick) onClick(event)
@@ -95,9 +95,7 @@ const Button: FC<PropsType> = ({
 				className,
 				getButtonClassNames()
 			)}
-			onClick={event => {
-				handleOnClick(event)
-			}}
+			onClick={handleOnClick}
 			onMouseEnter={onMouseEnter && onMouseEnter}
 			onMouseLeave={onMouseLeave && onMouseLeave}
 		>
