@@ -89,12 +89,16 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 		openConfirmationPopup,
 	} = useCollectionButton(basicInfo, collectionType)
 
+	const imageFullSrc = poster_path
+		? CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)
+		: ''
+
 	return (
 		<div className='flex gap-7 py-7 mb-16'>
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-28'>
 					<Image
-						src={CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)}
+						src={imageFullSrc}
 						defaultImage={defaultMovieImage}
 						className='border-4'
 					/>

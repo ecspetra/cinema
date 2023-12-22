@@ -36,6 +36,10 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 
 	const genderInString = getPersonGender(gender)
 
+	const imageFullSrc = profile_path
+		? CARD_IMAGE_SRC.replace('{imageSrc}', profile_path)
+		: ''
+
 	const details = [
 		{
 			type: 'place_of_birth',
@@ -59,7 +63,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 			<div className='w-full max-w-[340px]'>
 				<div className='sticky top-8'>
 					<Image
-						src={CARD_IMAGE_SRC.replace('{imageSrc}', profile_path)}
+						src={imageFullSrc}
 						defaultImage={defaultMovieImage}
 					/>
 				</div>

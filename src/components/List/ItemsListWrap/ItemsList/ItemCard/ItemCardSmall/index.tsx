@@ -8,7 +8,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { UserCollections } from '@/constants/enum'
-import { CARD_IMAGE_SRC } from '@/constants/images'
+import { CARD_IMAGE_SRC, ORIGINAL_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	itemId: number
@@ -29,6 +29,9 @@ const ItemCardSmall: FC<PropsType> = ({
 	className = false,
 }) => {
 	const [itemCover, setItemCover] = useState<string>('')
+	const imageFullSrc = itemCover
+		? CARD_IMAGE_SRC.replace('{imageSrc}', itemCover)
+		: ''
 
 	useEffect(() => {
 		getCover(itemId, collectionType).then(data => {
@@ -40,7 +43,7 @@ const ItemCardSmall: FC<PropsType> = ({
 		<>
 			<Image
 				className='duration-300 mb-4 border-4'
-				src={CARD_IMAGE_SRC.replace('{imageSrc}', itemCover)}
+				src={imageFullSrc}
 				defaultImage={
 					collectionType !== 'person'
 						? defaultMovieImage

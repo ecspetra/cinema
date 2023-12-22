@@ -10,7 +10,7 @@ import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
 import useItemsToShow from '@/hooks/useItemsToShow'
 import { uuidv4 } from '@firebase/util'
-import { SLIDER_IMAGE_SRC } from '@/constants/images'
+import { ORIGINAL_IMAGE_SRC, SLIDER_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	images: IBackdrop[] | IPersonImage[]
@@ -31,6 +31,9 @@ const ImagesList: FC<PropsType> = ({
 		buttonText,
 		listRef,
 	} = useItemsToShow(images, 12)
+	const imageFullSrc = item.file_path
+		? SLIDER_IMAGE_SRC.replace('{imageSrc}', item.file_path)
+		: ''
 
 	const handleSliderImage = (idx: number) => {
 		showModal({
@@ -69,10 +72,7 @@ const ImagesList: FC<PropsType> = ({
 									? 'aspect-[2/3]'
 									: 'aspect-[215/121]'
 							}
-							src={SLIDER_IMAGE_SRC.replace(
-								'{imageSrc}',
-								item.file_path
-							)}
+							src={imageFullSrc}
 							defaultImage={defaultMovieImage}
 						/>
 					</Button>

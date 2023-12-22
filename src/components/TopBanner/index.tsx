@@ -13,6 +13,9 @@ const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
 	const [scrollY, setScrollY] = useState<number>(0)
 	const parallaxFactor = 0.5
 	const translateY = scrollY * parallaxFactor
+	const imageFullSrc = imageSrc
+		? ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)
+		: ''
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -31,7 +34,7 @@ const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
 		<Image
 			key={imageKey}
 			className='aspect-[215/121] inset-x-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4'
-			src={ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)}
+			src={imageFullSrc}
 			defaultImage={defaultMovieBg}
 			loaderClassName='bg-transparent'
 		/>

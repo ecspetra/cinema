@@ -11,7 +11,7 @@ import {
 	IUpcomingMovieItem,
 	IVideoData,
 } from '../../../interfaces'
-import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
+import { CARD_IMAGE_SRC, ORIGINAL_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	itemsList: IFetchedResult<IUpcomingMovieItem>
@@ -23,6 +23,9 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 	)
 	const [imageSrc, setImageSrc] = useState<string>('')
 	const [videoSrc, setVideoSrc] = useState<string>('')
+	const imageFullSrc = imageSrc
+		? ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)
+		: ''
 
 	const getSelectedItemImageSrc = async () => {
 		const images = await fetchItemData('movie', selectedItem.id, '/images')
@@ -49,7 +52,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 	return (
 		<>
 			<TopBanner
-				imageSrc={ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)}
+				imageSrc={imageFullSrc}
 				className='-mb-72 after:h-full'
 			/>
 			<Title>Upcoming movies</Title>
@@ -63,7 +66,7 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 					/>
 				) : (
 					<Image
-						src={ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)}
+						src={imageFullSrc}
 						defaultImage={defaultMovieImage}
 						className='aspect-[215/121]'
 					/>

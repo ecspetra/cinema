@@ -53,10 +53,9 @@ const ItemCard: FC<PropsType> = ({
 	const cardType = media_type ?? collectionType
 	const isShowMark = cardType === 'movie' || cardType === 'tv'
 	const cardCoverSrc = poster_path ?? profile_path
-	const cardCoverFullSrc =
-		cardCoverSrc !== undefined
-			? CARD_IMAGE_SRC.replace('{imageSrc}', cardCoverSrc)
-			: ''
+	const cardCoverFullSrc = cardCoverSrc
+		? CARD_IMAGE_SRC.replace('{imageSrc}', cardCoverSrc)
+		: ''
 	const cardTitle = title ?? name
 
 	const itemCard = (

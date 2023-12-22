@@ -21,12 +21,15 @@ const TVSeasonCard: FC<PropsType> = ({ season }) => {
 		episode_count,
 		overview,
 	} = season
+	const imageFullSrc = poster_path
+		? CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)
+		: ''
 
 	return (
 		<div className='flex justify-start items-start gap-4 mb-4 last:mb-0'>
 			<Image
 				className='!w-24 !h-36 flex-none duration-300 mb-4 group-hover:border-rose-600 border-4'
-				src={CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)}
+				src={imageFullSrc}
 				defaultImage={defaultMovieImage}
 			/>
 			<div>
