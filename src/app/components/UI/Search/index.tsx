@@ -106,7 +106,7 @@ const Search: FC<PropsType> = ({
 	useEffect(() => {
 		const fetchData = async () => {
 			const abortController = new AbortController()
-			const signal = abortController.signal as AbortSignal | undefined
+			const signal = abortController.signal
 
 			setResults([])
 			setError('')

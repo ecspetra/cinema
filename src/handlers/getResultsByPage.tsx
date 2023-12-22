@@ -4,7 +4,7 @@ import { createItemCard } from '@/handlers/createItemCard'
 export const getResultsByPage = async (
 	url: string,
 	page: number,
-	signal = null
+	signal: AbortSignal | undefined = undefined
 ): Promise<IFetchedResult<IItemCard>> => {
 	const options = signal ? { signal } : {}
 
