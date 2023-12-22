@@ -457,7 +457,7 @@ export const getCollectionItemsList = async (
 	userId: string,
 	collectionType: UserCollections,
 	itemsPerPage: number | null,
-	lastItemId: string | null
+	lastItemId: string | undefined
 ): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
 	try {
 		const userPath = `users/${userId}/`

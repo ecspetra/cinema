@@ -31,9 +31,6 @@ const ImagesList: FC<PropsType> = ({
 		buttonText,
 		listRef,
 	} = useItemsToShow(images, 12)
-	const imageFullSrc = item.file_path
-		? SLIDER_IMAGE_SRC.replace('{imageSrc}', item.file_path)
-		: ''
 
 	const handleSliderImage = (idx: number) => {
 		showModal({
@@ -72,7 +69,14 @@ const ImagesList: FC<PropsType> = ({
 									? 'aspect-[2/3]'
 									: 'aspect-[215/121]'
 							}
-							src={imageFullSrc}
+							src={
+								item.file_path
+									? SLIDER_IMAGE_SRC.replace(
+											'{imageSrc}',
+											item.file_path
+									  )
+									: ''
+							}
 							defaultImage={defaultMovieImage}
 						/>
 					</Button>

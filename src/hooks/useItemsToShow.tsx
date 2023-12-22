@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { IBackdrop, ITVSeasonCard } from '../../interfaces'
+import { IBackdrop, IMark, ITVSeasonCard } from '../../interfaces'
 import useScrollToTop from '@/hooks/useScrollToTop'
 
-type ItemsType = IBackdrop[] | ITVSeasonCard[]
+type ItemsType = IBackdrop[] | ITVSeasonCard[] | IMark[]
 
 const useItemsToShow = (
 	initialItems: ItemsType,

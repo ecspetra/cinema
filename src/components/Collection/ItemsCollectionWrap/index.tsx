@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { IItemCard } from '../../../../interfaces'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Button from '@/app/components/UI/Button'
 import { IMark } from '../../../../../interfaces'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
@@ -23,7 +23,7 @@ const MarksCollectionWrap: FC<PropsType> = ({ items }) => {
 				ref={listRef}
 				className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'
 			>
-				{itemsToShow.map((item, idx) => {
+				{(itemsToShow as IMark[]).map((item: IMark, idx) => {
 					return (
 						<ItemCardSmall
 							key={idx}

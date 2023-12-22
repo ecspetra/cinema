@@ -1,6 +1,6 @@
 import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
-import { IItemCard } from '../../../../interfaces'
-import React, { FC, useEffect, useState } from 'react'
+import { IFetchedResult, IItemCard } from '../../../../interfaces'
+import { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
@@ -34,12 +34,12 @@ const SpecificCollectionItemsList: FC<PropsType> = ({
 
 	const getMoreCollectionItems = async () => {
 		setIsLoading(true)
-		const result = await getCollectionItemsList(
+		const result = (await getCollectionItemsList(
 			userId,
 			collectionType,
 			20,
 			lastItemId
-		)
+		)) as IFetchedResult<IItemCard>
 		setItemsToShow(prevState => [...prevState, ...result.items])
 		setIsShowMoreButton(result.isMoreDataAvailable)
 		setIsLoading(false)

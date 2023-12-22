@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import { IMark, IItemCard, IReviewCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
@@ -25,20 +25,20 @@ const CollectionWrap: FC<PropsType> = ({
 			case 'reviews':
 				return (
 					<ReviewList
-						reviews={items}
+						reviews={items as IReviewCard[]}
 						isShowTitle={false}
 						className='!mb-0'
 						isCollectionList
 					/>
 				)
 			case 'marks':
-				return <MarksCollectionWrap items={items} />
+				return <MarksCollectionWrap items={items as IMark[]} />
 			case 'movie':
 			case 'tv':
 			case 'person':
 				return (
 					<ItemsCollectionWrap
-						items={items}
+						items={items as IItemCard[]}
 						collectionType={collectionType}
 					/>
 				)
