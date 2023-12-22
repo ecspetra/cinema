@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC, ChangeEvent } from 'react'
 import classNames from 'classnames'
 import Error from '@/app/components/UI/Error'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,7 +6,7 @@ import { faFileArrowUp } from '@fortawesome/free-solid-svg-icons'
 
 type PropsType = {
 	id: string
-	onChange: (event) => void
+	onChange: (event: ChangeEvent<HTMLInputElement>) => void
 	error?: string
 	className?: string
 }

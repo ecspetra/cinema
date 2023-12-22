@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 	FormEvent,
+	ChangeEvent,
 } from 'react'
 import { faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
@@ -18,6 +19,8 @@ import Error from '@/app/components/UI/Error'
 import Loader from '@/components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FilterFormData } from '@/hooks/useFilterReducer'
+import { IItemCard } from '../../../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	name: string
@@ -26,7 +29,11 @@ type PropsType = {
 	onSearch:
 		| Dispatch<SetStateAction<string>>
 		| ((field: keyof FilterFormData, value: object) => void)
-	collectionType?: string
+	collectionType?:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.basic
 	defaultUrlToFetch?: string
 	isSearchApplied?: boolean
 	isSearchFieldWrapped?: boolean
@@ -48,7 +55,7 @@ const Search: FC<PropsType> = ({
 	const [isSearchQueryUpdate, setIsSearchQueryUpdate] =
 		useState<boolean>(false)
 	const [searchQuery, setSearchQuery] = useState<string>('')
-	const [results, setResults] = useState([])
+	const [results, setResults] = useState<IItemCard[]>([])
 	const [error, setError] = useState<string>('')
 	const [isMoreDataAvailable, setIsMoreDataAvailable] =
 		useState<boolean>(false)
@@ -60,7 +67,7 @@ const Search: FC<PropsType> = ({
 	)
 	const isShowClearButton = searchQuery.length > 0 || isSearchApplied
 
-	const handleInputChange = event => {
+	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(event.target.value)
 
 		if (!isTouched) setIsTouched(true)
@@ -68,7 +75,9 @@ const Search: FC<PropsType> = ({
 
 	const cancelSearch = () => {
 		resetSearch()
-		onSearch(defaultUrlToFetch)
+
+		if (typeof onSearch !== 'function')
+			(onSearch as Dispatch<SetStateAction<string>>)(defaultUrlToFetch!)
 	}
 
 	const resetSearch = () => {
@@ -83,7 +92,10 @@ const Search: FC<PropsType> = ({
 		const isFormValid = searchQuery.length > 0
 
 		if (isFormValid && isTouched) {
-			onSearch(urlToFetchWithSearchQuery)
+			if (typeof onSearch !== 'function')
+				(onSearch as Dispatch<SetStateAction<string>>)(
+					urlToFetchWithSearchQuery
+				)
 			resetSearch()
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
@@ -94,24 +106,26 @@ const Search: FC<PropsType> = ({
 	useEffect(() => {
 		const fetchData = async () => {
 			const abortController = new AbortController()
-			const signal = abortController.signal
+			const signal = abortController.signal as AbortSignal | undefined
 
 			setResults([])
 			setError('')
 			setIsSearchQueryUpdate(true)
 
 			try {
-				const data = await getResultsByPage(
-					urlToFetchWithSearchQuery,
-					1,
-					signal
-				)
+				if (signal) {
+					const data = await getResultsByPage(
+						urlToFetchWithSearchQuery,
+						1,
+						signal
+					)
 
-				setResults(data.items)
-				setIsMoreDataAvailable(data.isMoreDataAvailable)
-				setIsSearchQueryUpdate(false)
+					setResults(data.items)
+					setIsMoreDataAvailable(data.isMoreDataAvailable)
+					setIsSearchQueryUpdate(false)
+				}
 			} catch (error) {
-				setError('Error fetching data.')
+				setError('Error fetching data')
 			} finally {
 				abortController.abort()
 			}

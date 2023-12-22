@@ -1,4 +1,13 @@
-import React, { JSX, useState, FC, useRef, ReactNode, useEffect } from 'react'
+import {
+	useState,
+	FC,
+	useRef,
+	ReactNode,
+	useEffect,
+	Children,
+	isValidElement,
+	cloneElement,
+} from 'react'
 import classNames from 'classnames'
 import { useClickOutsideContainer } from '@/hooks/useClickOutsideContainer'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
@@ -6,11 +15,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Button from '@/app/components/UI/Button'
 import { FilterFormData } from '@/hooks/useFilterReducer'
 
+type SelectOptionProps = {
+	onClick: (value: string, label: string) => void
+	closeList: () => void
+}
+
 type PropsType = {
 	children: ReactNode[]
 	name: string
 	label: string
-	onChange: (field: keyof FilterFormData, value: any) => void
+	onChange: (field: keyof FilterFormData, value?: any) => void
 	defaultValue: string
 	className?: string
 }
@@ -28,7 +42,7 @@ const Select: FC<PropsType> = ({
 	const { isOpen, onToggleContainer, onCloseContainer } =
 		useClickOutsideContainer(containerRef)
 
-	const handleSelectChange = (value, label) => {
+	const handleSelectChange = (value: string, label: string) => {
 		if (name) {
 			onChange(name, value)
 		} else {
@@ -37,12 +51,14 @@ const Select: FC<PropsType> = ({
 		setSelectedOption(label)
 	}
 
-	const childrenWithProps = React.Children.map(children, child => {
-		if (React.isValidElement(child)) {
-			return React.cloneElement(child, {
+	const childrenWithProps = Children.map(children, child => {
+		if (isValidElement(child)) {
+			const childProps: SelectOptionProps = {
 				onClick: handleSelectChange,
 				closeList: onCloseContainer,
-			})
+			}
+
+			return cloneElement(child, childProps)
 		}
 		return child
 	})

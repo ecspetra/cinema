@@ -42,14 +42,18 @@ const Portal: FC<ReactPortalPropTypes> = ({ children, wrapperId, isAlert }) => {
 		setWrapperElement(element)
 
 		return () => {
-			if (isAppendToBody && element.parentNode) {
-				element.parentNode.removeChild(element)
+			const parent = element?.parentNode
+			if (isAppendToBody && parent && element) {
+				parent.removeChild(element)
 			}
 		}
 	}, [wrapperId])
 
 	if (!isDOMReady) return null
 
-	return createPortal(children, wrapperElement)
+	return createPortal(
+		children,
+		wrapperElement ?? document.createElement('div')
+	)
 }
 export default Portal

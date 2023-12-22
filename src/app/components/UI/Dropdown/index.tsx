@@ -1,4 +1,12 @@
-import React, { FC, ReactNode, useState } from 'react'
+import {
+	FC,
+	ReactNode,
+	useState,
+	Children,
+	isValidElement,
+	cloneElement,
+	ReactElement,
+} from 'react'
 import Button from '@/app/components/UI/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical, faGear } from '@fortawesome/free-solid-svg-icons'
@@ -14,7 +22,7 @@ type PropsType = {
 const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
-	const toggleList = event => {
+	const toggleList = () => {
 		setIsOpen(!isOpen)
 	}
 
@@ -22,9 +30,9 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 		setIsOpen(false)
 	}
 
-	const childrenWithProps = React.Children.map(children, child => {
-		if (React.isValidElement(child)) {
-			return React.cloneElement(child, { closeList })
+	const childrenWithProps = Children.map(children, child => {
+		if (isValidElement(child)) {
+			return cloneElement(child as ReactElement, { closeList })
 		}
 		return child
 	})

@@ -113,7 +113,7 @@ const ReviewCard: FC<PropsType> = ({
 			{isLinkToMovie && (
 				<ItemCardSmall
 					itemId={movieId}
-					type={isTVShow ? 'tv' : 'movie'}
+					collectionType={isTVShow ? 'tv' : 'movie'}
 				/>
 			)}
 			<span className='w-full'>
