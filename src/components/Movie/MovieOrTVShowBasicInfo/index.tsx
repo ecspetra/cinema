@@ -3,6 +3,7 @@ import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
 	IBackdrop,
+	IDetailsItem,
 	IMovieOrTVShowBasicInfo,
 	IReviewCard,
 } from '../../../../interfaces'
@@ -58,7 +59,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 
 	const isTVShowItem = collectionType === 'tv'
 
-	const details = [
+	const details: IDetailsItem[] = [
 		isTVShowItem
 			? first_air_date && {
 					type: 'first_air_date',

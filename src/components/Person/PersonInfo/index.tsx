@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
-import { IPersonImage, IPersonInfo } from '../../../../interfaces'
+import { IDetailsItem, IPersonImage, IPersonInfo } from '../../../../interfaces'
 import Title from '../../../app/components/UI/Title/Title'
 import CollectionButton from '../../../app/components/UI/Button/CollectionButton'
 import { useCollectionButton } from '@/hooks/useCollectionButton'
@@ -40,7 +40,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 		? CARD_IMAGE_SRC.replace('{imageSrc}', profile_path)
 		: ''
 
-	const details = [
+	const details: IDetailsItem[] = [
 		{
 			type: 'place_of_birth',
 			title: 'Place of birth:',

@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import React from 'react'
 import DetailsList from '@/components/Details/DetailsList'
+import { IDetailsItem } from '../../../../interfaces'
 
 type PropsType = {
 	userInfo: object
@@ -10,7 +11,7 @@ type PropsType = {
 const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 	const [profile, setProfile] = useState(null)
 
-	const details = [
+	const details: IDetailsItem[] = [
 		{
 			type: 'user_email',
 			title: 'Email:',

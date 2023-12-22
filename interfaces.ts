@@ -24,6 +24,21 @@ export interface IPersonImage {
 	file_path: string
 }
 
+export interface IDetailsTextArrayItemType {
+	name: string
+}
+
+export interface IDetailsItemText {
+	birthday: string
+	deathday?: string
+}
+
+export interface IDetailsItem {
+	type: string
+	title: string | IDetailsItemText
+	text: string | number | IDetailsItemText | IDetailsTextArrayItemType[]
+}
+
 export interface IMarkFromDB {
 	key: string
 	data: {
