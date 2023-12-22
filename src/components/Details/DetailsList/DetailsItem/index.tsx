@@ -12,7 +12,7 @@ import moment from 'moment/moment'
 type PropsType = {
 	type: string
 	title: string
-	text: string | Array<any>
+	text: string | any[]
 }
 
 const DetailsItem: FC<PropsType> = ({ type, title, text }) => {

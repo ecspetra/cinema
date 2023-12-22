@@ -8,7 +8,7 @@ import { openFriendsModal } from '@/handlers/handleModals'
 import { IUser } from '../../../../interfaces'
 
 type PropsType = {
-	friends: Array<any>
+	friends: any[]
 	onRemove: (profileInfo: IUser, modalId?: string | null) => void
 }
 

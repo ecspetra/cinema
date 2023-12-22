@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthProvider'
 import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 
 type PropsType = {
-	items: Array<IItemCard>
+	items: IItemCard[]
 	collectionType: string
 }
 

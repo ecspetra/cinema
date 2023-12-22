@@ -24,7 +24,7 @@ import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	basicInfo: IMovieOrTVShowBasicInfo
-	movieImages: Array<IBackdrop>
+	movieImages: IBackdrop[]
 	movieReviews: IReviewCard[]
 	movieVideo: string
 	collectionType: UserCollections.movie | UserCollections.tv

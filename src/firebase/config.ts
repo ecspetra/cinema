@@ -154,7 +154,7 @@ export const updateUserCredential = async (newInfo: object) => {
 	)
 }
 
-export const updateProfileGenres = async (newGenres: Array<ITag>) => {
+export const updateProfileGenres = async (newGenres: ITag[]) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 	const updateFields = {
@@ -269,7 +269,7 @@ export const userInfoListener = (
 
 export const userFriendsListener = (
 	userId: string,
-	loadedItems: Array<object>,
+	loadedItems: object[],
 	setFriends: Dispatch<SetStateAction<IFullUserInfo[]>>
 ) => {
 	const userRef = ref(database, `users/${userId}/friends`)
@@ -598,7 +598,7 @@ export const getCollectionMarksList = async (userId: string) => {
 export const collectionListener = (
 	userId: string,
 	collectionType: UserCollections,
-	loadedItems: Array<any>,
+	loadedItems: any[],
 	setItems: ([]) => void,
 	setIsMoreDataAvailable: (arg: boolean) => void
 ) => {

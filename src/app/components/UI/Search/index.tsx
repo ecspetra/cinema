@@ -16,7 +16,10 @@ type PropsType = {
 	urlToFetch: string
 	onSearch:
 		| Dispatch<SetStateAction<string>>
-		| ((field: keyof FilterFormData, value: object) => void)
+		| ((
+				field: keyof FilterFormData,
+				value: { id: number; name: string }
+		  ) => void)
 	collectionType?:
 		| UserCollections.movie
 		| UserCollections.tv

@@ -5,7 +5,7 @@ import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/It
 import useItemsToShow from '@/hooks/useItemsToShow'
 
 type PropsType = {
-	items: Array<IMark>
+	items: IMark[]
 }
 
 const MarksCollectionWrap: FC<PropsType> = ({ items }) => {

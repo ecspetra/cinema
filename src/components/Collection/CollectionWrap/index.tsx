@@ -10,7 +10,7 @@ import { UserCollections } from '@/constants/enum'
 type PropsType = {
 	title: string
 	collectionType: UserCollections
-	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
+	items: IItemCard[] | IReviewCard[] | IMark[]
 	isCurrentUserCollection: boolean
 }
 

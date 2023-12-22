@@ -10,7 +10,7 @@ import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 
 type PropsType = {
-	tags: Array<ITag>
+	tags: ITag[]
 	title?: string
 	className?: string
 	isEditTags?: boolean
@@ -24,8 +24,8 @@ const TagList: FC<PropsType> = ({
 	isEditTags = false,
 	onFormClose,
 }) => {
-	const [itemsList, setItemsList] = useState<Array<ITag>>([])
-	const [selectedTags, setSelectedTags] = useState<Array<ITag>>(tags)
+	const [itemsList, setItemsList] = useState<ITag[]>([])
+	const [selectedTags, setSelectedTags] = useState<ITag[]>(tags)
 	const { showModal } = useModal()
 
 	const handleToggleTag = (tag, isChecked) => {

@@ -12,7 +12,7 @@ import Image from '../Image/index'
 import { ORIGINAL_IMAGE_SRC, SLIDER_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
-	images: Array<IBackdrop>
+	images: IBackdrop[]
 	initialSliderImageIdx: number
 	isPersonImages?: boolean
 }

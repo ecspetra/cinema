@@ -1,10 +1,15 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Button from '@/app/components/UI/Button'
+import { FilterFormData } from '@/hooks/useFilterReducer'
+import { IItemCard } from '../../../../../../../interfaces'
 
 type PropsType = {
-	item: object
+	item: IItemCard
 	fieldName: string
-	onSelect: () => void
+	onSelect: (
+		field: keyof FilterFormData,
+		value: { id: number; name: string }
+	) => void
 }
 
 const SearchItemBasic: FC<PropsType> = ({ item, fieldName, onSelect }) => {
@@ -14,7 +19,7 @@ const SearchItemBasic: FC<PropsType> = ({ item, fieldName, onSelect }) => {
 			onClick={() =>
 				onSelect(fieldName, {
 					id: item.id,
-					name: item.name,
+					name: item.name!,
 				})
 			}
 			context='listItem'

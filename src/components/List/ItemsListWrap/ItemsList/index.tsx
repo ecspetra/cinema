@@ -9,7 +9,7 @@ import { useModal } from '@/context/ModalProvider'
 import { showErrorNotification } from '@/handlers/handleModals'
 
 type PropsType = {
-	itemsList: Array<IItemCard>
+	itemsList: IItemCard[]
 	collectionType:
 		| UserCollections.movie
 		| UserCollections.tv

@@ -7,7 +7,7 @@ import ItemsListSort from '@/components/List/ItemsListWrap/ItemsList/ItemsListSo
 import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
 
 type PropsType = {
-	itemsList: Array<IItemCard>
+	itemsList: IItemCard[]
 	collectionType:
 		| UserCollections.movie
 		| UserCollections.tv

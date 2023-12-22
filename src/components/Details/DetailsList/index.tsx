@@ -3,7 +3,7 @@ import DetailsItem from '@/components/Details/DetailsList/DetailsItem'
 import classNames from 'classnames'
 
 type PropsType = {
-	itemsList: Array<any>
+	itemsList: any[]
 	className: string
 }
 

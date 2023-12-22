@@ -12,7 +12,7 @@ import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	personInfo: IPersonInfo
-	personImages: Array<IPersonImage>
+	personImages: IPersonImage[]
 }
 
 const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {

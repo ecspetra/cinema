@@ -61,8 +61,8 @@ export interface IItemCard {
 	first_air_date?: string
 	title?: string
 	name?: string
-	genres?: Array<ITag>
-	genre_ids?: Array<number>
+	genres?: ITag[]
+	genre_ids?: number[]
 	known_for_department?: string
 	character?: string
 	job?: string
@@ -72,7 +72,7 @@ export interface IUpcomingMovieItem {
 	id: number
 	release_date?: string
 	title?: string
-	genres?: Array<ITag>
+	genres?: ITag[]
 }
 
 export interface ITVSeasonCard {
@@ -89,9 +89,9 @@ export interface IMovieOrTVShowBasicInfo {
 	id: number
 	poster_path: string
 	tagline: string
-	genres: Array<ITag>
-	production_countries: Array<object>
-	production_companies: Array<object>
+	genres: ITag[]
+	production_countries: object[]
+	production_companies: object[]
 	overview: string
 	vote_average: number
 	vote_count: number
@@ -99,7 +99,7 @@ export interface IMovieOrTVShowBasicInfo {
 	first_air_date?: string
 	title?: string
 	name?: string
-	seasons?: Array<ITVSeasonCard>
+	seasons?: ITVSeasonCard[]
 }
 
 export interface IPersonInfo {

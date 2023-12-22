@@ -14,7 +14,7 @@ type PropsType = {
 		| UserCollections.movie
 		| UserCollections.tv
 		| UserCollections.person
-	items: Array<IItemCard>
+	items: IItemCard[]
 	isMoreDataAvailable: boolean
 	title: string
 }
@@ -28,7 +28,7 @@ const SpecificCollectionItemsList: FC<PropsType> = ({
 	const [isFirstRender, setIsFirstRender] = useState<boolean>(true)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [lastItemId, setLastItemId] = useState<string | undefined>(undefined)
-	const [itemsToShow, setItemsToShow] = useState<Array<IItemCard>>([])
+	const [itemsToShow, setItemsToShow] = useState<IItemCard[]>([])
 	const [isShowMoreButton, setIsShowMoreButton] = useState<boolean>(false)
 	const { userId } = useAuth()
 

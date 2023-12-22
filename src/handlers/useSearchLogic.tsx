@@ -17,7 +17,10 @@ import { FilterFormData } from '@/hooks/useFilterReducer'
 export interface SearchHookProps {
 	onSearch:
 		| Dispatch<SetStateAction<string>>
-		| ((field: keyof FilterFormData, value: object) => void)
+		| ((
+				field: keyof FilterFormData,
+				value: { id: number; name: string }
+		  ) => void)
 	urlToFetch: string
 	defaultUrlToFetch?: string
 	isSearchApplied?: boolean

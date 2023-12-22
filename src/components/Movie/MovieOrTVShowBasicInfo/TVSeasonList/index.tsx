@@ -7,7 +7,7 @@ import Button from '@/app/components/UI/Button'
 import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
-	seasonsList: Array<ITVSeasonCard>
+	seasonsList: ITVSeasonCard[]
 }
 
 const TVSeasonsList: FC<PropsType> = ({ seasonsList }) => {
