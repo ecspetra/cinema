@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import {
 	faChevronLeft,
 	faChevronRight,
@@ -9,7 +9,7 @@ import { IBackdrop } from '../../../../interfaces'
 import useImagesSlider from '../../../hooks/useImagesSlider'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
 import Image from '../Image/index'
-import { ORIGINAL_IMAGE_SRC, SLIDER_IMAGE_SRC } from '@/constants/images'
+import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	images: IBackdrop[]

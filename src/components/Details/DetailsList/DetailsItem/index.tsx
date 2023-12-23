@@ -9,7 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { getDetailsItemText } from '@/components/Details/handlers/getDetailsItemText'
 import { IDetailsItem, IDetailsItemText } from '../../../../../interfaces'
-import { getPersonGender } from '@/handlers/getPersonGender'
 
 type PropsType = {
 	item: IDetailsItem
@@ -109,7 +108,7 @@ const DetailsItem: FC<PropsType> = ({ item }) => {
 						<span className='mr-1.5 font-semibold'>
 							{title as string}
 						</span>
-						{getPersonGender(text as number)}
+						{getDetailsItemText(text as string, 'text')}
 					</>
 				)
 			case 'user_date_of_birth':

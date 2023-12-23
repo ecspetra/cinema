@@ -15,19 +15,19 @@ export const getDetailsItemText = (
 				: emptyText)
 		case 'array':
 			return (itemText =
-				Array.isArray(text) &&
-				text.length > 0 &&
-				(text as IDetailsTextArrayItemType[]).map(
-					(item: IDetailsTextArrayItemType, idx) => {
-						return (
-							<span className='mr-1' key={item.name}>
-								{idx === text.length - 1
-									? item.name
-									: item.name + ','}
-							</span>
-						)
-					}
-				))
+				Array.isArray(text) && text.length > 0
+					? (text as IDetailsTextArrayItemType[]).map(
+							(item: IDetailsTextArrayItemType, idx) => {
+								return (
+									<span className='mr-1' key={item.name}>
+										{idx === text.length - 1
+											? item.name
+											: item.name + ','}
+									</span>
+								)
+							}
+					  )
+					: emptyText)
 		case 'text':
 			itemText = text ? text : emptyText
 	}

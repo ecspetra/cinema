@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import { IBackdrop, IPersonImage } from '../../../../interfaces'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
@@ -10,7 +10,7 @@ import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
 import useItemsToShow from '@/hooks/useItemsToShow'
 import { uuidv4 } from '@firebase/util'
-import { ORIGINAL_IMAGE_SRC, SLIDER_IMAGE_SRC } from '@/constants/images'
+import { SLIDER_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	images: IBackdrop[] | IPersonImage[]
@@ -57,7 +57,7 @@ const ImagesList: FC<PropsType> = ({
 		<div ref={listRef} className={classNames('mb-16', className)}>
 			<Title>Images</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start'>
-				{itemsToShow.map((item, idx) => (
+				{(itemsToShow as IBackdrop[]).map((item, idx) => (
 					<Button
 						key={idx}
 						context='image'

@@ -36,7 +36,7 @@ export interface IDetailsItemText {
 export interface IDetailsItem {
 	type: string
 	title: string | IDetailsItemText
-	text: string | number | IDetailsItemText | IDetailsTextArrayItemType[]
+	text: string | IDetailsItemText | IDetailsTextArrayItemType[]
 }
 
 export interface IMarkFromDB {

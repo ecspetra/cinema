@@ -14,8 +14,8 @@ type PropsType = {
 		| UserCollections.person
 		| UserCollections.basic
 	isMoreDataAvailable: boolean
+	urlToFetchItems: string
 	title?: string
-	urlToFetchItems?: string
 	isFilterable?: boolean
 	isSortable?: boolean
 }
@@ -24,8 +24,8 @@ const ItemsListWrap: FC<PropsType> = ({
 	itemsList,
 	collectionType,
 	isMoreDataAvailable,
-	title,
 	urlToFetchItems,
+	title,
 	isFilterable = false,
 	isSortable = false,
 }) => {
@@ -34,6 +34,10 @@ const ItemsListWrap: FC<PropsType> = ({
 	const [isShowEmptyList, setIsShowEmptyList] = useState<boolean>(
 		!itemsList.length
 	)
+	const defaultSortValue = isSortable
+		? new URLSearchParams(urlToFetchItems).get('sort_by')
+		: undefined
+
 	const handleSortChange = (value: SortByOption) => {
 		const updatedLinkToFetch = urlToFetch.replace(
 			/(sort_by=)[^&]*/,
@@ -60,7 +64,12 @@ const ItemsListWrap: FC<PropsType> = ({
 		<div className='mb-16'>
 			<div className='flex justify-between items-start mb-4'>
 				{title && <Title className='!mb-0'>{title}</Title>}
-				{isSortable && <ItemsListSort onChange={handleSortChange} />}
+				{isSortable && (
+					<ItemsListSort
+						onChange={handleSortChange}
+						defaultSortValue={defaultSortValue!}
+					/>
+				)}
 			</div>
 			<ItemsList
 				itemsList={itemsList}

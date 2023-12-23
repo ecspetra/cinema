@@ -1,6 +1,6 @@
 import ItemCard from './ItemCard'
 import { IItemCard } from '../../../../../interfaces'
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react'
 import Button from '@/app/components/UI/Button'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import Loader from '@/components/Loader'
@@ -16,8 +16,8 @@ type PropsType = {
 		| UserCollections.person
 		| UserCollections.basic
 	isMoreDataAvailable: boolean
-	urlToFetchItems?: string
-	onEmptyList: () => void
+	urlToFetchItems: string
+	onEmptyList: Dispatch<SetStateAction<boolean>>
 	isFilterable?: boolean
 }
 
@@ -32,15 +32,15 @@ const ItemsList: FC<PropsType> = ({
 	const { showModal } = useModal()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [itemsToShow, setItemsToShow] = useState([])
+	const [itemsToShow, setItemsToShow] = useState<IItemCard[]>([])
 	const [isShowMoreButton, setIsShowMoreButton] =
 		useState(isMoreDataAvailable)
 
-	const getMoreItems = page => {
+	const getMoreItems = (page: number) => {
 		setIsLoading(true)
 		getResultsByPage(urlToFetchItems, page)
 			.then(data => {
-				let newItems = []
+				let newItems: IItemCard[] = []
 				if (!data.items.length) onEmptyList(true)
 
 				data.items.map(item => {
@@ -73,14 +73,8 @@ const ItemsList: FC<PropsType> = ({
 	const resetItems = () => {
 		setItemsToShow([])
 		setCurrentPage(1)
-
-		if (isFilterable) {
-			setIsShowMoreButton(false)
-			getMoreItems(1)
-		} else {
-			setIsShowMoreButton(isMoreDataAvailable)
-			getMoreItems(1)
-		}
+		setIsShowMoreButton(isFilterable ? false : isMoreDataAvailable)
+		getMoreItems(1)
 	}
 
 	useEffect(() => {

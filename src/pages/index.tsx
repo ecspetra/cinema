@@ -68,7 +68,7 @@ const HomePage = ({ homePageProps }: { homePageProps: IHomePageProps }) => {
 
 	if (!defaultMovieList || !upcomingMovieList)
 		return <Loader className='bg-transparent' />
-	console.log(urlToFetch)
+
 	return (
 		<>
 			<HomePageSlider itemsList={upcomingMovieList} />

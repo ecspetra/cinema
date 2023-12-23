@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Link from 'next/link'
@@ -12,6 +12,7 @@ import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import { IItemCard } from '../../../../../../interfaces'
 import { CARD_IMAGE_SRC } from '@/constants/images'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	item: IItemCard
@@ -47,9 +48,17 @@ const ItemCard: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(item, media_type ?? collectionType)
+	} = useCollectionButton(
+		item,
+		((media_type as
+			| UserCollections.movie
+			| UserCollections.tv
+			| UserCollections.person) ||
+			collectionType) ??
+			collectionType
+	)
 
-	const isShowTags = genres?.length > 0
+	const isShowTags = genres && genres.length > 0
 	const cardType = media_type ?? collectionType
 	const isShowMark = cardType === 'movie' || cardType === 'tv'
 	const cardCoverSrc = poster_path ?? profile_path

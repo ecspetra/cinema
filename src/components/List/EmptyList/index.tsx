@@ -1,5 +1,5 @@
 import Title from '@/app/components/UI/Title/Title'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import classNames from 'classnames'
 
 type PropsType = {

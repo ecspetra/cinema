@@ -14,6 +14,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Button from '@/app/components/UI/Button'
 import { FilterFormData } from '@/hooks/useFilterReducer'
+import { SortByOption } from '@/constants/enum'
 
 type SelectOptionProps = {
 	onClick: (value: string, label: string) => void
@@ -22,19 +23,22 @@ type SelectOptionProps = {
 
 type PropsType = {
 	children: ReactNode[]
-	name: string
 	label: string
-	onChange: (field: keyof FilterFormData, value?: any) => void
+	onChange: (
+		field: keyof FilterFormData,
+		value?: string
+	) => void | ((value: SortByOption) => void)
 	defaultValue: string
+	name?: string
 	className?: string
 }
 
 const Select: FC<PropsType> = ({
 	children,
-	name,
 	label,
 	onChange,
 	defaultValue,
+	name,
 	className,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
@@ -44,9 +48,14 @@ const Select: FC<PropsType> = ({
 
 	const handleSelectChange = (value: string, label: string) => {
 		if (name) {
-			onChange(name, value)
+			;(
+				onChange as (
+					field: keyof FilterFormData,
+					value?: string
+				) => void
+			)(name, value)
 		} else {
-			onChange(value)
+			;(onChange as (value: SortByOption) => void)(value as SortByOption)
 		}
 		setSelectedOption(label)
 	}

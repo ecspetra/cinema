@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 import { useModal } from '@/context/ModalProvider'
 import { openFriendsModal } from '@/handlers/handleModals'
-import { IUser } from '../../../../interfaces'
+import { IFullUserInfo, IUser } from '../../../../interfaces'
 
 type PropsType = {
 	friends: any[]
@@ -14,7 +14,7 @@ type PropsType = {
 
 const FriendList: FC<PropsType> = ({ friends, onRemove }) => {
 	const { showModal } = useModal()
-	const [itemsList, setItemsList] = useState([])
+	const [itemsList, setItemsList] = useState<IFullUserInfo[]>([])
 	const initialItemsLength = 3
 	const isShowMoreButton = friends.length > initialItemsLength
 

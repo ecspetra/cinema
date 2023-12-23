@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Link from 'next/link'
@@ -8,7 +8,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { UserCollections } from '@/constants/enum'
-import { CARD_IMAGE_SRC, ORIGINAL_IMAGE_SRC } from '@/constants/images'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	itemId: number

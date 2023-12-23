@@ -1,3 +1,4 @@
 export const getPersonGender = (gender: number) => {
-	return gender === 0 ? 'Female' : 'Male'
+	const genderText = gender === 1 ? 'Female' : 'Male'
+	return genderText
 }
