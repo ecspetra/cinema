@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 type PropsType = {
 	itemsList: any[]
-	className: string
+	className?: string
 }
 
 const DetailsList: FC<PropsType> = ({ itemsList, className }) => {

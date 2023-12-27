@@ -7,19 +7,23 @@ import { IMarkFromDB } from '../../../../interfaces'
 import classNames from 'classnames'
 
 type PropsType = {
-	itemId: number
+	markedItemId: number
 	collectionType: string
 	className: string
 }
 
-const MarkSmall: FC<PropsType> = ({ itemId, collectionType, className }) => {
+const MarkSmall: FC<PropsType> = ({
+	markedItemId,
+	collectionType,
+	className,
+}) => {
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
 	const { isLoggedIn, userId } = useAuth()
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, collectionType).then(data => {
-				setMarkData(data)
+			getMarkForMovie(markedItemId, userId, collectionType).then(data => {
+				if (data) setMarkData(data)
 			})
 		}
 	}, [])
@@ -34,7 +38,9 @@ const MarkSmall: FC<PropsType> = ({ itemId, collectionType, className }) => {
 			)}
 		>
 			<FontAwesomeIcon icon={faStar} />
-			<span className='ml-1 font-semibold'>{markData?.data.mark}</span>
+			<span className='ml-1 font-semibold'>
+				{markData?.data.markValue}
+			</span>
 		</div>
 	)
 }

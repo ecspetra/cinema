@@ -1,4 +1,6 @@
-import useLoginFormReducer, { LoginFormData } from '@/hooks/useLoginFormReducer'
+import useLoginFormReducer, {
+	ILoginFormData,
+} from '@/hooks/useLoginFormReducer'
 import { ChangeEvent, FormEvent } from 'react'
 import { signIn } from '@/firebase/config'
 import { useRouter } from 'next/router'
@@ -34,7 +36,7 @@ export const useLoginForm = () => {
 	}
 
 	const updateField = (
-		fieldName: keyof LoginFormData,
+		fieldName: keyof ILoginFormData,
 		value: string,
 		error: string = ''
 	) => {

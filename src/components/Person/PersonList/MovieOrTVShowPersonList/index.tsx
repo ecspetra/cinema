@@ -1,5 +1,5 @@
 import { IItemCard } from '../../../../../interfaces'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Button from '@/app/components/UI/Button'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
@@ -29,7 +29,7 @@ const MovieOrTVShowPersonList: FC<PropsType> = ({ itemsList, title }) => {
 		<div ref={listRef} className='mb-16'>
 			<Title>{title}</Title>
 			<div className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'>
-				{itemsToShow.map((item: IItemCard, idx) => {
+				{(itemsToShow as IItemCard[]).map((item: IItemCard, idx) => {
 					return (
 						<ItemCard
 							key={idx}

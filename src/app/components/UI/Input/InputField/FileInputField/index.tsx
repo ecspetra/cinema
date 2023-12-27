@@ -17,7 +17,7 @@ const InputField: FC<PropsType> = ({ id, onChange, error, className }) => {
 			<label
 				htmlFor={id}
 				className={classNames(
-					'w-full min-h-[48px] bg-gray-700 rounded-md hover:bg-gray-600 font-semibold p-3 flex justify-center items-center duration-300 cursor-pointer',
+					'w-full min-h-[48px] bg-gray-700 rounded-3xl hover:bg-gray-600 font-semibold p-3 flex justify-center items-center duration-300 cursor-pointer',
 					className
 				)}
 			>

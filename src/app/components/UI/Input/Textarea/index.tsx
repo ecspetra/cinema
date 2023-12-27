@@ -3,7 +3,7 @@ import Error from '@/app/components/UI/Error'
 import classNames from 'classnames'
 
 type PropsType = {
-	onChange: Dispatch<SetStateAction<string>>
+	onChange: Dispatch<SetStateAction<string>> | ((value: string) => void)
 	value: string
 	error?: string
 	placeholder?: string

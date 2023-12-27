@@ -22,28 +22,25 @@ export const useFriendsCollection = (
 		if (isLoggedIn) {
 			setIsLoadingFriends(true)
 
-			setNewFriend(itemInfo?.id)
-				.then(() => {
-					getIsFriend(itemInfo?.id)
-						.then(data => {
-							setIsFriend(data)
-							setIsLoadingFriends(false)
-							showSuccessNotification(
-								showModal,
-								'User added as friend'
-							)
-						})
-						.catch(() => {
-							setIsLoadingFriends(false)
-							showErrorNotification(
-								showModal,
-								'An error has occurred'
-							)
-						})
-				})
-				.catch(() => {
-					setIsLoadingFriends(false)
-				})
+			setNewFriend(itemInfo?.id).then(() => {
+				getIsFriend(itemInfo?.id)
+					.then(data => {
+						setIsFriend(data)
+						showSuccessNotification(
+							showModal,
+							'User added as friend'
+						)
+					})
+					.catch(() => {
+						showErrorNotification(
+							showModal,
+							'An error has occurred'
+						)
+					})
+					.finally(() => {
+						setIsLoadingFriends(false)
+					})
+			})
 		} else openLoginModal(showModal)
 	}
 
@@ -55,7 +52,6 @@ export const useFriendsCollection = (
 			removeFriend(userId)
 				.then(() => {
 					setIsFriend(false)
-					setIsLoadingFriends(false)
 				})
 				.then(() => {
 					showSuccessNotification(
@@ -64,8 +60,10 @@ export const useFriendsCollection = (
 					)
 				})
 				.catch(() => {
-					setIsLoadingFriends(false)
 					showErrorNotification(showModal, 'An error has occurred')
+				})
+				.finally(() => {
+					setIsLoadingFriends(false)
 				})
 		}, 500)
 	}
@@ -93,9 +91,8 @@ export const useFriendsCollection = (
 			getIsFriend(itemInfo?.id)
 				.then(data => {
 					setIsFriend(data)
-					setIsLoadingFriends(false)
 				})
-				.catch(() => {
+				.finally(() => {
 					setIsLoadingFriends(false)
 				})
 		} else setIsLoadingFriends(false)

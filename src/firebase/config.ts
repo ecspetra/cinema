@@ -36,6 +36,7 @@ import {
 	IMark,
 	IFullUserInfo,
 	IUser,
+	IMarkFromDB,
 } from '../../interfaces'
 import { onValue } from '@firebase/database'
 import { fetchItemData } from '@/handlers/fetchItemData'
@@ -132,23 +133,23 @@ export const updateUserInfo = async (newInfo: object) => {
 	await updateUserInRealtimeDatabase(updateFields, userId)
 }
 
-export const updateUserCredential = async (newInfo: object) => {
+export const updateUserCredential = async (formData: object) => {
 	const currentUser = auth.currentUser
 	const userId = currentUser?.uid
 	const oldEmail = currentUser?.email
 	const updateFields = {
-		email: newInfo.email.value,
+		email: formData.email.value,
 	}
 
 	const credential = EmailAuthProvider.credential(
 		oldEmail,
-		newInfo.oldPassword.value
+		formData.oldPassword.value
 	)
 
 	await reauthenticateWithCredential(currentUser, credential).then(
 		async () => {
-			await updateEmail(currentUser, newInfo.email.value)
-			await updatePassword(currentUser, newInfo.newPassword.value)
+			await updateEmail(currentUser, formData.email.value)
+			await updatePassword(currentUser, formData.newPassword.value)
 			await updateUserInRealtimeDatabase(updateFields, userId)
 		}
 	)
@@ -331,26 +332,28 @@ export const userContextListener = (
 
 // movie marks handlers
 
-export const setNewMarkForMovie = async (markData: object, userId: string) => {
+export const setNewMarkForMovie = async (markData: IMark, userId: string) => {
 	const newMarkRef = ref(
 		database,
-		`users/${userId}/collection/marks/${markData.type}/${uuidv4()}`
+		`users/${userId}/collection/marks/${
+			markData.collectionType
+		}/${uuidv4()}`
 	)
 
 	const newMarkData = {
-		itemId: markData.id,
-		mark: markData.mark,
-		type: markData.type,
+		markedItemId: markData.markedItemId,
+		markValue: markData.markValue,
+		collectionType: markData.collectionType,
 	}
 
 	await set(newMarkRef, newMarkData)
 }
 
 export const getMarkForMovie = (
-	itemId: number,
+	markedItemId: number,
 	userId: string,
 	collectionType: string
-) => {
+): Promise<IMarkFromDB | undefined> => {
 	const marksCollectionRef = ref(
 		database,
 		`users/${userId}/collection/marks/${collectionType}`
@@ -366,7 +369,7 @@ export const getMarkForMovie = (
 					data: childSnapshot.val(),
 				}
 
-				if (mark.data.itemId === itemId) response = mark
+				if (mark.data.markedItemId === markedItemId) response = mark
 			})
 
 			resolve(response)

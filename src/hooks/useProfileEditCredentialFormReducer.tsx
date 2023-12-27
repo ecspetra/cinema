@@ -1,15 +1,15 @@
 import { useReducer } from 'react'
 
-export interface ISignUpFormData {
-	name: {
-		value: string
-		error: string
-	}
+export interface IProfileEditCredentialFormData {
 	email: {
 		value: string
 		error: string
 	}
-	password: {
+	oldPassword: {
+		value: string
+		error: string
+	}
+	newPassword: {
 		value: string
 		error: string
 	}
@@ -18,30 +18,30 @@ export interface ISignUpFormData {
 	}
 }
 
-interface State {
+export interface State {
 	isLoading: boolean
 	isTouched: boolean
-	formData: ISignUpFormData
+	formData: IProfileEditCredentialFormData
 }
 
 interface Action {
 	type: string
-	payload?: ISignUpFormData | boolean
+	payload?: IProfileEditCredentialFormData | boolean
 }
 
 const initialState: State = {
 	isLoading: false,
 	isTouched: false,
 	formData: {
-		name: {
-			value: '',
-			error: '',
-		},
 		email: {
 			value: '',
 			error: '',
 		},
-		password: {
+		oldPassword: {
+			value: '',
+			error: '',
+		},
+		newPassword: {
 			value: '',
 			error: '',
 		},
@@ -54,7 +54,10 @@ const initialState: State = {
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case 'SET_FORM_DATA':
-			return { ...state, formData: action.payload as ISignUpFormData }
+			return {
+				...state,
+				formData: action.payload as IProfileEditCredentialFormData,
+			}
 		case 'SET_LOADING':
 			return {
 				...state,
@@ -72,8 +75,8 @@ const reducer = (state: State, action: Action): State => {
 	}
 }
 
-const useSignUpFormReducer = () => {
+const useProfileEditCredentialFormReducer = () => {
 	return useReducer(reducer, initialState)
 }
 
-export default useSignUpFormReducer
+export default useProfileEditCredentialFormReducer

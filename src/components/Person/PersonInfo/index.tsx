@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import { IDetailsItem, IPersonImage, IPersonInfo } from '../../../../interfaces'
@@ -9,6 +9,7 @@ import { getPersonGender } from '@/handlers/getPersonGender'
 import ImagesList from '@/components/Images/ImagesList'
 import DetailsList from '@/components/Details/DetailsList'
 import { CARD_IMAGE_SRC } from '@/constants/images'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	personInfo: IPersonInfo
@@ -21,7 +22,7 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(personInfo, 'person')
+	} = useCollectionButton(personInfo, UserCollections.person)
 	const {
 		profile_path,
 		name,

@@ -76,7 +76,7 @@ const ItemCard: FC<PropsType> = ({
 			>
 				{isShowMark && (
 					<MarkSmall
-						itemId={id}
+						markedItemId={id}
 						collectionType={collectionType}
 						className='absolute -right-3 -top-3'
 					/>

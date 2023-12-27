@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useMemo } from 'react'
 import { signUp } from '@/firebase/config'
 import useSignUpFormReducer, {
-	SignUpFormData,
+	ISignUpFormData,
 } from '@/hooks/useSignUpFormReducer'
 import { useRouter } from 'next/router'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
@@ -17,7 +17,7 @@ export const useSignUpForm = () => {
 	const isAuthPage = useMemo(() => pathname === '/auth', [pathname])
 	const isNameValid = state.formData.name.value.trim() !== ''
 	const isEmailValid = /\S+@\S+\.\S+/.test(state.formData.email.value)
-	const isPasswordValid = state.formData.password.value.length >= 8
+	const isPasswordValid = state.formData.password.value.length >= 6
 
 	const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const error =
@@ -38,7 +38,7 @@ export const useSignUpForm = () => {
 	}
 
 	const updateField = (
-		fieldName: keyof SignUpFormData,
+		fieldName: keyof ISignUpFormData,
 		value: string,
 		error: string = ''
 	) => {
@@ -108,7 +108,7 @@ export const useSignUpForm = () => {
 						...state.formData.password,
 						error: isPasswordValid
 							? ''
-							: ERROR_MESSAGES.REQUIRED_FIELD,
+							: ERROR_MESSAGES.INVALID_PASSWORD,
 					},
 				},
 			})

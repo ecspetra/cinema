@@ -33,28 +33,25 @@ export const useCollectionButton = (
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
 
-			setNewCollectionItem(itemInfo.id, collectionType)
-				.then(() => {
-					getCollectionItem(itemInfo.id, collectionType)
-						.then(data => {
-							setIsCollectionItem(data)
-							setIsLoadingCollection(false)
-							showSuccessNotification(
-								showModal,
-								'The item was successfully added'
-							)
-						})
-						.catch(() => {
-							setIsLoadingCollection(false)
-							showErrorNotification(
-								showModal,
-								'An error has occurred'
-							)
-						})
-				})
-				.catch(() => {
-					setIsLoadingCollection(false)
-				})
+			setNewCollectionItem(itemInfo.id, collectionType).then(() => {
+				getCollectionItem(itemInfo.id, collectionType)
+					.then(data => {
+						setIsCollectionItem(data)
+						showSuccessNotification(
+							showModal,
+							'The item was successfully added'
+						)
+					})
+					.catch(() => {
+						showErrorNotification(
+							showModal,
+							'An error has occurred'
+						)
+					})
+					.finally(() => {
+						setIsLoadingCollection(false)
+					})
+			})
 		} else openLoginModal(showModal)
 	}
 
@@ -67,17 +64,16 @@ export const useCollectionButton = (
 			removeCollectionItem(itemInfo.id, collectionType)
 				.then(() => {
 					setIsCollectionItem(false)
-					setIsLoadingCollection(false)
-				})
-				.then(() => {
 					showSuccessNotification(
 						showModal,
 						'The item was successfully removed'
 					)
 				})
 				.catch(() => {
-					setIsLoadingCollection(false)
 					showErrorNotification(showModal, 'An error has occurred')
+				})
+				.finally(() => {
+					setIsLoadingCollection(false)
 				})
 		}, 500)
 	}
@@ -98,11 +94,10 @@ export const useCollectionButton = (
 			getCollectionItem(itemInfo.id, collectionType)
 				.then(data => {
 					setIsCollectionItem(data)
+				})
+				.finally(() => {
 					setIsLoadingCollection(false)
 					setIsMounted(true)
-				})
-				.catch(() => {
-					setIsLoadingCollection(false)
 				})
 		} else setIsLoadingCollection(false)
 	}, [isLoggedIn])

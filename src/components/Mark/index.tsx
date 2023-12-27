@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Title from '@/app/components/UI/Title/Title'
@@ -13,13 +13,14 @@ import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
 import { IMark, IMarkFromDB } from '../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	itemId: number
-	collectionType: string
+	markedItemId: number
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
-const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
+const Mark: FC<PropsType> = ({ markedItemId, collectionType }) => {
 	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
 	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
@@ -30,28 +31,23 @@ const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 	const EMPTY_MARK_COLOR = 'text-rose-900'
 	const FILLED_MARK_COLOR = 'text-rose-500'
 
-	const handleSetNewMark = (mark: number) => {
+	const handleSetNewMark = (markValue: number) => {
 		if (isLoggedIn) {
 			setIsLoadingMark(true)
-			const itemData: IMark = {
-				id: itemId,
-				mark: mark,
-				type: collectionType,
+			const markedItemData: IMark = {
+				markedItemId,
+				markValue,
+				collectionType,
 			}
-			setNewMarkForMovie(itemData, userId)
-				.then(() => {
-					getMarkForMovie(itemId, userId, collectionType)
-						.then(data => {
-							setMarkData(data)
-							setIsLoadingMark(false)
-						})
-						.catch(() => {
-							setIsLoadingMark(false)
-						})
-				})
-				.catch(() => {
-					setIsLoadingMark(false)
-				})
+			setNewMarkForMovie(markedItemData, userId).then(() => {
+				getMarkForMovie(markedItemId, userId, collectionType)
+					.then(data => {
+						if (data) setMarkData(data)
+					})
+					.finally(() => {
+						setIsLoadingMark(false)
+					})
+			})
 		} else openLoginModal(showModal)
 	}
 
@@ -97,7 +93,7 @@ const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 				...prevState,
 				createStarIcon(
 					i,
-					i <= markData.data.mark
+					markData && i <= markData.data.markValue
 						? FILLED_MARK_COLOR
 						: EMPTY_MARK_COLOR
 				),
@@ -120,20 +116,19 @@ const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 			.then(() => {
 				setMarkData(null)
 				getEmptyMarkIcons()
-				setIsLoadingMark(false)
 			})
-			.catch(() => {
+			.finally(() => {
 				setIsLoadingMark(false)
 			})
 	}
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, collectionType).then(data => {
-				setMarkData(data)
+			getMarkForMovie(markedItemId, userId, collectionType).then(data => {
+				if (data) setMarkData(data)
 			})
 		} else getEmptyMarkIcons()
-	}, [userId, itemId])
+	}, [userId, markedItemId])
 
 	useEffect(() => {
 		if (markData) {
@@ -157,7 +152,7 @@ const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 						{isShowRemoveMarkButton && (
 							<>
 								<p className='text-sm font-semibold leading-none mr-2'>
-									{markData.data.mark}
+									{markData.data.markValue}
 								</p>
 								<Button
 									onClick={() =>

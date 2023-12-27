@@ -30,7 +30,7 @@ export interface IDetailsTextArrayItemType {
 
 export interface IDetailsItemText {
 	birthday: string
-	deathday?: string
+	deathday?: string | null
 }
 
 export interface IDetailsItem {
@@ -41,16 +41,13 @@ export interface IDetailsItem {
 
 export interface IMarkFromDB {
 	key: string
-	data: {
-		itemMark: IMark
-		userId: string
-	}
+	data: IMark
 }
 
 export interface IMark {
-	mark: number
-	itemId: number
-	type: UserCollections.movie | UserCollections.tv
+	markedItemId: number
+	markValue: number
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
 export interface IReviewCard {
@@ -118,7 +115,7 @@ export interface IMovieOrTVShowBasicInfo {
 }
 
 export interface IPersonInfo {
-	id: string
+	id: number
 	profile_path: string
 	known_for_department: string
 	name: string

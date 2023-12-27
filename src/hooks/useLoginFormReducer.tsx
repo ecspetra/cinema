@@ -1,6 +1,6 @@
 import { useReducer } from 'react'
 
-export interface LoginFormData {
+export interface ILoginFormData {
 	email: {
 		value: string
 		error: string
@@ -17,12 +17,12 @@ export interface LoginFormData {
 export interface State {
 	isLoading: boolean
 	isTouched: boolean
-	formData: LoginFormData
+	formData: ILoginFormData
 }
 
 interface Action {
 	type: string
-	payload?: any
+	payload?: ILoginFormData | boolean
 }
 
 const initialState: State = {
@@ -35,14 +35,14 @@ const initialState: State = {
 	},
 }
 
-const loginFormReducer = (state: State, action: Action): State => {
+const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case 'SET_LOADING':
-			return { ...state, isLoading: action.payload }
+			return { ...state, isLoading: action.payload as boolean }
 		case 'SET_TOUCHED':
-			return { ...state, isTouched: action.payload }
+			return { ...state, isTouched: true }
 		case 'SET_FORM_DATA':
-			return { ...state, formData: action.payload }
+			return { ...state, formData: action.payload as ILoginFormData }
 		case 'CLEAR_FORM':
 			return initialState
 		default:
@@ -51,7 +51,7 @@ const loginFormReducer = (state: State, action: Action): State => {
 }
 
 const useLoginFormReducer = () => {
-	return useReducer(loginFormReducer, initialState)
+	return useReducer(reducer, initialState)
 }
 
 export default useLoginFormReducer

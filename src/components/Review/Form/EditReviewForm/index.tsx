@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC, useState, Dispatch, SetStateAction } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { updateReviewItem } from '@/firebase/config'
@@ -8,7 +8,7 @@ import { IReviewCard } from '../../../../../interfaces'
 type PropsType = {
 	item: IReviewCard
 	movieId: number
-	onFormClose: React.Dispatch<React.SetStateAction<boolean>>
+	onFormClose: Dispatch<SetStateAction<boolean>>
 	isReply?: boolean
 }
 

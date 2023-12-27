@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
@@ -81,7 +81,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 			title: 'Production companies:',
 			text: production_companies,
 		},
-	]
+	].filter(Boolean) as IDetailsItem[]
 
 	const {
 		isLoadingCollection,
@@ -117,11 +117,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 				<TagList tags={genres} className='mb-5' />
 				<DetailsList itemsList={details} />
 				<Rating rating={vote_average} voteCount={vote_count} />
-				<Mark
-					itemId={id}
-					itemTitle={title ? title : name}
-					collectionType={collectionType}
-				/>
+				<Mark markedItemId={id} collectionType={collectionType} />
 				<p className='mb-6'>{overview}</p>
 				<CollectionButton
 					className='mb-12'
@@ -133,7 +129,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 							: handleSetCollectionItem
 					}
 				/>
-				{isTVShowItem && <TVSeasonsList seasonsList={seasons} />}
+				{isTVShowItem && <TVSeasonsList seasonsList={seasons || []} />}
 				<ImagesList images={movieImages} />
 				<ReviewList movieId={id} reviews={movieReviews} />
 				<NewReviewForm
