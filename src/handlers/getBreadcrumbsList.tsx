@@ -1,6 +1,7 @@
 import { IItemCard } from '../../interfaces'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { getUserInfo } from '@/firebase/config'
+import { UserCollections } from '@/constants/enum'
 
 const getItemName = (item: IItemCard): string =>
 	item.title ? item.title : item.name || ''
@@ -18,7 +19,7 @@ export const getBreadcrumbsList = async (allSegments: string[]) => {
 
 		const isIdPageSegment = !isNaN(Number(segment))
 		const isUserCollectionSegment = segment.includes('?uid')
-		const isTVShowPageSegment = segment === 'tv'
+		const isTVShowPageSegment = segment === UserCollections.tv
 		const isProfilePageSegment =
 			allSegments.includes('profile') && segment !== 'profile'
 

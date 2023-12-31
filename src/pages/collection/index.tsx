@@ -101,25 +101,25 @@ const GeneralCollectionPage = ({
 	)
 }
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
-	const userIdFromUrl = ctx.query.uid as string
-	const cookies = await parseCookies(ctx.req!)
-	const userId = cookies.uid
-
-	const generalCollection = await getGeneralCollectionPage(
-		userIdFromUrl,
-		userId,
-		url => {
-			ctx.res?.writeHead(302, { Location: url })
-			ctx.res?.end()
-		}
-	)
-
-	return {
-		props: {
-			generalCollectionPageProps: generalCollection,
-		},
-	}
-}
+// export const getServerSideProps = async (ctx: NextPageContext) => {
+// 	const userIdFromUrl = ctx.query.uid as string
+// 	const cookies = await parseCookies(ctx.req!)
+// 	const userId = cookies.uid
+//
+// 	const generalCollection = await getGeneralCollectionPage(
+// 		userIdFromUrl,
+// 		userId,
+// 		url => {
+// 			ctx.res?.writeHead(302, { Location: url })
+// 			ctx.res?.end()
+// 		}
+// 	)
+//
+// 	return {
+// 		props: {
+// 			generalCollectionPageProps: generalCollection,
+// 		},
+// 	}
+// }
 
 export default GeneralCollectionPage

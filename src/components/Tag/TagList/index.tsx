@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react'
 import Tag from '@/components/Tag'
 import { ITag } from '../../../../interfaces'
 import { getAllGenres } from '@/handlers/getAllGenres'
@@ -14,7 +14,7 @@ type PropsType = {
 	title?: string
 	className?: string
 	isEditTags?: boolean
-	onFormClose?: React.Dispatch<React.SetStateAction<boolean>>
+	onFormClose?: Dispatch<SetStateAction<boolean>>
 }
 
 const TagList: FC<PropsType> = ({
@@ -28,7 +28,7 @@ const TagList: FC<PropsType> = ({
 	const [selectedTags, setSelectedTags] = useState<ITag[]>(tags)
 	const { showModal } = useModal()
 
-	const handleToggleTag = (tag, isChecked) => {
+	const handleToggleTag = (tag: ITag, isChecked: boolean) => {
 		if (isChecked) {
 			setSelectedTags(prevState =>
 				prevState.filter(item => item.name !== tag.name)
@@ -38,15 +38,19 @@ const TagList: FC<PropsType> = ({
 		}
 	}
 
-	const handleIsSelectedTag = tag => {
-		if (tags && tags.find(item => item.name === tag)) {
+	const handleIsSelectedTag = (tagName: ITag['name']) => {
+		if (tags && tags.find(item => item.name === tagName)) {
 			return true
 		}
 	}
 
+	const handleClose = () => {
+		onFormClose && onFormClose(false)
+	}
+
 	const handleSaveChanges = async () => {
 		await updateProfileGenres(selectedTags).then(() => {
-			onFormClose(false)
+			handleClose()
 			showSuccessNotification(
 				showModal,
 				'Your profile was successfully updated'
@@ -96,10 +100,7 @@ const TagList: FC<PropsType> = ({
 			{isEditTags && (
 				<div className='flex justify-start items-center gap-2 mt-5'>
 					<Button onClick={handleSaveChanges}>Save</Button>
-					<Button
-						context='filledDark'
-						onClick={() => onFormClose(false)}
-					>
+					<Button context='filledDark' onClick={handleClose}>
 						Cancel
 					</Button>
 				</div>

@@ -47,10 +47,10 @@ const TVShowPage = ({
 			<TopBanner imageSrc={tvShow?.images[0]?.file_path} />
 			<MovieOrTVShowBasicInfo
 				basicInfo={tvShow?.basicInfo}
-				movieImages={tvShow?.images}
-				movieReviews={tvShow?.reviewsFromAPIAndStorage}
-				movieVideo={tvShowTeaserKey}
-				collectionType={UserCollections.movie}
+				images={tvShow?.images}
+				reviews={tvShow?.reviewsFromAPIAndStorage}
+				video={tvShowTeaserKey}
+				collectionType={UserCollections.tv}
 			/>
 			<div>
 				<MovieOrTVShowPersonList
@@ -63,12 +63,12 @@ const TVShowPage = ({
 				/>
 				<ItemsListWrap
 					itemsList={tvShow?.similarItemsList.items}
-					collectionType={UserCollections.movie}
+					collectionType={UserCollections.tv}
 					isMoreDataAvailable={
 						tvShow?.similarItemsList.isMoreDataAvailable
 					}
 					urlToFetchItems={urlToFetchSimilarItems}
-					title='Similar movies'
+					title='Similar TV Shows'
 				/>
 			</div>
 		</>

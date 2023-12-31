@@ -30,8 +30,7 @@ export const getSpecificCollectionPage = async (
 		const collectionItemsList = await getCollectionItemsList(
 			userIdFromUrl,
 			collectionType,
-			20,
-			null
+			20
 		)
 		const isEmptyCollectionTypePage = !collectionItemsList.items.length
 

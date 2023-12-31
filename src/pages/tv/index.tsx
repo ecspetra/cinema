@@ -88,7 +88,7 @@ const GeneralTVShowListPage = ({
 export const getServerSideProps = async () => {
 	try {
 		const defaultTvShows = await getResultsByPage(
-			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', 'tv'),
+			URL_TO_SEARCH_LIST_ITEMS.replace('{type}', UserCollections.tv),
 			1
 		)
 

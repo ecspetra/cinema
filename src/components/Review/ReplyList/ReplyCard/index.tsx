@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useMemo } from 'react'
 import { IReviewCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
-import { getUserInfo, removeReviewItem } from '@/firebase/config'
+import { removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
 import Dropdown from '@/app/components/UI/Dropdown'
@@ -13,78 +13,47 @@ import { CSSTransition } from 'react-transition-group'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 import { UserCollections } from '@/constants/enum'
 import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/formatReviewTextWithHtmlTags'
+import useReviewCardContentLength from '@/components/Review/hooks/useReviewCardContentLength'
+import useReviewEditForm from '@/components/Review/hooks/useReviewEditForm'
+import useReplyCard from '@/components/Review/hooks/useReplyCard'
 
 type PropsType = {
-	movieId: number
+	reviewedItemId: number
 	userId: string
 	reply: IReviewCard
+	collectionType: UserCollections.movie | UserCollections.tv
 	onReply: (userName: string) => void
 	isCollectionItem?: boolean
 }
 
 const ReplyCard: FC<PropsType> = ({
-	movieId,
+	reviewedItemId,
 	userId,
 	reply,
+	collectionType,
 	onReply,
 	isCollectionItem,
 }) => {
-	const { content, id, created_at, authorId, replyTo } = reply
-	const [isMounted, setIsMounted] = useState<boolean>(false)
-	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
-	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
-	const [authorInfo, setAuthorInfo] = useState({
-		userId: '',
-		photoURL: '',
-		displayName: '',
-	})
-	const [isTruncateReview, setIsTruncateReview] = useState<boolean>(false)
-	const [contentHeight, setContentHeight] = useState<number>(0)
-	const contentRef = useRef<HTMLDivElement | null>(null)
-	const isLongReviewContent = useMemo(() => content.length > 400, [content])
+	const { content, id, created_at, authorId, replyToUser } = reply
 	const formattedDate = useMemo(
 		() => moment(created_at).format('MMM Do YY'),
 		[created_at]
 	)
-	const isShowTruncateDots =
-		isLongReviewContent && !isContentOpen && isTruncateReview
 	const isCurrentUserItem = userId === authorId
 
-	const handleReplyContent = () => {
-		setIsContentOpen(!isContentOpen)
-	}
+	const { isMounted, authorInfo } = useReplyCard(authorId!)
 
-	useEffect(() => {
-		if (contentRef.current) {
-			setContentHeight(contentRef.current!.scrollHeight)
-		}
+	const { isShowEditForm, showEditReviewForm, closeEditReviewForm } =
+		useReviewEditForm(userId)
 
-		if (!isContentOpen) {
-			setTimeout(() => {
-				setIsTruncateReview(true)
-			}, 500)
-		} else setIsTruncateReview(false)
-	}, [isContentOpen])
-
-	useEffect(() => {
-		getUserInfo(authorId)
-			.then(data => {
-				setAuthorInfo({
-					userId: data.info.id,
-					photoURL: data.info.photoURL,
-					displayName: data.info.displayName,
-				})
-			})
-			.then(() => {
-				setIsMounted(true)
-			})
-	}, [])
-
-	useEffect(() => {
-		if (!userId) {
-			setIsShowEditForm(false)
-		}
-	}, [userId])
+	const {
+		isContentOpen,
+		contentHeight,
+		contentRef,
+		isShowTruncateDots,
+		isLongReviewContent,
+		toggleReviewContentLength,
+	} = useReviewCardContentLength(content)
 
 	return (
 		<CSSTransition
@@ -99,13 +68,19 @@ const ReplyCard: FC<PropsType> = ({
 						<DropdownItem
 							label='Edit'
 							icon={faPenToSquare}
-							onClick={() => setIsShowEditForm(true)}
+							onClick={showEditReviewForm}
 						/>
 						<DropdownItem
 							label='Delete'
 							icon={faTrash}
 							onClick={() =>
-								removeReviewItem(id, movieId, userId, 'replies')
+								removeReviewItem(
+									id,
+									reviewedItemId,
+									userId,
+									UserCollections.replies,
+									collectionType
+								)
 							}
 						/>
 					</Dropdown>
@@ -131,9 +106,10 @@ const ReplyCard: FC<PropsType> = ({
 					{isShowEditForm ? (
 						<EditReviewForm
 							item={reply}
-							movieId={movieId}
-							onFormClose={setIsShowEditForm}
-							isReply
+							reviewedItemId={reviewedItemId}
+							reviewedItemCollectionType={collectionType}
+							onFormClose={closeEditReviewForm}
+							isReplyItem
 						/>
 					) : (
 						<>
@@ -152,7 +128,7 @@ const ReplyCard: FC<PropsType> = ({
 											isShowTruncateDots && 'line-clamp-2'
 										)}
 									>
-										<span className='mr-1 font-semibold'>{`${replyTo},`}</span>
+										<span className='mr-1 font-semibold'>{`${replyToUser},`}</span>
 										<span
 											dangerouslySetInnerHTML={{
 												__html: formatReviewTextWithHtmlTags(
@@ -169,7 +145,7 @@ const ReplyCard: FC<PropsType> = ({
 								{isLongReviewContent && (
 									<Button
 										context='text'
-										onClick={() => handleReplyContent()}
+										onClick={toggleReviewContentLength}
 									>
 										{isContentOpen ? 'Hide' : 'Show more'}
 									</Button>
@@ -177,10 +153,11 @@ const ReplyCard: FC<PropsType> = ({
 							</span>
 							<ReviewActions
 								reviewId={id}
-								movieId={movieId}
+								reviewedItemId={reviewedItemId}
 								userId={userId}
 								collectionType={UserCollections.replies}
 								onReply={() => onReply(authorInfo.displayName)}
+								reviewedItemCollectionType={collectionType}
 							/>
 						</>
 					)}

@@ -27,7 +27,7 @@ const HomePage = ({ homePageProps }: { homePageProps: IHomePageProps }) => {
 	)
 	const defaultUrlToFetchItems = URL_TO_SEARCH_LIST_ITEMS.replace(
 		'{type}',
-		'movie'
+		UserCollections.movie
 	)
 	const [defaultMovieList, setDefaultMovieList] =
 		useState<IHomePageProps['defaultMovies']>(null)

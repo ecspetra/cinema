@@ -1,4 +1,5 @@
 import { UserCollections } from '@/constants/enum'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 export interface IFetchedResult<T> {
 	isMoreDataAvailable: boolean
@@ -6,8 +7,9 @@ export interface IFetchedResult<T> {
 }
 
 export interface ITag {
-	id: number
-	name: string
+	id?: number
+	name?: string
+	field?: keyof FilterFormData
 }
 
 export interface IBackdrop {
@@ -56,11 +58,11 @@ export interface IReviewCard {
 	created_at: string
 	author?: string
 	avatar_path?: string
-	movieId?: number
+	reviewedItemId?: number
 	authorId?: string
-	isTVShow?: boolean
-	replyTo?: string
+	replyToUser?: string
 	reviewId?: string
+	reviewedItemCollectionType?: UserCollections.movie | UserCollections.tv
 }
 
 export interface IItemCard {
@@ -180,4 +182,10 @@ export interface IItemCountry {
 	iso_3166_1: string
 	english_name: string
 	native_name: string
+}
+
+export interface IReviewAuthorInfo {
+	userId: string
+	photoURL: string
+	displayName: string
 }

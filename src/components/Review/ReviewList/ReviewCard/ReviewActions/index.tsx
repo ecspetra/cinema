@@ -1,10 +1,17 @@
-import React, { FC, useEffect, useState } from 'react'
+import {
+	FC,
+	useEffect,
+	useState,
+	MouseEvent,
+	SetStateAction,
+	Dispatch,
+} from 'react'
 import ReviewActionButton from '@/components/Review/ReviewList/ReviewCard/ReviewActions/ReviewActionButton'
 import {
 	getReviewReactions,
 	removeReviewReaction,
 	reviewReactionsListener,
-	setNewReviewReaction,
+	setNewReviewOrReplyReaction,
 } from '@/firebase/config'
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
@@ -12,23 +19,30 @@ import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	reviewId: string
-	movieId: number
+	reviewedItemId: number
 	userId: string
-	onReply:
-		| React.Dispatch<React.SetStateAction<boolean>>
-		| ((userName: string) => void)
+	onReply: Dispatch<SetStateAction<boolean>> | ((userName: string) => void)
 	collectionType: UserCollections.reviews | UserCollections.replies
+	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+}
+
+type Reaction = { key: string; data: string }
+
+type ReactionsType = {
+	likes: Reaction[]
+	dislikes: Reaction[]
 }
 
 const ReviewActions: FC<PropsType> = ({
 	reviewId,
-	movieId,
+	reviewedItemId,
 	userId,
 	onReply,
 	collectionType,
+	reviewedItemCollectionType,
 }) => {
 	const { showModal } = useModal()
-	const [reactions, setReactions] = useState({
+	const [reactions, setReactions] = useState<ReactionsType>({
 		likes: [],
 		dislikes: [],
 	})
@@ -40,7 +54,7 @@ const ReviewActions: FC<PropsType> = ({
 		reactions.dislikes.some(item => item.key === userId)
 
 	const handleReaction = async (
-		event,
+		event: MouseEvent<HTMLButtonElement>,
 		reactionType: 'like' | 'dislike',
 		collectionType: UserCollections.reviews | UserCollections.replies
 	) => {
@@ -49,17 +63,19 @@ const ReviewActions: FC<PropsType> = ({
 				await removeReviewReaction(
 					userId,
 					reviewId,
-					movieId,
+					reviewedItemId,
 					collectionType,
-					reactionType
+					reactionType,
+					reviewedItemCollectionType
 				)
 			} else {
-				await setNewReviewReaction(
+				await setNewReviewOrReplyReaction(
 					userId,
 					reviewId,
-					movieId,
+					reviewedItemId,
 					collectionType,
-					reactionType
+					reactionType,
+					reviewedItemCollectionType
 				)
 			}
 		} else openLoginModal(showModal)
@@ -75,10 +91,15 @@ const ReviewActions: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		getReviewReactions(reviewId, movieId, collectionType).then(data => {
+		getReviewReactions(
+			reviewId,
+			reviewedItemId,
+			collectionType,
+			reviewedItemCollectionType
+		).then(data => {
 			setReactions({
-				likes: data.likes,
-				dislikes: data.dislikes,
+				likes: data.likes as Reaction[],
+				dislikes: data.dislikes as Reaction[],
 			})
 		})
 	}, [])
@@ -87,9 +108,10 @@ const ReviewActions: FC<PropsType> = ({
 		if (userId) {
 			const unsubscribe = reviewReactionsListener(
 				reviewId,
-				movieId,
+				reviewedItemId,
 				collectionType,
-				setReactions
+				setReactions,
+				reviewedItemCollectionType
 			)
 
 			return () => {

@@ -26,7 +26,7 @@ type PropsType = {
 	label: string
 	onChange: (
 		field: keyof FilterFormData,
-		value?: string
+		value: string
 	) => void | ((value: SortByOption) => void)
 	defaultValue: string
 	name?: string

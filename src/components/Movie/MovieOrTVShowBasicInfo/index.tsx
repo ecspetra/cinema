@@ -25,17 +25,17 @@ import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	basicInfo: IMovieOrTVShowBasicInfo
-	movieImages: IBackdrop[]
-	movieReviews: IReviewCard[]
-	movieVideo: string
+	images: IBackdrop[]
+	reviews: IReviewCard[]
+	video: string
 	collectionType: UserCollections.movie | UserCollections.tv
 }
 
 const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 	basicInfo,
-	movieImages,
-	movieReviews,
-	movieVideo,
+	images,
+	reviews,
+	video,
 	collectionType,
 }) => {
 	const { userId } = useAuth()
@@ -57,7 +57,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 		seasons,
 	} = basicInfo
 
-	const isTVShowItem = collectionType === 'tv'
+	const isTVShowItem = collectionType === UserCollections.tv
 
 	const details: IDetailsItem[] = [
 		isTVShowItem
@@ -130,18 +130,22 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 					}
 				/>
 				{isTVShowItem && <TVSeasonsList seasonsList={seasons || []} />}
-				<ImagesList images={movieImages} />
-				<ReviewList movieId={id} reviews={movieReviews} />
-				<NewReviewForm
-					movieId={id}
-					userId={userId}
-					isTVShow={isTVShowItem}
+				<ImagesList images={images} />
+				<ReviewList
+					reviewedItemId={id}
+					collectionType={collectionType}
+					reviews={reviews}
 				/>
-				{movieVideo && (
+				<NewReviewForm
+					reviewedItemId={id}
+					userId={userId}
+					reviewedItemCollectionType={collectionType}
+				/>
+				{video && (
 					<div className='mt-16'>
 						<Title>Trailer</Title>
 						<ReactPlayer
-							url={`https://www.youtube.com/watch?v=${movieVideo}`}
+							url={`https://www.youtube.com/watch?v=${video}`}
 							controls={true}
 							width={'100%'}
 							style={{ minHeight: `500px` }}

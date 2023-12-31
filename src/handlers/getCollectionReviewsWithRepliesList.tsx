@@ -1,24 +1,30 @@
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { IFetchedResult, IReviewCard } from '../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 export const getCollectionReviewsWithRepliesList = (
-	collectionReplies: IFetchedResult<IReviewCard>
+	collectionReplies: IReviewCard[]
 ) => {
 	return new Promise(async resolve => {
 		let reviews: IReviewCard[]
 
-		const repliesArray: IReviewCard[] =
-			collectionReplies.items as IReviewCard[]
-
-		const filteredReplies = repliesArray.filter(
-			(item: IReviewCard) =>
-				item.movieId !== undefined && item.reviewId !== undefined
+		const filteredReplies = collectionReplies.filter(
+			item =>
+				item.reviewedItemId !== undefined && item.reviewId !== undefined
 		)
 
 		const addedReviewIds = new Set<string>()
 
-		const fetchMovieReviews = async (movieId: number, reviewId: string) => {
-			const result = await fetchItemData('movie', movieId, '/reviews')
+		const fetchMovieOrTVShowReviews = async (
+			reviewedItemId: number,
+			reviewId: string,
+			collectionType: UserCollections.movie | UserCollections.tv
+		) => {
+			const result = await fetchItemData(
+				collectionType,
+				reviewedItemId,
+				'/reviews'
+			)
 			const fetchedReview = result.results.find(
 				(item: IReviewCard) => item.id === reviewId
 			)
@@ -26,7 +32,8 @@ export const getCollectionReviewsWithRepliesList = (
 			if (!addedReviewIds.has(reviewId) && fetchedReview) {
 				const review = {
 					...fetchedReview,
-					movieId: movieId,
+					reviewedItemId: reviewedItemId,
+					reviewedItemCollectionType: collectionType,
 				}
 
 				addedReviewIds.add(reviewId)
@@ -37,18 +44,52 @@ export const getCollectionReviewsWithRepliesList = (
 			return null
 		}
 
-		const fetchPromises = filteredReplies.map((item: IReviewCard) => {
-			if (item.movieId !== undefined && item.reviewId !== undefined) {
-				return fetchMovieReviews(item.movieId, item.reviewId)
+		const fetchMovieReviewPromises = filteredReplies.map(
+			(item: IReviewCard) => {
+				if (
+					item.reviewedItemId !== undefined &&
+					item.reviewId !== undefined &&
+					item.reviewedItemCollectionType === UserCollections.movie
+				) {
+					return fetchMovieOrTVShowReviews(
+						item.reviewedItemId,
+						item.reviewId,
+						UserCollections.movie
+					)
+				}
 			}
-		})
-
-		const resolvedReviews = await Promise.all(fetchPromises)
-
-		reviews = resolvedReviews.filter(
-			(review: IReviewCard) => review !== null
 		)
 
-		resolve(reviews)
+		const fetchTVShowReviewPromises = filteredReplies.map(
+			(item: IReviewCard) => {
+				if (
+					item.reviewedItemId !== undefined &&
+					item.reviewId !== undefined &&
+					item.reviewedItemCollectionType === UserCollections.tv
+				) {
+					return fetchMovieOrTVShowReviews(
+						item.reviewedItemId,
+						item.reviewId,
+						UserCollections.tv
+					)
+				}
+			}
+		)
+
+		const resolvedMovieReviews = await Promise.all(fetchMovieReviewPromises)
+		const resolvedTVShowReviews = await Promise.all(
+			fetchTVShowReviewPromises
+		)
+
+		const movieReviews = resolvedMovieReviews.filter(
+			(review: IReviewCard) => review !== null && review !== undefined
+		)
+		const tvShowReviews = resolvedTVShowReviews.filter(
+			(review: IReviewCard) => review !== null && review !== undefined
+		)
+
+		reviews = [...movieReviews, ...tvShowReviews]
+
+		resolve(reviews.filter(item => item !== undefined))
 	})
 }

@@ -45,7 +45,7 @@ const ItemCardSmall: FC<PropsType> = ({
 				className='duration-300 mb-4 border-4'
 				src={imageFullSrc}
 				defaultImage={
-					collectionType !== 'person'
+					collectionType !== UserCollections.person
 						? defaultMovieImage
 						: defaultUserImage
 				}

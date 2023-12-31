@@ -12,6 +12,7 @@ import {
 	IVideoData,
 } from '../../../interfaces'
 import { CARD_IMAGE_SRC, ORIGINAL_IMAGE_SRC } from '@/constants/images'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	itemsList: IFetchedResult<IUpcomingMovieItem>
@@ -28,8 +29,16 @@ const HomePageSlider: FC<PropsType> = ({ itemsList }) => {
 		: ''
 
 	const getSelectedItemImageSrc = async () => {
-		const images = await fetchItemData('movie', selectedItem.id, '/images')
-		const videos = await fetchItemData('movie', selectedItem.id, '/videos')
+		const images = await fetchItemData(
+			UserCollections.movie,
+			selectedItem.id,
+			'/images'
+		)
+		const videos = await fetchItemData(
+			UserCollections.movie,
+			selectedItem.id,
+			'/videos'
+		)
 		const movieTeaser =
 			videos.results.length > 0 &&
 			videos.results.find(

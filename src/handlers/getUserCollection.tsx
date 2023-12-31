@@ -1,4 +1,7 @@
-import { getCollectionItemsList } from '@/firebase/config'
+import {
+	getCollectionItemsList,
+	getReviewsOrRepliesFromUserCollection,
+} from '@/firebase/config'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
 import {
 	IFetchedResult,
@@ -16,46 +19,39 @@ export const getUserCollection = async (
 		const collectionMovies = (await getCollectionItemsList(
 			userId,
 			UserCollections.movie,
-			5,
-			null
+			5
 		)) as IFetchedResult<IItemCard>
 		const collectionTVShows = (await getCollectionItemsList(
 			userId,
 			UserCollections.tv,
-			5,
-			null
+			5
 		)) as IFetchedResult<IItemCard>
 		const collectionPersons = (await getCollectionItemsList(
 			userId,
 			UserCollections.person,
-			5,
-			null
+			5
 		)) as IFetchedResult<IItemCard>
-		const collectionReviews = (await getCollectionItemsList(
-			userId,
-			UserCollections.reviews,
-			null,
-			null
-		)) as IFetchedResult<IReviewCard>
-		const collectionReplies = (await getCollectionItemsList(
-			userId,
-			UserCollections.replies,
-			null,
-			null
-		)) as IFetchedResult<IReviewCard>
 		const collectionMarks = (await getCollectionItemsList(
 			userId,
 			UserCollections.marks,
-			null,
 			null
 		)) as IFetchedResult<IMark>
+		const collectionReviews = (await getReviewsOrRepliesFromUserCollection(
+			userId,
+			UserCollections.reviews
+		)) as IReviewCard[]
+		const collectionReplies = (await getReviewsOrRepliesFromUserCollection(
+			userId,
+			UserCollections.replies
+		)) as IReviewCard[]
 
 		const reviewsWithUserReplies =
 			await getCollectionReviewsWithRepliesList(collectionReplies)
 
 		const allCollectionReviews = [
-			...collectionReviews.items.filter(
-				item => item.movieId !== undefined && item.id !== undefined
+			...collectionReviews.filter(
+				item =>
+					item.reviewedItemId !== undefined && item.id !== undefined
 			),
 			...(reviewsWithUserReplies as IReviewCard[]),
 		]

@@ -27,9 +27,9 @@ const MarksCollectionWrap: FC<PropsType> = ({ items }) => {
 					return (
 						<ItemCardSmall
 							key={idx}
-							itemId={item.itemId}
-							mark={item.mark}
-							collectionType={item.type}
+							itemId={item.markedItemId}
+							mark={item.markValue}
+							collectionType={item.collectionType}
 							isLinkToMovie
 						/>
 					)

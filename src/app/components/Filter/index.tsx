@@ -29,7 +29,7 @@ import useFilterReducer, {
 } from '@/hooks/useFilterReducer'
 import { getFilterQuery } from '@/app/components/Filter/handlers/getFilterQuery'
 import { getSelectOptions } from '@/app/components/Filter/handlers/getSelectOptions'
-import { IItemCountry } from '../../../../interfaces'
+import { IItemCountry, ITag } from '../../../../interfaces'
 
 type PropsType = {
 	onApplyFilter: Dispatch<SetStateAction<string>>
@@ -54,7 +54,7 @@ const Filter: FC<PropsType> = ({
 		onApplyFilter(defaultUrl)
 	}
 
-	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
+	const handleSelectChange = (field: keyof FilterFormData, value: string) => {
 		dispatch({ type: 'SELECT_FIELD_CHANGE', field, value })
 	}
 
@@ -65,7 +65,7 @@ const Filter: FC<PropsType> = ({
 		dispatch({ type: 'ARRAY_FIELD_CHANGE', field, value })
 	}
 
-	const handleRemoveFilterTag = (tag: any) => {
+	const handleRemoveFilterTag = (tag: ITag) => {
 		dispatch({ type: 'REMOVE_TAG', tag })
 	}
 

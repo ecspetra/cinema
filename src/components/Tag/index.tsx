@@ -1,17 +1,16 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ITag } from '../../../interfaces'
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import Button from '@/app/components/UI/Button'
-import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
-	tag: ITag | { name: string; field: keyof FilterFormData }
+	tag: ITag
 	isEdit?: boolean
 	isSelected?: boolean
 	onToggle?: (tag: ITag, isChecked: boolean) => void
-	onRemove?: (tag: ITag, isChecked: boolean) => void
+	onRemove?: (tag: ITag) => void
 }
 
 const Tag: FC<PropsType> = ({
@@ -28,7 +27,7 @@ const Tag: FC<PropsType> = ({
 			onToggle(tag, isChecked)
 			setIsChecked(!isChecked)
 		} else {
-			onRemove(tag)
+			onRemove && onRemove(tag)
 		}
 	}
 

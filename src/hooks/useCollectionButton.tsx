@@ -100,7 +100,7 @@ export const useCollectionButton = (
 					setIsMounted(true)
 				})
 		} else setIsLoadingCollection(false)
-	}, [isLoggedIn])
+	}, [isLoggedIn, itemInfo])
 
 	return {
 		isMounted,

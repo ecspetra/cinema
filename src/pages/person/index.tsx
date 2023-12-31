@@ -20,7 +20,10 @@ const GeneralPersonListPage = ({
 }: {
 	personListFromProps: IFetchedResult<IItemCard>
 }) => {
-	const defaultUrlToSearch = URL_TO_SEARCH.replace('{fieldName}', 'person')
+	const defaultUrlToSearch = URL_TO_SEARCH.replace(
+		'{fieldName}',
+		UserCollections.person
+	)
 
 	const [urlToFetch, setUrlToFetch] = useState<string>(
 		URL_TO_FETCH_PERSON_LIST

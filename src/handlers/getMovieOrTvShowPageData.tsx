@@ -3,7 +3,7 @@ import { getReviewListFromStorage } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import { UserCollections } from '@/constants/enum'
-import { IMovieOrTVShowData, IItemCard } from '../../interfaces'
+import { IItemCard, IMovieOrTVShowData } from '../../interfaces'
 import { createItemCard } from '@/handlers/createItemCard'
 
 export const getMovieOrTvShowPageData = async (
@@ -19,7 +19,8 @@ export const getMovieOrTvShowPageData = async (
 		const fetchReviewListFromStorage = async () => {
 			const reviewListFromStorage = await getReviewListFromStorage(
 				itemId,
-				UserCollections.reviews
+				UserCollections.reviews,
+				collectionType
 			)
 			return reviewListFromStorage
 		}

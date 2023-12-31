@@ -47,9 +47,9 @@ const MoviePage = ({
 			<TopBanner imageSrc={movie?.images[0]?.file_path} />
 			<MovieOrTVShowBasicInfo
 				basicInfo={movie?.basicInfo}
-				movieImages={movie?.images}
-				movieReviews={movie?.reviewsFromAPIAndStorage}
-				movieVideo={movieTeaserKey}
+				images={movie?.images}
+				reviews={movie?.reviewsFromAPIAndStorage}
+				video={movieTeaserKey}
 				collectionType={UserCollections.movie}
 			/>
 			<div>

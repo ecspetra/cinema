@@ -60,7 +60,8 @@ const ItemCard: FC<PropsType> = ({
 
 	const isShowTags = genres && genres.length > 0
 	const cardType = media_type ?? collectionType
-	const isShowMark = cardType === 'movie' || cardType === 'tv'
+	const isShowMark =
+		cardType === UserCollections.movie || cardType === UserCollections.tv
 	const cardCoverSrc = poster_path ?? profile_path
 	const cardCoverFullSrc = cardCoverSrc
 		? CARD_IMAGE_SRC.replace('{imageSrc}', cardCoverSrc)
@@ -85,7 +86,7 @@ const ItemCard: FC<PropsType> = ({
 					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
 					src={cardCoverFullSrc}
 					defaultImage={
-						cardType !== 'person'
+						cardType !== UserCollections.person
 							? defaultMovieImage
 							: defaultUserImage
 					}
