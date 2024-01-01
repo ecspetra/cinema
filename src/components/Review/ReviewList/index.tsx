@@ -21,7 +21,6 @@ type PropsType = {
 	reviewedItemId?: number
 	isCollectionList?: boolean
 	className?: string
-	isShowTitle?: boolean
 }
 
 const ReviewList: FC<PropsType> = ({
@@ -30,7 +29,6 @@ const ReviewList: FC<PropsType> = ({
 	reviewedItemId,
 	isCollectionList = false,
 	className,
-	isShowTitle = true,
 }) => {
 	const { listRef, scrollToTop } = useScrollToTop(100)
 
@@ -42,7 +40,6 @@ const ReviewList: FC<PropsType> = ({
 		maxReviewsLength,
 		handleItemsToShowLength,
 	} = useReviewList(reviews, collectionInfo, scrollToTop)
-	console.log(itemsToShow)
 
 	if (!itemsToShow.length) {
 		return (
@@ -50,7 +47,12 @@ const ReviewList: FC<PropsType> = ({
 				title='Reviews'
 				text={
 					isCollectionList
-						? `This collection is empty. Please add some items in this collection before you can see it here`
+						? 'Please write a review before you can see it here'
+						: undefined
+				}
+				className={
+					isCollectionList
+						? 'border border-gray-500 !mb-4 -my-12 p-4 last:mb-0'
 						: undefined
 				}
 			/>
@@ -59,24 +61,20 @@ const ReviewList: FC<PropsType> = ({
 
 	return (
 		<div ref={listRef} className={classNames('mb-16', className)}>
-			{isShowTitle && <Title>Reviews</Title>}
+			<Title>Reviews</Title>
 			<div>
-				{itemsToShow
-					.filter(item => item.id !== undefined)
-					.slice(0, maxReviewsLength)
-					.map(item => (
-						<ReviewCard
-							key={item.id}
-							review={item}
-							collectionType={
-								collectionType! ??
-								item.reviewedItemCollectionType!
-							}
-							defaultCardReviewedId={reviewedItemId}
-							isLinkToMovie={isCollectionList}
-							isCollectionItem={isCollectionList}
-						/>
-					))}
+				{itemsToShow.slice(0, maxReviewsLength).map(item => (
+					<ReviewCard
+						key={item.id}
+						review={item}
+						collectionType={
+							collectionType! ?? item.reviewedItemCollectionType!
+						}
+						defaultCardReviewedId={reviewedItemId}
+						isLinkToMovie={isCollectionList}
+						isCollectionItem={isCollectionList}
+					/>
+				))}
 				{isShowMoreButton && (
 					<Button
 						className='mx-auto'

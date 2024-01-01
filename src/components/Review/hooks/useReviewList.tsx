@@ -84,8 +84,7 @@ const useReviewList = (
 
 				const unsubscribe = collectionReviewsListener(
 					collectionId!,
-					itemsFromDB,
-					setItemsFromDB
+					setItemsToShow
 				)
 
 				return () => {
@@ -113,8 +112,7 @@ const useReviewList = (
 			if (isCollectionList) {
 				const unsubscribe = collectionRepliesListener(
 					userId,
-					setItemsToShow,
-					collectionType!
+					setItemsToShow
 				)
 
 				return () => {

@@ -884,7 +884,7 @@ export const reviewsListener = (
 		})
 	}
 
-	const unsubscribeReviewAdded = onChildRemoved(reviewsRef, onReviewAdded)
+	const unsubscribeReviewAdded = onChildAdded(reviewsRef, onReviewAdded)
 	const unsubscribeReviewRemoved = onChildRemoved(reviewsRef, onReviewRemoved)
 	const unsubscribeReviewChanged = onChildChanged(reviewsRef, onReviewChanged)
 
@@ -897,15 +897,14 @@ export const reviewsListener = (
 
 export const collectionReviewsListener = (
 	collectionId: number | string,
-	loadedItems: IReviewCard[],
 	setItems: ([]) => void
 ) => {
-	const reviewsRefTv = ref(
+	const tvShowReviewsRef = ref(
 		database,
 		`users/${collectionId}/collection/reviews/tv`
 	)
 
-	const reviewsRefMovie = ref(
+	const movieReviewsRef = ref(
 		database,
 		`users/${collectionId}/collection/reviews/movie`
 	)
@@ -931,30 +930,29 @@ export const collectionReviewsListener = (
 		})
 	}
 
-	const unsubscribeReviewRemovedTv = onChildRemoved(
-		reviewsRefTv,
+	const unsubscribeTVShowReviewRemoved = onChildRemoved(
+		tvShowReviewsRef,
 		onReviewRemoved
 	)
-	const unsubscribeReviewChangedTv = onChildChanged(
-		reviewsRefTv,
+	const unsubscribeTVShowReviewChanged = onChildChanged(
+		tvShowReviewsRef,
 		onReviewChanged
 	)
 
-	const unsubscribeReviewRemovedMovie = onChildRemoved(
-		reviewsRefMovie,
+	const unsubscribeMovieReviewRemoved = onChildRemoved(
+		movieReviewsRef,
 		onReviewRemoved
 	)
-	const unsubscribeReviewChangedMovie = onChildChanged(
-		reviewsRefMovie,
+	const unsubscribeMovieReviewChanged = onChildChanged(
+		movieReviewsRef,
 		onReviewChanged
 	)
 
 	return () => {
-		unsubscribeReviewRemovedTv()
-		unsubscribeReviewChangedTv()
-
-		unsubscribeReviewRemovedMovie()
-		unsubscribeReviewChangedMovie()
+		unsubscribeTVShowReviewRemoved()
+		unsubscribeTVShowReviewChanged()
+		unsubscribeMovieReviewRemoved()
+		unsubscribeMovieReviewChanged()
 	}
 }
 
@@ -1014,26 +1012,72 @@ export const repliesListener = (
 
 export const collectionRepliesListener = (
 	userId: string,
-	setItems: ([]) => void,
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	setItems: ([]) => void
 ) => {
-	const repliesRef = ref(
+	const tvShowRepliesRef = ref(
 		database,
-		`users/${userId}/collection/replies/${reviewedItemCollectionType}/`
+		`users/${userId}/collection/replies/tv`
 	)
 
-	const onReplyRemoved = (childSnapshot: DataSnapshot) => {
-		const removedItem = childSnapshot.val()
+	const movieRepliesRef = ref(
+		database,
+		`users/${userId}/collection/replies/movie`
+	)
 
-		setItems(prevItems =>
-			prevItems.filter(item => item.id !== removedItem.reviewId)
-		)
+	const tvShowReviewsRef = ref(
+		database,
+		`users/${userId}/collection/reviews/tv`
+	)
+
+	const movieReviewsRef = ref(
+		database,
+		`users/${userId}/collection/reviews/movie`
+	)
+
+	const onReplyRemoved = async (childSnapshot: DataSnapshot) => {
+		const removedItem = childSnapshot.val()
+		let allRepliesSnapshot
+		let allReplies
+		let allReviewsSnapshot
+		let allReviews
+
+		if (removedItem.reviewedItemCollectionType === UserCollections.movie) {
+			allRepliesSnapshot = await get(query(movieRepliesRef))
+			allReplies = Object.values(allRepliesSnapshot.val() || {})
+			allReviewsSnapshot = await get(query(movieReviewsRef))
+			allReviews = Object.values(allReviewsSnapshot.val() || {})
+		} else {
+			allRepliesSnapshot = await get(query(tvShowRepliesRef))
+			allReplies = Object.values(allRepliesSnapshot.val() || {})
+			allReviewsSnapshot = await get(query(tvShowReviewsRef))
+			allReviews = Object.values(allReviewsSnapshot.val() || {})
+		}
+
+		const review = allReviews.find(item => item.id === removedItem.reviewId)
+
+		if (
+			!allReplies.some(item => item.reviewId === removedItem.reviewId) &&
+			(!review || review.authorId !== userId)
+		) {
+			setItems(prevItems =>
+				prevItems.filter(item => item.id !== removedItem.reviewId)
+			)
+		}
 	}
 
-	const unsubscribeReplyRemoved = onChildRemoved(repliesRef, onReplyRemoved)
+	const unsubscribeTVShowReplyRemoved = onChildRemoved(
+		tvShowRepliesRef,
+		onReplyRemoved
+	)
+
+	const unsubscribeMovieReplyRemoved = onChildRemoved(
+		movieRepliesRef,
+		onReplyRemoved
+	)
 
 	return () => {
-		unsubscribeReplyRemoved()
+		unsubscribeTVShowReplyRemoved()
+		unsubscribeMovieReplyRemoved()
 	}
 }
 

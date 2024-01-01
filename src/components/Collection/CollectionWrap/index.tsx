@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { IMark, IItemCard, IReviewCard } from '../../../../interfaces'
+import { IItemCard, IMark, IReviewCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
 import MarksCollectionWrap from '@/components/Collection/CollectionWrap/MarksCollectionWrap'
@@ -20,13 +20,13 @@ const CollectionWrap: FC<PropsType> = ({
 	items,
 	isCurrentUserCollection,
 }) => {
+	const isShowTitle = collectionType !== UserCollections.reviews
 	const getItemsList = () => {
 		switch (collectionType) {
 			case 'reviews':
 				return (
 					<ReviewList
 						reviews={items as IReviewCard[]}
-						isShowTitle={false}
 						className='!mb-0'
 						isCollectionList
 					/>
@@ -55,7 +55,6 @@ const CollectionWrap: FC<PropsType> = ({
 			case 'marks':
 				return `Please rate something before you can see it here`
 			case 'reviews':
-			case 'replies':
 				return `Please write a review before you can see it here`
 		}
 	}
@@ -76,7 +75,7 @@ const CollectionWrap: FC<PropsType> = ({
 
 	return (
 		<div className='my-16 first:mt-0 last:mb-0'>
-			<Title>{title}</Title>
+			{isShowTitle && <Title>{title}</Title>}
 			{getItemsList()}
 		</div>
 	)
