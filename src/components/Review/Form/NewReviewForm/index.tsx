@@ -23,6 +23,7 @@ type PropsType = {
 	reviewedItemId: number
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 	userId: string
+	reviewAuthorId?: string
 	reviewId?: string
 	replyToUser?: string
 	isReplyItem?: boolean
@@ -33,6 +34,7 @@ const NewReviewForm: FC<PropsType> = ({
 	reviewedItemId,
 	reviewedItemCollectionType,
 	userId,
+	reviewAuthorId,
 	reviewId,
 	replyToUser,
 	isReplyItem = false,
@@ -69,6 +71,9 @@ const NewReviewForm: FC<PropsType> = ({
 
 				if (isReplyItem) {
 					newItem = {
+						...(reviewAuthorId !== undefined && {
+							reviewAuthorId: reviewAuthorId,
+						}),
 						reviewedItemId: reviewedItemId,
 						replyToUser: replyToUser,
 						reviewId: reviewId,

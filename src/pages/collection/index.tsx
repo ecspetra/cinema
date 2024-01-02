@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
@@ -8,7 +9,6 @@ import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '@/context/AuthProvider'
-import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import GeneralUserCollection from '@/components/Collection'
@@ -28,6 +28,7 @@ const GeneralCollectionPage = ({
 	const { showModal } = useModal()
 	const router = useRouter()
 	const { userId } = useAuth()
+
 	useEffect(() => {
 		const getGeneralCollection = async () => {
 			setIsLoading(true)
@@ -101,25 +102,25 @@ const GeneralCollectionPage = ({
 	)
 }
 
-// export const getServerSideProps = async (ctx: NextPageContext) => {
-// 	const userIdFromUrl = ctx.query.uid as string
-// 	const cookies = await parseCookies(ctx.req!)
-// 	const userId = cookies.uid
-//
-// 	const generalCollection = await getGeneralCollectionPage(
-// 		userIdFromUrl,
-// 		userId,
-// 		url => {
-// 			ctx.res?.writeHead(302, { Location: url })
-// 			ctx.res?.end()
-// 		}
-// 	)
-//
-// 	return {
-// 		props: {
-// 			generalCollectionPageProps: generalCollection,
-// 		},
-// 	}
-// }
+export const getServerSideProps = async (ctx: NextPageContext) => {
+	const userIdFromUrl = ctx.query.uid as string
+	const cookies = await parseCookies(ctx.req!)
+	const userId = cookies.uid
+
+	const generalCollection = await getGeneralCollectionPage(
+		userIdFromUrl,
+		userId,
+		url => {
+			ctx.res?.writeHead(302, { Location: url })
+			ctx.res?.end()
+		}
+	)
+
+	return {
+		props: {
+			generalCollectionPageProps: generalCollection,
+		},
+	}
+}
 
 export default GeneralCollectionPage

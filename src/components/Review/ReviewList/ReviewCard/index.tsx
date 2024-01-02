@@ -194,6 +194,7 @@ const ReviewCard: FC<PropsType> = ({
 							/>
 							{isShowReplyForm && (
 								<NewReviewForm
+									reviewAuthorId={review.authorId}
 									reviewedItemId={
 										defaultCardReviewedId ?? reviewedItemId!
 									}

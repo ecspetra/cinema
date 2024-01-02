@@ -12,6 +12,7 @@ type CollectionInfo = {
 	collectionType?: UserCollections.movie | UserCollections.tv
 	isCollectionList: boolean
 	reviewedItemId?: number
+	collectionOwnerId?: string
 }
 
 const useReviewList = (
@@ -31,7 +32,12 @@ const useReviewList = (
 		itemsToShow.filter(item => item.id !== undefined).length
 	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
-	const { collectionType, isCollectionList, reviewedItemId } = collectionInfo
+	const {
+		collectionType,
+		isCollectionList,
+		reviewedItemId,
+		collectionOwnerId,
+	} = collectionInfo
 
 	const handleItemsToShowLength = () => {
 		if (!isMoreDataAvailable) scrollToTop()
@@ -112,6 +118,7 @@ const useReviewList = (
 			if (isCollectionList) {
 				const unsubscribe = collectionRepliesListener(
 					userId,
+					collectionOwnerId!,
 					setItemsToShow
 				)
 

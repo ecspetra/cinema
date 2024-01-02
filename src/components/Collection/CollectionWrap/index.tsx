@@ -12,6 +12,7 @@ type PropsType = {
 	collectionType: UserCollections
 	items: IItemCard[] | IReviewCard[] | IMark[]
 	isCurrentUserCollection: boolean
+	collectionOwnerId?: string
 }
 
 const CollectionWrap: FC<PropsType> = ({
@@ -19,6 +20,7 @@ const CollectionWrap: FC<PropsType> = ({
 	collectionType,
 	items,
 	isCurrentUserCollection,
+	collectionOwnerId,
 }) => {
 	const isShowTitle = collectionType !== UserCollections.reviews
 	const getItemsList = () => {
@@ -28,6 +30,7 @@ const CollectionWrap: FC<PropsType> = ({
 					<ReviewList
 						reviews={items as IReviewCard[]}
 						className='!mb-0'
+						collectionOwnerId={collectionOwnerId}
 						isCollectionList
 					/>
 				)

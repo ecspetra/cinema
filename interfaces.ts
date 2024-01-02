@@ -62,6 +62,7 @@ export interface IReviewCard {
 	authorId?: string
 	replyToUser?: string
 	reviewId?: string
+	reviewAuthorId?: string
 	reviewedItemCollectionType?: UserCollections.movie | UserCollections.tv
 }
 

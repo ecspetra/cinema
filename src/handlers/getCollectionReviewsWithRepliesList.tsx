@@ -1,8 +1,10 @@
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { IFetchedResult, IReviewCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { getReviewFromAnotherUserCollection } from '@/firebase/config'
 
 export const getCollectionReviewsWithRepliesList = (
+	collectionOwnerId: string,
 	collectionReplies: IReviewCard[]
 ) => {
 	return new Promise(async resolve => {
@@ -46,32 +48,48 @@ export const getCollectionReviewsWithRepliesList = (
 
 		const fetchMovieReviewPromises = filteredReplies.map(
 			(item: IReviewCard) => {
-				if (
-					item.reviewedItemId !== undefined &&
-					item.reviewId !== undefined &&
+				const isReviewFromDefaultReviews = !item.reviewAuthorId
+				const isReviewsOwnerReview =
+					item.reviewAuthorId === collectionOwnerId
+				const isMovieReview =
 					item.reviewedItemCollectionType === UserCollections.movie
-				) {
-					return fetchMovieOrTVShowReviews(
-						item.reviewedItemId,
-						item.reviewId,
-						UserCollections.movie
-					)
+
+				if (isMovieReview && !isReviewsOwnerReview) {
+					return isReviewFromDefaultReviews
+						? fetchMovieOrTVShowReviews(
+								item.reviewedItemId,
+								item.reviewId,
+								UserCollections.movie
+						  )
+						: getReviewFromAnotherUserCollection(
+								item.reviewAuthorId,
+								item.reviewId,
+								UserCollections.movie
+						  )
 				}
 			}
 		)
 
 		const fetchTVShowReviewPromises = filteredReplies.map(
 			(item: IReviewCard) => {
-				if (
-					item.reviewedItemId !== undefined &&
-					item.reviewId !== undefined &&
+				const isReviewFromDefaultReviews = !item.reviewAuthorId
+				const isReviewsOwnerReview =
+					item.reviewAuthorId === collectionOwnerId
+				const isTVShowReview =
 					item.reviewedItemCollectionType === UserCollections.tv
-				) {
-					return fetchMovieOrTVShowReviews(
-						item.reviewedItemId,
-						item.reviewId,
-						UserCollections.tv
-					)
+
+				if (isTVShowReview && !isReviewsOwnerReview) {
+					return isReviewFromDefaultReviews
+						? fetchMovieOrTVShowReviews(
+								item.reviewedItemId,
+								item.reviewId,
+								UserCollections.tv
+						  )
+						: getReviewFromAnotherUserCollection(
+								item.reviewAuthorId,
+								item.reviewId,
+								UserCollections.tv
+						  )
 				}
 			}
 		)

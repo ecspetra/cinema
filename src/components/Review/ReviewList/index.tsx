@@ -20,6 +20,7 @@ type PropsType = {
 	collectionType?: UserCollections.movie | UserCollections.tv
 	reviewedItemId?: number
 	isCollectionList?: boolean
+	collectionOwnerId?: string
 	className?: string
 }
 
@@ -28,11 +29,17 @@ const ReviewList: FC<PropsType> = ({
 	collectionType,
 	reviewedItemId,
 	isCollectionList = false,
+	collectionOwnerId,
 	className,
 }) => {
 	const { listRef, scrollToTop } = useScrollToTop(100)
 
-	const collectionInfo = { collectionType, isCollectionList, reviewedItemId }
+	const collectionInfo = {
+		collectionType,
+		isCollectionList,
+		reviewedItemId,
+		collectionOwnerId,
+	}
 	const {
 		itemsToShow,
 		isShowMoreButton,

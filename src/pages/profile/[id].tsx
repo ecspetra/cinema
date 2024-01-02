@@ -205,6 +205,7 @@ const UserProfilePage = ({
 					marks={generalCollection?.collectionMarks ?? []}
 					reviews={generalCollection?.allCollectionReviews ?? []}
 					isCurrentUserCollection={isCurrentUserProfile}
+					collectionOwnerId={profile?.id}
 				/>
 			)}
 		</>

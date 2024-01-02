@@ -13,40 +13,43 @@ import {
 import { UserCollections } from '@/constants/enum'
 
 export const getUserCollection = async (
-	userId: string
+	collectionOwnerId: string
 ): Promise<IGeneralCollection | null> => {
 	try {
 		const collectionMovies = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.movie,
 			5
 		)) as IFetchedResult<IItemCard>
 		const collectionTVShows = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.tv,
 			5
 		)) as IFetchedResult<IItemCard>
 		const collectionPersons = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.person,
 			5
 		)) as IFetchedResult<IItemCard>
 		const collectionMarks = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.marks,
 			null
 		)) as IFetchedResult<IMark>
 		const collectionReviews = (await getReviewsOrRepliesFromUserCollection(
-			userId,
+			collectionOwnerId,
 			UserCollections.reviews
 		)) as IReviewCard[]
 		const collectionReplies = (await getReviewsOrRepliesFromUserCollection(
-			userId,
+			collectionOwnerId,
 			UserCollections.replies
 		)) as IReviewCard[]
 
 		const reviewsWithUserReplies =
-			await getCollectionReviewsWithRepliesList(collectionReplies)
+			await getCollectionReviewsWithRepliesList(
+				collectionOwnerId,
+				collectionReplies
+			)
 
 		const allCollectionReviews = [
 			...collectionReviews.filter(

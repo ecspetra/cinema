@@ -15,6 +15,7 @@ type PropsType = {
 	marks: IFetchedResult<IMark>['items']
 	reviews: IFetchedResult<IReviewCard>['items']
 	isCurrentUserCollection?: boolean
+	collectionOwnerId?: string
 }
 
 const GeneralUserCollection: FC<PropsType> = ({
@@ -24,6 +25,7 @@ const GeneralUserCollection: FC<PropsType> = ({
 	marks,
 	reviews,
 	isCurrentUserCollection = true,
+	collectionOwnerId,
 }) => {
 	return (
 		<div>
@@ -56,6 +58,7 @@ const GeneralUserCollection: FC<PropsType> = ({
 				collectionType={UserCollections.reviews}
 				items={reviews ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
+				collectionOwnerId={collectionOwnerId}
 			/>
 		</div>
 	)

@@ -218,11 +218,11 @@ export const getUserInfo = async (userId: string): Promise<IFullUserInfo> => {
 	})
 }
 
-export const getUserFriends = (friendIdList): Promise<IFullUserInfo[]> => {
+export const getUserFriends = (friendIdsList): Promise<IFullUserInfo[]> => {
 	return new Promise(async resolve => {
 		let friendsInfo: IFullUserInfo[] = []
 
-		const promises = Object.keys(friendIdList).map(async (id: string) => {
+		const promises = Object.keys(friendIdsList).map(async (id: string) => {
 			const friend = await getUserInfo(id)
 			friendsInfo.push(friend)
 		})
@@ -456,11 +456,11 @@ export const removeCollectionItem = (
 }
 
 export const getReviewsOrRepliesFromUserCollection = async (
-	userId: string,
+	collectionOwnerId: string,
 	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	try {
-		const collectionPath = `users/${userId}/collection/${collectionType}/`
+		const collectionPath = `users/${collectionOwnerId}/collection/${collectionType}/`
 		const userCollectionRef = ref(database, collectionPath)
 		const paginationQuery = query(userCollectionRef, orderByKey())
 		const snapshot = await get(paginationQuery)
@@ -483,7 +483,7 @@ export const getReviewsOrRepliesFromUserCollection = async (
 }
 
 export const getCollectionItemsList = async (
-	userId: string,
+	collectionOwnerId: string,
 	collectionType:
 		| UserCollections.movie
 		| UserCollections.person
@@ -493,7 +493,7 @@ export const getCollectionItemsList = async (
 	lastItemId: string | undefined = undefined
 ): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
 	try {
-		const userPath = `users/${userId}/`
+		const userPath = `users/${collectionOwnerId}/`
 		const userRef = ref(database, userPath)
 		const userSnapshot = await get(userRef)
 
@@ -501,12 +501,12 @@ export const getCollectionItemsList = async (
 			throw `Failed to fetch`
 		}
 
-		const collectionPath = `users/${userId}/collection/${collectionType}/`
+		const collectionPath = `users/${collectionOwnerId}/collection/${collectionType}/`
 		const userCollectionRef = ref(database, collectionPath)
 		const collectionInfo = {
 			type: collectionType,
 			ref: userCollectionRef,
-			userId: userId,
+			userId: collectionOwnerId,
 		}
 		let paginationQuery
 
@@ -845,6 +845,28 @@ export const getReviewListFromStorage = async (
 	}
 }
 
+export const getReviewFromAnotherUserCollection = async (
+	reviewAuthorId: string,
+	reviewId: string,
+	collectionType: UserCollections.movie | UserCollections.tv
+) => {
+	const collectionPath = `users/${reviewAuthorId}/collection/reviews/${collectionType}/${reviewId}`
+	const reviewRef = ref(database, collectionPath)
+
+	try {
+		const snapshot = await get(reviewRef)
+
+		if (snapshot.exists()) {
+			const data = snapshot.val()
+			return data
+		} else {
+			return
+		}
+	} catch (error) {
+		return error
+	}
+}
+
 export const reviewsListener = (
 	collectionId: number | string,
 	loadedItems: IReviewCard[],
@@ -1012,26 +1034,27 @@ export const repliesListener = (
 
 export const collectionRepliesListener = (
 	userId: string,
+	collectionOwnerId: string,
 	setItems: ([]) => void
 ) => {
 	const tvShowRepliesRef = ref(
 		database,
-		`users/${userId}/collection/replies/tv`
+		`users/${collectionOwnerId}/collection/replies/tv`
 	)
 
 	const movieRepliesRef = ref(
 		database,
-		`users/${userId}/collection/replies/movie`
+		`users/${collectionOwnerId}/collection/replies/movie`
 	)
 
 	const tvShowReviewsRef = ref(
 		database,
-		`users/${userId}/collection/reviews/tv`
+		`users/${collectionOwnerId}/collection/reviews/tv`
 	)
 
 	const movieReviewsRef = ref(
 		database,
-		`users/${userId}/collection/reviews/movie`
+		`users/${collectionOwnerId}/collection/reviews/movie`
 	)
 
 	const onReplyRemoved = async (childSnapshot: DataSnapshot) => {
@@ -1055,9 +1078,18 @@ export const collectionRepliesListener = (
 
 		const review = allReviews.find(item => item.id === removedItem.reviewId)
 
+		const isLastReplyInReview = !allReplies.some(
+			item => item.reviewId === removedItem.reviewId
+		)
+		const isCurrentUserReview = review && review.authorId === userId
+		const isReviewFromDefaultReviews = !review
+		const isCurrentUserCollection = collectionOwnerId === userId
+
 		if (
-			!allReplies.some(item => item.reviewId === removedItem.reviewId) &&
-			(!review || review.authorId !== userId)
+			(isLastReplyInReview &&
+				!isCurrentUserReview &&
+				isCurrentUserCollection) ||
+			isReviewFromDefaultReviews
 		) {
 			setItems(prevItems =>
 				prevItems.filter(item => item.id !== removedItem.reviewId)
