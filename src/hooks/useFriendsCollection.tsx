@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { getIsFriend, removeFriend, setNewFriend } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import {
@@ -9,6 +8,9 @@ import {
 	showSuccessNotification,
 } from '@/handlers/handleModals'
 import { IFullUserInfo, IUser } from '../../interfaces'
+import { createNewFriend } from '@/firebase/handlers/friendHandlers/createNewFriend'
+import { removeFriend } from '@/firebase/handlers/friendHandlers/removeFriend'
+import { checkIfUserExistsInFriendsCollection } from '@/firebase/handlers/friendHandlers/checkIfUserExistsInFriendsCollection'
 
 export const useFriendsCollection = (
 	itemInfo: IFullUserInfo['info'] | null
@@ -17,30 +19,33 @@ export const useFriendsCollection = (
 	const [isLoadingFriends, setIsLoadingFriends] = useState<boolean>(true)
 	const { showModal, hideModal } = useModal()
 	const { isLoggedIn } = useAuth()
+	const userId = itemInfo?.id
 
 	const handleSetNewFriend = () => {
 		if (isLoggedIn) {
 			setIsLoadingFriends(true)
 
-			setNewFriend(itemInfo?.id).then(() => {
-				getIsFriend(itemInfo?.id)
-					.then(data => {
-						setIsFriend(data)
-						showSuccessNotification(
-							showModal,
-							'User added as friend'
-						)
-					})
-					.catch(() => {
-						showErrorNotification(
-							showModal,
-							'An error has occurred'
-						)
-					})
-					.finally(() => {
-						setIsLoadingFriends(false)
-					})
-			})
+			if (userId) {
+				createNewFriend(itemInfo?.id).then(() => {
+					checkIfUserExistsInFriendsCollection(itemInfo?.id)
+						.then(data => {
+							setIsFriend(data)
+							showSuccessNotification(
+								showModal,
+								'User added as friend'
+							)
+						})
+						.catch(() => {
+							showErrorNotification(
+								showModal,
+								'An error has occurred'
+							)
+						})
+						.finally(() => {
+							setIsLoadingFriends(false)
+						})
+				})
+			}
 		} else openLoginModal(showModal)
 	}
 
@@ -88,13 +93,16 @@ export const useFriendsCollection = (
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingFriends(true)
-			getIsFriend(itemInfo?.id)
-				.then(data => {
-					setIsFriend(data)
-				})
-				.finally(() => {
-					setIsLoadingFriends(false)
-				})
+
+			if (userId) {
+				checkIfUserExistsInFriendsCollection(itemInfo?.id)
+					.then(data => {
+						setIsFriend(data)
+					})
+					.finally(() => {
+						setIsLoadingFriends(false)
+					})
+			}
 		} else setIsLoadingFriends(false)
 	}, [isLoggedIn, itemInfo])
 

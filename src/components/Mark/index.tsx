@@ -4,16 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Title from '@/app/components/UI/Title/Title'
 import { useAuth } from '@/context/AuthProvider'
 import Button from '../../app/components/UI/Button/index'
-import {
-	removeMarkForMovie,
-	getMarkForMovie,
-	setNewMarkForMovie,
-} from '@/firebase/config'
 import { useModal } from '@/context/ModalProvider'
 import { openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
 import { IMark, IMarkFromDB } from '../../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { createNewMarkForMovieOrTVShow } from '@/firebase/handlers/markHandlers/createNewMarkForMovieOrTVShow'
+import { getMarkForMovieOrTVShow } from '@/firebase/handlers/markHandlers/getMarkForMovieOrTVShow'
+import { removeMarkForMovie } from '@/firebase/handlers/markHandlers/removeMarkForMovie'
 
 type PropsType = {
 	markedItemId: number
@@ -39,8 +37,8 @@ const Mark: FC<PropsType> = ({ markedItemId, collectionType }) => {
 				markValue,
 				collectionType,
 			}
-			setNewMarkForMovie(markedItemData, userId).then(() => {
-				getMarkForMovie(markedItemId, userId, collectionType)
+			createNewMarkForMovieOrTVShow(markedItemData, userId).then(() => {
+				getMarkForMovieOrTVShow(markedItemId, userId, collectionType)
 					.then(data => {
 						if (data) setMarkData(data)
 					})
@@ -124,9 +122,11 @@ const Mark: FC<PropsType> = ({ markedItemId, collectionType }) => {
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(markedItemId, userId, collectionType).then(data => {
-				if (data) setMarkData(data)
-			})
+			getMarkForMovieOrTVShow(markedItemId, userId, collectionType).then(
+				data => {
+					if (data) setMarkData(data)
+				}
+			)
 		} else getEmptyMarkIcons()
 	}, [userId, markedItemId])
 

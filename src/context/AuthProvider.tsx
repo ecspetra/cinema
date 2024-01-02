@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { auth, AuthContextType, userContextListener } from '@/firebase/config'
+import { auth, AuthContextType } from '@/firebase/config'
 import { onAuthStateChanged, reload, User } from 'firebase/auth'
 import { removeCookie, setCookie } from '@/handlers/handleCookies'
+import { userContextListener } from '@/firebase/handlers/authHandlers/userContextListener'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 

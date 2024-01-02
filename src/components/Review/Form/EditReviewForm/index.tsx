@@ -1,10 +1,10 @@
-import { Dispatch, FC, FormEvent, SetStateAction, useState } from 'react'
+import { FC, FormEvent, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
-import { updateReviewItem } from '@/firebase/config'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { IReviewCard } from '../../../../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { updateReview } from '@/firebase/handlers/reviewHandlers/updateReview'
 
 type PropsType = {
 	item: IReviewCard
@@ -43,7 +43,7 @@ const EditReviewForm: FC<PropsType> = ({
 				content: textareaValue,
 			}
 
-			await updateReviewItem(
+			await updateReview(
 				updatedItem,
 				item.authorId!,
 				reviewedItemId,

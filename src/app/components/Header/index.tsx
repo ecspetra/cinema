@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
 import Button from '@/app/components/UI/Button'
-import { signOutUser } from '@/firebase/config'
 import Image from '@/components/Images/Image'
 import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
@@ -13,6 +12,7 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { createRoutes } from '@/constants/routes'
 import Logo from '@/app/components/Logo'
+import { signOutUser } from '@/firebase/handlers/authHandlers/signOutUser'
 
 const Header = () => {
 	const { userId, photoURL, isLoggedIn } = useAuth()

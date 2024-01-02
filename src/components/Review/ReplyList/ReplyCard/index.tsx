@@ -3,7 +3,6 @@ import { IReviewCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
-import { removeReviewItem } from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
 import Dropdown from '@/app/components/UI/Dropdown'
@@ -16,6 +15,7 @@ import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/forma
 import useReviewCardContentLength from '@/components/Review/hooks/useReviewCardContentLength'
 import useReviewEditForm from '@/components/Review/hooks/useReviewEditForm'
 import useReplyCard from '@/components/Review/hooks/useReplyCard'
+import { removeReview } from '@/firebase/handlers/reviewHandlers/removeReview'
 
 type PropsType = {
 	reviewedItemId: number
@@ -74,7 +74,7 @@ const ReplyCard: FC<PropsType> = ({
 							label='Delete'
 							icon={faTrash}
 							onClick={() =>
-								removeReviewItem(
+								removeReview(
 									id,
 									reviewedItemId,
 									userId,

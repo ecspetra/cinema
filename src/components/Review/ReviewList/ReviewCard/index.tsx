@@ -1,13 +1,8 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useMemo } from 'react'
 import { IReviewCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
-import {
-	getDBRepliesList,
-	getUserInfo,
-	removeReviewItem,
-} from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
 import NewReviewForm from '../../Form/NewReviewForm'
 import ReplyList from '../../ReplyList'
@@ -54,7 +49,7 @@ const ReviewCard: FC<PropsType> = ({
 		reviewedItemId,
 	} = review
 	const collectionInfo = { id, authorId, reviewedItemId, collectionType }
-	const { isMounted, replies, isItemFromDB, authorInfo, removeReview } =
+	const { isMounted, replies, isItemFromDB, authorInfo, removeReviewCard } =
 		useReviewCard(collectionInfo, userId)
 	const { isShowEditForm, showEditReviewForm, closeEditReviewForm } =
 		useReviewEditForm(userId)
@@ -92,7 +87,7 @@ const ReviewCard: FC<PropsType> = ({
 					<DropdownItem
 						label='Delete'
 						icon={faTrash}
-						onClick={removeReview}
+						onClick={removeReviewCard}
 					/>
 				</Dropdown>
 			)}

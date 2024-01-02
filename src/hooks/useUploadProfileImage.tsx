@@ -12,8 +12,8 @@ import {
 	uploadBytesResumable,
 } from 'firebase/storage'
 import { useModal } from '@/context/ModalProvider'
-import { updateProfileIcon } from '@/firebase/config'
 import { showSuccessNotification } from '@/handlers/handleModals'
+import { updateUserProfileIcon } from '@/firebase/handlers/profileHandlers/updateUserProfileIcon'
 
 interface IProfileImage {
 	value: string
@@ -88,7 +88,7 @@ const useUploadProfileImage = (photoURL: string) => {
 	}
 
 	const saveProfileImage = () => {
-		updateProfileIcon(image!.value).then(() => {
+		updateUserProfileIcon(image!.value).then(() => {
 			setUploadProgress(0)
 			showSuccessNotification(
 				showModal,

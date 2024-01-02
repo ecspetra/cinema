@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, useMemo } from 'react'
-import { signUp } from '@/firebase/config'
 import useSignUpFormReducer, {
 	ISignUpFormData,
 } from '@/hooks/useSignUpFormReducer'
@@ -7,6 +6,7 @@ import { useRouter } from 'next/router'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { useModal } from '@/context/ModalProvider'
 import { usePathname } from 'next/navigation'
+import { signUp } from '@/firebase/handlers/authHandlers/signUp'
 
 export const useSignUpForm = () => {
 	const [state, dispatch] = useSignUpFormReducer()

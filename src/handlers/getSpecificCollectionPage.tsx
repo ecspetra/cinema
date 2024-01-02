@@ -1,11 +1,15 @@
 import { UserCollections } from '@/constants/enum'
-import { getCollectionItemsList } from '@/firebase/config'
 import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
 import { IFetchedResult, IItemCard } from '../../interfaces'
+import { getCollectionItemsList } from '@/firebase/handlers/userCollectionHandlers/getCollectionItemsList'
 
 export const getSpecificCollectionPage = async (
 	userIdFromUrl: string,
-	collectionType: UserCollections,
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.person
+		| UserCollections.tv
+		| UserCollections.marks,
 	userId: string | undefined,
 	redirect: (url: string) => void
 ): Promise<IFetchedResult<IItemCard> | null> => {

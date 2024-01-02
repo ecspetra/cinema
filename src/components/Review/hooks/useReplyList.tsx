@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { IReviewCard } from '../../../../interfaces'
-import { repliesListener } from '@/firebase/config'
 import { UserCollections } from '@/constants/enum'
+import { movieOrTVShowRepliesListener } from '@/firebase/handlers/replyHandlers/movieOrTVShowRepliesListener'
 
 type CollectionInfo = {
 	collectionType?: UserCollections.movie | UserCollections.tv
@@ -39,7 +39,7 @@ const useReplyList = (
 
 	useEffect(() => {
 		if (userId) {
-			const unsubscribe = repliesListener(
+			const unsubscribe = movieOrTVShowRepliesListener(
 				reviewedItemId!,
 				reviewId,
 				replies,

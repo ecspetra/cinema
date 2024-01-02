@@ -1,7 +1,7 @@
 import { IItemCard } from '../../interfaces'
 import { fetchItemData } from '@/handlers/fetchItemData'
-import { getUserInfo } from '@/firebase/config'
 import { UserCollections } from '@/constants/enum'
+import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserProfileInfo'
 
 const getItemName = (item: IItemCard): string =>
 	item.title ? item.title : item.name || ''
@@ -41,7 +41,7 @@ export const getBreadcrumbsList = async (allSegments: string[]) => {
 		}
 
 		const getProfilePageSegment = async () => {
-			const item = await getUserInfo(segment)
+			const item = await getUserProfileInfo(segment)
 			segmentName = item.info.displayName
 			allBreadcrumbs.push({ label: segmentName, href })
 		}

@@ -1,9 +1,4 @@
 import { useState, useEffect } from 'react'
-import {
-	getCollectionItem,
-	removeCollectionItem,
-	setNewCollectionItem,
-} from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import {
@@ -14,6 +9,9 @@ import {
 } from '@/handlers/handleModals'
 import { IItemCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { removeCollectionItem } from '@/firebase/handlers/userCollectionHandlers/removeCollectionItem'
+import { getCollectionItem } from '@/firebase/handlers/userCollectionHandlers/getCollectionItem'
+import { createNewCollectionItem } from '@/firebase/handlers/userCollectionHandlers/createNewCollectionItem'
 
 export const useCollectionButton = (
 	itemInfo: IItemCard,
@@ -33,7 +31,7 @@ export const useCollectionButton = (
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
 
-			setNewCollectionItem(itemInfo.id, collectionType).then(() => {
+			createNewCollectionItem(itemInfo.id, collectionType).then(() => {
 				getCollectionItem(itemInfo.id, collectionType)
 					.then(data => {
 						setIsCollectionItem(data)

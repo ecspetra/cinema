@@ -7,15 +7,13 @@ import {
 	Dispatch,
 } from 'react'
 import ReviewActionButton from '@/components/Review/ReviewList/ReviewCard/ReviewActions/ReviewActionButton'
-import {
-	getReviewReactions,
-	removeReviewReaction,
-	reviewReactionsListener,
-	setNewReviewOrReplyReaction,
-} from '@/firebase/config'
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { UserCollections } from '@/constants/enum'
+import { getReviewReactions } from '@/firebase/handlers/reviewHandlers/getReviewReactions'
+import { reviewOrReplyReactionsListener } from '@/firebase/handlers/reactionHandlers/reviewOrReplyReactionsListener'
+import { createNewReviewOrReplyReaction } from '@/firebase/handlers/reactionHandlers/createNewReviewOrReplyReaction'
+import { removeReviewOrReplyReaction } from '@/firebase/handlers/reactionHandlers/removeReviewOrReplyReaction'
 
 type PropsType = {
 	reviewId: string
@@ -60,7 +58,7 @@ const ReviewActions: FC<PropsType> = ({
 	) => {
 		if (userId) {
 			if (isCurrentUserReaction(reactionType)) {
-				await removeReviewReaction(
+				await removeReviewOrReplyReaction(
 					userId,
 					reviewId,
 					reviewedItemId,
@@ -69,7 +67,7 @@ const ReviewActions: FC<PropsType> = ({
 					reviewedItemCollectionType
 				)
 			} else {
-				await setNewReviewOrReplyReaction(
+				await createNewReviewOrReplyReaction(
 					userId,
 					reviewId,
 					reviewedItemId,
@@ -106,7 +104,7 @@ const ReviewActions: FC<PropsType> = ({
 
 	useEffect(() => {
 		if (userId) {
-			const unsubscribe = reviewReactionsListener(
+			const unsubscribe = reviewOrReplyReactionsListener(
 				reviewId,
 				reviewedItemId,
 				collectionType,

@@ -4,8 +4,8 @@ import useProfileEditCredentialFormReducer, {
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { updateUserCredential } from '@/firebase/config'
 import { showSuccessNotification } from '@/handlers/handleModals'
+import { updateUserCredential } from '@/firebase/handlers/profileHandlers/updateUserCredential'
 
 const useProfileEditCredentialForm = (
 	onFormClose: Dispatch<SetStateAction<boolean>>

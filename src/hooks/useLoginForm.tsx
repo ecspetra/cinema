@@ -2,7 +2,6 @@ import useLoginFormReducer, {
 	ILoginFormData,
 } from '@/hooks/useLoginFormReducer'
 import { ChangeEvent, FormEvent } from 'react'
-import { signIn } from '@/firebase/config'
 import { useRouter } from 'next/router'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import {
@@ -13,6 +12,7 @@ import {
 import { useModal } from '@/context/ModalProvider'
 import { usePathname } from 'next/navigation'
 import { parseCookies } from '@/handlers/handleCookies'
+import { signIn } from '@/firebase/handlers/authHandlers/signIn'
 
 export const useLoginForm = () => {
 	const [state, dispatch] = useLoginFormReducer()

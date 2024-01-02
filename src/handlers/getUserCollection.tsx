@@ -1,7 +1,4 @@
-import {
-	getCollectionItemsList,
-	getReviewsOrRepliesFromUserCollection,
-} from '@/firebase/config'
+import {} from '@/firebase/config'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
 import {
 	IFetchedResult,
@@ -11,6 +8,8 @@ import {
 	IReviewCard,
 } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { getCollectionItemsList } from '@/firebase/handlers/userCollectionHandlers/getCollectionItemsList'
+import { getReviewsOrRepliesFromUserCollection } from '@/firebase/handlers/userCollectionHandlers/getReviewsOrRepliesFromUserCollection'
 
 export const getUserCollection = async (
 	collectionOwnerId: string

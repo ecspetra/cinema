@@ -1,12 +1,10 @@
 import { useAuth } from '@/context/AuthProvider'
 import { useEffect, useState } from 'react'
 import { IReviewCard } from '../../../../interfaces'
-import {
-	collectionRepliesListener,
-	collectionReviewsListener,
-	reviewsListener,
-} from '@/firebase/config'
 import { UserCollections } from '@/constants/enum'
+import { movieOrTVShowReviewsListener } from '@/firebase/handlers/reviewHandlers/movieOrTVShowReviewsListener'
+import { collectionRepliesListener } from '@/firebase/handlers/userCollectionHandlers/collectionRepliesListener'
+import { collectionReviewsListener } from '@/firebase/handlers/userCollectionHandlers/collectionReviewsListener'
 
 type CollectionInfo = {
 	collectionType?: UserCollections.movie | UserCollections.tv
@@ -99,7 +97,7 @@ const useReviewList = (
 			} else {
 				const collectionId = isCollectionList ? userId : reviewedItemId
 
-				const unsubscribe = reviewsListener(
+				const unsubscribe = movieOrTVShowReviewsListener(
 					collectionId!,
 					itemsFromDB,
 					setItemsFromDB,

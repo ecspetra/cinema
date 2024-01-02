@@ -4,10 +4,10 @@ import useProfileEditFormReducer, {
 import { useModal } from '@/context/ModalProvider'
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { updateUserInfo } from '@/firebase/config'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { DateValueType } from 'react-tailwindcss-datepicker'
 import { IUser } from '../../interfaces'
+import { updateUserProfileInfo } from '@/firebase/handlers/profileHandlers/updateUserProfileInfo'
 
 const useProfileEditForm = (
 	profileInfo: IUser,
@@ -81,7 +81,7 @@ const useProfileEditForm = (
 
 		if (isNameValid && state.isTouched) {
 			try {
-				await updateUserInfo(state.formData)
+				await updateUserProfileInfo(state.formData)
 
 				onFormClose(false)
 				updateFormError('')

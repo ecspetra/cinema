@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { IReviewAuthorInfo, IReviewCard } from '../../../../interfaces'
-import {
-	getDBRepliesList,
-	getUserInfo,
-	removeReviewItem,
-} from '@/firebase/config'
 import { UserCollections } from '@/constants/enum'
+import { removeReview } from '@/firebase/handlers/reviewHandlers/removeReview'
+import { getReplyListFromStorage } from '@/firebase/handlers/replyHandlers/getReplyListFromStorage'
+import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserProfileInfo'
 
 type CollectionInfo = {
 	id: string
@@ -25,11 +23,11 @@ const useReviewCard = (collectionInfo: CollectionInfo, userId: string) => {
 	const { id, authorId, reviewedItemId, collectionType } = collectionInfo
 	const isItemFromDB = !!authorId
 
-	const removeReview = () => {
+	const removeReviewCard = () => {
 		setIsMounted(false)
 
 		setTimeout(() => {
-			removeReviewItem(
+			removeReview(
 				id,
 				reviewedItemId!,
 				userId,
@@ -40,14 +38,16 @@ const useReviewCard = (collectionInfo: CollectionInfo, userId: string) => {
 	}
 
 	useEffect(() => {
-		getDBRepliesList(reviewedItemId!, id, collectionType!).then(data => {
-			setReplies(data)
-		})
+		getReplyListFromStorage(reviewedItemId!, id, collectionType!).then(
+			data => {
+				setReplies(data)
+			}
+		)
 	}, [])
 
 	useEffect(() => {
 		if (isItemFromDB) {
-			getUserInfo(authorId!)
+			getUserProfileInfo(authorId!)
 				.then(data => {
 					setAuthorInfo({
 						userId: data.info.id,
@@ -63,7 +63,7 @@ const useReviewCard = (collectionInfo: CollectionInfo, userId: string) => {
 		}
 	}, [isItemFromDB])
 
-	return { isMounted, replies, isItemFromDB, authorInfo, removeReview }
+	return { isMounted, replies, isItemFromDB, authorInfo, removeReviewCard }
 }
 
 export default useReviewCard

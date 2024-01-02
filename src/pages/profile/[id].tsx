@@ -1,5 +1,4 @@
 import { NextPageContext } from 'next'
-import { userFriendsListener, userInfoListener } from '@/firebase/config'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
@@ -28,6 +27,8 @@ import { showErrorNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { IFullUserInfo, IGeneralCollection } from '../../../interfaces'
 import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
+import { userFriendsListener } from '@/firebase/handlers/friendHandlers/userFriendsListener'
+import { userProfileInfoListener } from '@/firebase/handlers/profileHandlers/userProfileInfoListener'
 
 const UserProfilePage = ({
 	profilePageProps,
@@ -99,7 +100,7 @@ const UserProfilePage = ({
 
 	useEffect(() => {
 		if (isCurrentUserProfile) {
-			const unsubscribe = userInfoListener(userId, setProfile)
+			const unsubscribe = userProfileInfoListener(userId, setProfile)
 
 			return () => {
 				unsubscribe()

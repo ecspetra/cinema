@@ -1,7 +1,7 @@
 import { fetchItemData } from '@/handlers/fetchItemData'
-import { IFetchedResult, IReviewCard } from '../../interfaces'
+import { IReviewCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { getReviewFromAnotherUserCollection } from '@/firebase/config'
+import { getReviewFromAnotherUserCollection } from '@/firebase/handlers/reviewHandlers/getReviewFromAnotherUserCollection'
 
 export const getCollectionReviewsWithRepliesList = (
 	collectionOwnerId: string,
@@ -57,13 +57,13 @@ export const getCollectionReviewsWithRepliesList = (
 				if (isMovieReview && !isReviewsOwnerReview) {
 					return isReviewFromDefaultReviews
 						? fetchMovieOrTVShowReviews(
-								item.reviewedItemId,
-								item.reviewId,
+								item.reviewedItemId!,
+								item.reviewId!,
 								UserCollections.movie
 						  )
 						: getReviewFromAnotherUserCollection(
-								item.reviewAuthorId,
-								item.reviewId,
+								item.reviewAuthorId!,
+								item.reviewId!,
 								UserCollections.movie
 						  )
 				}
@@ -81,13 +81,13 @@ export const getCollectionReviewsWithRepliesList = (
 				if (isTVShowReview && !isReviewsOwnerReview) {
 					return isReviewFromDefaultReviews
 						? fetchMovieOrTVShowReviews(
-								item.reviewedItemId,
-								item.reviewId,
+								item.reviewedItemId!,
+								item.reviewId!,
 								UserCollections.tv
 						  )
 						: getReviewFromAnotherUserCollection(
-								item.reviewAuthorId,
-								item.reviewId,
+								item.reviewAuthorId!,
+								item.reviewId!,
 								UserCollections.tv
 						  )
 				}

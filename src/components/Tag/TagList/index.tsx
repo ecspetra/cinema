@@ -5,9 +5,9 @@ import { getAllGenres } from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import Button from '@/app/components/UI/Button'
-import { updateProfileGenres } from '@/firebase/config'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
+import { updateUserProfileGenres } from '@/firebase/handlers/profileHandlers/updateUserProfileGenres'
 
 type PropsType = {
 	tags: ITag[]
@@ -49,7 +49,7 @@ const TagList: FC<PropsType> = ({
 	}
 
 	const handleSaveChanges = async () => {
-		await updateProfileGenres(selectedTags).then(() => {
+		await updateUserProfileGenres(selectedTags).then(() => {
 			handleClose()
 			showSuccessNotification(
 				showModal,

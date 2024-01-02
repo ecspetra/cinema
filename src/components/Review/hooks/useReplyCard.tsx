@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getUserInfo } from '@/firebase/config'
 import { IReviewAuthorInfo } from '../../../../interfaces'
+import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserProfileInfo'
 
 const useReplyCard = (authorId: string) => {
 	const [isMounted, setIsMounted] = useState<boolean>(false)
@@ -11,7 +11,7 @@ const useReplyCard = (authorId: string) => {
 	})
 
 	useEffect(() => {
-		getUserInfo(authorId)
+		getUserProfileInfo(authorId)
 			.then(data => {
 				setAuthorInfo({
 					userId: data.info.id,

@@ -2,12 +2,13 @@ import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 import { IFetchedResult, IItemCard } from '../../../../interfaces'
 import { FC, useEffect, useState } from 'react'
 import Button from '@/app/components/UI/Button'
-import { collectionListener, getCollectionItemsList } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import Title from '@/app/components/UI/Title/Title'
 import Loader from '@/components/Loader'
 import EmptyList from '@/components/List/EmptyList'
 import { UserCollections } from '@/constants/enum'
+import { specificCollectionListener } from '@/firebase/handlers/userCollectionHandlers/specificCollectionListener'
+import { getCollectionItemsList } from '@/firebase/handlers/userCollectionHandlers/getCollectionItemsList'
 
 type PropsType = {
 	collectionType:
@@ -47,7 +48,7 @@ const SpecificCollectionItemsList: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		const unsubscribe = collectionListener(
+		const unsubscribe = specificCollectionListener(
 			userId,
 			collectionType,
 			itemsToShow,

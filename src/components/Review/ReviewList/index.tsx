@@ -1,13 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { IReviewCard } from '../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import {
-	collectionRepliesListener,
-	collectionReviewsListener,
-	reviewsListener,
-} from '@/firebase/config'
-import { useAuth } from '@/context/AuthProvider'
 import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
 import EmptyList from '@/components/List/EmptyList'
 import useScrollToTop from '@/hooks/useScrollToTop'

@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getMarkForMovie } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { IMarkFromDB } from '../../../../interfaces'
 import classNames from 'classnames'
+import { getMarkForMovieOrTVShow } from '@/firebase/handlers/markHandlers/getMarkForMovieOrTVShow'
 
 type PropsType = {
 	markedItemId: number
@@ -22,9 +22,11 @@ const MarkSmall: FC<PropsType> = ({
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(markedItemId, userId, collectionType).then(data => {
-				if (data) setMarkData(data)
-			})
+			getMarkForMovieOrTVShow(markedItemId, userId, collectionType).then(
+				data => {
+					if (data) setMarkData(data)
+				}
+			)
 		}
 	}, [])
 
