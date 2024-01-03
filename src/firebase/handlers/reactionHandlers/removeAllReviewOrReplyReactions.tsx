@@ -9,21 +9,27 @@ export const removeAllReviewOrReplyReactions = (
 	collectionType: UserCollections.reviews | UserCollections.replies,
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 ) => {
-	const collectionPath = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${itemId}`
-	const generalCollectionPath = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}`
+	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${itemId}`
+	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}`
 
-	const itemRef = ref(database, collectionPath)
-	const generalCollectionItemRef = ref(database, generalCollectionPath)
+	const collectionRefForUserReaction = ref(
+		database,
+		collectionPathForUserReaction
+	)
+	const generalCollectionRefForUserReaction = ref(
+		database,
+		generalCollectionPathForUserReaction
+	)
 
 	return new Promise(async resolve => {
-		let isRemoved = false
+		let isReactionRemovedFromCollection = false
 
-		remove(itemRef).then(() => {
-			remove(generalCollectionItemRef).then(() => {
-				isRemoved = true
+		remove(collectionRefForUserReaction).then(() => {
+			remove(generalCollectionRefForUserReaction).then(() => {
+				isReactionRemovedFromCollection = true
 			})
 		})
 
-		resolve(isRemoved)
+		resolve(isReactionRemovedFromCollection)
 	})
 }

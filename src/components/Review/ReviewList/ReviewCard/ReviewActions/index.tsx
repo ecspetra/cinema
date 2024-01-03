@@ -117,7 +117,7 @@ const ReviewActions: FC<PropsType> = ({
 			}
 		}
 	}, [reactions, userId])
-
+	console.log(reactions)
 	return (
 		<span className='flex justify-start items-center mt-auto'>
 			<ReviewActionButton

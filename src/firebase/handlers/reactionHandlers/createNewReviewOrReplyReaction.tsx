@@ -11,18 +11,24 @@ export const createNewReviewOrReplyReaction = async (
 	action: 'like' | 'dislike',
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 ) => {
-	const collectionPath = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${itemId}/${
+	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${itemId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${userId}`
-	const generalCollectionPath = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}/${
+	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}/${
 		action === 'like' ? 'likes' : 'dislikes'
 	}/${userId}`
 
-	const itemRef = ref(database, collectionPath)
-	const generalCollectionItemRef = ref(database, generalCollectionPath)
+	const collectionRefForUserReaction = ref(
+		database,
+		collectionPathForUserReaction
+	)
+	const generalCollectionRefForUserReaction = ref(
+		database,
+		generalCollectionPathForUserReaction
+	)
 
-	await set(itemRef, itemId)
-	await set(generalCollectionItemRef, itemId)
+	await set(collectionRefForUserReaction, itemId)
+	await set(generalCollectionRefForUserReaction, itemId)
 	await removeReviewOrReplyReaction(
 		userId,
 		itemId,

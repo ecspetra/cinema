@@ -2,56 +2,63 @@ import { UserCollections } from '@/constants/enum'
 import { DataSnapshot, ref } from 'firebase/database'
 import { onValue } from '@firebase/database'
 import { database } from '@/firebase/config'
+import { Dispatch, SetStateAction } from 'react'
+
+interface IReaction {
+	key: string
+	data: string
+}
+
+interface IAllReactions {
+	likes: IReaction[]
+	dislikes: IReaction[]
+}
 
 export const reviewOrReplyReactionsListener = (
 	reviewId: string,
 	reviewedItemId: number,
 	collectionType: UserCollections.reviews | UserCollections.replies,
-	setItems: ({ likes: [], dislikes: [] }) => void,
+	setItems: Dispatch<SetStateAction<IAllReactions>>,
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 ) => {
-	const likesCollectionRef = ref(
-		database,
-		`reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/likes`
-	)
-	const dislikesCollectionRef = ref(
-		database,
-		`reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/dislikes`
-	)
+	const collectionPathForLikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/likes`
+	const collectionPathForDislikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/likes`
+	const collectionRefForLikes = ref(database, collectionPathForLikes)
+	const collectionRefForDislikes = ref(database, collectionPathForDislikes)
 
-	const likes = []
-	const dislikes = []
+	const likesList: IReaction[] = []
+	const dislikesList: IReaction[] = []
 
 	const unsubscribeLikes = onValue(
-		likesCollectionRef,
+		collectionRefForLikes,
 		(snapshot: DataSnapshot) => {
-			likes.length = 0
+			likesList.length = 0
 			snapshot.forEach(childSnapshot => {
-				likes.push({
+				likesList.push({
 					key: childSnapshot.key,
 					data: childSnapshot.val(),
 				})
 			})
 			setItems(prevState => ({
-				likes: likes,
+				likes: likesList,
 				dislikes: prevState.dislikes,
 			}))
 		}
 	)
 
 	const unsubscribeDislikes = onValue(
-		dislikesCollectionRef,
+		collectionRefForDislikes,
 		(snapshot: DataSnapshot) => {
-			dislikes.length = 0
+			dislikesList.length = 0
 			snapshot.forEach(childSnapshot => {
-				dislikes.push({
+				dislikesList.push({
 					key: childSnapshot.key,
 					data: childSnapshot.val(),
 				})
 			})
 			setItems(prevState => ({
 				likes: prevState.likes,
-				dislikes: dislikes,
+				dislikes: dislikesList,
 			}))
 		}
 	)
