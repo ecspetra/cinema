@@ -11,29 +11,28 @@ import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserP
 
 export const userFriendsListener = (
 	userId: string,
-	loadedItems: object[],
+	oldFriendList: IFullUserInfo[],
 	setFriends: Dispatch<SetStateAction<IFullUserInfo[]>>
 ) => {
 	const userRef = ref(database, `users/${userId}/friends`)
 
 	const onFriendAdded = async (childSnapshot: DataSnapshot) => {
 		const newFriendId = childSnapshot.val()
+		const isOldFriendListEmpty = oldFriendList.length === 0
+		const isNewFriendExistsInOldFriendList = oldFriendList.some(
+			existingItem => existingItem.info.id === newFriendId
+		)
 
-		if (
-			loadedItems.length === 0 ||
-			!loadedItems.some(
-				existingItem => existingItem.info.id === newFriendId
-			)
-		) {
-			const newFriend = await getUserProfileInfo(newFriendId)
-			setFriends(prevItems => [newFriend, ...prevItems])
+		if (isOldFriendListEmpty || !isNewFriendExistsInOldFriendList) {
+			const newFriendInfo = await getUserProfileInfo(newFriendId)
+			setFriends(prevItems => [newFriendInfo, ...prevItems])
 		}
 	}
 
 	const onFriendRemoved = (childSnapshot: DataSnapshot) => {
-		const removedItemId = childSnapshot.val()
+		const removedFriendId = childSnapshot.val()
 		setFriends(prevItems =>
-			prevItems.filter(item => item.info.id !== removedItemId)
+			prevItems.filter(item => item.info.id !== removedFriendId)
 		)
 	}
 

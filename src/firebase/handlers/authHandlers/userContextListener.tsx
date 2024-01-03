@@ -3,26 +3,25 @@ import { onValue } from '@firebase/database'
 import { database } from '@/firebase/config'
 
 export const userContextListener = (
-	userId: string,
-	prevData: object,
+	oldUserProfileData: { userId: string; photoURL: string; userName: string },
 	updateUserProfile: () => void
 ) => {
-	const userRef = ref(database, `users/${userId}/info`)
+	const userRef = ref(database, `users/${oldUserProfileData.userId}/info`)
 
-	const onInfoChanged = (snapshot: DataSnapshot) => {
-		const profileData = snapshot.val()
+	const onUserProfileChanged = (snapshot: DataSnapshot) => {
+		const newUserProfileData = snapshot.val()
 
 		if (
-			prevData.photoURL !== profileData?.photoURL ||
-			prevData.userName !== profileData?.displayName
+			oldUserProfileData.photoURL !== newUserProfileData?.photoURL ||
+			oldUserProfileData.userName !== newUserProfileData?.displayName
 		) {
 			updateUserProfile()
 		}
 	}
 
-	const unsubscribe = onValue(userRef, onInfoChanged)
+	const unsubscribeUserProfile = onValue(userRef, onUserProfileChanged)
 
 	return () => {
-		unsubscribe()
+		unsubscribeUserProfile()
 	}
 }

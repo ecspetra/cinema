@@ -1,17 +1,21 @@
 import { IFullUserInfo } from '../../../../interfaces'
 import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserProfileInfo'
 
-export const getUserFriendList = (friendIdsList): Promise<IFullUserInfo[]> => {
+export const getUserFriendList = (
+	friendIdsList: { userId: string }[]
+): Promise<IFullUserInfo[]> => {
 	return new Promise(async resolve => {
-		let friendsInfo: IFullUserInfo[] = []
+		let friendsWithFullUserInfo: IFullUserInfo[] = []
 
-		const promises = Object.keys(friendIdsList).map(async (id: string) => {
-			const friend = await getUserProfileInfo(id)
-			friendsInfo.push(friend)
-		})
+		const promises = Object.keys(friendIdsList).map(
+			async (userId: string) => {
+				const userInfo = await getUserProfileInfo(userId)
+				friendsWithFullUserInfo.push(userInfo)
+			}
+		)
 
 		await Promise.all(promises)
 
-		resolve(friendsInfo)
+		resolve(friendsWithFullUserInfo)
 	})
 }

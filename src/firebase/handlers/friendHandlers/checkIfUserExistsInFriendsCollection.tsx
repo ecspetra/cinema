@@ -2,20 +2,23 @@ import { get, ref } from 'firebase/database'
 import { auth, database } from '@/firebase/config'
 
 export const checkIfUserExistsInFriendsCollection = (
-	itemId: string
+	friendId: string
 ): Promise<boolean> => {
 	const currentUser = auth.currentUser
-	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/friends/${itemId}`
-	const itemRef = ref(database, collectionPath)
+	const currentUserId = currentUser?.uid
+	const currentUserFriendsCollectionPath = `users/${currentUserId}/friends/${friendId}`
+	const currentUserFriendsCollectionRef = ref(
+		database,
+		currentUserFriendsCollectionPath
+	)
 
 	return new Promise(async resolve => {
-		let isCollectionItem = false
+		let isUserExistsInFriendsCollection = false
 
-		get(itemRef).then(snapshot => {
-			if (snapshot.exists()) isCollectionItem = true
+		get(currentUserFriendsCollectionRef).then(snapshot => {
+			if (snapshot.exists()) isUserExistsInFriendsCollection = true
 
-			resolve(isCollectionItem)
+			resolve(isUserExistsInFriendsCollection)
 		})
 	})
 }

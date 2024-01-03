@@ -3,13 +3,18 @@ import { auth, database } from '@/firebase/config'
 
 export const createNewFriend = async (newFriendId: string) => {
 	const currentUser = auth.currentUser
-	const userId = currentUser?.uid
-	const currentUserCollectionPath = `users/${userId}/friends/${newFriendId}/`
-	const newFriendCollectionPath = `users/${newFriendId}/friends/${userId}/`
+	const currentUserId = currentUser?.uid
+	const friendsCollectionPathForCurrentUser = `users/${currentUserId}/friends/${newFriendId}/`
+	const friendsCollectionPathForNewFriend = `users/${newFriendId}/friends/${currentUserId}/`
+	const friendsCollectionRefForCurrentUser = ref(
+		database,
+		friendsCollectionPathForCurrentUser
+	)
+	const friendsCollectionRefForNewFriend = ref(
+		database,
+		friendsCollectionPathForNewFriend
+	)
 
-	const itemRef = ref(database, currentUserCollectionPath)
-	const friendItemRef = ref(database, newFriendCollectionPath)
-
-	await set(itemRef, newFriendId)
-	await set(friendItemRef, userId)
+	await set(friendsCollectionRefForCurrentUser, newFriendId)
+	await set(friendsCollectionRefForNewFriend, currentUserId)
 }

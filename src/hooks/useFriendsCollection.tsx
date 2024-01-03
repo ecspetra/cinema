@@ -13,21 +13,21 @@ import { removeFriend } from '@/firebase/handlers/friendHandlers/removeFriend'
 import { checkIfUserExistsInFriendsCollection } from '@/firebase/handlers/friendHandlers/checkIfUserExistsInFriendsCollection'
 
 export const useFriendsCollection = (
-	itemInfo: IFullUserInfo['info'] | null
+	userInfo: IFullUserInfo['info'] | null
 ) => {
 	const [isFriend, setIsFriend] = useState<boolean>(false)
 	const [isLoadingFriends, setIsLoadingFriends] = useState<boolean>(true)
 	const { showModal, hideModal } = useModal()
 	const { isLoggedIn } = useAuth()
-	const userId = itemInfo?.id
+	const userId = userInfo?.id
 
 	const handleSetNewFriend = () => {
 		if (isLoggedIn) {
 			setIsLoadingFriends(true)
 
 			if (userId) {
-				createNewFriend(itemInfo?.id).then(() => {
-					checkIfUserExistsInFriendsCollection(itemInfo?.id)
+				createNewFriend(userInfo?.id).then(() => {
+					checkIfUserExistsInFriendsCollection(userInfo?.id)
 						.then(data => {
 							setIsFriend(data)
 							showSuccessNotification(
@@ -95,7 +95,7 @@ export const useFriendsCollection = (
 			setIsLoadingFriends(true)
 
 			if (userId) {
-				checkIfUserExistsInFriendsCollection(itemInfo?.id)
+				checkIfUserExistsInFriendsCollection(userInfo?.id)
 					.then(data => {
 						setIsFriend(data)
 					})
@@ -104,7 +104,7 @@ export const useFriendsCollection = (
 					})
 			}
 		} else setIsLoadingFriends(false)
-	}, [isLoggedIn, itemInfo])
+	}, [isLoggedIn, userInfo])
 
 	return {
 		isLoadingFriends,

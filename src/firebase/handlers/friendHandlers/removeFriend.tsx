@@ -1,25 +1,29 @@
 import { ref, remove } from 'firebase/database'
 import { auth, database } from '@/firebase/config'
 
-export const removeFriend = (itemId: string): Promise<boolean> => {
+export const removeFriend = (friendId: string): Promise<boolean> => {
 	const currentUser = auth.currentUser
-	const userId = currentUser?.uid
-
-	const userCollectionFriendRef = ref(
+	const currentUserId = currentUser?.uid
+	const friendsCollectionPathForCurrentUser = `users/${currentUserId}/friends/${friendId}`
+	const friendsCollectionPathForRemovedFriend = `users/${friendId}/friends/${currentUserId}`
+	const friendsCollectionRefForCurrentUser = ref(
 		database,
-		`users/${userId}/friends/${itemId}`
+		friendsCollectionPathForCurrentUser
 	)
-	const friendRef = ref(database, `users/${itemId}/friends/${userId}`)
+	const friendsCollectionRefForNewFriend = ref(
+		database,
+		friendsCollectionPathForRemovedFriend
+	)
 
 	return new Promise(async resolve => {
-		let isRemoved = false
+		let isFriendRemovedFromCollection = false
 
-		remove(userCollectionFriendRef).then(() => {
-			remove(friendRef).then(() => {
-				isRemoved = true
+		remove(friendsCollectionRefForCurrentUser).then(() => {
+			remove(friendsCollectionRefForNewFriend).then(() => {
+				isFriendRemovedFromCollection = true
 			})
 		})
 
-		resolve(isRemoved)
+		resolve(isFriendRemovedFromCollection)
 	})
 }
