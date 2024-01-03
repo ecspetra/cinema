@@ -7,25 +7,24 @@ export const getMarkForMovieOrTVShow = (
 	userId: string,
 	collectionType: string
 ): Promise<IMarkFromDB | undefined> => {
-	const marksCollectionRef = ref(
-		database,
-		`users/${userId}/collection/marks/${collectionType}`
-	)
+	const marksCollectionPath = `users/${userId}/collection/marks/${collectionType}`
+	const marksCollectionRef = ref(database, marksCollectionPath)
 
 	return new Promise(async resolve => {
 		get(marksCollectionRef).then(snapshot => {
-			let response
+			let mark
 
 			snapshot.forEach(childSnapshot => {
-				const mark = {
+				const markFromStorage = {
 					key: childSnapshot.key,
 					data: childSnapshot.val(),
 				}
 
-				if (mark.data.markedItemId === markedItemId) response = mark
+				if (markFromStorage.data.markedItemId === markedItemId)
+					mark = markFromStorage
 			})
 
-			resolve(response)
+			resolve(mark)
 		})
 	})
 }

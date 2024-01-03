@@ -5,19 +5,17 @@ export const removeMarkForMovie = (
 	markKey: string,
 	userId: string,
 	collectionType: string
-) => {
-	const markRef = ref(
-		database,
-		`users/${userId}/collection/marks/${collectionType}/${markKey}`
-	)
+): Promise<boolean> => {
+	const removedMarkPath = `users/${userId}/collection/marks/${collectionType}/${markKey}`
+	const removedMarkRef = ref(database, removedMarkPath)
 
 	return new Promise(async resolve => {
-		let isRemoved = false
+		let isMarkRemovedFromCollection = false
 
-		remove(markRef).then(() => {
-			isRemoved = true
+		remove(removedMarkRef).then(() => {
+			isMarkRemovedFromCollection = true
 		})
 
-		resolve(isRemoved)
+		resolve(isMarkRemovedFromCollection)
 	})
 }

@@ -1,20 +1,23 @@
 import { auth } from '@/firebase/config'
 import { updateProfile } from 'firebase/auth'
 import { updateUserInStorage } from '@/firebase/handlers/profileHandlers/updateUserInStorage'
+import { IProfileEditFormData } from '@/hooks/useProfileEditFormReducer'
 
-export const updateUserProfileInfo = async (newInfo: object) => {
-	const currentUser = auth.currentUser
-	const displayName = newInfo.name.value
+export const updateUserProfileInfo = async (
+	updatedUserInfo: IProfileEditFormData
+) => {
+	const currentUser = auth.currentUser!
+	const displayName = updatedUserInfo.name.value
 	const userId = currentUser?.uid
 	const photoURL = currentUser?.photoURL
 
-	const updateFields = {
-		displayName: newInfo.name.value,
-		country: newInfo.country.value,
-		dateOfBirth: newInfo.dateOfBirth.value,
-		about: newInfo.about.value,
+	const updatedFields = {
+		displayName: updatedUserInfo.name.value,
+		country: updatedUserInfo.country.value,
+		dateOfBirth: updatedUserInfo.dateOfBirth.value,
+		about: updatedUserInfo.about.value,
 	}
 
 	await updateProfile(currentUser, { displayName, photoURL })
-	await updateUserInStorage(updateFields, userId)
+	await updateUserInStorage(updatedFields, userId)
 }

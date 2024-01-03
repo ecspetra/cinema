@@ -2,18 +2,20 @@ import { get, ref, set } from 'firebase/database'
 import { database } from '@/firebase/config'
 
 export const updateUserInStorage = async (
-	updateFields: object,
+	updatedFields: object,
 	userId: string
 ) => {
-	const newUserRef = ref(database, `users/${userId}`)
+	const userToUpdatePath = `users/${userId}`
+	const userToUpdateRef = ref(database, userToUpdatePath)
 
-	const existingUserData = (await get(newUserRef)).val()
-	const newUserData = {
+	const userData = (await get(userToUpdateRef)).val()
+	const oldUserInfo = userData.info
+	const updatedUserData = {
 		info: {
-			...existingUserData.info,
-			...updateFields,
+			...oldUserInfo,
+			...updatedFields,
 		},
 	}
 
-	await set(newUserRef, newUserData)
+	await set(userToUpdateRef, updatedUserData)
 }

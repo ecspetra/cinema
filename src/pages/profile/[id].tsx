@@ -100,10 +100,13 @@ const UserProfilePage = ({
 
 	useEffect(() => {
 		if (isCurrentUserProfile) {
-			const unsubscribe = userProfileInfoListener(userId, setProfile)
+			const unsubscribeUserProfileInfoChanged = userProfileInfoListener(
+				userId,
+				setProfile
+			)
 
 			return () => {
-				unsubscribe()
+				unsubscribeUserProfileInfoChanged()
 			}
 		}
 	}, [isCurrentUserProfile])

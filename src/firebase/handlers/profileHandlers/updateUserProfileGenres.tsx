@@ -3,11 +3,11 @@ import { auth } from '@/firebase/config'
 import { updateUserInStorage } from '@/firebase/handlers/profileHandlers/updateUserInStorage'
 
 export const updateUserProfileGenres = async (newGenres: ITag[]) => {
-	const currentUser = auth.currentUser
-	const userId = currentUser?.uid
-	const updateFields = {
+	const currentUser = auth.currentUser!
+	const currentUserId = currentUser?.uid
+	const updatedFields = {
 		favoriteGenres: newGenres,
 	}
 
-	await updateUserInStorage(updateFields, userId)
+	await updateUserInStorage(updatedFields, currentUserId)
 }

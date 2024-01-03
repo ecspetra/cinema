@@ -8,15 +8,19 @@ export const userProfileInfoListener = (
 	userId: string,
 	setProfile: Dispatch<SetStateAction<IFullUserInfo['info'] | null>>
 ) => {
-	const userRef = ref(database, `users/${userId}/info`)
+	const userInfoPath = `users/${userId}/info`
+	const userInfoRef = ref(database, userInfoPath)
 
-	const onInfoChanged = (snapshot: DataSnapshot) => {
+	const onUserProfileInfoChanged = (snapshot: DataSnapshot) => {
 		const profileData = snapshot.val()
 		setProfile(profileData)
 	}
-	const unsubscribe = onValue(userRef, onInfoChanged)
+	const unsubscribeUserProfileInfoChanged = onValue(
+		userInfoRef,
+		onUserProfileInfoChanged
+	)
 
 	return () => {
-		unsubscribe()
+		unsubscribeUserProfileInfoChanged()
 	}
 }

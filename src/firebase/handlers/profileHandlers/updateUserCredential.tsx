@@ -6,11 +6,14 @@ import {
 	updatePassword,
 } from 'firebase/auth'
 import { updateUserInStorage } from '@/firebase/handlers/profileHandlers/updateUserInStorage'
+import { IProfileEditCredentialFormData } from '@/hooks/useProfileEditCredentialFormReducer'
 
-export const updateUserCredential = async (formData: object) => {
-	const currentUser = auth.currentUser
-	const userId = currentUser?.uid
-	const oldEmail = currentUser?.email
+export const updateUserCredential = async (
+	formData: IProfileEditCredentialFormData
+) => {
+	const currentUser = auth.currentUser!
+	const currentUserId = currentUser?.uid
+	const oldEmail = currentUser?.email!
 	const updateFields = {
 		email: formData.email.value,
 	}
@@ -20,11 +23,11 @@ export const updateUserCredential = async (formData: object) => {
 		formData.oldPassword.value
 	)
 
-	await reauthenticateWithCredential(currentUser, credential).then(
+	await reauthenticateWithCredential(currentUser!, credential).then(
 		async () => {
-			await updateEmail(currentUser, formData.email.value)
-			await updatePassword(currentUser, formData.newPassword.value)
-			await updateUserInStorage(updateFields, userId)
+			await updateEmail(currentUser!, formData.email.value)
+			await updatePassword(currentUser!, formData.newPassword.value)
+			await updateUserInStorage(updateFields, currentUserId)
 		}
 	)
 }

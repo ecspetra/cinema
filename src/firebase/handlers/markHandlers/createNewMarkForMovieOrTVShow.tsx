@@ -7,12 +7,10 @@ export const createNewMarkForMovieOrTVShow = async (
 	markData: IMark,
 	userId: string
 ) => {
-	const newMarkRef = ref(
-		database,
-		`users/${userId}/collection/marks/${
-			markData.collectionType
-		}/${uuidv4()}`
-	)
+	const newMarkPath = `users/${userId}/collection/marks/${
+		markData.collectionType
+	}/${uuidv4()}`
+	const newMarkRef = ref(database, newMarkPath)
 
 	const newMarkData = {
 		markedItemId: markData.markedItemId,

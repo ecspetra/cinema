@@ -5,12 +5,13 @@ import { database } from '@/firebase/config'
 export const getUserProfileInfo = async (
 	userId: string
 ): Promise<IFullUserInfo> => {
-	const infoPath = `users/${userId}`
-	const itemRef = ref(database, infoPath)
+	const userPath = `users/${userId}`
+	const userRef = ref(database, userPath)
 
 	return new Promise(async resolve => {
-		get(itemRef).then(snapshot => {
-			let userInfo = {}
+		get(userRef).then(snapshot => {
+			let userInfo = null
+
 			if (snapshot.exists()) {
 				userInfo = snapshot.val()
 			}
