@@ -3,7 +3,7 @@ import {
 	IFetchedResult,
 	IItemCard,
 	IMark,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../../../interfaces'
 import {
 	get,
@@ -25,7 +25,7 @@ export const getCollectionItemsList = async (
 		| UserCollections.marks,
 	itemsPerPage: number | null,
 	lastItemId: string | undefined = undefined
-): Promise<IFetchedResult<IReviewCard | IItemCard | IMark>> => {
+): Promise<IFetchedResult<IReviewItemCard | IItemCard | IMark>> => {
 	try {
 		const userPath = `users/${collectionOwnerId}/`
 		const userRef = ref(database, userPath)
@@ -35,11 +35,11 @@ export const getCollectionItemsList = async (
 			throw `Failed to fetch`
 		}
 
-		const collectionPath = `users/${collectionOwnerId}/collection/${collectionType}/`
-		const userCollectionRef = ref(database, collectionPath)
+		const collectionPathForUser = `users/${collectionOwnerId}/collection/${collectionType}/`
+		const collectionRefForUser = ref(database, collectionPathForUser)
 		const collectionInfo = {
 			type: collectionType,
-			ref: userCollectionRef,
+			ref: collectionRefForUser,
 			userId: collectionOwnerId,
 		}
 		let paginationQuery
@@ -47,14 +47,14 @@ export const getCollectionItemsList = async (
 		if (lastItemId) {
 			if (itemsPerPage !== null) {
 				paginationQuery = query(
-					userCollectionRef,
+					collectionRefForUser,
 					orderByKey(),
 					startAfter(lastItemId),
 					limitToFirst(itemsPerPage + 1)
 				)
 			} else {
 				paginationQuery = query(
-					userCollectionRef,
+					collectionRefForUser,
 					orderByKey(),
 					startAfter(lastItemId)
 				)
@@ -62,12 +62,12 @@ export const getCollectionItemsList = async (
 		} else {
 			if (itemsPerPage !== null) {
 				paginationQuery = query(
-					userCollectionRef,
+					collectionRefForUser,
 					orderByKey(),
 					limitToFirst(itemsPerPage + 1)
 				)
 			} else {
-				paginationQuery = query(userCollectionRef, orderByKey())
+				paginationQuery = query(collectionRefForUser, orderByKey())
 			}
 		}
 
@@ -92,7 +92,7 @@ export const getCollectionItemsList = async (
 
 		return {
 			isMoreDataAvailable,
-			items: items as (IItemCard | IReviewCard | IMark)[],
+			items: items as (IItemCard | IReviewItemCard | IMark)[],
 		}
 	} catch (error) {
 		throw error

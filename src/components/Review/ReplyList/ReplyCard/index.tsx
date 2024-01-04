@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { IReviewCard } from '../../../../../interfaces'
+import { IReviewItemCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
@@ -15,12 +15,12 @@ import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/forma
 import useReviewCardContentLength from '@/components/Review/hooks/useReviewCardContentLength'
 import useReviewEditForm from '@/components/Review/hooks/useReviewEditForm'
 import useReplyCard from '@/components/Review/hooks/useReplyCard'
-import { removeReview } from '@/firebase/handlers/reviewHandlers/removeReview'
+import { removeReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/removeReviewOrReply'
 
 type PropsType = {
 	reviewedItemId: number
 	userId: string
-	reply: IReviewCard
+	reply: IReviewItemCard
 	collectionType: UserCollections.movie | UserCollections.tv
 	onReply: (userName: string) => void
 	isCollectionItem?: boolean
@@ -74,7 +74,7 @@ const ReplyCard: FC<PropsType> = ({
 							label='Delete'
 							icon={faTrash}
 							onClick={() =>
-								removeReview(
+								removeReviewOrReply(
 									id,
 									reviewedItemId,
 									userId,

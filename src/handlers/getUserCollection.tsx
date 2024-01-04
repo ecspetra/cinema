@@ -5,7 +5,7 @@ import {
 	IGeneralCollection,
 	IItemCard,
 	IMark,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
 import { getCollectionItemsList } from '@/firebase/handlers/userCollectionHandlers/getCollectionItemsList'
@@ -38,11 +38,11 @@ export const getUserCollection = async (
 		const collectionReviews = (await getReviewsOrRepliesFromUserCollection(
 			collectionOwnerId,
 			UserCollections.reviews
-		)) as IReviewCard[]
+		)) as IReviewItemCard[]
 		const collectionReplies = (await getReviewsOrRepliesFromUserCollection(
 			collectionOwnerId,
 			UserCollections.replies
-		)) as IReviewCard[]
+		)) as IReviewItemCard[]
 
 		const reviewsWithUserReplies =
 			await getCollectionReviewsWithRepliesList(
@@ -55,7 +55,7 @@ export const getUserCollection = async (
 				item =>
 					item.reviewedItemId !== undefined && item.id !== undefined
 			),
-			...(reviewsWithUserReplies as IReviewCard[]),
+			...(reviewsWithUserReplies as IReviewItemCard[]),
 		]
 
 		return {

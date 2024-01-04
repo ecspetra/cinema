@@ -7,16 +7,16 @@ export const getMovieOrTVShowReviewListFromStorage = async (
 	collectionType: UserCollections.reviews | UserCollections.replies,
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 ) => {
-	const collectionPath = `${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/`
-	const reviewsCollectionRef = ref(database, collectionPath)
+	const collectionPathForReviews = `${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/`
+	const collectionRefForReviews = ref(database, collectionPathForReviews)
 
 	try {
-		const snapshot = await get(reviewsCollectionRef)
+		const snapshot = await get(collectionRefForReviews)
 
 		if (snapshot.exists()) {
 			const data = snapshot.val()
-			const result = Object.values(data)
-			return result
+			const reviewList = Object.values(data)
+			return reviewList
 		} else {
 			return []
 		}

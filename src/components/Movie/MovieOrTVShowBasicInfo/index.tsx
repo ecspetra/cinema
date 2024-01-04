@@ -5,7 +5,7 @@ import {
 	IBackdrop,
 	IDetailsItem,
 	IMovieOrTVShowBasicInfo,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
@@ -26,7 +26,7 @@ import { CARD_IMAGE_SRC } from '@/constants/images'
 type PropsType = {
 	basicInfo: IMovieOrTVShowBasicInfo
 	images: IBackdrop[]
-	reviews: IReviewCard[]
+	reviews: IReviewItemCard[]
 	video: string
 	collectionType: UserCollections.movie | UserCollections.tv
 }

@@ -10,10 +10,11 @@ import ReviewActionButton from '@/components/Review/ReviewList/ReviewCard/Review
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { UserCollections } from '@/constants/enum'
-import { getReviewReactions } from '@/firebase/handlers/reviewHandlers/getReviewReactions'
+import { getReviewOrReplyReactions } from '@/firebase/handlers/reviewAndReplyHandlers/getReviewOrReplyReactions'
 import { reviewOrReplyReactionsListener } from '@/firebase/handlers/reactionHandlers/reviewOrReplyReactionsListener'
 import { createNewReviewOrReplyReaction } from '@/firebase/handlers/reactionHandlers/createNewReviewOrReplyReaction'
 import { removeReviewOrReplyReaction } from '@/firebase/handlers/reactionHandlers/removeReviewOrReplyReaction'
+import { IAllReactions, IReaction } from '../../../../../../interfaces'
 
 type PropsType = {
 	reviewId: string
@@ -22,13 +23,6 @@ type PropsType = {
 	onReply: Dispatch<SetStateAction<boolean>> | ((userName: string) => void)
 	collectionType: UserCollections.reviews | UserCollections.replies
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
-}
-
-type Reaction = { key: string; data: string }
-
-type ReactionsType = {
-	likes: Reaction[]
-	dislikes: Reaction[]
 }
 
 const ReviewActions: FC<PropsType> = ({
@@ -40,7 +34,7 @@ const ReviewActions: FC<PropsType> = ({
 	reviewedItemCollectionType,
 }) => {
 	const { showModal } = useModal()
-	const [reactions, setReactions] = useState<ReactionsType>({
+	const [reactions, setReactions] = useState<IAllReactions>({
 		likes: [],
 		dislikes: [],
 	})
@@ -89,15 +83,17 @@ const ReviewActions: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		getReviewReactions(
+		getReviewOrReplyReactions(
 			reviewId,
 			reviewedItemId,
 			collectionType,
 			reviewedItemCollectionType
 		).then(data => {
+			console.log(data)
+
 			setReactions({
-				likes: data.likes as Reaction[],
-				dislikes: data.dislikes as Reaction[],
+				likes: data.likes as IReaction[],
+				dislikes: data.dislikes as IReaction[],
 			})
 		})
 	}, [])
@@ -117,7 +113,7 @@ const ReviewActions: FC<PropsType> = ({
 			}
 		}
 	}, [reactions, userId])
-	console.log(reactions)
+
 	return (
 		<span className='flex justify-start items-center mt-auto'>
 			<ReviewActionButton

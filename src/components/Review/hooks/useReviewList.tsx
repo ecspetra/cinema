@@ -1,8 +1,8 @@
 import { useAuth } from '@/context/AuthProvider'
 import { useEffect, useState } from 'react'
-import { IReviewCard } from '../../../../interfaces'
+import { IReviewItemCard } from '../../../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { movieOrTVShowReviewsListener } from '@/firebase/handlers/reviewHandlers/movieOrTVShowReviewsListener'
+import { movieOrTVShowReviewsListener } from '@/firebase/handlers/reviewAndReplyHandlers/movieOrTVShowReviewsListener'
 import { collectionRepliesListener } from '@/firebase/handlers/userCollectionHandlers/collectionRepliesListener'
 import { collectionReviewsListener } from '@/firebase/handlers/userCollectionHandlers/collectionReviewsListener'
 
@@ -14,7 +14,7 @@ type CollectionInfo = {
 }
 
 const useReviewList = (
-	reviews: IReviewCard[],
+	reviews: IReviewItemCard[],
 	collectionInfo: CollectionInfo,
 	scrollToTop: () => void
 ) => {
@@ -22,9 +22,11 @@ const useReviewList = (
 	const initialItemsLength = 3
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
-	const [itemsToShow, setItemsToShow] = useState<IReviewCard[]>(reviews)
-	const [itemsFromDB, setItemsFromDB] = useState<IReviewCard[]>([])
-	const [defaultItems, setDefaultItems] = useState<IReviewCard[]>([])
+	const [itemsToShow, setItemsToShow] = useState<IReviewItemCard[]>(reviews)
+	const [itemsFromStorage, setitemsFromStorage] = useState<IReviewItemCard[]>(
+		[]
+	)
+	const [defaultItems, setDefaultItems] = useState<IReviewItemCard[]>([])
 	const isMoreDataAvailable =
 		maxReviewsLength <
 		itemsToShow.filter(item => item.id !== undefined).length
@@ -57,18 +59,18 @@ const useReviewList = (
 	}
 
 	const defineReviewSrc = () => {
-		const itemsFromDB: IReviewCard[] = []
-		const defaultItems: IReviewCard[] = []
+		const itemsFromStorage: IReviewItemCard[] = []
+		const defaultItems: IReviewItemCard[] = []
 
 		reviews.forEach(item => {
 			if (item.authorId) {
-				itemsFromDB.push(item)
+				itemsFromStorage.push(item)
 			} else {
 				defaultItems.push(item)
 			}
 		})
 
-		setItemsFromDB(itemsFromDB)
+		setitemsFromStorage(itemsFromStorage)
 		setDefaultItems(defaultItems)
 	}
 
@@ -77,9 +79,9 @@ const useReviewList = (
 	}, [reviews])
 
 	useEffect(() => {
-		const newItemsToShow = [...itemsFromDB, ...defaultItems]
+		const newItemsToShow = [...itemsFromStorage, ...defaultItems]
 		setItemsToShow(newItemsToShow)
-	}, [itemsFromDB, defaultItems])
+	}, [itemsFromStorage, defaultItems])
 
 	useEffect(() => {
 		if (userId) {
@@ -99,8 +101,8 @@ const useReviewList = (
 
 				const unsubscribe = movieOrTVShowReviewsListener(
 					collectionId!,
-					itemsFromDB,
-					setItemsFromDB,
+					itemsFromStorage,
+					setitemsFromStorage,
 					collectionType
 				)
 
@@ -109,7 +111,7 @@ const useReviewList = (
 				}
 			}
 		}
-	}, [itemsFromDB, userId])
+	}, [itemsFromStorage, userId])
 
 	useEffect(() => {
 		if (userId) {

@@ -7,48 +7,45 @@ import {
 } from 'firebase/database'
 import { UserCollections } from '@/constants/enum'
 import { database } from '@/firebase/config'
+import { Dispatch, SetStateAction } from 'react'
+import { IReviewItemCard } from '../../../../interfaces'
 
 export const collectionRepliesListener = (
 	userId: string,
 	collectionOwnerId: string,
-	setItems: ([]) => void
+	setItems: Dispatch<SetStateAction<IReviewItemCard[]>>
 ) => {
-	const tvShowRepliesRef = ref(
+	const tvShowRepliesCollectionPath = `users/${collectionOwnerId}/collection/replies/tv`
+	const tvShowReviewsCollectionPath = `users/${collectionOwnerId}/collection/reviews/tv`
+	const movieRepliesCollectionPath = `users/${collectionOwnerId}/collection/replies/movie`
+	const movieReviewsCollectionPath = `users/${collectionOwnerId}/collection/reviews/movie`
+	const tvShowRepliesCollectionRef = ref(
 		database,
-		`users/${collectionOwnerId}/collection/replies/tv`
+		tvShowRepliesCollectionPath
 	)
-
-	const movieRepliesRef = ref(
+	const tvShowReviewsCollectionRef = ref(
 		database,
-		`users/${collectionOwnerId}/collection/replies/movie`
+		tvShowReviewsCollectionPath
 	)
-
-	const tvShowReviewsRef = ref(
-		database,
-		`users/${collectionOwnerId}/collection/reviews/tv`
-	)
-
-	const movieReviewsRef = ref(
-		database,
-		`users/${collectionOwnerId}/collection/reviews/movie`
-	)
+	const movieRepliesCollectionRef = ref(database, movieRepliesCollectionPath)
+	const movieReviewsCollectionRef = ref(database, movieReviewsCollectionPath)
 
 	const onReplyRemoved = async (childSnapshot: DataSnapshot) => {
 		const removedItem = childSnapshot.val()
 		let allRepliesSnapshot
-		let allReplies
+		let allReplies: IReviewItemCard[] = []
 		let allReviewsSnapshot
-		let allReviews
+		let allReviews: IReviewItemCard[] = []
 
 		if (removedItem.reviewedItemCollectionType === UserCollections.movie) {
-			allRepliesSnapshot = await get(query(movieRepliesRef))
+			allRepliesSnapshot = await get(query(movieRepliesCollectionRef))
 			allReplies = Object.values(allRepliesSnapshot.val() || {})
-			allReviewsSnapshot = await get(query(movieReviewsRef))
+			allReviewsSnapshot = await get(query(movieReviewsCollectionRef))
 			allReviews = Object.values(allReviewsSnapshot.val() || {})
 		} else {
-			allRepliesSnapshot = await get(query(tvShowRepliesRef))
+			allRepliesSnapshot = await get(query(tvShowRepliesCollectionRef))
 			allReplies = Object.values(allRepliesSnapshot.val() || {})
-			allReviewsSnapshot = await get(query(tvShowReviewsRef))
+			allReviewsSnapshot = await get(query(tvShowReviewsCollectionRef))
 			allReviews = Object.values(allReviewsSnapshot.val() || {})
 		}
 
@@ -74,12 +71,12 @@ export const collectionRepliesListener = (
 	}
 
 	const unsubscribeTVShowReplyRemoved = onChildRemoved(
-		tvShowRepliesRef,
+		tvShowRepliesCollectionRef,
 		onReplyRemoved
 	)
 
 	const unsubscribeMovieReplyRemoved = onChildRemoved(
-		movieRepliesRef,
+		movieRepliesCollectionRef,
 		onReplyRemoved
 	)
 

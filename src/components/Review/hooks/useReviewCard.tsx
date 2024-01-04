@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { IReviewAuthorInfo, IReviewCard } from '../../../../interfaces'
+import { IReviewAuthorInfo, IReviewItemCard } from '../../../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { removeReview } from '@/firebase/handlers/reviewHandlers/removeReview'
-import { getReplyListFromStorage } from '@/firebase/handlers/replyHandlers/getReplyListFromStorage'
+import { removeReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/removeReviewOrReply'
+import { getReplyListFromStorage } from '@/firebase/handlers/reviewAndReplyHandlers/getReplyListFromStorage'
 import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserProfileInfo'
 
 type CollectionInfo = {
@@ -13,7 +13,7 @@ type CollectionInfo = {
 }
 
 const useReviewCard = (collectionInfo: CollectionInfo, userId: string) => {
-	const [replies, setReplies] = useState<IReviewCard[]>([])
+	const [replies, setReplies] = useState<IReviewItemCard[]>([])
 	const [authorInfo, setAuthorInfo] = useState<IReviewAuthorInfo>({
 		userId: '',
 		photoURL: '',
@@ -27,7 +27,7 @@ const useReviewCard = (collectionInfo: CollectionInfo, userId: string) => {
 		setIsMounted(false)
 
 		setTimeout(() => {
-			removeReview(
+			removeReviewOrReply(
 				id,
 				reviewedItemId!,
 				userId,

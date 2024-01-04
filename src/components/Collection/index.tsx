@@ -4,7 +4,7 @@ import {
 	IFetchedResult,
 	IItemCard,
 	IMark,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../../interfaces'
 import { UserCollections } from '@/constants/enum'
 
@@ -13,7 +13,7 @@ type PropsType = {
 	tvShows: IFetchedResult<IItemCard>['items'] | null
 	persons: IFetchedResult<IItemCard>['items'] | null
 	marks: IFetchedResult<IMark>['items']
-	reviews: IFetchedResult<IReviewCard>['items']
+	reviews: IFetchedResult<IReviewItemCard>['items']
 	isCurrentUserCollection?: boolean
 	collectionOwnerId?: string
 }

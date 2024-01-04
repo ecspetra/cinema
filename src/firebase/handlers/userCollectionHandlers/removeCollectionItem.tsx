@@ -7,17 +7,20 @@ export const removeCollectionItem = (
 	collectionType: UserCollections
 ) => {
 	const currentUser = auth.currentUser
-	const userId = currentUser?.uid
-	const collectionPath = `users/${userId}/collection/${collectionType}/${itemId}`
-	const itemRef = ref(database, collectionPath)
+	const currentUserId = currentUser?.uid
+	const collectionPathForRemovedItem = `users/${currentUserId}/collection/${collectionType}/${itemId}`
+	const collectionRefForRemovedItem = ref(
+		database,
+		collectionPathForRemovedItem
+	)
 
 	return new Promise(async resolve => {
-		let isRemoved = false
+		let isItemRemovedFromCollection = false
 
-		remove(itemRef).then(() => {
-			isRemoved = true
+		remove(collectionRefForRemovedItem).then(() => {
+			isItemRemovedFromCollection = true
 		})
 
-		resolve(isRemoved)
+		resolve(isItemRemovedFromCollection)
 	})
 }

@@ -7,23 +7,29 @@ export const getReviewsOrRepliesFromUserCollection = async (
 	collectionType: UserCollections.reviews | UserCollections.replies
 ) => {
 	try {
-		const collectionPath = `users/${collectionOwnerId}/collection/${collectionType}/`
-		const userCollectionRef = ref(database, collectionPath)
-		const paginationQuery = query(userCollectionRef, orderByKey())
+		const collectionPathForReviewsOrReplies = `users/${collectionOwnerId}/collection/${collectionType}/`
+		const collectionRefForReviewsOrReplies = ref(
+			database,
+			collectionPathForReviewsOrReplies
+		)
+		const paginationQuery = query(
+			collectionRefForReviewsOrReplies,
+			orderByKey()
+		)
 		const snapshot = await get(paginationQuery)
 		const data = snapshot.val() || {}
-		const itemsFromDB = []
+		const itemsFromStorage = []
 
 		for (const type in data) {
 			const items = data[type]
 
 			for (const itemId in items) {
 				const review = items[itemId]
-				itemsFromDB.push(review)
+				itemsFromStorage.push(review)
 			}
 		}
 
-		return itemsFromDB
+		return itemsFromStorage
 	} catch (error) {
 		throw error
 	}

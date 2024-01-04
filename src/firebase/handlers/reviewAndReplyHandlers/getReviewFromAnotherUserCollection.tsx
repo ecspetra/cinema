@@ -7,19 +7,19 @@ export const getReviewFromAnotherUserCollection = async (
 	reviewId: string,
 	collectionType: UserCollections.movie | UserCollections.tv
 ) => {
-	const collectionPath = `users/${reviewAuthorId}/collection/reviews/${collectionType}/${reviewId}`
-	const reviewRef = ref(database, collectionPath)
+	const collectionPathForReview = `users/${reviewAuthorId}/collection/reviews/${collectionType}/${reviewId}`
+	const collectionRefForReview = ref(database, collectionPathForReview)
 
 	try {
-		const snapshot = await get(reviewRef)
+		const snapshot = await get(collectionRefForReview)
 
 		if (snapshot.exists()) {
-			const data = snapshot.val()
-			return data
+			const review = snapshot.val()
+			return review
 		} else {
 			return
 		}
 	} catch (error) {
-		return error
+		return null
 	}
 }

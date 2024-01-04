@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IReviewCard } from '../../../../interfaces'
+import { IReviewItemCard } from '../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
 import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
@@ -10,7 +10,7 @@ import { UserCollections } from '@/constants/enum'
 import useReviewList from '@/components/Review/hooks/useReviewList'
 
 type PropsType = {
-	reviews: IReviewCard[]
+	reviews: IReviewItemCard[]
 	collectionType?: UserCollections.movie | UserCollections.tv
 	reviewedItemId?: number
 	isCollectionList?: boolean

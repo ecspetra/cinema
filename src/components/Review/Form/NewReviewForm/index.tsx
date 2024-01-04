@@ -14,10 +14,10 @@ import moment from 'moment'
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { IReviewCard } from '../../../../../interfaces'
+import { IReviewItemCard } from '../../../../../interfaces'
 import Loader from '@/components/Loader'
 import { UserCollections } from '@/constants/enum'
-import { createReview } from '@/firebase/handlers/reviewHandlers/createReview'
+import { createReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/createReviewOrReply'
 
 type PropsType = {
 	reviewedItemId: number
@@ -67,7 +67,7 @@ const NewReviewForm: FC<PropsType> = ({
 			if (userId) {
 				setError('')
 
-				let newItem: IReviewCard
+				let newItem: IReviewItemCard
 
 				if (isReplyItem) {
 					newItem = {
@@ -94,7 +94,7 @@ const NewReviewForm: FC<PropsType> = ({
 					}
 				}
 
-				await createReview(
+				await createReviewOrReply(
 					newItem,
 					userId,
 					reviewedItemId,

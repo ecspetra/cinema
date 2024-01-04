@@ -10,7 +10,7 @@ import {
 import { IItemCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
 import { removeCollectionItem } from '@/firebase/handlers/userCollectionHandlers/removeCollectionItem'
-import { getCollectionItem } from '@/firebase/handlers/userCollectionHandlers/getCollectionItem'
+import { checkIfItemExistsInCollection } from '@/firebase/handlers/userCollectionHandlers/checkIfItemExistsInCollection'
 import { createNewCollectionItem } from '@/firebase/handlers/userCollectionHandlers/createNewCollectionItem'
 
 export const useCollectionButton = (
@@ -32,7 +32,7 @@ export const useCollectionButton = (
 			setIsLoadingCollection(true)
 
 			createNewCollectionItem(itemInfo.id, collectionType).then(() => {
-				getCollectionItem(itemInfo.id, collectionType)
+				checkIfItemExistsInCollection(itemInfo.id, collectionType)
 					.then(data => {
 						setIsCollectionItem(data)
 						showSuccessNotification(
@@ -89,7 +89,7 @@ export const useCollectionButton = (
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			getCollectionItem(itemInfo.id, collectionType)
+			checkIfItemExistsInCollection(itemInfo.id, collectionType)
 				.then(data => {
 					setIsCollectionItem(data)
 				})

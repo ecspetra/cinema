@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { IReviewCard } from '../../../../interfaces'
+import { IReviewItemCard } from '../../../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { movieOrTVShowRepliesListener } from '@/firebase/handlers/replyHandlers/movieOrTVShowRepliesListener'
+import { movieOrTVShowRepliesListener } from '@/firebase/handlers/reviewAndReplyHandlers/movieOrTVShowRepliesListener'
 
 type CollectionInfo = {
 	collectionType?: UserCollections.movie | UserCollections.tv
@@ -10,14 +10,14 @@ type CollectionInfo = {
 }
 
 const useReplyList = (
-	replies: IReviewCard[],
+	replies: IReviewItemCard[],
 	collectionInfo: CollectionInfo,
 	userId: string
 ) => {
 	const initialItemsLength = 2
 	const [maxReviewsLength, setMaxReviewsLength] =
 		useState<number>(initialItemsLength)
-	const [itemsToShow, setItemsToShow] = useState<IReviewCard[]>([])
+	const [itemsToShow, setItemsToShow] = useState<IReviewItemCard[]>([])
 	const isMoreDataAvailable = maxReviewsLength < itemsToShow.length
 	const isShowMoreButton = itemsToShow.length > initialItemsLength
 	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'

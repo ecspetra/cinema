@@ -52,7 +52,7 @@ export interface IMark {
 	collectionType: UserCollections.movie | UserCollections.tv
 }
 
-export interface IReviewCard {
+export interface IReviewItemCard {
 	id: string
 	content: string
 	created_at: string
@@ -149,7 +149,7 @@ export interface IGeneralCollection {
 	collectionMovies: IItemCard[]
 	collectionTVShows: IItemCard[]
 	collectionPersons: IItemCard[]
-	allCollectionReviews: IReviewCard[]
+	allCollectionReviews: IReviewItemCard[]
 	collectionMarks: IMark[]
 }
 
@@ -175,7 +175,7 @@ export interface IMovieOrTVShowData {
 	credits: { cast: IItemCard[]; crew: IItemCard[] }
 	images: IBackdrop[]
 	video: IVideoData[]
-	reviewsFromAPIAndStorage: IReviewCard[]
+	reviewsFromAPIAndStorage: IReviewItemCard[]
 	similarItemsList: IFetchedResult<IItemCard>
 }
 
@@ -189,4 +189,14 @@ export interface IReviewAuthorInfo {
 	userId: string
 	photoURL: string
 	displayName: string
+}
+
+export interface IReaction {
+	key: string
+	data: string
+}
+
+export interface IAllReactions {
+	likes: IReaction[]
+	dislikes: IReaction[]
 }

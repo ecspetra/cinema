@@ -4,7 +4,7 @@ import { getResultsByPage } from '@/handlers/getResultsByPage'
 import { UserCollections } from '@/constants/enum'
 import { IItemCard, IMovieOrTVShowData } from '../../interfaces'
 import { createItemCard } from '@/handlers/createItemCard'
-import { getMovieOrTVShowReviewListFromStorage } from '@/firebase/handlers/reviewHandlers/getMovieOrTVShowReviewListFromStorage'
+import { getMovieOrTVShowReviewListFromStorage } from '@/firebase/handlers/reviewAndReplyHandlers/getMovieOrTVShowReviewListFromStorage'
 
 export const getMovieOrTvShowPageData = async (
 	itemId: string,

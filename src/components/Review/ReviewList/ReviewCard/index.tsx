@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { IReviewCard } from '../../../../../interfaces'
+import { IReviewItemCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
@@ -25,7 +25,7 @@ import useReviewReplyForm from '@/components/Review/hooks/useReviewReplyForm'
 
 type PropsType = {
 	collectionType: UserCollections.movie | UserCollections.tv
-	review: IReviewCard
+	review: IReviewItemCard
 	defaultCardReviewedId?: number
 	isLinkToMovie?: boolean
 	isCollectionItem?: boolean

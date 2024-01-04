@@ -1,51 +1,60 @@
 import { UserCollections } from '@/constants/enum'
 import { DataSnapshot, get, onChildRemoved, ref } from 'firebase/database'
 import { database } from '@/firebase/config'
+import { Dispatch, SetStateAction } from 'react'
+import { IItemCard } from '../../../../interfaces'
 
 export const specificCollectionListener = (
 	userId: string,
-	collectionType: UserCollections,
-	loadedItems: any[],
-	setItems: ([]) => void,
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person,
+	oldItems: any[],
+	setItems: Dispatch<SetStateAction<IItemCard[]>>,
 	setIsMoreDataAvailable: (arg: boolean) => void
 ) => {
-	const collectionRef = ref(
-		database,
-		`users/${userId}/collection/${collectionType}`
-	)
+	const specificCollectionPath = `users/${userId}/collection/${collectionType}`
+	const specificCollectionRef = ref(database, specificCollectionPath)
 
-	const getAllItemsFromCurrentCollection = () => {
+	const getAllItemsFromSpecificCollection = () => {
 		return new Promise(async resolve => {
-			get(collectionRef).then(snapshot => {
-				let items = []
+			get(specificCollectionRef).then(snapshot => {
+				let specificCollectionItems: IItemCard[] = []
 
 				if (snapshot.exists()) {
 					snapshot.forEach(childSnapshot => {
-						items.push(childSnapshot.val())
+						specificCollectionItems.push(childSnapshot.val())
 					})
 				}
 
-				resolve(items)
+				resolve(specificCollectionItems)
 			})
 		})
 	}
 
 	const onItemRemoved = async (childSnapshot: DataSnapshot) => {
 		const removedItem = childSnapshot.val()
-		const allItemsFromCurrentCollection =
-			await getAllItemsFromCurrentCollection()
-		const totalItemsLength = allItemsFromCurrentCollection.length
-		const loadedItemsLength = loadedItems.length
-		const newItems = loadedItems.filter(
+		const allItemsFromSpecificCollection =
+			(await getAllItemsFromSpecificCollection()) as IItemCard[]
+		const totalItemsFromSpecificCollectionLength =
+			allItemsFromSpecificCollection.length
+		const oldItemsLength = oldItems.length
+		const newItems = oldItems.filter(
 			existingItem => existingItem.id !== removedItem.id
 		)
 		setItems(newItems)
-		setIsMoreDataAvailable(totalItemsLength > loadedItemsLength)
+		setIsMoreDataAvailable(
+			totalItemsFromSpecificCollectionLength > oldItemsLength
+		)
 	}
 
-	const unsubscribe = onChildRemoved(collectionRef, onItemRemoved)
+	const unsubscribeItemRemoved = onChildRemoved(
+		specificCollectionRef,
+		onItemRemoved
+	)
 
 	return () => {
-		unsubscribe()
+		unsubscribeItemRemoved()
 	}
 }

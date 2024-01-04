@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { IReviewCard } from '../../../../interfaces'
+import { IReviewItemCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
 import { repliesListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/ReplyList/ReplyCard'
@@ -10,7 +10,7 @@ type PropsType = {
 	reviewedItemId: number
 	userId: string
 	reviewId: string
-	replies: IReviewCard[]
+	replies: IReviewItemCard[]
 	onReply: (userName: string) => void
 	collectionType: UserCollections.movie | UserCollections.tv
 	isCollectionList?: boolean

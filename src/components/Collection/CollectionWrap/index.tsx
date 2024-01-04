@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { IItemCard, IMark, IReviewCard } from '../../../../interfaces'
+import { IItemCard, IMark, IReviewItemCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
 import MarksCollectionWrap from '@/components/Collection/CollectionWrap/MarksCollectionWrap'
@@ -10,7 +10,7 @@ import { UserCollections } from '@/constants/enum'
 type PropsType = {
 	title: string
 	collectionType: UserCollections
-	items: IItemCard[] | IReviewCard[] | IMark[]
+	items: IItemCard[] | IReviewItemCard[] | IMark[]
 	isCurrentUserCollection: boolean
 	collectionOwnerId?: string
 }
@@ -28,7 +28,7 @@ const CollectionWrap: FC<PropsType> = ({
 			case 'reviews':
 				return (
 					<ReviewList
-						reviews={items as IReviewCard[]}
+						reviews={items as IReviewItemCard[]}
 						className='!mb-0'
 						collectionOwnerId={collectionOwnerId}
 						isCollectionList

@@ -1,14 +1,20 @@
 import { get, ref } from 'firebase/database'
 import { UserCollections } from '@/constants/enum'
 import { database } from '@/firebase/config'
+import { IMark } from '../../../../interfaces'
 
 export const getCollectionMarksList = async (userId: string) => {
 	try {
-		const getMarks = async type => {
-			let items = []
-			const collectionPath = `users/${userId}/collection/marks/${type}`
-			const collectionRef = ref(database, collectionPath)
-			const snapshot = await get(collectionRef)
+		const getMarks = async (
+			markedItemType: UserCollections.movie | UserCollections.tv
+		) => {
+			let items: IMark[] = []
+			const collectionPathForMarksList = `users/${userId}/collection/marks/${markedItemType}`
+			const collectionRefForMarksList = ref(
+				database,
+				collectionPathForMarksList
+			)
+			const snapshot = await get(collectionRefForMarksList)
 
 			if (snapshot.exists()) {
 				snapshot.forEach(childSnapshot => {

@@ -1,14 +1,14 @@
 import { fetchItemData } from '@/handlers/fetchItemData'
-import { IReviewCard } from '../../interfaces'
+import { IReviewItemCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { getReviewFromAnotherUserCollection } from '@/firebase/handlers/reviewHandlers/getReviewFromAnotherUserCollection'
+import { getReviewFromAnotherUserCollection } from '@/firebase/handlers/reviewAndReplyHandlers/getReviewFromAnotherUserCollection'
 
 export const getCollectionReviewsWithRepliesList = (
 	collectionOwnerId: string,
-	collectionReplies: IReviewCard[]
+	collectionReplies: IReviewItemCard[]
 ) => {
 	return new Promise(async resolve => {
-		let reviews: IReviewCard[]
+		let reviews: IReviewItemCard[]
 
 		const filteredReplies = collectionReplies.filter(
 			item =>
@@ -28,7 +28,7 @@ export const getCollectionReviewsWithRepliesList = (
 				'/reviews'
 			)
 			const fetchedReview = result.results.find(
-				(item: IReviewCard) => item.id === reviewId
+				(item: IReviewItemCard) => item.id === reviewId
 			)
 
 			if (!addedReviewIds.has(reviewId) && fetchedReview) {
@@ -47,7 +47,7 @@ export const getCollectionReviewsWithRepliesList = (
 		}
 
 		const fetchMovieReviewPromises = filteredReplies.map(
-			(item: IReviewCard) => {
+			(item: IReviewItemCard) => {
 				const isReviewFromDefaultReviews = !item.reviewAuthorId
 				const isReviewsOwnerReview =
 					item.reviewAuthorId === collectionOwnerId
@@ -71,7 +71,7 @@ export const getCollectionReviewsWithRepliesList = (
 		)
 
 		const fetchTVShowReviewPromises = filteredReplies.map(
-			(item: IReviewCard) => {
+			(item: IReviewItemCard) => {
 				const isReviewFromDefaultReviews = !item.reviewAuthorId
 				const isReviewsOwnerReview =
 					item.reviewAuthorId === collectionOwnerId
@@ -100,10 +100,10 @@ export const getCollectionReviewsWithRepliesList = (
 		)
 
 		const movieReviews = resolvedMovieReviews.filter(
-			(review: IReviewCard) => review !== null && review !== undefined
+			(review: IReviewItemCard) => review !== null && review !== undefined
 		)
 		const tvShowReviews = resolvedTVShowReviews.filter(
-			(review: IReviewCard) => review !== null && review !== undefined
+			(review: IReviewItemCard) => review !== null && review !== undefined
 		)
 
 		reviews = [...movieReviews, ...tvShowReviews]

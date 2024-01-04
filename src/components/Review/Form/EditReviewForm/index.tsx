@@ -2,12 +2,12 @@ import { FC, FormEvent, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { IReviewCard } from '../../../../../interfaces'
+import { IReviewItemCard } from '../../../../../interfaces'
 import { UserCollections } from '@/constants/enum'
-import { updateReview } from '@/firebase/handlers/reviewHandlers/updateReview'
+import { updateReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/updateReviewOrReply'
 
 type PropsType = {
-	item: IReviewCard
+	item: IReviewItemCard
 	reviewedItemId: number
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 	onFormClose: () => void
@@ -36,14 +36,14 @@ const EditReviewForm: FC<PropsType> = ({
 		if (textareaValue.trim() !== '') {
 			setError('')
 
-			let updatedItem: IReviewCard
+			let updatedItem: IReviewItemCard
 
 			updatedItem = {
 				...item,
 				content: textareaValue,
 			}
 
-			await updateReview(
+			await updateReviewOrReply(
 				updatedItem,
 				item.authorId!,
 				reviewedItemId,

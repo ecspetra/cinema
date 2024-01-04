@@ -5,20 +5,20 @@ import {
 	ref,
 } from 'firebase/database'
 import { database } from '@/firebase/config'
+import { Dispatch, SetStateAction } from 'react'
+import { IReviewItemCard } from '../../../../interfaces'
 
 export const collectionReviewsListener = (
-	collectionId: number | string,
-	setItems: ([]) => void
+	collectionId: number,
+	setItems: Dispatch<SetStateAction<IReviewItemCard[]>>
 ) => {
-	const tvShowReviewsRef = ref(
+	const tvShowReviewsCollectionPath = `users/${collectionId}/collection/reviews/tv`
+	const movieReviewsCollectionPath = `users/${collectionId}/collection/reviews/movie`
+	const tvShowReviewsCollectionRef = ref(
 		database,
-		`users/${collectionId}/collection/reviews/tv`
+		tvShowReviewsCollectionPath
 	)
-
-	const movieReviewsRef = ref(
-		database,
-		`users/${collectionId}/collection/reviews/movie`
-	)
+	const movieReviewsCollectionRef = ref(database, movieReviewsCollectionPath)
 
 	const onReviewRemoved = (childSnapshot: DataSnapshot) => {
 		const removedItem = childSnapshot.val()
@@ -42,20 +42,20 @@ export const collectionReviewsListener = (
 	}
 
 	const unsubscribeTVShowReviewRemoved = onChildRemoved(
-		tvShowReviewsRef,
+		tvShowReviewsCollectionRef,
 		onReviewRemoved
 	)
 	const unsubscribeTVShowReviewChanged = onChildChanged(
-		tvShowReviewsRef,
+		tvShowReviewsCollectionRef,
 		onReviewChanged
 	)
 
 	const unsubscribeMovieReviewRemoved = onChildRemoved(
-		movieReviewsRef,
+		movieReviewsCollectionRef,
 		onReviewRemoved
 	)
 	const unsubscribeMovieReviewChanged = onChildChanged(
-		movieReviewsRef,
+		movieReviewsCollectionRef,
 		onReviewChanged
 	)
 

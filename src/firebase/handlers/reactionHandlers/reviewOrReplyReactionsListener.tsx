@@ -3,16 +3,7 @@ import { DataSnapshot, ref } from 'firebase/database'
 import { onValue } from '@firebase/database'
 import { database } from '@/firebase/config'
 import { Dispatch, SetStateAction } from 'react'
-
-interface IReaction {
-	key: string
-	data: string
-}
-
-interface IAllReactions {
-	likes: IReaction[]
-	dislikes: IReaction[]
-}
+import { IAllReactions, IReaction } from '../../../../interfaces'
 
 export const reviewOrReplyReactionsListener = (
 	reviewId: string,
@@ -22,7 +13,7 @@ export const reviewOrReplyReactionsListener = (
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 ) => {
 	const collectionPathForLikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/likes`
-	const collectionPathForDislikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/likes`
+	const collectionPathForDislikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/dislikes`
 	const collectionRefForLikes = ref(database, collectionPathForLikes)
 	const collectionRefForDislikes = ref(database, collectionPathForDislikes)
 
