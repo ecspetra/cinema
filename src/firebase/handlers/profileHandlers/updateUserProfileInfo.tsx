@@ -1,7 +1,7 @@
 import { auth } from '@/firebase/config'
 import { updateProfile } from 'firebase/auth'
 import { updateUserInStorage } from '@/firebase/handlers/profileHandlers/updateUserInStorage'
-import { IProfileEditFormData } from '@/hooks/useProfileEditFormReducer'
+import { IProfileEditFormData } from '@/components/Profile/hooks/useProfileEditFormReducer'
 
 export const updateUserProfileInfo = async (
 	updatedUserInfo: IProfileEditFormData

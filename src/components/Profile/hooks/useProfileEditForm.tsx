@@ -1,12 +1,12 @@
 import useProfileEditFormReducer, {
 	IProfileEditFormData,
-} from '@/hooks/useProfileEditFormReducer'
+} from '@/components/Profile/hooks/useProfileEditFormReducer'
 import { useModal } from '@/context/ModalProvider'
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import { showSuccessNotification } from '@/handlers/handleModals'
 import { DateValueType } from 'react-tailwindcss-datepicker'
-import { IUser } from '../../interfaces'
+import { IUser } from '../../../../interfaces'
 import { updateUserProfileInfo } from '@/firebase/handlers/profileHandlers/updateUserProfileInfo'
 
 const useProfileEditForm = (

@@ -20,8 +20,8 @@ import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/forma
 import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
 import useReviewCard from '@/components/Review/hooks/useReviewCard'
 import useReviewCardContentLength from '@/components/Review/hooks/useReviewCardContentLength'
-import useReviewEditForm from '@/components/Review/hooks/useReviewEditForm'
-import useReviewReplyForm from '@/components/Review/hooks/useReviewReplyForm'
+import useReplyEditForm from '@/components/Review/hooks/useReplyEditForm'
+import useReplyForm from '@/components/Review/hooks/useReplyForm'
 
 type PropsType = {
 	collectionType: UserCollections.movie | UserCollections.tv
@@ -39,6 +39,7 @@ const ReviewCard: FC<PropsType> = ({
 	isCollectionItem = false,
 }) => {
 	const { userId } = useAuth()
+
 	const {
 		content,
 		id,
@@ -48,19 +49,22 @@ const ReviewCard: FC<PropsType> = ({
 		authorId,
 		reviewedItemId,
 	} = review
+
 	const collectionInfo = { id, authorId, reviewedItemId, collectionType }
+
 	const { isMounted, replies, isItemFromDB, authorInfo, removeReviewCard } =
 		useReviewCard(collectionInfo, userId)
 	const { isShowEditForm, showEditReviewForm, closeEditReviewForm } =
-		useReviewEditForm(userId)
+		useReplyEditForm(userId)
 	const {
 		replyToUser,
 		isShowReplyForm,
 		showReplyForm,
 		closeReplyForm,
 		makeReplyToUser,
-	} = useReviewReplyForm(isItemFromDB ? authorInfo.displayName : author!)
+	} = useReplyForm(isItemFromDB ? authorInfo.displayName : author!)
 	const isCurrentUserItem = userId === authorId && isItemFromDB
+
 	const formattedDate = useMemo(
 		() => moment(created_at).format('MMM Do YY'),
 		[created_at]
@@ -127,7 +131,7 @@ const ReviewCard: FC<PropsType> = ({
 				<span className='flex flex-col h-[calc(100%-50.5px)]'>
 					{isShowEditForm ? (
 						<EditReviewForm
-							item={review}
+							editedItem={review}
 							reviewedItemId={
 								defaultCardReviewedId ?? reviewedItemId!
 							}

@@ -1,8 +1,9 @@
-import React, { FC, useState, useEffect } from 'react'
+import { FC, useState, useEffect } from 'react'
 import defaultMovieBg from '@/app/assets/images/default-movie-bg.jpg'
 import Image from '@/components/Images/Image'
 import classNames from 'classnames'
 import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
+import useToBannerParallax from '@/components/TopBanner/hooks/useToBannerParallax'
 
 type PropsType = {
 	imageSrc?: string
@@ -10,25 +11,11 @@ type PropsType = {
 }
 
 const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
-	const [scrollY, setScrollY] = useState<number>(0)
-	const parallaxFactor = 0.5
-	const translateY = scrollY * parallaxFactor
+	const { translateY } = useToBannerParallax(imageSrc)
+
 	const imageFullSrc = imageSrc
 		? ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)
 		: ''
-
-	useEffect(() => {
-		const handleScroll = () => {
-			setScrollY(window.scrollY)
-		}
-
-		window.addEventListener('scroll', handleScroll)
-
-		return () => {
-			window.removeEventListener('scroll', handleScroll)
-		}
-	}, [])
-
 	const imageKey = imageSrc || 'default'
 	const imageComponent = (
 		<Image

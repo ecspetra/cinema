@@ -17,7 +17,7 @@ import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
 import {
 	FilterFields,
-	FilterUrlToSearch,
+	FilterUrlToSearchMap,
 	UserCollections,
 } from '@/constants/enum'
 import { getCountriesList } from '@/app/components/Filter/handlers/getCountriesList'
@@ -71,7 +71,7 @@ const Filter: FC<PropsType> = ({
 
 	const handleToggleTag = (
 		field: keyof FilterFormData,
-		tag: any,
+		tag: ITag,
 		isChecked: boolean
 	) => {
 		dispatch({ type: 'TOGGLE_TAG', field, tag, isChecked })
@@ -143,7 +143,7 @@ const Filter: FC<PropsType> = ({
 						key={field}
 						name={field}
 						label={FilterFields[field]}
-						urlToFetch={FilterUrlToSearch[field].toString()}
+						urlToFetch={FilterUrlToSearchMap[field].toString()}
 						onSearch={handleArrayFieldChange}
 					/>
 				)

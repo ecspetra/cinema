@@ -7,7 +7,7 @@ import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
 import CustomDatepicker from '@/app/components/UI/Datepicker'
 import { IUser } from '../../../../../interfaces'
-import useProfileEditForm from '@/hooks/useProfileEditForm'
+import useProfileEditForm from '@/components/Profile/hooks/useProfileEditForm'
 
 type PropsType = {
 	profileInfo: IUser

@@ -42,7 +42,7 @@ const Select: FC<PropsType> = ({
 	className,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
-	const [selectedOption, setSelectedOption] = useState(defaultValue)
+	const [selectedOption, setSelectedOption] = useState<string>(defaultValue)
 	const { isOpen, onToggleContainer, onCloseContainer } =
 		useClickOutsideContainer(containerRef)
 

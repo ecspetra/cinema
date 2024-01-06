@@ -1,14 +1,15 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAuth } from '@/context/AuthProvider'
 import { IMarkFromDB } from '../../../../interfaces'
 import classNames from 'classnames'
 import { getMarkForMovieOrTVShow } from '@/firebase/handlers/markHandlers/getMarkForMovieOrTVShow'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	markedItemId: number
-	collectionType: string
+	collectionType: UserCollections.movie | UserCollections.tv
 	className: string
 }
 

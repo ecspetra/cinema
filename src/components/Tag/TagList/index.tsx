@@ -1,13 +1,10 @@
-import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react'
+import { FC, Dispatch, SetStateAction } from 'react'
 import Tag from '@/components/Tag'
 import { ITag } from '../../../../interfaces'
-import { getAllGenres } from '@/handlers/getAllGenres'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
 import Button from '@/app/components/UI/Button'
-import { showSuccessNotification } from '@/handlers/handleModals'
-import { useModal } from '@/context/ModalProvider'
-import { updateUserProfileGenres } from '@/firebase/handlers/profileHandlers/updateUserProfileGenres'
+import useTagList from '@/components/Tag/hooks/useTagList'
 
 type PropsType = {
 	tags: ITag[]
@@ -24,52 +21,17 @@ const TagList: FC<PropsType> = ({
 	isEditTags = false,
 	onFormClose,
 }) => {
-	const [itemsList, setItemsList] = useState<ITag[]>([])
-	const [selectedTags, setSelectedTags] = useState<ITag[]>(tags)
-	const { showModal } = useModal()
-
-	const handleToggleTag = (tag: ITag, isChecked: boolean) => {
-		if (isChecked) {
-			setSelectedTags(prevState =>
-				prevState.filter(item => item.name !== tag.name)
-			)
-		} else {
-			setSelectedTags(prevState => [...prevState, tag])
-		}
+	const tagListConfig = {
+		onFormClose,
+		isEditTags,
 	}
-
-	const handleIsSelectedTag = (tagName: ITag['name']) => {
-		if (tags && tags.find(item => item.name === tagName)) {
-			return true
-		}
-	}
-
-	const handleClose = () => {
-		onFormClose && onFormClose(false)
-	}
-
-	const handleSaveChanges = async () => {
-		await updateUserProfileGenres(selectedTags).then(() => {
-			handleClose()
-			showSuccessNotification(
-				showModal,
-				'Your profile was successfully updated'
-			)
-		})
-	}
-
-	useEffect(() => {
-		if (isEditTags) {
-			const getTags = async () => {
-				const allTags = await getAllGenres('all')
-				setItemsList(allTags)
-			}
-
-			getTags()
-		} else {
-			setItemsList(tags)
-		}
-	}, [isEditTags])
+	const {
+		itemsList,
+		toggleTag,
+		saveChanges,
+		closeEditTagsForm,
+		checkIfTagIsSelected,
+	} = useTagList(tags, tagListConfig)
 
 	if (!itemsList.length)
 		return (
@@ -91,16 +53,16 @@ const TagList: FC<PropsType> = ({
 							key={item.name}
 							tag={item}
 							isEdit={isEditTags}
-							isSelected={handleIsSelectedTag(item.name)}
-							onToggle={handleToggleTag}
+							isSelected={checkIfTagIsSelected(item.name)}
+							onToggle={toggleTag}
 						/>
 					)
 				})}
 			</div>
 			{isEditTags && (
 				<div className='flex justify-start items-center gap-2 mt-5'>
-					<Button onClick={handleSaveChanges}>Save</Button>
-					<Button context='filledDark' onClick={handleClose}>
+					<Button onClick={saveChanges}>Save</Button>
+					<Button context='filledDark' onClick={closeEditTagsForm}>
 						Cancel
 					</Button>
 				</div>

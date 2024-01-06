@@ -8,7 +8,7 @@ type PropsType = {
 
 const PageLoader: FC<PropsType> = ({ children }) => {
 	const router = useRouter()
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	useEffect(() => {
 		const handleRouteChangeStart = () => {

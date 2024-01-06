@@ -1,6 +1,6 @@
 import useProfileEditCredentialFormReducer, {
 	IProfileEditCredentialFormData,
-} from '@/hooks/useProfileEditCredentialFormReducer'
+} from '@/components/Profile/hooks/useProfileEditCredentialFormReducer'
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'

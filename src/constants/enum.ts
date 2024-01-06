@@ -24,17 +24,23 @@ export enum FilterFields {
 	with_keywords = 'Keyword',
 }
 
-export enum FilterUrlToSearch {
-	with_people = URL_TO_SEARCH.replace(
+export type FilterUrlToSearch =
+	| 'with_people'
+	| 'with_companies'
+	| 'with_original_language'
+	| 'with_keywords'
+
+export const FilterUrlToSearchMap: Record<FilterUrlToSearch, string> = {
+	with_people: URL_TO_SEARCH.replace(
 		'{fieldName}',
 		FilterFields.with_people.toLowerCase()
 	),
-	with_companies = URL_TO_SEARCH.replace(
+	with_companies: URL_TO_SEARCH.replace(
 		'{fieldName}',
 		FilterFields.with_companies.toLowerCase()
 	),
-	with_original_language = URL_TO_FETCH_COUNTRIES,
-	with_keywords = URL_TO_SEARCH.replace(
+	with_original_language: URL_TO_FETCH_COUNTRIES,
+	with_keywords: URL_TO_SEARCH.replace(
 		'{fieldName}',
 		FilterFields.with_keywords.toLowerCase()
 	),

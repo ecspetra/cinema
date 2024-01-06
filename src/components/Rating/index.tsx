@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import useRatingIcons from '@/handlers/useRatingIcons'
+import useRatingIcons from '@/components/Rating/hooks/useRatingIcons'
 
 type PropsType = {
 	rating: number

@@ -1,10 +1,11 @@
 import { IItemCard } from '../../../../interfaces'
-import React, { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import EmptyList from '@/components/List/EmptyList'
-import { SortByOption, UserCollections } from '@/constants/enum'
+import { UserCollections } from '@/constants/enum'
 import ItemsListSort from '@/components/List/ItemsListWrap/ItemsList/ItemsListSort'
 import ItemsList from '@/components/List/ItemsListWrap/ItemsList'
+import useItemsListWrap from '@/components/List/hooks/useItemsListWrap'
 
 type PropsType = {
 	itemsList: IItemCard[]
@@ -29,32 +30,14 @@ const ItemsListWrap: FC<PropsType> = ({
 	isFilterable = false,
 	isSortable = false,
 }) => {
-	const [isFirstRender, setIsFirstRender] = useState<boolean>(true)
-	const [urlToFetch, setUrlToFetch] = useState<string>(urlToFetchItems)
-	const [isShowEmptyList, setIsShowEmptyList] = useState<boolean>(
-		!itemsList.length
-	)
-	const defaultSortValue = isSortable
-		? new URLSearchParams(urlToFetchItems).get('sort_by')
-		: undefined
-
-	const handleSortChange = (value: SortByOption) => {
-		const updatedLinkToFetch = urlToFetch.replace(
-			/(sort_by=)[^&]*/,
-			`$1${value}`
-		)
-		setUrlToFetch(updatedLinkToFetch)
-	}
-
-	useEffect(() => {
-		setUrlToFetch(urlToFetchItems)
-
-		if (!isFirstRender) {
-			setIsShowEmptyList(false)
-		} else {
-			setIsFirstRender(false)
-		}
-	}, [urlToFetchItems])
+	const itemsListConfig = { urlToFetchItems, isSortable }
+	const {
+		defaultSortValue,
+		urlToFetch,
+		isShowEmptyList,
+		handleSortChange,
+		setIsShowEmptyList,
+	} = useItemsListWrap(itemsList, itemsListConfig)
 
 	if (isShowEmptyList) {
 		return <EmptyList title={title} />

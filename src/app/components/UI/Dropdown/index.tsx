@@ -20,7 +20,7 @@ type PropsType = {
 }
 
 const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
-	const [isOpen, setIsOpen] = useState(false)
+	const [isOpen, setIsOpen] = useState<boolean>(false)
 
 	const toggleList = () => {
 		setIsOpen(!isOpen)

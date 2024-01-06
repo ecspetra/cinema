@@ -89,8 +89,6 @@ const ReviewActions: FC<PropsType> = ({
 			collectionType,
 			reviewedItemCollectionType
 		).then(data => {
-			console.log(data)
-
 			setReactions({
 				likes: data.likes as IReaction[],
 				dislikes: data.dislikes as IReaction[],

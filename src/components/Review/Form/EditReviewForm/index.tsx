@@ -7,7 +7,7 @@ import { UserCollections } from '@/constants/enum'
 import { updateReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/updateReviewOrReply'
 
 type PropsType = {
-	item: IReviewItemCard
+	editedItem: IReviewItemCard
 	reviewedItemId: number
 	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 	onFormClose: () => void
@@ -15,13 +15,15 @@ type PropsType = {
 }
 
 const EditReviewForm: FC<PropsType> = ({
-	item,
+	editedItem,
 	reviewedItemId,
 	reviewedItemCollectionType,
 	onFormClose,
 	isReplyItem = false,
 }) => {
-	const [textareaValue, setTextareaValue] = useState<string>(item.content)
+	const [textareaValue, setTextareaValue] = useState<string>(
+		editedItem.content
+	)
 	const [error, setError] = useState<string>('')
 	const buttonText = isReplyItem ? 'Update reply' : 'Update review'
 
@@ -39,13 +41,13 @@ const EditReviewForm: FC<PropsType> = ({
 			let updatedItem: IReviewItemCard
 
 			updatedItem = {
-				...item,
+				...editedItem,
 				content: textareaValue,
 			}
 
 			await updateReviewOrReply(
 				updatedItem,
-				item.authorId!,
+				editedItem.authorId!,
 				reviewedItemId,
 				isReplyItem ? UserCollections.replies : UserCollections.reviews,
 				reviewedItemCollectionType

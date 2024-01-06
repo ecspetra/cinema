@@ -9,6 +9,7 @@ import EmptyList from '@/components/List/EmptyList'
 import { UserCollections } from '@/constants/enum'
 import { specificCollectionListener } from '@/firebase/handlers/userCollectionHandlers/specificCollectionListener'
 import { getCollectionItemsList } from '@/firebase/handlers/userCollectionHandlers/getCollectionItemsList'
+import useSpecificCollectionItemsList from '@/components/Collection/hooks/useSpecificCollectionItemsList'
 
 type PropsType = {
 	collectionType:
@@ -26,57 +27,9 @@ const SpecificCollectionItemsList: FC<PropsType> = ({
 	isMoreDataAvailable,
 	title,
 }) => {
-	const [isFirstRender, setIsFirstRender] = useState<boolean>(true)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [lastItemId, setLastItemId] = useState<string | undefined>(undefined)
-	const [itemsToShow, setItemsToShow] = useState<IItemCard[]>([])
-	const [isShowMoreButton, setIsShowMoreButton] = useState<boolean>(false)
-	const { userId } = useAuth()
-
-	const getMoreCollectionItems = async () => {
-		setIsLoading(true)
-		const result = (await getCollectionItemsList(
-			userId,
-			collectionType,
-			20,
-			lastItemId
-		)) as IFetchedResult<IItemCard>
-		setItemsToShow(prevState => [...prevState, ...result.items])
-		setIsShowMoreButton(result.isMoreDataAvailable)
-		setIsLoading(false)
-		setLastItemId(undefined)
-	}
-
-	useEffect(() => {
-		const unsubscribe = specificCollectionListener(
-			userId,
-			collectionType,
-			itemsToShow,
-			setItemsToShow,
-			setIsShowMoreButton
-		)
-
-		return () => {
-			unsubscribe()
-		}
-	}, [itemsToShow])
-
-	useEffect(() => {
-		if (
-			lastItemId ||
-			(!itemsToShow.length && isShowMoreButton && !isFirstRender)
-		) {
-			getMoreCollectionItems()
-		}
-	}, [lastItemId, itemsToShow, isShowMoreButton])
-
-	useEffect(() => {
-		setItemsToShow(items)
-		setTimeout(() => {
-			setIsShowMoreButton(isMoreDataAvailable)
-		}, 1500)
-		setIsFirstRender(false)
-	}, [items])
+	const collectionConfig = { isMoreDataAvailable, collectionType }
+	const { isShowMoreButton, isLoading, itemsToShow, showMore } =
+		useSpecificCollectionItemsList(items, collectionConfig)
 
 	if (!itemsToShow.length) {
 		return <EmptyList title={title} />
@@ -99,15 +52,7 @@ const SpecificCollectionItemsList: FC<PropsType> = ({
 			</div>
 			{isLoading && <Loader type='static' />}
 			{itemsToShow.length > 0 && isShowMoreButton && (
-				<Button
-					className='mx-auto'
-					context='empty'
-					onClick={() =>
-						setLastItemId(
-							itemsToShow[itemsToShow.length - 1].id.toString()
-						)
-					}
-				>
+				<Button className='mx-auto' context='empty' onClick={showMore}>
 					Show more
 				</Button>
 			)}

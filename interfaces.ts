@@ -165,7 +165,7 @@ export interface IUser {
 }
 
 export interface IFullUserInfo {
-	friends: IFullUserInfo[]
+	friends: IFullUserInfo[] | { userId: string }[]
 	info: IUser
 	collection: IGeneralCollection | null
 }

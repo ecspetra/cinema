@@ -7,17 +7,19 @@ export const getUserProfilePageData = async (
 	userIdFromUrl: string
 ): Promise<IFullUserInfo> => {
 	try {
-		let friends: IFullUserInfo[] = []
+		let friendList: IFullUserInfo[] = []
 		const user = await getUserProfileInfo(userIdFromUrl)
 		const userCollection = await getUserCollection(userIdFromUrl)
 
 		if (user.friends) {
-			friends = await getUserFriendList(user.friends)
+			friendList = await getUserFriendList(
+				user.friends as { userId: string }[]
+			)
 		}
 
 		return {
 			info: user.info,
-			friends: friends,
+			friends: friendList,
 			collection: userCollection,
 		}
 	} catch (error) {

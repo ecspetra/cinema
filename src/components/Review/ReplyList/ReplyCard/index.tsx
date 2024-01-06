@@ -13,7 +13,7 @@ import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/Profi
 import { UserCollections } from '@/constants/enum'
 import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/formatReviewTextWithHtmlTags'
 import useReviewCardContentLength from '@/components/Review/hooks/useReviewCardContentLength'
-import useReviewEditForm from '@/components/Review/hooks/useReviewEditForm'
+import useReplyEditForm from '@/components/Review/hooks/useReplyEditForm'
 import useReplyCard from '@/components/Review/hooks/useReplyCard'
 import { removeReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/removeReviewOrReply'
 
@@ -44,7 +44,7 @@ const ReplyCard: FC<PropsType> = ({
 	const { isMounted, authorInfo } = useReplyCard(authorId!)
 
 	const { isShowEditForm, showEditReviewForm, closeEditReviewForm } =
-		useReviewEditForm(userId)
+		useReplyEditForm(userId)
 
 	const {
 		isContentOpen,
@@ -105,7 +105,7 @@ const ReplyCard: FC<PropsType> = ({
 				<span>
 					{isShowEditForm ? (
 						<EditReviewForm
-							item={reply}
+							editedItem={reply}
 							reviewedItemId={reviewedItemId}
 							reviewedItemCollectionType={collectionType}
 							onFormClose={closeEditReviewForm}

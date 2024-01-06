@@ -1,7 +1,6 @@
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { IReviewItemCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
-import { repliesListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/ReplyList/ReplyCard'
 import { UserCollections } from '@/constants/enum'
 import useReplyList from '@/components/Review/hooks/useReplyList'

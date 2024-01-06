@@ -6,7 +6,7 @@ import {
 	updatePassword,
 } from 'firebase/auth'
 import { updateUserInStorage } from '@/firebase/handlers/profileHandlers/updateUserInStorage'
-import { IProfileEditCredentialFormData } from '@/hooks/useProfileEditCredentialFormReducer'
+import { IProfileEditCredentialFormData } from '@/components/Profile/hooks/useProfileEditCredentialFormReducer'
 
 export const updateUserCredential = async (
 	formData: IProfileEditCredentialFormData

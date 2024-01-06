@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const useReviewEditForm = (userId: string) => {
+const useReplyEditForm = (userId: string) => {
 	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
 
 	const showEditReviewForm = () => {
@@ -19,4 +19,4 @@ const useReviewEditForm = (userId: string) => {
 
 	return { isShowEditForm, showEditReviewForm, closeEditReviewForm }
 }
-export default useReviewEditForm
+export default useReplyEditForm

@@ -9,7 +9,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { IReviewItemCard } from '../../../../interfaces'
 
 export const collectionReviewsListener = (
-	collectionId: number,
+	collectionId: string | number,
 	setItems: Dispatch<SetStateAction<IReviewItemCard[]>>
 ) => {
 	const tvShowReviewsCollectionPath = `users/${collectionId}/collection/reviews/tv`

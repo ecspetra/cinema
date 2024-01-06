@@ -4,7 +4,7 @@ import InputField from '@/app/components/UI/Input/InputField'
 import { faAt, faKey } from '@fortawesome/free-solid-svg-icons'
 import Loader from '@/components/Loader'
 import Error from '@/app/components/UI/Error'
-import useProfileEditCredentialForm from '@/hooks/useProfileEditCredentialForm'
+import useProfileEditCredentialForm from '@/components/Profile/hooks/useProfileEditCredentialForm'
 
 type PropsType = {
 	onFormClose: Dispatch<SetStateAction<boolean>>

@@ -1,6 +1,6 @@
 import { NextPageContext } from 'next'
 import { URL_TO_FETCH_MOVIES_WITH_PERSONS } from '@/constants/linksToFetch'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PersonInfo from '@/components/Person/PersonInfo'
 import Loader from '@/components/Loader'

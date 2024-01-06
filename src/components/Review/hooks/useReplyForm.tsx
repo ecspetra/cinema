@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const useReviewReplyForm = (authorName: string) => {
+const useReplyForm = (authorName: string) => {
 	const [isShowReplyForm, setIsShowReplyForm] = useState<boolean>(false)
 	const [replyToUser, setReplyToUser] = useState<string>('')
 
@@ -31,4 +31,4 @@ const useReviewReplyForm = (authorName: string) => {
 	}
 }
 
-export default useReviewReplyForm
+export default useReplyForm

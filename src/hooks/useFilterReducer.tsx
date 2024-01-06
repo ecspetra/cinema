@@ -9,11 +9,11 @@ type Action =
 			field: keyof FilterFormData
 			value: object
 	  }
-	| { type: 'REMOVE_TAG'; tag: any }
+	| { type: 'REMOVE_TAG'; tag: ITag }
 	| {
 			type: 'TOGGLE_TAG'
 			field: keyof FilterFormData
-			tag: any
+			tag: ITag
 			isChecked: boolean
 	  }
 
@@ -69,20 +69,24 @@ const useFilterReducer = (): [FilterFormData, Dispatch<Action>] => {
 						: [action.value],
 				}
 			case 'REMOVE_TAG':
-				const updatedArray = Array.isArray(state[action.tag.field])
-					? state[action.tag.field].filter(
-							item => item.name !== action.tag.name
+				const updatedArray = Array.isArray(
+					state[action.tag.field as string]
+				)
+					? state[action.tag.field as string].filter(
+							(item: ITag) => item.name !== action.tag.name
 					  )
 					: []
 
 				const updatedState = {
 					...state,
-					[action.tag.field]: updatedArray,
+					[action.tag.field as string]: updatedArray,
 				}
 
 				if (updatedArray.length === 0) {
-					const { [action.tag.field]: removedField, ...restState } =
-						updatedState
+					const {
+						[action.tag.field as string]: removedField,
+						...restState
+					} = updatedState
 					return restState
 				}
 
@@ -94,7 +98,7 @@ const useFilterReducer = (): [FilterFormData, Dispatch<Action>] => {
 
 				const updatedArrayToggle = action.isChecked
 					? currentArrayToggle.filter(
-							item => item.name !== action.tag.name
+							(item: ITag) => item.name !== action.tag.name
 					  )
 					: [...currentArrayToggle, action.tag]
 

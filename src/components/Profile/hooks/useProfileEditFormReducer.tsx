@@ -1,5 +1,5 @@
 import { useReducer, Dispatch } from 'react'
-import { IUser } from '../../interfaces'
+import { IUser } from '../../../../interfaces'
 
 export interface IProfileEditFormData {
 	name: {
