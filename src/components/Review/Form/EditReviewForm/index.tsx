@@ -45,13 +45,18 @@ const EditReviewForm: FC<PropsType> = ({
 				content: textareaValue,
 			}
 
-			await updateReviewOrReply(
-				updatedItem,
-				editedItem.authorId!,
+			const itemConfig = {
+				item: updatedItem,
 				reviewedItemId,
-				isReplyItem ? UserCollections.replies : UserCollections.reviews,
-				reviewedItemCollectionType
-			)
+				collectionType: isReplyItem
+					? UserCollections.replies
+					: (UserCollections.reviews as
+							| UserCollections.reviews
+							| UserCollections.replies),
+				reviewedItemCollectionType,
+			}
+
+			await updateReviewOrReply(editedItem.authorId!, itemConfig)
 			setTextareaValue('')
 
 			onFormClose()

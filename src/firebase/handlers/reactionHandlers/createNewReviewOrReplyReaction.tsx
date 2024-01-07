@@ -5,17 +5,26 @@ import { removeReviewOrReplyReaction } from '@/firebase/handlers/reactionHandler
 
 export const createNewReviewOrReplyReaction = async (
 	userId: string,
-	itemId: string,
-	reviewedItemId: number,
-	collectionType: UserCollections.reviews | UserCollections.replies,
-	action: 'like' | 'dislike',
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	itemConfig: {
+		reviewId: string
+		reviewedItemId: number
+		collectionType: UserCollections.reviews | UserCollections.replies
+		reactionType: 'like' | 'dislike'
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
-	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${itemId}/${
-		action === 'like' ? 'likes' : 'dislikes'
+	const {
+		reviewId,
+		reviewedItemId,
+		collectionType,
+		reactionType,
+		reviewedItemCollectionType,
+	} = itemConfig
+	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${reviewId}/${
+		reactionType === 'like' ? 'likes' : 'dislikes'
 	}/${userId}`
-	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}/${
-		action === 'like' ? 'likes' : 'dislikes'
+	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/${
+		reactionType === 'like' ? 'likes' : 'dislikes'
 	}/${userId}`
 
 	const collectionRefForUserReaction = ref(
@@ -27,14 +36,7 @@ export const createNewReviewOrReplyReaction = async (
 		generalCollectionPathForUserReaction
 	)
 
-	await set(collectionRefForUserReaction, itemId)
-	await set(generalCollectionRefForUserReaction, itemId)
-	await removeReviewOrReplyReaction(
-		userId,
-		itemId,
-		reviewedItemId,
-		collectionType,
-		action === 'like' ? 'dislike' : 'like',
-		reviewedItemCollectionType
-	)
+	await set(collectionRefForUserReaction, reviewId)
+	await set(generalCollectionRefForUserReaction, reviewId)
+	await removeReviewOrReplyReaction(userId, itemConfig)
 }

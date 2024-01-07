@@ -4,19 +4,28 @@ import { database } from '@/firebase/config'
 
 export const removeReviewOrReplyReaction = (
 	userId: string,
-	reviewId: string,
-	reviewedItemId: number,
-	collectionType: UserCollections.reviews | UserCollections.replies,
-	action: 'like' | 'dislike',
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	itemConfig: {
+		reviewId: string
+		reviewedItemId: number
+		collectionType: UserCollections.reviews | UserCollections.replies
+		reactionType: 'like' | 'dislike'
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
-	const itemId = userId
+	const {
+		reviewId,
+		reviewedItemId,
+		collectionType,
+		reactionType,
+		reviewedItemCollectionType,
+	} = itemConfig
+	const reactionId = userId
 	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${reviewId}/${
-		action === 'like' ? 'likes' : 'dislikes'
-	}/${itemId}`
+		reactionType === 'like' ? 'likes' : 'dislikes'
+	}/${reactionId}`
 	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/${
-		action === 'like' ? 'likes' : 'dislikes'
-	}/${itemId}`
+		reactionType === 'like' ? 'likes' : 'dislikes'
+	}/${reactionId}`
 
 	const collectionRefForUserReaction = ref(
 		database,

@@ -55,6 +55,18 @@ const ReplyCard: FC<PropsType> = ({
 		toggleReviewContentLength,
 	} = useReviewCardContentLength(content)
 
+	const removeReplyCard = () => {
+		const itemConfig = {
+			reviewedItemId: reviewedItemId!,
+			userId,
+			collectionType: UserCollections.replies as
+				| UserCollections.reviews
+				| UserCollections.replies,
+			reviewedItemCollectionType: collectionType!,
+		}
+		removeReviewOrReply(id, itemConfig)
+	}
+
 	return (
 		<CSSTransition
 			in={isMounted}
@@ -73,15 +85,7 @@ const ReplyCard: FC<PropsType> = ({
 						<DropdownItem
 							label='Delete'
 							icon={faTrash}
-							onClick={() =>
-								removeReviewOrReply(
-									id,
-									reviewedItemId,
-									userId,
-									UserCollections.replies,
-									collectionType
-								)
-							}
+							onClick={removeReplyCard}
 						/>
 					</Dropdown>
 				)}

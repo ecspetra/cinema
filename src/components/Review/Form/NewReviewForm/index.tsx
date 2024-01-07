@@ -94,15 +94,18 @@ const NewReviewForm: FC<PropsType> = ({
 					}
 				}
 
-				await createReviewOrReply(
+				const itemConfig = {
 					newItem,
-					userId,
 					reviewedItemId,
-					isReplyItem
+					collectionType: isReplyItem
 						? UserCollections.replies
-						: UserCollections.reviews,
-					reviewedItemCollectionType
-				)
+						: (UserCollections.reviews as
+								| UserCollections.reviews
+								| UserCollections.replies),
+					reviewedItemCollectionType,
+				}
+
+				await createReviewOrReply(userId, itemConfig)
 				setTextareaValue('')
 
 				if (isReplyItem) handleCloseForm()

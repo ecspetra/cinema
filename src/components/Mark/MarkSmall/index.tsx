@@ -23,11 +23,10 @@ const MarkSmall: FC<PropsType> = ({
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovieOrTVShow(markedItemId, userId, collectionType).then(
-				data => {
-					if (data) setMarkData(data)
-				}
-			)
+			const markConfig = { markedItemId, collectionType }
+			getMarkForMovieOrTVShow(userId, markConfig).then(data => {
+				if (data) setMarkData(data)
+			})
 		}
 	}, [])
 

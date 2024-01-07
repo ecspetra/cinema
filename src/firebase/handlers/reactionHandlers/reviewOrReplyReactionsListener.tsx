@@ -7,11 +7,19 @@ import { IAllReactions, IReaction } from '../../../../interfaces'
 
 export const reviewOrReplyReactionsListener = (
 	reviewId: string,
-	reviewedItemId: number,
-	collectionType: UserCollections.reviews | UserCollections.replies,
-	setItems: Dispatch<SetStateAction<IAllReactions>>,
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	reviewConfig: {
+		reviewedItemId: number
+		collectionType: UserCollections.reviews | UserCollections.replies
+		setReactions: Dispatch<SetStateAction<IAllReactions>>
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
+	const {
+		reviewedItemId,
+		collectionType,
+		setReactions,
+		reviewedItemCollectionType,
+	} = reviewConfig
 	const collectionPathForLikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/likes`
 	const collectionPathForDislikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/dislikes`
 	const collectionRefForLikes = ref(database, collectionPathForLikes)
@@ -30,7 +38,7 @@ export const reviewOrReplyReactionsListener = (
 					data: childSnapshot.val(),
 				})
 			})
-			setItems(prevState => ({
+			setReactions(prevState => ({
 				likes: likesList,
 				dislikes: prevState.dislikes,
 			}))
@@ -47,7 +55,7 @@ export const reviewOrReplyReactionsListener = (
 					data: childSnapshot.val(),
 				})
 			})
-			setItems(prevState => ({
+			setReactions(prevState => ({
 				likes: prevState.likes,
 				dislikes: dislikesList,
 			}))

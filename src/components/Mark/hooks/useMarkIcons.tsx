@@ -34,7 +34,8 @@ const useMarkIcons = (
 				collectionType,
 			}
 			createNewMarkForMovieOrTVShow(markedItemData, userId).then(() => {
-				getMarkForMovieOrTVShow(markedItemId, userId, collectionType)
+				const markConfig = { markedItemId, collectionType }
+				getMarkForMovieOrTVShow(userId, markConfig)
 					.then(data => {
 						if (data) setMarkData(data)
 					})
@@ -106,7 +107,8 @@ const useMarkIcons = (
 
 	const removeMark = () => {
 		setIsLoadingMark(true)
-		removeMarkForMovie(markData?.key!, userId, collectionType)
+		const markConfig = { markKey: markData?.key!, collectionType }
+		removeMarkForMovie(userId, markConfig)
 			.then(() => {
 				setMarkData(null)
 				getEmptyMarkIcons()
@@ -118,11 +120,10 @@ const useMarkIcons = (
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovieOrTVShow(markedItemId, userId, collectionType).then(
-				data => {
-					if (data) setMarkData(data)
-				}
-			)
+			const markConfig = { markedItemId, collectionType }
+			getMarkForMovieOrTVShow(userId, markConfig).then(data => {
+				if (data) setMarkData(data)
+			})
 		} else getEmptyMarkIcons()
 	}, [userId, markedItemId])
 

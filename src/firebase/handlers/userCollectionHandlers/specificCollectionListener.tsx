@@ -6,14 +6,18 @@ import { IItemCard } from '../../../../interfaces'
 
 export const specificCollectionListener = (
 	userId: string,
-	collectionType:
-		| UserCollections.movie
-		| UserCollections.tv
-		| UserCollections.person,
-	oldItems: any[],
-	setItems: Dispatch<SetStateAction<IItemCard[]>>,
-	setIsMoreDataAvailable: (arg: boolean) => void
+	collectionConfig: {
+		collectionType:
+			| UserCollections.movie
+			| UserCollections.tv
+			| UserCollections.person
+		oldItems: any[]
+		setItems: Dispatch<SetStateAction<IItemCard[]>>
+		setIsMoreDataAvailable: (arg: boolean) => void
+	}
 ) => {
+	const { collectionType, oldItems, setItems, setIsMoreDataAvailable } =
+		collectionConfig
 	const specificCollectionPath = `users/${userId}/collection/${collectionType}`
 	const specificCollectionRef = ref(database, specificCollectionPath)
 

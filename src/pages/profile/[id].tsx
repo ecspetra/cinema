@@ -78,7 +78,7 @@ const UserProfilePage = ({
 			getUserProfilePageData(userIdFromUrl)
 				.then(data => {
 					setProfile(data.info)
-					setFriends(data.friends)
+					setFriends(data.friends as IFullUserInfo[])
 					setGeneralCollection(data.collection)
 				})
 				.catch(() => {
@@ -93,7 +93,7 @@ const UserProfilePage = ({
 			fetchUserProfilePageData()
 		} else {
 			setProfile(profilePageProps.info)
-			setFriends(profilePageProps.friends)
+			setFriends(profilePageProps.friends as IFullUserInfo[])
 			setGeneralCollection(profilePageProps.collection)
 		}
 	}, [profilePageProps, router.query.id])
@@ -113,10 +113,11 @@ const UserProfilePage = ({
 
 	useEffect(() => {
 		if (profile) {
+			const friendListState = { oldFriendList: friends, setFriends }
+
 			const unsubscribeFriends = userFriendsListener(
 				profile.id,
-				friends,
-				setFriends
+				friendListState
 			)
 
 			return () => {

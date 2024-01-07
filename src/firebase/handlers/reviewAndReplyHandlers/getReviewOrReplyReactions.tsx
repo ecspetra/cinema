@@ -5,10 +5,14 @@ import { IReaction } from '../../../../interfaces'
 
 export const getReviewOrReplyReactions = async (
 	itemId: string,
-	reviewedItemId: number,
-	collectionType: UserCollections.reviews | UserCollections.replies,
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	itemConfig: {
+		reviewedItemId: number
+		collectionType: UserCollections.reviews | UserCollections.replies
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
+	const { reviewedItemId, collectionType, reviewedItemCollectionType } =
+		itemConfig
 	const collectionPathForLikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}/likes/`
 	const collectionPathForDislikes = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}/dislikes/`
 	const collectionRefForLikes = ref(database, collectionPathForLikes)

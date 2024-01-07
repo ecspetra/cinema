@@ -5,11 +5,19 @@ import { removeAllReviewOrReplyReactions } from '@/firebase/handlers/reactionHan
 
 export const removeReviewOrReply = async (
 	itemId: string,
-	reviewedItemId: number,
-	userId: string,
-	collectionType: UserCollections.reviews | UserCollections.replies,
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	itemConfig: {
+		reviewedItemId: number
+		userId: string
+		collectionType: UserCollections.reviews | UserCollections.replies
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
+	const {
+		reviewedItemId,
+		userId,
+		collectionType,
+		reviewedItemCollectionType,
+	} = itemConfig
 	const collectionPathForReviewOrReply = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${itemId}`
 	const generalCollectionPathForReviewOrReply = `${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${itemId}`
 	const collectionRefForReviewOrReply = ref(

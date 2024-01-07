@@ -4,14 +4,22 @@ import { ref, set } from 'firebase/database'
 import { database } from '@/firebase/config'
 
 export const createReviewOrReply = async (
-	item: IReviewItemCard,
 	userId: string,
-	reviewedItemId: number,
-	collectionType: UserCollections.reviews | UserCollections.replies,
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	itemConfig: {
+		newItem: IReviewItemCard
+		reviewedItemId: number
+		collectionType: UserCollections.reviews | UserCollections.replies
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
-	const collectionPathForReviewOrReply = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${item.id}`
-	const generalCollectionPathForReviewOrReply = `${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${item.id}`
+	const {
+		newItem,
+		reviewedItemId,
+		collectionType,
+		reviewedItemCollectionType,
+	} = itemConfig
+	const collectionPathForReviewOrReply = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${newItem.id}`
+	const generalCollectionPathForReviewOrReply = `${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${newItem.id}`
 	const collectionRefForReviewOrReply = ref(
 		database,
 		collectionPathForReviewOrReply
@@ -21,6 +29,6 @@ export const createReviewOrReply = async (
 		generalCollectionPathForReviewOrReply
 	)
 
-	await set(collectionRefForReviewOrReply, item)
-	await set(generalCollectionRefForReviewOrReply, item)
+	await set(collectionRefForReviewOrReply, newItem)
+	await set(generalCollectionRefForReviewOrReply, newItem)
 }

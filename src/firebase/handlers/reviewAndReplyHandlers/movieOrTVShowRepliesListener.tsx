@@ -12,11 +12,15 @@ import { Dispatch, SetStateAction } from 'react'
 
 export const movieOrTVShowRepliesListener = (
 	reviewedItemId: number,
-	reviewId: string,
-	oldItems: IReviewItemCard[],
-	setItems: Dispatch<SetStateAction<IReviewItemCard[]>>,
-	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	replyListConfig: {
+		reviewId: string
+		oldItems: IReviewItemCard[]
+		setItems: Dispatch<SetStateAction<IReviewItemCard[]>>
+		reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	}
 ) => {
+	const { reviewId, oldItems, setItems, reviewedItemCollectionType } =
+		replyListConfig
 	const collectionPathForReplies = `${reviewedItemCollectionType}/${reviewedItemId}/replies/`
 	const collectionRefForReplies = ref(database, collectionPathForReplies)
 

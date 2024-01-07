@@ -27,13 +27,15 @@ const useReviewCard = (collectionInfo: CollectionInfo, userId: string) => {
 		setIsMounted(false)
 
 		setTimeout(() => {
-			removeReviewOrReply(
-				id,
-				reviewedItemId!,
+			const itemConfig = {
+				reviewedItemId: reviewedItemId!,
 				userId,
-				UserCollections.reviews,
-				collectionType!
-			)
+				collectionType: UserCollections.reviews as
+					| UserCollections.reviews
+					| UserCollections.replies,
+				reviewedItemCollectionType: collectionType!,
+			}
+			removeReviewOrReply(id, itemConfig)
 		}, 500)
 	}
 

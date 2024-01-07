@@ -98,12 +98,15 @@ const useReviewList = (
 				}
 			} else {
 				const collectionId = isCollectionList ? userId : reviewedItemId
+				const reviewListConfig = {
+					oldItems: itemsFromStorage,
+					setItems: setitemsFromStorage,
+					reviewedItemCollectionType: collectionType,
+				}
 
 				const unsubscribe = movieOrTVShowReviewsListener(
 					collectionId!,
-					itemsFromStorage,
-					setitemsFromStorage,
-					collectionType
+					reviewListConfig
 				)
 
 				return () => {

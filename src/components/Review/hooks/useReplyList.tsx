@@ -39,12 +39,16 @@ const useReplyList = (
 
 	useEffect(() => {
 		if (userId) {
+			const replyListConfig = {
+				reviewId,
+				oldItems: replies,
+				setItems: setItemsToShow,
+				reviewedItemCollectionType: collectionType!,
+			}
+
 			const unsubscribe = movieOrTVShowRepliesListener(
 				reviewedItemId!,
-				reviewId,
-				replies,
-				setItemsToShow,
-				collectionType!
+				replyListConfig
 			)
 
 			return () => {

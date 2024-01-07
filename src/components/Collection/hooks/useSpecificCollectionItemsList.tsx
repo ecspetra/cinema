@@ -42,13 +42,14 @@ const useSpecificCollectionItemsList = (
 	}
 
 	useEffect(() => {
-		const unsubscribe = specificCollectionListener(
-			userId,
+		const collectionConfig = {
 			collectionType,
-			itemsToShow,
-			setItemsToShow,
-			setIsShowMoreButton
-		)
+			oldItems: itemsToShow,
+			setItems: setItemsToShow,
+			setIsMoreDataAvailable: setIsShowMoreButton,
+		}
+
+		const unsubscribe = specificCollectionListener(userId, collectionConfig)
 
 		return () => {
 			unsubscribe()

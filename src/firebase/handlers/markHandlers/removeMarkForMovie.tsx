@@ -3,10 +3,13 @@ import { database } from '@/firebase/config'
 import { UserCollections } from '@/constants/enum'
 
 export const removeMarkForMovie = (
-	markKey: string,
 	userId: string,
-	collectionType: UserCollections.movie | UserCollections.tv
+	markConfig: {
+		markKey: string
+		collectionType: UserCollections.movie | UserCollections.tv
+	}
 ): Promise<boolean> => {
+	const { markKey, collectionType } = markConfig
 	const removedMarkPath = `users/${userId}/collection/marks/${collectionType}/${markKey}`
 	const removedMarkRef = ref(database, removedMarkPath)
 

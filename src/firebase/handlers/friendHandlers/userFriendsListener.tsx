@@ -11,9 +11,12 @@ import { getUserProfileInfo } from '@/firebase/handlers/profileHandlers/getUserP
 
 export const userFriendsListener = (
 	userId: string,
-	oldFriendList: IFullUserInfo[],
-	setFriends: Dispatch<SetStateAction<IFullUserInfo[]>>
+	friendListState: {
+		oldFriendList: IFullUserInfo[]
+		setFriends: Dispatch<SetStateAction<IFullUserInfo[]>>
+	}
 ) => {
+	const { oldFriendList, setFriends } = friendListState
 	const userRef = ref(database, `users/${userId}/friends`)
 
 	const onFriendAdded = async (childSnapshot: DataSnapshot) => {

@@ -4,10 +4,13 @@ import { database } from '@/firebase/config'
 import { UserCollections } from '@/constants/enum'
 
 export const getMarkForMovieOrTVShow = (
-	markedItemId: number,
 	userId: string,
-	collectionType: UserCollections.movie | UserCollections.tv
+	markConfig: {
+		markedItemId: number
+		collectionType: UserCollections.movie | UserCollections.tv
+	}
 ): Promise<IMarkFromDB | undefined> => {
+	const { markedItemId, collectionType } = markConfig
 	const marksCollectionPath = `users/${userId}/collection/marks/${collectionType}`
 	const marksCollectionRef = ref(database, marksCollectionPath)
 

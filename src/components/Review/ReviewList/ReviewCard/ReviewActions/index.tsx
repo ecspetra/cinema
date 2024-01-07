@@ -51,25 +51,17 @@ const ReviewActions: FC<PropsType> = ({
 		collectionType: UserCollections.reviews | UserCollections.replies
 	) => {
 		if (userId) {
-			if (isCurrentUserReaction(reactionType)) {
-				await removeReviewOrReplyReaction(
-					userId,
-					reviewId,
-					reviewedItemId,
-					collectionType,
-					reactionType,
-					reviewedItemCollectionType
-				)
-			} else {
-				await createNewReviewOrReplyReaction(
-					userId,
-					reviewId,
-					reviewedItemId,
-					collectionType,
-					reactionType,
-					reviewedItemCollectionType
-				)
+			const itemConfig = {
+				reviewId,
+				reviewedItemId,
+				collectionType,
+				reactionType,
+				reviewedItemCollectionType,
 			}
+
+			isCurrentUserReaction(reactionType)
+				? await removeReviewOrReplyReaction(userId, itemConfig)
+				: await createNewReviewOrReplyReaction(userId, itemConfig)
 		} else openLoginModal(showModal)
 	}
 
@@ -83,12 +75,13 @@ const ReviewActions: FC<PropsType> = ({
 	}
 
 	useEffect(() => {
-		getReviewOrReplyReactions(
-			reviewId,
+		const itemConfig = {
 			reviewedItemId,
 			collectionType,
-			reviewedItemCollectionType
-		).then(data => {
+			reviewedItemCollectionType,
+		}
+
+		getReviewOrReplyReactions(reviewId, itemConfig).then(data => {
 			setReactions({
 				likes: data.likes as IReaction[],
 				dislikes: data.dislikes as IReaction[],
@@ -98,12 +91,16 @@ const ReviewActions: FC<PropsType> = ({
 
 	useEffect(() => {
 		if (userId) {
-			const unsubscribe = reviewOrReplyReactionsListener(
-				reviewId,
+			const reviewConfig = {
 				reviewedItemId,
 				collectionType,
 				setReactions,
-				reviewedItemCollectionType
+				reviewedItemCollectionType,
+			}
+
+			const unsubscribe = reviewOrReplyReactionsListener(
+				reviewId,
+				reviewConfig
 			)
 
 			return () => {
