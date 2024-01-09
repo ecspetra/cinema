@@ -46,7 +46,9 @@ const GeneralPersonListPage = ({
 	return (
 		<>
 			<TopBanner imageSrc={PERSON_LIST_TOP_BANNER_IMAGE} />
-			<Title className='text-7xl after:hidden pb-0'>Persons</Title>
+			<Title className='text-3xl md:text-7xl after:hidden pb-0'>
+				Persons
+			</Title>
 			<Search
 				collectionType={UserCollections.person}
 				name='personSearch'

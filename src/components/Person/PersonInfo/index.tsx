@@ -70,7 +70,9 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 				</div>
 			</div>
 			<div className='w-full'>
-				<Title className='text-7xl after:hidden pb-0'>{name}</Title>
+				<Title className='text-3xl md:text-7xl after:hidden pb-0'>
+					{name}
+				</Title>
 				<Title variant='h2' className='text-gray-400'>
 					{known_for_department}
 				</Title>

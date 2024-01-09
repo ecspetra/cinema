@@ -1,8 +1,11 @@
+import pLimit from 'p-limit'
 import {
 	URL_TO_FETCH_COUNTRY_MOVIE_LIST,
 	URL_TO_FETCH_COUNTRIES,
 } from '@/constants/linksToFetch'
 import { IItemCountry } from '../../../../../interfaces'
+
+const limit = pLimit(5) // Установите лимит в 5 запросов
 
 export const getCountriesList = async (
 	type: string
@@ -11,12 +14,14 @@ export const getCountriesList = async (
 	const allCountriesResult = await allCountries.json()
 
 	const requests = allCountriesResult.map(async (item: IItemCountry) => {
-		return await fetch(
-			URL_TO_FETCH_COUNTRY_MOVIE_LIST.replace('{type}', type).replace(
-				'{country}',
-				item.iso_3166_1.toLowerCase()
-			)
-		).then(response => response.json())
+		return limit(() =>
+			fetch(
+				URL_TO_FETCH_COUNTRY_MOVIE_LIST.replace('{type}', type).replace(
+					'{country}',
+					item.iso_3166_1.toLowerCase()
+				)
+			).then(response => response.json())
+		)
 	})
 
 	const responses = await Promise.all(requests)

@@ -35,7 +35,7 @@ const ProfileInfo: FC<PropsType> = ({ userInfo }) => {
 	return (
 		<div className='flex flex-col justify-start items-center'>
 			<div className='w-full'>
-				<Title className='text-7xl after:hidden pb-0'>
+				<Title className='text-3xl md:text-7xl after:hidden pb-0'>
 					{profile?.displayName}
 				</Title>
 				<DetailsList itemsList={details} className='!mb-8' />

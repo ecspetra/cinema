@@ -3,7 +3,7 @@ import defaultMovieBg from '@/app/assets/images/default-movie-bg.jpg'
 import Image from '@/components/Images/Image'
 import classNames from 'classnames'
 import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
-import useToBannerParallax from '@/components/TopBanner/hooks/useToBannerParallax'
+import useTopBannerParallax from '@/components/TopBanner/hooks/useTopBannerParallax'
 
 type PropsType = {
 	imageSrc?: string
@@ -11,7 +11,7 @@ type PropsType = {
 }
 
 const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
-	const { translateY } = useToBannerParallax(imageSrc)
+	const { translateY } = useTopBannerParallax(imageSrc!)
 
 	const imageFullSrc = imageSrc
 		? ORIGINAL_IMAGE_SRC.replace('{imageSrc}', imageSrc)
@@ -30,7 +30,7 @@ const TopBanner: FC<PropsType> = ({ imageSrc, className }) => {
 	return (
 		<div
 			className={classNames(
-				'w-screen h-[600px] -z-10 -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-gray-950 overflow-hidden',
+				'w-screen h-[40vw] md:h-[30vw] -z-10 -mb-40 relative inset-x-1/2 -translate-x-1/2 after:w-full after:absolute after:bottom-0 after:h-4/5 after:bg-gradient-to-t from-gray-950 overflow-hidden',
 				className
 			)}
 		>

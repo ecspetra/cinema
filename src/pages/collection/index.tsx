@@ -60,7 +60,7 @@ const GeneralCollectionPage = ({
 			<>
 				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
 				<div className='max-w-4xl'>
-					<Title className='text-7xl'>
+					<Title className='text-3xl md:text-7xl'>
 						Your favorite movies, TV shows and persons will be
 						displayed here
 						<FontAwesomeIcon

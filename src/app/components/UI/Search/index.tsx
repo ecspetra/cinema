@@ -72,6 +72,7 @@ const Search: FC<PropsType> = ({
 					onChange={handleInputChange}
 					icon={faMagnifyingGlass}
 					placeholder='Search'
+					additionalInputClassName='max-w-[calc(100%-128px)]'
 				/>
 				{isSearchFieldWrapped && (
 					<div className='absolute inset-y-1/2 -translate-y-1/2 right-4 flex justify-end items-center gap-4'>

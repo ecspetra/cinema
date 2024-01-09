@@ -80,7 +80,7 @@ const ReviewCard: FC<PropsType> = ({
 	} = useReviewCardContentLength(content)
 
 	const reviewContent = (
-		<span className=' p-4 gap-4 bg-gray-900 relative duration-300 flex'>
+		<span className='p-2 md:p-4 gap-4 bg-gray-900 relative duration-300 flex'>
 			{isCurrentUserItem && (
 				<Dropdown>
 					<DropdownItem

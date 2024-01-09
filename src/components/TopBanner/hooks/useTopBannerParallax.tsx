@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const useToBannerParallax = (imageSrc: string) => {
+const useTopBannerParallax = (imageSrc: string) => {
 	const [scrollY, setScrollY] = useState<number>(0)
 	const parallaxFactor = 0.5
 	const translateY = scrollY * parallaxFactor
@@ -20,4 +20,4 @@ const useToBannerParallax = (imageSrc: string) => {
 	return { translateY }
 }
 
-export default useToBannerParallax
+export default useTopBannerParallax

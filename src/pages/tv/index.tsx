@@ -49,7 +49,9 @@ const GeneralTVShowListPage = ({
 	return (
 		<>
 			<TopBanner imageSrc={TV_LIST_TOP_BANNER_IMAGE} />
-			<Title className='text-7xl after:hidden pb-0'>TV shows</Title>
+			<Title className='text-3xl md:text-7xl after:hidden pb-0'>
+				TV shows
+			</Title>
 			<Search
 				collectionType={UserCollections.tv}
 				name='tvShowsSearch'

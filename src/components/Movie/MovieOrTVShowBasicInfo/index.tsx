@@ -95,8 +95,8 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 		: ''
 
 	return (
-		<div className='flex gap-7 py-7 mb-16'>
-			<div className='w-full max-w-[340px]'>
+		<div className='flex gap-7 py-7 mb-16 flex-wrap md:flex-nowrap'>
+			<div className='w-full max-w-[240px] md:max-w-[340px] mx-auto mt-16 md:mt-0'>
 				<div className='sticky top-28'>
 					<Image
 						src={imageFullSrc}
@@ -106,7 +106,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 				</div>
 			</div>
 			<div className='w-full'>
-				<Title className='text-7xl after:hidden pb-0'>
+				<Title className='text-3xl md:text-7xl after:hidden pb-0'>
 					{title ? title : name}
 				</Title>
 				{tagline && (
@@ -148,7 +148,10 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 							url={`https://www.youtube.com/watch?v=${video}`}
 							controls={true}
 							width={'100%'}
-							style={{ minHeight: `500px` }}
+							height={'auto'}
+							style={{
+								aspectRatio: '16/9',
+							}}
 						/>
 					</div>
 				)}
