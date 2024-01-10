@@ -1,5 +1,9 @@
 import { parse } from 'cookie'
 
+interface Cookies {
+	[key: string]: string
+}
+
 interface CookieOptions {
 	expires?: Date
 	path?: string
@@ -28,6 +32,17 @@ export const removeCookie = (name: string, options: CookieOptions = {}) => {
 	}`
 }
 
-export function parseCookies(req?: { headers: { cookie?: string } }) {
-	return parse(req ? req.headers.cookie || '' : document.cookie)
+export function parseCookies(req?: {
+	headers: { cookie?: string }
+}): Promise<Cookies> {
+	return new Promise((resolve, reject) => {
+		try {
+			const cookies = parse(
+				req ? req.headers.cookie || '' : document.cookie
+			)
+			resolve(cookies)
+		} catch (error) {
+			reject(error)
+		}
+	})
 }

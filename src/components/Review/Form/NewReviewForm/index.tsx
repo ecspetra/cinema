@@ -1,33 +1,43 @@
-import React, { FC, useEffect, useState } from 'react'
+import {
+	FC,
+	FormEvent,
+	useEffect,
+	useState,
+	Dispatch,
+	SetStateAction,
+} from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Title from '../../../../app/components/UI/Title/Title'
 import Button from '../../../../app/components/UI/Button'
-import { setNewReviewItem } from '@/firebase/config'
 import { uuidv4 } from '@firebase/util'
 import moment from 'moment'
 import { openLoginModal } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { IReviewCard } from '../../../../../interfaces'
+import { IReviewItemCard } from '../../../../../interfaces'
 import Loader from '@/components/Loader'
+import { UserCollections } from '@/constants/enum'
+import { createReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/createReviewOrReply'
 
 type PropsType = {
-	movieId: number
+	reviewedItemId: number
+	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
 	userId: string
-	isTVShow: boolean
+	reviewAuthorId?: string
 	reviewId?: string
-	replyTo?: string
-	isReply?: boolean
-	onFormClose?: React.Dispatch<React.SetStateAction<boolean>>
+	replyToUser?: string
+	isReplyItem?: boolean
+	onFormClose?: Dispatch<SetStateAction<boolean>>
 }
 
 const NewReviewForm: FC<PropsType> = ({
-	movieId,
+	reviewedItemId,
+	reviewedItemCollectionType,
 	userId,
-	isTVShow = false,
+	reviewAuthorId,
 	reviewId,
-	replyTo,
-	isReply = false,
+	replyToUser,
+	isReplyItem = false,
 	onFormClose,
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -37,15 +47,19 @@ const NewReviewForm: FC<PropsType> = ({
 	const buttonText = isLoading ? (
 		<Loader type='static' />
 	) : (
-		<>{`${isReply ? 'Submit reply' : 'Submit review'}`}</>
+		<>{`${isReplyItem ? 'Submit reply' : 'Submit review'}`}</>
 	)
 
-	const handleTextareaChange = newValue => {
+	const handleTextareaChange = (newValue: string) => {
 		setTextareaValue(newValue)
 		setError('')
 	}
 
-	const handleSubmit = async event => {
+	const handleCloseForm = () => {
+		onFormClose && onFormClose(false)
+	}
+
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault()
 		setIsLoading(true)
 
@@ -53,39 +67,48 @@ const NewReviewForm: FC<PropsType> = ({
 			if (userId) {
 				setError('')
 
-				let newItem: IReviewCard
+				let newItem: IReviewItemCard
 
-				if (isReply) {
+				if (isReplyItem) {
 					newItem = {
-						movieId: movieId,
-						replyTo: replyTo,
+						...(reviewAuthorId !== undefined && {
+							reviewAuthorId: reviewAuthorId,
+						}),
+						reviewedItemId: reviewedItemId,
+						replyToUser: replyToUser,
 						reviewId: reviewId,
 						id: uuidv4(),
 						content: textareaValue,
 						created_at: moment().format(),
 						authorId: userId,
-						isTVShow: isTVShow,
+						reviewedItemCollectionType: reviewedItemCollectionType,
 					}
 				} else {
 					newItem = {
-						movieId: movieId,
+						reviewedItemId: reviewedItemId,
 						id: uuidv4(),
 						content: textareaValue,
 						created_at: moment().format(),
 						authorId: userId,
-						isTVShow: isTVShow,
+						reviewedItemCollectionType: reviewedItemCollectionType,
 					}
 				}
 
-				await setNewReviewItem(
+				const itemConfig = {
 					newItem,
-					userId,
-					movieId,
-					isReply ? 'replies' : 'reviews'
-				)
+					reviewedItemId,
+					collectionType: isReplyItem
+						? UserCollections.replies
+						: (UserCollections.reviews as
+								| UserCollections.reviews
+								| UserCollections.replies),
+					reviewedItemCollectionType,
+				}
+
+				await createReviewOrReply(userId, itemConfig)
 				setTextareaValue('')
 
-				if (isReply) onFormClose(false)
+				if (isReplyItem) handleCloseForm()
 			} else openLoginModal(showModal)
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
@@ -97,13 +120,13 @@ const NewReviewForm: FC<PropsType> = ({
 	useEffect(() => {
 		setTextareaValue('')
 		setError('')
-	}, [movieId])
+	}, [reviewedItemId])
 
 	return (
 		<>
-			{isReply ? (
+			{isReplyItem ? (
 				<Title variant='h3' className='mt-8'>
-					{`Leave your reply to ${replyTo}`}
+					{`Leave your reply to ${replyToUser}`}
 				</Title>
 			) : (
 				<Title>Leave your review</Title>
@@ -116,11 +139,11 @@ const NewReviewForm: FC<PropsType> = ({
 				/>
 				<span className='mt-8 flex justify-start items-center'>
 					<Button onClick={handleSubmit}>{buttonText}</Button>
-					{isReply && (
+					{isReplyItem && (
 						<Button
 							context='filledDark'
 							className='ml-2'
-							onClick={() => onFormClose(false)}
+							onClick={handleCloseForm}
 						>
 							Cancel
 						</Button>

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import { IBackdrop, IPersonImage } from '../../../../interfaces'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '../../../app/assets/images/default-movie-image.svg'
@@ -10,6 +10,7 @@ import classNames from 'classnames'
 import EmptyList from '@/components/List/EmptyList'
 import useItemsToShow from '@/hooks/useItemsToShow'
 import { uuidv4 } from '@firebase/util'
+import { SLIDER_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	images: IBackdrop[] | IPersonImage[]
@@ -55,8 +56,8 @@ const ImagesList: FC<PropsType> = ({
 	return (
 		<div ref={listRef} className={classNames('mb-16', className)}>
 			<Title>Images</Title>
-			<div className='grid grid-cols-[repeat(auto-fill,215px)] gap-1 justify-start'>
-				{itemsToShow.map((item, idx) => (
+			<div className='grid grid-cols-[repeat(auto-fill,calc((100vw-24px)/3))] md:grid-cols-[repeat(auto-fill,calc((100vw-416px)/3))] xl:grid-cols-[repeat(auto-fill,calc(864px/3))] gap-1 justify-start'>
+				{(itemsToShow as IBackdrop[]).map((item, idx) => (
 					<Button
 						key={idx}
 						context='image'
@@ -68,7 +69,14 @@ const ImagesList: FC<PropsType> = ({
 									? 'aspect-[2/3]'
 									: 'aspect-[215/121]'
 							}
-							src={`https://image.tmdb.org/t/p/w500${item.file_path}`}
+							src={
+								item.file_path
+									? SLIDER_IMAGE_SRC.replace(
+											'{imageSrc}',
+											item.file_path
+									  )
+									: ''
+							}
 							defaultImage={defaultMovieImage}
 						/>
 					</Button>

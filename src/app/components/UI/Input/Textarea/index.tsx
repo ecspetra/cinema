@@ -1,9 +1,9 @@
-import { FC, Dispatch, SetStateAction } from 'react'
+import { FC, Dispatch, SetStateAction, ChangeEvent } from 'react'
 import Error from '@/app/components/UI/Error'
 import classNames from 'classnames'
 
 type PropsType = {
-	onChange: Dispatch<SetStateAction<string>>
+	onChange: Dispatch<SetStateAction<string>> | ((value: string) => void)
 	value: string
 	error?: string
 	placeholder?: string
@@ -17,7 +17,9 @@ const Textarea: FC<PropsType> = ({
 	placeholder = 'Enter text...',
 	className,
 }) => {
-	const handleChange = event => {
+	const onTextareaContentChange = (
+		event: ChangeEvent<HTMLTextAreaElement>
+	) => {
 		const newValue = event.target.value
 		onChange(newValue)
 	}
@@ -26,7 +28,7 @@ const Textarea: FC<PropsType> = ({
 		<>
 			<textarea
 				value={value}
-				onChange={handleChange}
+				onChange={onTextareaContentChange}
 				onClick={event => event.preventDefault()}
 				rows={6}
 				className={classNames(

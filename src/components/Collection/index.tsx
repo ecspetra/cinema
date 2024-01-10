@@ -1,10 +1,10 @@
 import CollectionWrap from '@/components/Collection/CollectionWrap'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import {
 	IFetchedResult,
 	IItemCard,
 	IMark,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../../interfaces'
 import { UserCollections } from '@/constants/enum'
 
@@ -13,8 +13,9 @@ type PropsType = {
 	tvShows: IFetchedResult<IItemCard>['items'] | null
 	persons: IFetchedResult<IItemCard>['items'] | null
 	marks: IFetchedResult<IMark>['items']
-	reviews: IFetchedResult<IReviewCard>['items']
+	reviews: IFetchedResult<IReviewItemCard>['items']
 	isCurrentUserCollection?: boolean
+	collectionOwnerId?: string
 }
 
 const GeneralUserCollection: FC<PropsType> = ({
@@ -24,9 +25,10 @@ const GeneralUserCollection: FC<PropsType> = ({
 	marks,
 	reviews,
 	isCurrentUserCollection = true,
+	collectionOwnerId,
 }) => {
 	return (
-		<div>
+		<div className='mt-24 md:mt-0'>
 			<CollectionWrap
 				title='Movies'
 				collectionType={UserCollections.movie}
@@ -56,6 +58,7 @@ const GeneralUserCollection: FC<PropsType> = ({
 				collectionType={UserCollections.reviews}
 				items={reviews ?? []}
 				isCurrentUserCollection={isCurrentUserCollection}
+				collectionOwnerId={collectionOwnerId}
 			/>
 		</div>
 	)

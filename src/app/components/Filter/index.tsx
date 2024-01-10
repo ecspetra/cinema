@@ -1,5 +1,13 @@
 import Title from '@/app/components/UI/Title/Title'
-import { FC, useEffect, Dispatch, useState, SetStateAction } from 'react'
+import {
+	FC,
+	useEffect,
+	Dispatch,
+	useState,
+	SetStateAction,
+	FormEvent,
+	ReactNode,
+} from 'react'
 import Loader from '@/components/Loader'
 import Button from '@/app/components/UI/Button'
 import Error from '@/app/components/UI/Error'
@@ -7,15 +15,21 @@ import SelectOption from '@/app/components/UI/Input/Select/SelectOption'
 import Select from '@/app/components/UI/Input/Select'
 import FilterTagList from '@/components/Tag/FilterTagList'
 import Search from '@/app/components/UI/Search'
-import { generateYearsList } from '@/handlers/generateYearsList'
 import {
 	FilterFields,
-	FilterUrlToSearch,
+	FilterUrlToSearchMap,
 	UserCollections,
 } from '@/constants/enum'
-import { getCountriesList } from '@/handlers/getCountriesList'
+import { getCountriesList } from '@/app/components/Filter/handlers/getCountriesList'
 import SelectedFilters from '@/app/components/Filter/SelectedFilters'
-import { generateRatingList } from '@/handlers/generateRatingList'
+import useFilterReducer, {
+	FilterFormData,
+	groupedFilterFields,
+	ungroupedFilterFields,
+} from '@/hooks/useFilterReducer'
+import { getFilterQuery } from '@/app/components/Filter/handlers/getFilterQuery'
+import { getSelectOptions } from '@/app/components/Filter/handlers/getSelectOptions'
+import { IItemCountry, ITag } from '../../../../interfaces'
 
 type PropsType = {
 	onApplyFilter: Dispatch<SetStateAction<string>>
@@ -24,143 +38,53 @@ type PropsType = {
 	defaultUrl: string
 }
 
-interface FilterFormData {
-	primary_release_year: number
-	first_air_date_year: number
-	'vote_average.lte': number
-	with_people: Array<string>
-	with_companies: Array<string>
-	with_genres: Array<string>
-	with_original_language: string
-	with_keywords: Array<string>
-}
-
 const Filter: FC<PropsType> = ({
 	onApplyFilter,
 	collectionType,
 	fields,
 	defaultUrl,
 }) => {
+	const [state, dispatch] = useFilterReducer()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [formData, setFormData] = useState<FilterFormData>({})
 	const [error, setError] = useState<string>('')
-	const [countryList, setCountryList] = useState([])
+	const [countryList, setCountryList] = useState<IItemCountry[]>([])
 
 	const handleResetFilter = () => {
-		setFormData({})
+		dispatch({ type: 'RESET' })
 		onApplyFilter(defaultUrl)
 	}
 
-	const handleSelectChange = (field: keyof FilterFormData, value: any) => {
-		setFormData(prevData => ({ ...prevData, [field]: value }))
+	const handleSelectChange = (field: keyof FilterFormData, value: string) => {
+		dispatch({ type: 'SELECT_FIELD_CHANGE', field, value })
 	}
 
 	const handleArrayFieldChange = (
 		field: keyof FilterFormData,
 		value: object
 	) => {
-		setFormData(prevData => {
-			const currentValue = prevData[field]
-
-			const updatedArray = Array.isArray(currentValue)
-				? [...currentValue, value]
-				: [value]
-			return { ...prevData, [field]: updatedArray }
-		})
+		dispatch({ type: 'ARRAY_FIELD_CHANGE', field, value })
 	}
 
-	const handleRemoveFilterTag = (tag: any) => {
-		setFormData(prevData => {
-			const currentValue = prevData[tag.field]
-
-			const updatedArray = Array.isArray(currentValue)
-				? currentValue.filter(item => item.name !== tag.name)
-				: []
-
-			const updatedData = { ...prevData, [tag.field]: updatedArray }
-
-			if (updatedArray.length === 0) {
-				const { [tag.field]: removedField, ...restData } = updatedData
-				return restData
-			}
-
-			return updatedData
-		})
+	const handleRemoveFilterTag = (tag: ITag) => {
+		dispatch({ type: 'REMOVE_TAG', tag })
 	}
 
-	const handleToggleTag = (field: keyof FilterFormData, tag, isChecked) => {
-		setFormData(prevData => {
-			const currentValue = prevData[field]
-
-			if (isChecked) {
-				const updatedArray = Array.isArray(currentValue)
-					? currentValue.filter(item => item.name !== tag.name)
-					: []
-
-				const updatedData = { ...prevData, [field]: updatedArray }
-				if (updatedArray.length === 0) {
-					const { [field]: removedField, ...restData } = updatedData
-					return restData
-				}
-
-				return updatedData
-			} else {
-				const updatedArray = Array.isArray(currentValue)
-					? [...currentValue, tag]
-					: [tag]
-				return { ...prevData, [field]: updatedArray }
-			}
-		})
+	const handleToggleTag = (
+		field: keyof FilterFormData,
+		tag: ITag,
+		isChecked: boolean
+	) => {
+		dispatch({ type: 'TOGGLE_TAG', field, tag, isChecked })
 	}
 
-	const getQuery = () => {
-		let queryArray = []
-
-		for (const key in formData) {
-			if (formData.hasOwnProperty(key)) {
-				const value = formData[key]
-
-				if (Array.isArray(value)) {
-					queryArray.push(
-						`${key}=${value.map(item => item?.id).join(',')}`
-					)
-				} else if (
-					typeof value === 'string' ||
-					typeof value === 'number'
-				) {
-					queryArray.push(`${key}=${value || ''}`)
-				}
-			}
-		}
-
-		return `&${queryArray.join('&').replace(/\s/g, '')}`
-	}
-
-	const getSelectOptions = field => {
-		let options = []
-		switch (field) {
-			case 'primary_release_year':
-			case 'first_air_date_year':
-				options = generateYearsList(1930)
-				return options
-			case 'vote_average.lte':
-				options = generateRatingList(10)
-				return options
-		}
-	}
-
-	const handleSearch = async (event: React.FormEvent) => {
+	const handleSearch = async (event: FormEvent) => {
 		event.preventDefault()
 		setIsLoading(true)
 
 		try {
-			if (Object.keys(formData).length === 0) {
-				onApplyFilter(defaultUrl)
-			} else {
-				const query = getQuery()
-				onApplyFilter(defaultUrl.concat(query))
-			}
-
+			const query =
+				Object.keys(state).length === 0 ? '' : getFilterQuery(state)
+			onApplyFilter(defaultUrl.concat(query))
 			setError('')
 		} catch (error: any) {
 			setError(error.toString())
@@ -169,46 +93,38 @@ const Filter: FC<PropsType> = ({
 		}
 	}
 
-	const groupedFields = [
-		'primary_release_year',
-		'first_air_date_year',
-		'vote_average.lte',
-		'with_people',
-		'with_companies',
-		'with_original_language',
-		'with_keywords',
-	]
-	const ungroupedFields = ['with_genres']
-
-	const getField = (field: keyof FilterFormData) => {
+	const getFilterField = (field: keyof FilterFormData) => {
 		switch (field) {
 			case 'primary_release_year':
 			case 'first_air_date_year':
 			case 'vote_average.lte':
-				const options = getSelectOptions(field)
+				const options = getSelectOptions(field) as string[]
+				const dateAndVoteAverageSelectValue = state[field] ?? 'Select'
 				return (
 					<Select
 						key={field}
 						label={FilterFields[field]}
 						name={field}
 						onChange={handleSelectChange}
+						defaultValue={dateAndVoteAverageSelectValue}
 					>
 						{options.map((item, idx) => (
-							<SelectOption
-								key={item}
-								value={item}
-								label={item}
-							/>
+							<SelectOption key={idx} value={item} label={item} />
 						))}
 					</Select>
 				)
 			case 'with_original_language':
+				const countrySelectValue =
+					countryList.find(
+						item => item.iso_3166_1.toLowerCase() === state[field]
+					)?.english_name ?? 'Select'
 				return (
 					<Select
 						key={field}
 						label={FilterFields[field]}
 						name={field}
 						onChange={handleSelectChange}
+						defaultValue={countrySelectValue}
 					>
 						{countryList.map((item, idx) => (
 							<SelectOption
@@ -227,7 +143,7 @@ const Filter: FC<PropsType> = ({
 						key={field}
 						name={field}
 						label={FilterFields[field]}
-						urlToFetch={FilterUrlToSearch[field]}
+						urlToFetch={FilterUrlToSearchMap[field].toString()}
 						onSearch={handleArrayFieldChange}
 					/>
 				)
@@ -235,13 +151,23 @@ const Filter: FC<PropsType> = ({
 				return (
 					<FilterTagList
 						key={field}
-						tags={formData[field]}
+						tags={state[field] ?? []}
 						onToggle={handleToggleTag}
 						name={field}
 						type={collectionType}
 					/>
 				)
 		}
+	}
+
+	const renderFieldGroup = (
+		filterFieldGroup:
+			| typeof groupedFilterFields
+			| typeof ungroupedFilterFields
+	): ReactNode => {
+		return filterFieldGroup.map(field => {
+			if (fields.includes(field)) return getFilterField(field)
+		})
 	}
 
 	useEffect(() => {
@@ -258,19 +184,11 @@ const Filter: FC<PropsType> = ({
 			<Title>Filter</Title>
 			<form onSubmit={handleSearch}>
 				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
-					{fields.map((field: keyof FilterFormData) => {
-						if (groupedFields.includes(field))
-							return getField(field)
-					})}
+					{renderFieldGroup(groupedFilterFields)}
 				</div>
-				<div>
-					{fields.map((field: keyof FilterFormData) => {
-						if (ungroupedFields.includes(field))
-							return getField(field)
-					})}
-				</div>
+				<div>{renderFieldGroup(ungroupedFilterFields)}</div>
 				<SelectedFilters
-					formData={formData}
+					formData={state}
 					onRemove={handleRemoveFilterTag}
 					onReset={handleResetFilter}
 					countryList={countryList}

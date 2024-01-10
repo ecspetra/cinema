@@ -1,16 +1,11 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { IReviewCard } from '../../../../../interfaces'
+import { FC, useMemo } from 'react'
+import { IReviewItemCard } from '../../../../../interfaces'
 import Button from '../../../../app/components/UI/Button'
 import moment from 'moment'
 import classNames from 'classnames'
-import {
-	getDBRepliesList,
-	getUserInfo,
-	removeReviewItem,
-} from '@/firebase/config'
 import ReviewActions from '@/components/Review/ReviewList/ReviewCard/ReviewActions'
 import NewReviewForm from '../../Form/NewReviewForm'
-import RepliesList from '../../ReplyList'
+import ReplyList from '../../ReplyList'
 import EditReviewForm from '@/components/Review/Form/EditReviewForm'
 import Dropdown from '@/app/components/UI/Dropdown'
 import DropdownItem from '@/app/components/UI/Dropdown/DropdownItem'
@@ -21,21 +16,30 @@ import Link from 'next/link'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 import { UserCollections } from '@/constants/enum'
+import { formatReviewTextWithHtmlTags } from '@/components/Review/handlers/formatReviewTextWithHtmlTags'
+import { ORIGINAL_IMAGE_SRC } from '@/constants/images'
+import useReviewCard from '@/components/Review/hooks/useReviewCard'
+import useReviewCardContentLength from '@/components/Review/hooks/useReviewCardContentLength'
+import useReplyEditForm from '@/components/Review/hooks/useReplyEditForm'
+import useReplyForm from '@/components/Review/hooks/useReplyForm'
 
 type PropsType = {
-	defaultCardMovieId: number
-	review: IReviewCard
+	collectionType: UserCollections.movie | UserCollections.tv
+	review: IReviewItemCard
+	defaultCardReviewedId?: number
 	isLinkToMovie?: boolean
 	isCollectionItem?: boolean
 }
 
 const ReviewCard: FC<PropsType> = ({
-	defaultCardMovieId,
+	collectionType,
 	review,
+	defaultCardReviewedId,
 	isLinkToMovie = false,
 	isCollectionItem = false,
 }) => {
 	const { userId } = useAuth()
+
 	const {
 		content,
 		id,
@@ -43,86 +47,74 @@ const ReviewCard: FC<PropsType> = ({
 		created_at,
 		avatar_path,
 		authorId,
-		movieId,
-		isTVShow,
+		reviewedItemId,
 	} = review
-	const [replies, setReplies] = useState<IReviewCard[]>([])
-	const [authorInfo, setAuthorInfo] = useState({
-		userId: '',
-		photoURL: '',
-		displayName: '',
-	})
-	const [isMounted, setIsMounted] = useState<boolean>(false)
-	const [isShowEditForm, setIsShowEditForm] = useState<boolean>(false)
-	const [isShowReplyForm, setIsShowReplyForm] = useState<boolean>(false)
-	const [isContentOpen, setIsContentOpen] = useState<boolean>(false)
-	const [isItemFromDB, setIsItemFromDB] = useState<boolean>(false)
-	const [isTruncateReview, setIsTruncateReview] = useState<boolean>(false)
-	const [replyTo, setReplyTo] = useState<string>('')
-	const [contentHeight, setContentHeight] = useState<number>(0)
-	const contentRef = useRef<HTMLDivElement | null>(null)
-	const isLongReviewContent = useMemo(() => content.length > 400, [content])
+
+	const collectionInfo = { id, authorId, reviewedItemId, collectionType }
+
+	const { isMounted, replies, isItemFromDB, authorInfo, removeReviewCard } =
+		useReviewCard(collectionInfo, userId)
+	const { isShowEditForm, showEditReviewForm, closeEditReviewForm } =
+		useReplyEditForm(userId)
+	const {
+		replyToUser,
+		isShowReplyForm,
+		showReplyForm,
+		closeReplyForm,
+		makeReplyToUser,
+	} = useReplyForm(isItemFromDB ? authorInfo.displayName : author!)
+	const isCurrentUserItem = userId === authorId && isItemFromDB
+
 	const formattedDate = useMemo(
 		() => moment(created_at).format('MMM Do YY'),
 		[created_at]
 	)
-	const isShowTruncateDots =
-		isLongReviewContent && !isContentOpen && isTruncateReview
-	const isCurrentUserItem = userId === authorId && isItemFromDB
 
-	const handleFormClose = () => {
-		setReplyTo(isItemFromDB ? authorInfo.displayName : author)
-		setIsShowReplyForm(false)
-	}
-
-	const handleReplyTo = (userName: string) => {
-		setIsShowReplyForm(true)
-		setReplyTo(userName)
-	}
-
-	const handleReviewContent = () => {
-		setIsContentOpen(!isContentOpen)
-	}
-
-	const handleRemoveReview = () => {
-		setIsMounted(false)
-
-		setTimeout(() => {
-			removeReviewItem(id, movieId, userId, 'reviews')
-		}, 500)
-	}
+	const {
+		isContentOpen,
+		contentHeight,
+		contentRef,
+		isShowTruncateDots,
+		isLongReviewContent,
+		toggleReviewContentLength,
+	} = useReviewCardContentLength(content)
 
 	const reviewContent = (
-		<span className=' p-4 gap-4 bg-gray-900 relative duration-300 flex'>
+		<span className='p-2 md:p-4 gap-4 bg-gray-900 relative duration-300 flex flex-wrap md:flex-nowrap'>
 			{isCurrentUserItem && (
 				<Dropdown>
 					<DropdownItem
 						label='Edit'
 						icon={faPenToSquare}
-						onClick={() => setIsShowEditForm(true)}
+						onClick={showEditReviewForm}
 					/>
 					<DropdownItem
 						label='Delete'
 						icon={faTrash}
-						onClick={handleRemoveReview}
+						onClick={removeReviewCard}
 					/>
 				</Dropdown>
 			)}
 			{isLinkToMovie && (
 				<ItemCardSmall
-					itemId={movieId}
-					type={isTVShow ? 'tv' : 'movie'}
+					itemId={reviewedItemId!}
+					collectionType={collectionType}
 				/>
 			)}
 			<span className='w-full'>
 				<span className='flex mb-2 max-w-[calc(100%-54px)]'>
 					<span className='flex items-center'>
 						<ProfileIconSmall
-							userId={isItemFromDB && authorInfo.userId}
+							userId={
+								isItemFromDB ? authorInfo.userId : undefined
+							}
 							photoURL={
 								isItemFromDB
 									? authorInfo.photoURL
-									: `https://image.tmdb.org/t/p/original${avatar_path}`
+									: ORIGINAL_IMAGE_SRC.replace(
+											'{imageSrc}',
+											avatar_path!
+									  )
 							}
 							isLinkToProfile={isItemFromDB && !isLinkToMovie}
 						/>
@@ -139,9 +131,12 @@ const ReviewCard: FC<PropsType> = ({
 				<span className='flex flex-col h-[calc(100%-50.5px)]'>
 					{isShowEditForm ? (
 						<EditReviewForm
-							item={review}
-							movieId={defaultCardMovieId ?? movieId}
-							onFormClose={setIsShowEditForm}
+							editedItem={review}
+							reviewedItemId={
+								defaultCardReviewedId ?? reviewedItemId!
+							}
+							reviewedItemCollectionType={collectionType}
+							onFormClose={closeEditReviewForm}
 						/>
 					) : (
 						<>
@@ -153,20 +148,23 @@ const ReviewCard: FC<PropsType> = ({
 											: '3rem',
 									}}
 									ref={contentRef}
-									className='overflow-hidden transition-[max-height] duration-500 block'
+									className='overflow-hidden transition-[max-height] duration-500 block text-base'
 								>
 									<span
+										dangerouslySetInnerHTML={{
+											__html: formatReviewTextWithHtmlTags(
+												content
+											),
+										}}
 										className={classNames(
 											isShowTruncateDots && 'line-clamp-2'
 										)}
-									>
-										{content}
-									</span>
+									></span>
 								</span>
 								{isLongReviewContent && (
 									<Button
 										context='text'
-										onClick={handleReviewContent}
+										onClick={toggleReviewContentLength}
 									>
 										{isContentOpen ? 'Hide' : 'Show more'}
 									</Button>
@@ -174,28 +172,37 @@ const ReviewCard: FC<PropsType> = ({
 							</span>
 							<ReviewActions
 								reviewId={id}
-								movieId={defaultCardMovieId ?? movieId}
+								reviewedItemId={
+									defaultCardReviewedId ?? reviewedItemId!
+								}
 								userId={userId}
-								onReply={() => setIsShowReplyForm(true)}
+								onReply={showReplyForm}
 								collectionType={UserCollections.reviews}
+								reviewedItemCollectionType={collectionType}
 							/>
-							<RepliesList
-								movieId={defaultCardMovieId ?? movieId}
+							<ReplyList
+								reviewedItemId={
+									defaultCardReviewedId ?? reviewedItemId!
+								}
 								userId={userId}
 								reviewId={id}
 								replies={replies}
-								onReply={handleReplyTo}
+								onReply={makeReplyToUser}
+								collectionType={collectionType}
 								isCollectionList={isCollectionItem}
 							/>
 							{isShowReplyForm && (
 								<NewReviewForm
-									movieId={defaultCardMovieId ?? movieId}
-									isTVShow={isTVShow}
+									reviewAuthorId={review.authorId}
+									reviewedItemId={
+										defaultCardReviewedId ?? reviewedItemId!
+									}
+									reviewedItemCollectionType={collectionType}
 									userId={userId}
 									reviewId={id}
-									replyTo={replyTo}
-									onFormClose={handleFormClose}
-									isReply
+									replyToUser={replyToUser}
+									onFormClose={closeReplyForm}
+									isReplyItem
 								/>
 							)}
 						</>
@@ -204,56 +211,6 @@ const ReviewCard: FC<PropsType> = ({
 			</span>
 		</span>
 	)
-
-	useEffect(() => {
-		if (contentRef.current) {
-			setContentHeight(contentRef.current!.scrollHeight)
-		}
-
-		if (!isContentOpen) {
-			setTimeout(() => {
-				setIsTruncateReview(true)
-			}, 500)
-		} else setIsTruncateReview(false)
-	}, [isContentOpen])
-
-	useEffect(() => {
-		getDBRepliesList(movieId, id).then(data => {
-			setReplies(data)
-		})
-	}, [])
-
-	useEffect(() => {
-		if (!userId) {
-			setIsShowEditForm(false)
-		}
-	}, [userId])
-
-	useEffect(() => {
-		setReplyTo(isItemFromDB ? authorInfo.displayName : author)
-	}, [authorInfo])
-
-	useEffect(() => {
-		if (authorId) {
-			setIsItemFromDB(true)
-		}
-
-		if (isItemFromDB) {
-			getUserInfo(authorId)
-				.then(data => {
-					setAuthorInfo({
-						userId: data.info.id,
-						photoURL: data.info.photoURL,
-						displayName: data.info.displayName,
-					})
-				})
-				.then(() => {
-					setIsMounted(true)
-				})
-		} else {
-			setIsMounted(true)
-		}
-	}, [isItemFromDB, authorId])
 
 	return (
 		<CSSTransition
@@ -265,7 +222,7 @@ const ReviewCard: FC<PropsType> = ({
 			{isLinkToMovie ? (
 				<Link
 					href='/movie/[id]'
-					as={`/movie/${movieId}`}
+					as={`/movie/${reviewedItemId}`}
 					className='mb-4 block last:mb-0'
 				>
 					{reviewContent}

@@ -1,71 +1,64 @@
-import React, { FC, useState } from 'react'
+import { FC, FormEvent, useState } from 'react'
 import Textarea from '../../../../app/components/UI/Input/Textarea'
 import Button from '../../../../app/components/UI/Button'
-import { updateReviewItem } from '@/firebase/config'
 import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { IReviewCard } from '../../../../../interfaces'
+import { IReviewItemCard } from '../../../../../interfaces'
+import { UserCollections } from '@/constants/enum'
+import { updateReviewOrReply } from '@/firebase/handlers/reviewAndReplyHandlers/updateReviewOrReply'
 
 type PropsType = {
-	item: IReviewCard
-	movieId: number
-	onFormClose: React.Dispatch<React.SetStateAction<boolean>>
-	isReply?: boolean
+	editedItem: IReviewItemCard
+	reviewedItemId: number
+	reviewedItemCollectionType: UserCollections.movie | UserCollections.tv
+	onFormClose: () => void
+	isReplyItem?: boolean
 }
 
 const EditReviewForm: FC<PropsType> = ({
-	item,
-	movieId,
+	editedItem,
+	reviewedItemId,
+	reviewedItemCollectionType,
 	onFormClose,
-	isReply = false,
+	isReplyItem = false,
 }) => {
-	const [textareaValue, setTextareaValue] = useState<string>(item.content)
+	const [textareaValue, setTextareaValue] = useState<string>(
+		editedItem.content
+	)
 	const [error, setError] = useState<string>('')
-	const buttonText = isReply ? 'Update reply' : 'Update review'
 
-	const handleTextareaChange = newValue => {
+	const handleTextareaChange = (newValue: string) => {
 		setTextareaValue(newValue)
 		setError('')
 	}
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault()
 
 		if (textareaValue.trim() !== '') {
 			setError('')
 
-			let updatedItem: IReviewCard
+			let updatedItem: IReviewItemCard
 
-			if (isReply) {
-				updatedItem = {
-					movieId: movieId,
-					replyTo: item.replyTo,
-					reviewId: item.reviewId,
-					id: item.id,
-					content: textareaValue,
-					created_at: item.created_at,
-					authorId: item.authorId,
-					isTVShow: item.isTVShow,
-				}
-			} else {
-				updatedItem = {
-					movieId: movieId,
-					id: item.id,
-					content: textareaValue,
-					created_at: item.created_at,
-					authorId: item.authorId,
-					isTVShow: item.isTVShow,
-				}
+			updatedItem = {
+				...editedItem,
+				content: textareaValue,
 			}
 
-			await updateReviewItem(
-				updatedItem,
-				item.authorId,
-				movieId,
-				isReply ? 'replies' : 'reviews'
-			)
+			const itemConfig = {
+				item: updatedItem,
+				reviewedItemId,
+				collectionType: isReplyItem
+					? UserCollections.replies
+					: (UserCollections.reviews as
+							| UserCollections.reviews
+							| UserCollections.replies),
+				reviewedItemCollectionType,
+			}
+
+			await updateReviewOrReply(editedItem.authorId!, itemConfig)
 			setTextareaValue('')
 
-			onFormClose(false)
+			onFormClose()
 		} else {
 			setError(ERROR_MESSAGES.REQUIRED_FIELD)
 		}
@@ -79,11 +72,11 @@ const EditReviewForm: FC<PropsType> = ({
 				error={error}
 			/>
 			<span className='mt-8 flex justify-start items-center'>
-				<Button onClick={handleSubmit}>{buttonText}</Button>
+				<Button onClick={handleSubmit}>Update</Button>
 				<Button
 					context='filledDark'
 					className='ml-2'
-					onClick={() => onFormClose(false)}
+					onClick={onFormClose}
 				>
 					Cancel
 				</Button>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Link from 'next/link'
@@ -8,6 +8,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { UserCollections } from '@/constants/enum'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	itemId: number
@@ -28,6 +29,9 @@ const ItemCardSmall: FC<PropsType> = ({
 	className = false,
 }) => {
 	const [itemCover, setItemCover] = useState<string>('')
+	const imageFullSrc = itemCover
+		? CARD_IMAGE_SRC.replace('{imageSrc}', itemCover)
+		: ''
 
 	useEffect(() => {
 		getCover(itemId, collectionType).then(data => {
@@ -39,9 +43,9 @@ const ItemCardSmall: FC<PropsType> = ({
 		<>
 			<Image
 				className='duration-300 mb-4 border-4'
-				src={`https://image.tmdb.org/t/p/w440_and_h660_face${itemCover}`}
+				src={imageFullSrc}
 				defaultImage={
-					collectionType !== 'person'
+					collectionType !== UserCollections.person
 						? defaultMovieImage
 						: defaultUserImage
 				}

@@ -1,5 +1,4 @@
 import { NextPageContext } from 'next'
-import { userFriendsListener, userInfoListener } from '@/firebase/config'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Loader from '@/components/Loader'
@@ -28,6 +27,8 @@ import { showErrorNotification } from '@/handlers/handleModals'
 import { useModal } from '@/context/ModalProvider'
 import { IFullUserInfo, IGeneralCollection } from '../../../interfaces'
 import ErrorScreen from '@/app/components/UI/Error/ErrorScreen'
+import { userFriendsListener } from '@/firebase/handlers/friendHandlers/userFriendsListener'
+import { userProfileInfoListener } from '@/firebase/handlers/profileHandlers/userProfileInfoListener'
 
 const UserProfilePage = ({
 	profilePageProps,
@@ -77,7 +78,7 @@ const UserProfilePage = ({
 			getUserProfilePageData(userIdFromUrl)
 				.then(data => {
 					setProfile(data.info)
-					setFriends(data.friends)
+					setFriends(data.friends as IFullUserInfo[])
 					setGeneralCollection(data.collection)
 				})
 				.catch(() => {
@@ -92,27 +93,31 @@ const UserProfilePage = ({
 			fetchUserProfilePageData()
 		} else {
 			setProfile(profilePageProps.info)
-			setFriends(profilePageProps.friends)
+			setFriends(profilePageProps.friends as IFullUserInfo[])
 			setGeneralCollection(profilePageProps.collection)
 		}
 	}, [profilePageProps, router.query.id])
 
 	useEffect(() => {
 		if (isCurrentUserProfile) {
-			const unsubscribe = userInfoListener(userId, setProfile)
+			const unsubscribeUserProfileInfoChanged = userProfileInfoListener(
+				userId,
+				setProfile
+			)
 
 			return () => {
-				unsubscribe()
+				unsubscribeUserProfileInfoChanged()
 			}
 		}
 	}, [isCurrentUserProfile])
 
 	useEffect(() => {
 		if (profile) {
+			const friendListState = { oldFriendList: friends, setFriends }
+
 			const unsubscribeFriends = userFriendsListener(
 				profile.id,
-				friends,
-				setFriends
+				friendListState
 			)
 
 			return () => {
@@ -132,15 +137,15 @@ const UserProfilePage = ({
 	return (
 		<>
 			<TopBanner imageSrc={PROFILE_PAGE_TOP_BANNER_IMAGE} />
-			<div className='flex justify-start items-start gap-14'>
-				<div className='mb-16 relative'>
+			<div className='flex justify-start items-start gap-14 flex-wrap md:flex-nowrap'>
+				<div className='mb-0 mt-24 md:mb-16 md:mt-0 relative mx-auto'>
 					<ProfileIcon
 						photoURL={profile.photoURL}
 						isCurrentUserProfile={isCurrentUserProfile}
 					/>
 					{!isCurrentUserProfile && (
 						<CollectionButton
-							className='w-full'
+							className='md:w-full'
 							isLoadingCollection={isLoadingFriends}
 							isCollectionItem={isFriend}
 							onClick={
@@ -205,6 +210,7 @@ const UserProfilePage = ({
 					marks={generalCollection?.collectionMarks ?? []}
 					reviews={generalCollection?.allCollectionReviews ?? []}
 					isCurrentUserCollection={isCurrentUserProfile}
+					collectionOwnerId={profile?.id}
 				/>
 			)}
 		</>

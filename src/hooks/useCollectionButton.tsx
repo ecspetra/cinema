@@ -1,9 +1,4 @@
 import { useState, useEffect } from 'react'
-import {
-	getCollectionItem,
-	removeCollectionItem,
-	setNewCollectionItem,
-} from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { useModal } from '@/context/ModalProvider'
 import {
@@ -14,6 +9,9 @@ import {
 } from '@/handlers/handleModals'
 import { IItemCard } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { removeCollectionItem } from '@/firebase/handlers/userCollectionHandlers/removeCollectionItem'
+import { checkIfItemExistsInCollection } from '@/firebase/handlers/userCollectionHandlers/checkIfItemExistsInCollection'
+import { createNewCollectionItem } from '@/firebase/handlers/userCollectionHandlers/createNewCollectionItem'
 
 export const useCollectionButton = (
 	itemInfo: IItemCard,
@@ -33,28 +31,25 @@ export const useCollectionButton = (
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
 
-			setNewCollectionItem(itemInfo.id, collectionType)
-				.then(() => {
-					getCollectionItem(itemInfo.id, collectionType)
-						.then(data => {
-							setIsCollectionItem(data)
-							setIsLoadingCollection(false)
-							showSuccessNotification(
-								showModal,
-								'The item was successfully added'
-							)
-						})
-						.catch(() => {
-							setIsLoadingCollection(false)
-							showErrorNotification(
-								showModal,
-								'An error has occurred'
-							)
-						})
-				})
-				.catch(() => {
-					setIsLoadingCollection(false)
-				})
+			createNewCollectionItem(itemInfo.id, collectionType).then(() => {
+				checkIfItemExistsInCollection(itemInfo.id, collectionType)
+					.then(data => {
+						setIsCollectionItem(data)
+						showSuccessNotification(
+							showModal,
+							'The item was successfully added'
+						)
+					})
+					.catch(() => {
+						showErrorNotification(
+							showModal,
+							'An error has occurred'
+						)
+					})
+					.finally(() => {
+						setIsLoadingCollection(false)
+					})
+			})
 		} else openLoginModal(showModal)
 	}
 
@@ -67,17 +62,16 @@ export const useCollectionButton = (
 			removeCollectionItem(itemInfo.id, collectionType)
 				.then(() => {
 					setIsCollectionItem(false)
-					setIsLoadingCollection(false)
-				})
-				.then(() => {
 					showSuccessNotification(
 						showModal,
 						'The item was successfully removed'
 					)
 				})
 				.catch(() => {
-					setIsLoadingCollection(false)
 					showErrorNotification(showModal, 'An error has occurred')
+				})
+				.finally(() => {
+					setIsLoadingCollection(false)
 				})
 		}, 500)
 	}
@@ -95,17 +89,16 @@ export const useCollectionButton = (
 	useEffect(() => {
 		if (isLoggedIn) {
 			setIsLoadingCollection(true)
-			getCollectionItem(itemInfo.id, collectionType)
+			checkIfItemExistsInCollection(itemInfo.id, collectionType)
 				.then(data => {
 					setIsCollectionItem(data)
+				})
+				.finally(() => {
 					setIsLoadingCollection(false)
 					setIsMounted(true)
 				})
-				.catch(() => {
-					setIsLoadingCollection(false)
-				})
 		} else setIsLoadingCollection(false)
-	}, [isLoggedIn])
+	}, [isLoggedIn, itemInfo])
 
 	return {
 		isMounted,

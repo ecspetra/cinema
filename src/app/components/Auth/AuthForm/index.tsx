@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDoorOpen, faUserPlus } from '@fortawesome/free-solid-svg-icons'

@@ -15,6 +15,7 @@ export const getPersonPageData = async (
 	info: IPersonInfo
 	images: IBackdrop[]
 	movies: IFetchedResult<IItemCard>
+	tvShows: IFetchedResult<IItemCard>
 }> => {
 	const getPersonData = async (fetchQuery: string) => {
 		try {
@@ -31,11 +32,24 @@ export const getPersonPageData = async (
 
 	try {
 		const urlToFetchMoviesWithCurrentPerson =
-			URL_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', personId)
+			URL_TO_FETCH_MOVIES_WITH_PERSONS.replace(
+				'{type}',
+				UserCollections.movie
+			).replace('{personId}', personId)
+		const urlToFetchTVShowsWithCurrentPerson =
+			URL_TO_FETCH_MOVIES_WITH_PERSONS.replace(
+				'{type}',
+				UserCollections.tv
+			).replace('{personId}', personId)
+
 		const personInfo = await getPersonData('')
 		const personImages = await getPersonData('/images')
 		const moviesWithPerson = await getResultsByPage(
 			urlToFetchMoviesWithCurrentPerson,
+			1
+		)
+		const tvShowsWithPerson = await getResultsByPage(
+			urlToFetchTVShowsWithCurrentPerson,
 			1
 		)
 
@@ -43,6 +57,7 @@ export const getPersonPageData = async (
 			info: personInfo,
 			images: personImages.profiles,
 			movies: moviesWithPerson,
+			tvShows: tvShowsWithPerson,
 		}
 	} catch (error) {
 		throw error

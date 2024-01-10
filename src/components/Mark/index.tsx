@@ -1,145 +1,25 @@
-import React, { FC, useEffect, useState } from 'react'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { useAuth } from '@/context/AuthProvider'
 import Button from '../../app/components/UI/Button/index'
-import {
-	removeMarkForMovie,
-	getMarkForMovie,
-	setNewMarkForMovie,
-} from '@/firebase/config'
-import { useModal } from '@/context/ModalProvider'
-import { openLoginModal } from '@/handlers/handleModals'
 import Loader from '@/components/Loader'
-import { IMark, IMarkFromDB } from '../../../interfaces'
+import { UserCollections } from '@/constants/enum'
+import useMarkIcons from '@/components/Mark/hooks/useMarkIcons'
+import { useAuth } from '@/context/AuthProvider'
 
 type PropsType = {
-	itemId: number
-	collectionType: string
+	markedItemId: number
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
-const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
-	const [markIcons, setMarkIcons] = useState<JSX.Element[]>([])
-	const [isLoadingMark, setIsLoadingMark] = useState<boolean>(false)
-	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
-	const { userId, isLoggedIn } = useAuth()
-	const { showModal } = useModal()
-	const isShowRemoveMarkButton = markData && userId
-	const MAX_MARK = 10
-	const EMPTY_MARK_COLOR = 'text-rose-900'
-	const FILLED_MARK_COLOR = 'text-rose-500'
-
-	const handleSetNewMark = (mark: number) => {
-		if (isLoggedIn) {
-			setIsLoadingMark(true)
-			const itemData: IMark = {
-				id: itemId,
-				mark: mark,
-				type: collectionType,
-			}
-			setNewMarkForMovie(itemData, userId)
-				.then(() => {
-					getMarkForMovie(itemId, userId, collectionType)
-						.then(data => {
-							setMarkData(data)
-							setIsLoadingMark(false)
-						})
-						.catch(() => {
-							setIsLoadingMark(false)
-						})
-				})
-				.catch(() => {
-					setIsLoadingMark(false)
-				})
-		} else openLoginModal(showModal)
-	}
-
-	const createStarButton = (idx: number, className: string) => {
-		return (
-			<Button
-				context='image'
-				key={idx}
-				className={className}
-				onClick={() => handleSetNewMark(idx)}
-				onMouseEnter={() => handleIconsHover(idx)}
-				onMouseLeave={getEmptyMarkIcons}
-			>
-				<FontAwesomeIcon icon={faStar} />
-			</Button>
-		)
-	}
-
-	const createStarIcon = (idx: number, className: string) => {
-		return <FontAwesomeIcon key={idx} icon={faStar} className={className} />
-	}
-
-	const handleIconsHover = (iconIdx: number) => {
-		let hoveredIcons = []
-
-		for (let i = 1; i <= MAX_MARK; i++) {
-			hoveredIcons.push(
-				createStarButton(
-					i,
-					i <= iconIdx ? FILLED_MARK_COLOR : EMPTY_MARK_COLOR
-				)
-			)
-		}
-
-		setMarkIcons(hoveredIcons)
-	}
-
-	const getMarkIcons = () => {
-		setMarkIcons([])
-
-		for (let i = 1; i <= MAX_MARK; i++) {
-			setMarkIcons(prevState => [
-				...prevState,
-				createStarIcon(
-					i,
-					i <= markData.data.mark
-						? FILLED_MARK_COLOR
-						: EMPTY_MARK_COLOR
-				),
-			])
-		}
-	}
-
-	const getEmptyMarkIcons = () => {
-		setMarkIcons([])
-		setMarkIcons(
-			Array.from({ length: MAX_MARK }, (_, idx) =>
-				createStarButton(idx + 1, EMPTY_MARK_COLOR)
-			)
-		)
-	}
-
-	const handleRemoveMyMark = (markKey: string, userId: string) => {
-		setIsLoadingMark(true)
-		removeMarkForMovie(markKey, userId, collectionType)
-			.then(() => {
-				setMarkData(null)
-				getEmptyMarkIcons()
-				setIsLoadingMark(false)
-			})
-			.catch(() => {
-				setIsLoadingMark(false)
-			})
-	}
-
-	useEffect(() => {
-		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, collectionType).then(data => {
-				setMarkData(data)
-			})
-		} else getEmptyMarkIcons()
-	}, [userId, itemId])
-
-	useEffect(() => {
-		if (markData) {
-			getMarkIcons()
-		} else getEmptyMarkIcons()
-	}, [markData])
+const Mark: FC<PropsType> = ({ markedItemId, collectionType }) => {
+	const { userId } = useAuth()
+	const {
+		mark,
+		markIcons,
+		isLoadingMark,
+		isShowRemoveMarkButton,
+		removeMark,
+	} = useMarkIcons(markedItemId, collectionType)
 
 	return (
 		<div className='mb-4 relative'>
@@ -157,17 +37,9 @@ const Mark: FC<PropsType> = ({ itemId, collectionType }) => {
 						{isShowRemoveMarkButton && (
 							<>
 								<p className='text-sm font-semibold leading-none mr-2'>
-									{markData.data.mark}
+									{mark}
 								</p>
-								<Button
-									onClick={() =>
-										handleRemoveMyMark(
-											markData?.key,
-											userId
-										)
-									}
-									context='text'
-								>
+								<Button onClick={removeMark} context='text'>
 									Remove my mark
 								</Button>
 							</>

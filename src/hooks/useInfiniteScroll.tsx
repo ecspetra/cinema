@@ -21,9 +21,8 @@ export const useInfiniteScroll = (
 			.then(data => {
 				setItems(prevState => [...prevState, ...data.items])
 				setIsMoreItemsAvailable(data.isMoreDataAvailable)
-				setIsLoading(false)
 			})
-			.catch(() => {
+			.finally(() => {
 				setIsLoading(false)
 			})
 	}

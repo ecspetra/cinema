@@ -1,4 +1,4 @@
-import { ChangeEventHandler, KeyboardEvent, FC, useState } from 'react'
+import { ChangeEventHandler, FC, useState } from 'react'
 import classNames from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
@@ -15,6 +15,7 @@ type PropsType = {
 	type?: 'image' | 'password' | 'text'
 	placeholder?: string
 	className?: string
+	additionalInputClassName?: string
 	icon?: IconProp
 	required?: boolean
 }
@@ -28,13 +29,14 @@ const InputField: FC<PropsType> = ({
 	type = 'text',
 	placeholder = 'Enter your text...',
 	className,
+	additionalInputClassName,
 	icon,
 	required,
 }) => {
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
 	const isPasswordInput = type === 'password'
 	const inputClassName =
-		'w-full h-full bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
+		'truncate w-full h-full bg-transparent autofill:shadow-[inset_0_0_0px_1000px_#000000/0] autofill:caret-white outline-none block'
 
 	return (
 		<div className='w-full h-full'>
@@ -50,7 +52,12 @@ const InputField: FC<PropsType> = ({
 					{`${label}${required ? ' *' : ''}`}
 				</span>
 				<span className='flex justify-between items-center'>
-					<span className='w-full flex justify-start items-center'>
+					<span
+						className={classNames(
+							'w-full flex justify-start items-center',
+							additionalInputClassName
+						)}
+					>
 						{icon && (
 							<FontAwesomeIcon
 								className='text-sm mr-2'
@@ -58,7 +65,11 @@ const InputField: FC<PropsType> = ({
 							/>
 						)}
 						{isPasswordInput ? (
-							<span className='w-full flex justify-between items-center'>
+							<span
+								className={
+									'w-full flex justify-between items-center'
+								}
+							>
 								<input
 									value={value}
 									onChange={onChange}
@@ -70,7 +81,7 @@ const InputField: FC<PropsType> = ({
 									className={inputClassName}
 								/>
 								<Button
-									className='w-auto h-auto hover:bg-transparent'
+									className='!w-auto !h-auto hover:bg-transparent'
 									context='icon'
 									onClick={() =>
 										setIsPasswordVisible(!isPasswordVisible)

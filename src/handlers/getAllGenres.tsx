@@ -1,7 +1,8 @@
 import { URL_TO_FETCH_ALL_GENRES } from '@/constants/linksToFetch'
 import { ITag } from '../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
-type GenresType = 'movie' | 'tv' | 'all'
+type GenresType = UserCollections.movie | UserCollections.tv | 'all'
 
 export const getAllGenres = async (type: GenresType) => {
 	let genres
@@ -15,14 +16,14 @@ export const getAllGenres = async (type: GenresType) => {
 
 	switch (type) {
 		case 'movie':
-			genres = await getGenres('movie')
+			genres = await getGenres(UserCollections.movie)
 			return genres
 		case 'tv':
-			genres = await getGenres('tv')
+			genres = await getGenres(UserCollections.tv)
 			return genres
 		case 'all':
-			const movieGenres = await getGenres('movie')
-			const tvGenres = await getGenres('tv')
+			const movieGenres = await getGenres(UserCollections.movie)
+			const tvGenres = await getGenres(UserCollections.tv)
 			const mergedGenres = [
 				...movieGenres,
 				...tvGenres.filter(

@@ -1,7 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { auth, AuthContextType, userContextListener } from '@/firebase/config'
+import {
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+	ReactNode,
+} from 'react'
+import { auth, AuthContextType } from '@/firebase/config'
 import { onAuthStateChanged, reload, User } from 'firebase/auth'
 import { removeCookie, setCookie } from '@/handlers/handleCookies'
+import { userContextListener } from '@/firebase/handlers/authHandlers/userContextListener'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -13,9 +20,9 @@ export const useAuth = () => {
 	return context
 }
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
-	const [isLoading, setIsLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	const updateUserProfile = async () => {
 		if (currentUser) {
@@ -45,19 +52,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		})
 
 		if (currentUser) {
-			const prevData = {
-				id: currentUser?.uid,
-				photoURL: currentUser?.photoURL,
-				userName: currentUser?.displayName,
+			const oldUserProfileData = {
+				userId: currentUser?.uid,
+				photoURL: currentUser?.photoURL ?? '',
+				userName: currentUser?.displayName ?? '',
 			}
 
-			const unsubscribeUserInfo = userContextListener(
-				currentUser?.uid,
-				prevData,
+			const unsubscribeUserProfile = userContextListener(
+				oldUserProfileData,
 				updateUserProfile
 			)
 
-			return unsubscribeUserInfo
+			return unsubscribeUserProfile
 		}
 
 		return unsubscribe
@@ -65,9 +71,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const value: AuthContextType = {
 		isLoggedIn: currentUser !== null,
-		userId: currentUser?.uid,
-		photoURL: currentUser?.photoURL,
-		userName: currentUser?.displayName,
+		userId: currentUser?.uid ?? '',
+		photoURL: currentUser?.photoURL ?? '',
+		userName: currentUser?.displayName ?? '',
 		updateUserProfile,
 	}
 

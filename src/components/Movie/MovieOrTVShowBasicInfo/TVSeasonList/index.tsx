@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { ITVSeasonCard } from '../../../../../interfaces'
 import TVSeasonCard from './TVSeasonCard'
 import Title from '@/app/components/UI/Title/Title'
@@ -7,7 +7,7 @@ import Button from '@/app/components/UI/Button'
 import EmptyList from '@/components/List/EmptyList'
 
 type PropsType = {
-	seasonsList: Array<ITVSeasonCard>
+	seasonsList: ITVSeasonCard[]
 }
 
 const TVSeasonsList: FC<PropsType> = ({ seasonsList }) => {
@@ -28,7 +28,7 @@ const TVSeasonsList: FC<PropsType> = ({ seasonsList }) => {
 			<Title>Seasons</Title>
 			<div>
 				{itemsToShow.map((item, idx) => (
-					<TVSeasonCard key={item.id} season={item} />
+					<TVSeasonCard key={idx} season={item as ITVSeasonCard} />
 				))}
 			</div>
 			{isShowMoreButton && (

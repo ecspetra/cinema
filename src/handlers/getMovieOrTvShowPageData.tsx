@@ -1,14 +1,14 @@
 import { URL_TO_FETCH_SIMILAR_LIST } from '@/constants/linksToFetch'
-import { getReviewListFromStorage } from '@/firebase/config'
 import { fetchItemData } from '@/handlers/fetchItemData'
 import { getResultsByPage } from '@/handlers/getResultsByPage'
 import { UserCollections } from '@/constants/enum'
-import { IMovieOrTVShowData, IItemCard } from '../../interfaces'
+import { IItemCard, IMovieOrTVShowData } from '../../interfaces'
 import { createItemCard } from '@/handlers/createItemCard'
+import { getMovieOrTVShowReviewListFromStorage } from '@/firebase/handlers/reviewAndReplyHandlers/getMovieOrTVShowReviewListFromStorage'
 
 export const getMovieOrTvShowPageData = async (
 	itemId: string,
-	collectionType: UserCollections
+	collectionType: UserCollections.movie | UserCollections.tv
 ): Promise<IMovieOrTVShowData> => {
 	try {
 		const urlToFetchSimilarMovies = URL_TO_FETCH_SIMILAR_LIST.replace(
@@ -17,10 +17,12 @@ export const getMovieOrTvShowPageData = async (
 		).replace('{collectionType}', collectionType)
 
 		const fetchReviewListFromStorage = async () => {
-			const reviewListFromStorage = await getReviewListFromStorage(
-				itemId,
-				UserCollections.reviews
-			)
+			const reviewListFromStorage =
+				await getMovieOrTVShowReviewListFromStorage(
+					itemId,
+					UserCollections.reviews,
+					collectionType
+				)
 			return reviewListFromStorage
 		}
 

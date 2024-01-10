@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import defaultUserImage from '@/app/assets/images/default-user-image.svg'
 import Link from 'next/link'
@@ -11,10 +11,12 @@ import MarkSmall from '@/components/Mark/MarkSmall'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import { IItemCard } from '../../../../../../interfaces'
+import { CARD_IMAGE_SRC } from '@/constants/images'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	item: IItemCard
-	collectionType: string
+	collectionType: UserCollections.movie | UserCollections.tv
 	isShowButton?: boolean
 	isCollectionListItem?: boolean
 	isShowRole?: boolean
@@ -46,12 +48,24 @@ const ItemCard: FC<PropsType> = ({
 		isCollectionItem,
 		handleSetCollectionItem,
 		openConfirmationPopup,
-	} = useCollectionButton(item, media_type ?? collectionType)
+	} = useCollectionButton(
+		item,
+		((media_type as
+			| UserCollections.movie
+			| UserCollections.tv
+			| UserCollections.person) ||
+			collectionType) ??
+			collectionType
+	)
 
-	const isShowTags = genres?.length > 0
+	const isShowTags = genres && genres.length > 0
 	const cardType = media_type ?? collectionType
-	const isShowMark = cardType === 'movie' || cardType === 'tv'
-	const cardCover = poster_path ?? profile_path
+	const isShowMark =
+		cardType === UserCollections.movie || cardType === UserCollections.tv
+	const cardCoverSrc = poster_path ?? profile_path
+	const cardCoverFullSrc = cardCoverSrc
+		? CARD_IMAGE_SRC.replace('{imageSrc}', cardCoverSrc)
+		: ''
 	const cardTitle = title ?? name
 
 	const itemCard = (
@@ -63,16 +77,16 @@ const ItemCard: FC<PropsType> = ({
 			>
 				{isShowMark && (
 					<MarkSmall
-						itemId={id}
+						markedItemId={id}
 						collectionType={collectionType}
 						className='absolute -right-3 -top-3'
 					/>
 				)}
 				<Image
 					className='duration-300 mb-4 group-hover:border-rose-600 border-4'
-					src={`https://image.tmdb.org/t/p/w440_and_h660_face${cardCover}`}
+					src={cardCoverFullSrc}
 					defaultImage={
-						cardType !== 'person'
+						cardType !== UserCollections.person
 							? defaultMovieImage
 							: defaultUserImage
 					}
@@ -100,7 +114,7 @@ const ItemCard: FC<PropsType> = ({
 			)}
 			{isShowButton && (
 				<CollectionButton
-					className='mt-auto w-full'
+					className='mt-auto w-full md:w-full'
 					isLoadingCollection={isLoadingCollection}
 					isCollectionItem={isCollectionItem}
 					onClick={

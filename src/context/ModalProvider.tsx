@@ -1,4 +1,4 @@
-import React, {
+import {
 	createContext,
 	useContext,
 	useState,
@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 type ModalContextType = {
 	showModal: (content: IModalContent) => void
 	hideModal: (modalId: string) => void
-	currentModal: IModalContent
+	currentModal: IModalContent | null
 	isMounted: boolean
 }
 
@@ -30,9 +30,9 @@ type ModalProviderProps = {
 }
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {
-	const [modalQueue, setModalQueue] = useState<ModalContextType[]>([])
+	const [modalQueue, setModalQueue] = useState<IModalContent[]>([])
 	const [currentModal, setCurrentModal] = useState<IModalContent | null>(null)
-	const [isMounted, setIsMounted] = useState(false)
+	const [isMounted, setIsMounted] = useState<boolean>(false)
 	const router = useRouter()
 
 	const showModal = (modalData: IModalContent) => {

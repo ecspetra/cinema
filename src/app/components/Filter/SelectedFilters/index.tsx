@@ -1,13 +1,15 @@
 import Tag from '@/components/Tag'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
+import { IItemCountry, ITag } from '../../../../../interfaces'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
-	formData: object
-	onRemove: () => void
+	formData: FilterFormData
+	onRemove: (tag: ITag) => void
 	onReset: () => void
-	countryList: Array<any>
+	countryList: IItemCountry[]
 }
 
 const SelectedFilters: FC<PropsType> = ({
@@ -28,7 +30,7 @@ const SelectedFilters: FC<PropsType> = ({
 					Reset
 				</Button>
 			</div>
-			<div className='flex justify-start items-start'>
+			<div className='flex flex-wrap justify-start items-start'>
 				{Object.keys(formData).map((field, idx) => {
 					switch (field) {
 						case 'primary_release_year':
@@ -38,7 +40,7 @@ const SelectedFilters: FC<PropsType> = ({
 								<Tag
 									key={field}
 									tag={{
-										name: formData[field],
+										name: formData[field] ?? '',
 										field: field,
 									}}
 									isEdit
@@ -49,7 +51,7 @@ const SelectedFilters: FC<PropsType> = ({
 						case 'with_companies':
 						case 'with_keywords':
 						case 'with_genres':
-							return formData[field].map(item => {
+							return (formData[field] ?? []).map(item => {
 								return (
 									<Tag
 										key={item.name}
@@ -67,7 +69,7 @@ const SelectedFilters: FC<PropsType> = ({
 								item =>
 									item.iso_3166_1.toLowerCase() ===
 									formData[field]
-							)
+							) as IItemCountry
 							const countryName = country.english_name
 							return (
 								<Tag

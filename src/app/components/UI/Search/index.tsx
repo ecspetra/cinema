@@ -1,129 +1,66 @@
-import {
-	FC,
-	Dispatch,
-	SetStateAction,
-	useEffect,
-	useRef,
-	useState,
-	FormEvent,
-} from 'react'
+import { FC, Dispatch, SetStateAction } from 'react'
 import { faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InputField from '@/app/components/UI/Input/InputField'
-import { getResultsByPage } from '@/handlers/getResultsByPage'
 import SearchList from '@/app/components/UI/Search/SearchList'
-import { useClickOutsideContainer } from '@/hooks/useClickOutsideContainer'
 import Button from '@/app/components/UI/Button'
-import { ERROR_MESSAGES } from '@/constants/errorMessages'
 import Error from '@/app/components/UI/Error'
 import Loader from '@/components/Loader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FilterFormData } from '@/hooks/useFilterReducer'
+import { UserCollections } from '@/constants/enum'
+import useSearchLogic from '@/handlers/useSearchLogic'
 
 type PropsType = {
 	name: string
-	collectionType: string
 	label: string
 	urlToFetch: string
-	defaultUrlToFetch: string
-	onSearch: Dispatch<SetStateAction<string>>
+	onSearch:
+		| Dispatch<SetStateAction<string>>
+		| ((
+				field: keyof FilterFormData,
+				value: { id: number; name: string }
+		  ) => void)
+	collectionType?:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.basic
+	defaultUrlToFetch?: string
 	isSearchApplied?: boolean
 	isSearchFieldWrapped?: boolean
 }
 
 const Search: FC<PropsType> = ({
 	name,
-	collectionType,
 	label,
 	urlToFetch,
-	defaultUrlToFetch,
 	onSearch,
+	collectionType,
+	defaultUrlToFetch,
 	isSearchApplied = false,
 	isSearchFieldWrapped = false,
 }) => {
-	const containerRef = useRef<HTMLDivElement | null>(null)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isTouched, setIsTouched] = useState<boolean>(false)
-	const [isSearchQueryUpdate, setIsSearchQueryUpdate] =
-		useState<boolean>(false)
-	const [searchQuery, setSearchQuery] = useState<string>('')
-	const [results, setResults] = useState([])
-	const [error, setError] = useState<string>('')
-	const [isMoreDataAvailable, setIsMoreDataAvailable] =
-		useState<boolean>(false)
-	const { isOpen, onOpenContainer, onCloseContainer } =
-		useClickOutsideContainer(containerRef, searchQuery.length > 0)
-	const urlToFetchWithSearchQuery = urlToFetch.replace(
-		'{searchQuery}',
-		searchQuery
-	)
-	const isShowClearButton = searchQuery.length > 0 || isSearchApplied
-
-	const handleInputChange = event => {
-		setSearchQuery(event.target.value)
-
-		if (!isTouched) setIsTouched(true)
-	}
-
-	const cancelSearch = () => {
-		resetSearch()
-		onSearch(defaultUrlToFetch)
-	}
-
-	const resetSearch = () => {
-		onCloseContainer()
-		setResults([])
-		setSearchQuery('')
-	}
-
-	const handleSearch = async (event: FormEvent) => {
-		event.preventDefault()
-
-		const isFormValid = searchQuery.length > 0
-
-		if (isFormValid && isTouched) {
-			onSearch(urlToFetchWithSearchQuery)
-			resetSearch()
-		} else {
-			setError(ERROR_MESSAGES.REQUIRED_FIELD)
-			setIsLoading(false)
-		}
-	}
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const abortController = new AbortController()
-			const signal = abortController.signal
-
-			setResults([])
-			setError('')
-			setIsSearchQueryUpdate(true)
-
-			try {
-				const data = await getResultsByPage(
-					urlToFetchWithSearchQuery,
-					1,
-					signal
-				)
-
-				setResults(data.items)
-				setIsMoreDataAvailable(data.isMoreDataAvailable)
-				setIsSearchQueryUpdate(false)
-			} catch (error) {
-				setError('Error fetching data.')
-			} finally {
-				abortController.abort()
-			}
-		}
-
-		if (searchQuery.length > 0) {
-			if (!isOpen) onOpenContainer()
-
-			const timeoutId = setTimeout(fetchData, 500)
-
-			return () => {
-				clearTimeout(timeoutId)
-			}
-		}
-	}, [searchQuery, urlToFetchWithSearchQuery])
+	const {
+		containerRef,
+		isLoading,
+		urlToFetchWithSearchQuery,
+		isShowClearButton,
+		isSearchQueryUpdate,
+		searchQuery,
+		results,
+		error,
+		isMoreDataAvailable,
+		isOpen,
+		handleInputChange,
+		cancelSearch,
+		resetSearch,
+		handleSearch,
+	} = useSearchLogic({
+		onSearch,
+		urlToFetch,
+		defaultUrlToFetch,
+		isSearchApplied,
+	})
 
 	const search = (
 		<div ref={containerRef} className='relative h-16'>
@@ -135,6 +72,7 @@ const Search: FC<PropsType> = ({
 					onChange={handleInputChange}
 					icon={faMagnifyingGlass}
 					placeholder='Search'
+					additionalInputClassName='max-w-[calc(100%-128px)]'
 				/>
 				{isSearchFieldWrapped && (
 					<div className='absolute inset-y-1/2 -translate-y-1/2 right-4 flex justify-end items-center gap-4'>

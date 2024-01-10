@@ -1,11 +1,5 @@
 import { CURRENT_USER_COLLECTION_PAGE } from '@/constants/paths'
-import {
-	IFetchedResult,
-	IGeneralCollection,
-	IItemCard,
-	IMark,
-	IReviewCard,
-} from '../../interfaces'
+import { IGeneralCollection } from '../../interfaces'
 import { getUserCollection } from '@/handlers/getUserCollection'
 
 export const getGeneralCollectionPage = async (

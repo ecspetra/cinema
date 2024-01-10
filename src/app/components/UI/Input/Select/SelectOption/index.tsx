@@ -5,28 +5,26 @@ import classNames from 'classnames'
 type PropsType = {
 	value: string
 	label: string
-	className?: string
-	onClick?: () => void
+	onClick?: (value: string, label: string) => void
 	closeList?: () => void
+	className?: string
 }
 
 const SelectOption: FC<PropsType> = ({
 	value,
 	label,
-	className,
 	onClick,
 	closeList,
+	className,
 }) => {
-	const handleClick = () => {
-		onClick(value, label)
-		if (closeList) {
-			closeList()
-		}
+	const onChooseSelectOption = () => {
+		onClick && onClick(value, label)
+		closeList && closeList()
 	}
 	return (
 		<Button
 			context='listItem'
-			onClick={handleClick}
+			onClick={onChooseSelectOption}
 			className={classNames('w-full z-10 text-left', className)}
 		>
 			{label}

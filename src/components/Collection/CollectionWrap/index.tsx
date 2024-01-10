@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Title from '@/app/components/UI/Title/Title'
-import { IMark, IItemCard, IReviewCard } from '../../../../interfaces'
+import { IItemCard, IMark, IReviewItemCard } from '../../../../interfaces'
 import EmptyList from '@/components/List/EmptyList'
 import ReviewList from '@/components/Review/ReviewList'
 import MarksCollectionWrap from '@/components/Collection/CollectionWrap/MarksCollectionWrap'
@@ -10,8 +10,9 @@ import { UserCollections } from '@/constants/enum'
 type PropsType = {
 	title: string
 	collectionType: UserCollections
-	items: Array<IItemCard> | IReviewCard[] | Array<IMark>
+	items: IItemCard[] | IReviewItemCard[] | IMark[]
 	isCurrentUserCollection: boolean
+	collectionOwnerId?: string
 }
 
 const CollectionWrap: FC<PropsType> = ({
@@ -19,26 +20,28 @@ const CollectionWrap: FC<PropsType> = ({
 	collectionType,
 	items,
 	isCurrentUserCollection,
+	collectionOwnerId,
 }) => {
+	const isShowTitle = collectionType !== UserCollections.reviews
 	const getItemsList = () => {
 		switch (collectionType) {
 			case 'reviews':
 				return (
 					<ReviewList
-						reviews={items}
-						isShowTitle={false}
+						reviews={items as IReviewItemCard[]}
 						className='!mb-0'
+						collectionOwnerId={collectionOwnerId}
 						isCollectionList
 					/>
 				)
 			case 'marks':
-				return <MarksCollectionWrap items={items} />
+				return <MarksCollectionWrap items={items as IMark[]} />
 			case 'movie':
 			case 'tv':
 			case 'person':
 				return (
 					<ItemsCollectionWrap
-						items={items}
+						items={items as IItemCard[]}
 						collectionType={collectionType}
 					/>
 				)
@@ -55,7 +58,6 @@ const CollectionWrap: FC<PropsType> = ({
 			case 'marks':
 				return `Please rate something before you can see it here`
 			case 'reviews':
-			case 'replies':
 				return `Please write a review before you can see it here`
 		}
 	}
@@ -76,7 +78,7 @@ const CollectionWrap: FC<PropsType> = ({
 
 	return (
 		<div className='my-16 first:mt-0 last:mb-0'>
-			<Title>{title}</Title>
+			{isShowTitle && <Title>{title}</Title>}
 			{getItemsList()}
 		</div>
 	)

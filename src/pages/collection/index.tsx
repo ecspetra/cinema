@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { NextPageContext } from 'next'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
@@ -8,7 +9,6 @@ import TopBanner from '@/components/TopBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '@/context/AuthProvider'
-import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { COLLECTION_PAGE_TOP_BANNER_IMAGE } from '@/constants/images'
 import GeneralUserCollection from '@/components/Collection'
@@ -53,14 +53,14 @@ const GeneralCollectionPage = ({
 				? setGeneralCollection(generalCollectionPageProps)
 				: getGeneralCollection()
 		}
-	}, [generalCollectionPageProps, userId])
+	}, [generalCollectionPageProps, router.query.uid])
 
 	if (!userId) {
 		return (
 			<>
 				<TopBanner imageSrc='/35z8hWuzfFUZQaYog8E9LsXW3iI.jpg' />
 				<div className='max-w-4xl'>
-					<Title className='text-7xl'>
+					<Title className='text-3xl md:text-7xl'>
 						Your favorite movies, TV shows and persons will be
 						displayed here
 						<FontAwesomeIcon
@@ -104,7 +104,7 @@ const GeneralCollectionPage = ({
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
 	const userIdFromUrl = ctx.query.uid as string
-	const cookies = parseCookies(ctx.req!)
+	const cookies = await parseCookies(ctx.req!)
 	const userId = cookies.uid
 
 	const generalCollection = await getGeneralCollectionPage(

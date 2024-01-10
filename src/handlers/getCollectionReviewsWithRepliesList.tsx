@@ -1,32 +1,41 @@
 import { fetchItemData } from '@/handlers/fetchItemData'
-import { IFetchedResult, IReviewCard } from '../../interfaces'
+import { IReviewItemCard } from '../../interfaces'
+import { UserCollections } from '@/constants/enum'
+import { getReviewFromAnotherUserCollection } from '@/firebase/handlers/reviewAndReplyHandlers/getReviewFromAnotherUserCollection'
 
 export const getCollectionReviewsWithRepliesList = (
-	collectionReplies: IFetchedResult<IReviewCard>
+	collectionOwnerId: string,
+	collectionReplies: IReviewItemCard[]
 ) => {
 	return new Promise(async resolve => {
-		let reviews: IReviewCard[]
+		let reviews: IReviewItemCard[]
 
-		const repliesArray: IReviewCard[] =
-			collectionReplies.items as IReviewCard[]
-
-		const filteredReplies = repliesArray.filter(
-			(item: IReviewCard) =>
-				item.movieId !== undefined && item.reviewId !== undefined
+		const filteredReplies = collectionReplies.filter(
+			item =>
+				item.reviewedItemId !== undefined && item.reviewId !== undefined
 		)
 
 		const addedReviewIds = new Set<string>()
 
-		const fetchMovieReviews = async (movieId: number, reviewId: string) => {
-			const result = await fetchItemData('movie', movieId, '/reviews')
+		const fetchMovieOrTVShowReviews = async (
+			reviewedItemId: number,
+			reviewId: string,
+			collectionType: UserCollections.movie | UserCollections.tv
+		) => {
+			const result = await fetchItemData(
+				collectionType,
+				reviewedItemId,
+				'/reviews'
+			)
 			const fetchedReview = result.results.find(
-				(item: IReviewCard) => item.id === reviewId
+				(item: IReviewItemCard) => item.id === reviewId
 			)
 
 			if (!addedReviewIds.has(reviewId) && fetchedReview) {
 				const review = {
 					...fetchedReview,
-					movieId: movieId,
+					reviewedItemId: reviewedItemId,
+					reviewedItemCollectionType: collectionType,
 				}
 
 				addedReviewIds.add(reviewId)
@@ -37,18 +46,68 @@ export const getCollectionReviewsWithRepliesList = (
 			return null
 		}
 
-		const fetchPromises = filteredReplies.map((item: IReviewCard) => {
-			if (item.movieId !== undefined && item.reviewId !== undefined) {
-				return fetchMovieReviews(item.movieId, item.reviewId)
+		const fetchMovieReviewPromises = filteredReplies.map(
+			(item: IReviewItemCard) => {
+				const isReviewFromDefaultReviews = !item.reviewAuthorId
+				const isReviewsOwnerReview =
+					item.reviewAuthorId === collectionOwnerId
+				const isMovieReview =
+					item.reviewedItemCollectionType === UserCollections.movie
+
+				if (isMovieReview && !isReviewsOwnerReview) {
+					return isReviewFromDefaultReviews
+						? fetchMovieOrTVShowReviews(
+								item.reviewedItemId!,
+								item.reviewId!,
+								UserCollections.movie
+						  )
+						: getReviewFromAnotherUserCollection(
+								item.reviewAuthorId!,
+								item.reviewId!,
+								UserCollections.movie
+						  )
+				}
 			}
-		})
-
-		const resolvedReviews = await Promise.all(fetchPromises)
-
-		reviews = resolvedReviews.filter(
-			(review: IReviewCard) => review !== null
 		)
 
-		resolve(reviews)
+		const fetchTVShowReviewPromises = filteredReplies.map(
+			(item: IReviewItemCard) => {
+				const isReviewFromDefaultReviews = !item.reviewAuthorId
+				const isReviewsOwnerReview =
+					item.reviewAuthorId === collectionOwnerId
+				const isTVShowReview =
+					item.reviewedItemCollectionType === UserCollections.tv
+
+				if (isTVShowReview && !isReviewsOwnerReview) {
+					return isReviewFromDefaultReviews
+						? fetchMovieOrTVShowReviews(
+								item.reviewedItemId!,
+								item.reviewId!,
+								UserCollections.tv
+						  )
+						: getReviewFromAnotherUserCollection(
+								item.reviewAuthorId!,
+								item.reviewId!,
+								UserCollections.tv
+						  )
+				}
+			}
+		)
+
+		const resolvedMovieReviews = await Promise.all(fetchMovieReviewPromises)
+		const resolvedTVShowReviews = await Promise.all(
+			fetchTVShowReviewPromises
+		)
+
+		const movieReviews = resolvedMovieReviews.filter(
+			(review: IReviewItemCard) => review !== null && review !== undefined
+		)
+		const tvShowReviews = resolvedTVShowReviews.filter(
+			(review: IReviewItemCard) => review !== null && review !== undefined
+		)
+
+		reviews = [...movieReviews, ...tvShowReviews]
+
+		resolve(reviews.filter(item => item !== undefined))
 	})
 }

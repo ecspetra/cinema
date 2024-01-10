@@ -1,16 +1,25 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import moment from 'moment/moment'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import Link from 'next/link'
+import { IItemCard } from '../../../../../../../interfaces'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	item: object
-	collectionType: string
+	item: IItemCard
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 }
 
 const SearchItemLink: FC<PropsType> = ({ item, collectionType }) => {
 	const { id, title, name, release_date, first_air_date, media_type } = item
-	const itemType = media_type ?? collectionType
+	const itemType: UserCollections =
+		(media_type as
+			| UserCollections.movie
+			| UserCollections.tv
+			| UserCollections.person) || collectionType
 
 	return (
 		<Link

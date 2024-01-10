@@ -19,8 +19,6 @@ const ReviewActionButton: FC<PropsType> = ({
 	counter,
 	isCurrentUserReaction,
 }) => {
-	const buttonIcon = action === 'like'
-
 	const iconClassNames = 'mr-1'
 
 	const getButtonIcon = () => {

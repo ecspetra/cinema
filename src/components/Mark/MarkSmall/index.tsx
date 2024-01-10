@@ -1,25 +1,31 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getMarkForMovie } from '@/firebase/config'
 import { useAuth } from '@/context/AuthProvider'
 import { IMarkFromDB } from '../../../../interfaces'
 import classNames from 'classnames'
+import { getMarkForMovieOrTVShow } from '@/firebase/handlers/markHandlers/getMarkForMovieOrTVShow'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
-	itemId: number
-	collectionType: string
+	markedItemId: number
+	collectionType: UserCollections.movie | UserCollections.tv
 	className: string
 }
 
-const MarkSmall: FC<PropsType> = ({ itemId, collectionType, className }) => {
+const MarkSmall: FC<PropsType> = ({
+	markedItemId,
+	collectionType,
+	className,
+}) => {
 	const [markData, setMarkData] = useState<IMarkFromDB | null>(null)
 	const { isLoggedIn, userId } = useAuth()
 
 	useEffect(() => {
 		if (isLoggedIn) {
-			getMarkForMovie(itemId, userId, collectionType).then(data => {
-				setMarkData(data)
+			const markConfig = { markedItemId, collectionType }
+			getMarkForMovieOrTVShow(userId, markConfig).then(data => {
+				if (data) setMarkData(data)
 			})
 		}
 	}, [])
@@ -34,7 +40,9 @@ const MarkSmall: FC<PropsType> = ({ itemId, collectionType, className }) => {
 			)}
 		>
 			<FontAwesomeIcon icon={faStar} />
-			<span className='ml-1 font-semibold'>{markData?.data.mark}</span>
+			<span className='ml-1 font-semibold'>
+				{markData?.data.markValue}
+			</span>
 		</div>
 	)
 }

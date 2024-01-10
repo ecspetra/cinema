@@ -1,10 +1,11 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Image from '../../../components/Images/Image'
 import defaultMovieImage from '@/app/assets/images/default-movie-image.svg'
 import {
 	IBackdrop,
+	IDetailsItem,
 	IMovieOrTVShowBasicInfo,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../../../interfaces'
 import ImagesList from '../../../components/Images/ImagesList'
 import Rating from '../../../components/Rating'
@@ -19,20 +20,22 @@ import ReactPlayer from 'react-player'
 import TVSeasonsList from '@/components/Movie/MovieOrTVShowBasicInfo/TVSeasonList'
 import TagList from '@/components/Tag/TagList'
 import DetailsList from '@/components/Details/DetailsList'
+import { UserCollections } from '@/constants/enum'
+import { CARD_IMAGE_SRC } from '@/constants/images'
 
 type PropsType = {
 	basicInfo: IMovieOrTVShowBasicInfo
-	movieImages: Array<IBackdrop>
-	movieReviews: IReviewCard[]
-	movieVideo: string
-	collectionType: string
+	images: IBackdrop[]
+	reviews: IReviewItemCard[]
+	video: string
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
 const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 	basicInfo,
-	movieImages,
-	movieReviews,
-	movieVideo,
+	images,
+	reviews,
+	video,
 	collectionType,
 }) => {
 	const { userId } = useAuth()
@@ -54,9 +57,9 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 		seasons,
 	} = basicInfo
 
-	const isTVShowItem = collectionType === 'tv'
+	const isTVShowItem = collectionType === UserCollections.tv
 
-	const details = [
+	const details: IDetailsItem[] = [
 		isTVShowItem
 			? first_air_date && {
 					type: 'first_air_date',
@@ -78,7 +81,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 			title: 'Production companies:',
 			text: production_companies,
 		},
-	]
+	].filter(Boolean) as IDetailsItem[]
 
 	const {
 		isLoadingCollection,
@@ -87,19 +90,23 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 		openConfirmationPopup,
 	} = useCollectionButton(basicInfo, collectionType)
 
+	const imageFullSrc = poster_path
+		? CARD_IMAGE_SRC.replace('{imageSrc}', poster_path)
+		: ''
+
 	return (
-		<div className='flex gap-7 py-7 mb-16'>
-			<div className='w-full max-w-[340px]'>
+		<div className='flex gap-7 py-7 mb-16 flex-wrap md:flex-nowrap'>
+			<div className='w-full max-w-[240px] md:max-w-[340px] mx-auto mt-24 md:mt-0'>
 				<div className='sticky top-28'>
 					<Image
-						src={`https://image.tmdb.org/t/p/w440_and_h660_face${poster_path}`}
+						src={imageFullSrc}
 						defaultImage={defaultMovieImage}
 						className='border-4'
 					/>
 				</div>
 			</div>
 			<div className='w-full'>
-				<Title className='text-7xl after:hidden pb-0'>
+				<Title className='text-3xl md:text-7xl after:hidden pb-0'>
 					{title ? title : name}
 				</Title>
 				{tagline && (
@@ -110,11 +117,7 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 				<TagList tags={genres} className='mb-5' />
 				<DetailsList itemsList={details} />
 				<Rating rating={vote_average} voteCount={vote_count} />
-				<Mark
-					itemId={id}
-					itemTitle={title ? title : name}
-					collectionType={collectionType}
-				/>
+				<Mark markedItemId={id} collectionType={collectionType} />
 				<p className='mb-6'>{overview}</p>
 				<CollectionButton
 					className='mb-12'
@@ -126,22 +129,29 @@ const MovieOrTVShowBasicInfo: FC<PropsType> = ({
 							: handleSetCollectionItem
 					}
 				/>
-				{isTVShowItem && <TVSeasonsList seasonsList={seasons} />}
-				<ImagesList images={movieImages} />
-				<ReviewList movieId={id} reviews={movieReviews} />
-				<NewReviewForm
-					movieId={id}
-					userId={userId}
-					isTVShow={isTVShowItem}
+				{isTVShowItem && <TVSeasonsList seasonsList={seasons || []} />}
+				<ImagesList images={images} />
+				<ReviewList
+					reviewedItemId={id}
+					collectionType={collectionType}
+					reviews={reviews}
 				/>
-				{movieVideo && (
+				<NewReviewForm
+					reviewedItemId={id}
+					userId={userId}
+					reviewedItemCollectionType={collectionType}
+				/>
+				{video && (
 					<div className='mt-16'>
 						<Title>Trailer</Title>
 						<ReactPlayer
-							url={`https://www.youtube.com/watch?v=${movieVideo}`}
+							url={`https://www.youtube.com/watch?v=${video}`}
 							controls={true}
 							width={'100%'}
-							style={{ minHeight: `500px` }}
+							height={'auto'}
+							style={{
+								aspectRatio: '16/9',
+							}}
 						/>
 					</div>
 				)}

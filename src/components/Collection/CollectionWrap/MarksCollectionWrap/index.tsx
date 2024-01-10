@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import Button from '@/app/components/UI/Button'
 import { IMark } from '../../../../../interfaces'
 import ItemCardSmall from '@/components/List/ItemsListWrap/ItemsList/ItemCard/ItemCardSmall'
 import useItemsToShow from '@/hooks/useItemsToShow'
 
 type PropsType = {
-	items: Array<IMark>
+	items: IMark[]
 }
 
 const MarksCollectionWrap: FC<PropsType> = ({ items }) => {
@@ -23,13 +23,13 @@ const MarksCollectionWrap: FC<PropsType> = ({ items }) => {
 				ref={listRef}
 				className='grid grid-cols-[repeat(auto-fill,141px)] gap-4 justify-center mb-8'
 			>
-				{itemsToShow.map((item, idx) => {
+				{(itemsToShow as IMark[]).map((item: IMark, idx) => {
 					return (
 						<ItemCardSmall
 							key={idx}
-							itemId={item.itemId}
-							mark={item.mark}
-							collectionType={item.type}
+							itemId={item.markedItemId}
+							mark={item.markValue}
+							collectionType={item.collectionType}
 							isLinkToMovie
 						/>
 					)

@@ -1,62 +1,38 @@
-import React, { FC, useEffect, useState } from 'react'
-import { IReviewCard } from '../../../../interfaces'
+import { FC } from 'react'
+import { IReviewItemCard } from '../../../../interfaces'
 import Button from '@/app/components/UI/Button'
-import { repliesListener } from '@/firebase/config'
 import ReplyCard from '@/components/Review/ReplyList/ReplyCard'
+import { UserCollections } from '@/constants/enum'
+import useReplyList from '@/components/Review/hooks/useReplyList'
 
 type PropsType = {
-	movieId: number
+	reviewedItemId: number
 	userId: string
 	reviewId: string
-	replies: IReviewCard[]
+	replies: IReviewItemCard[]
 	onReply: (userName: string) => void
+	collectionType: UserCollections.movie | UserCollections.tv
 	isCollectionList?: boolean
 }
 
 const ReplyList: FC<PropsType> = ({
-	movieId,
+	reviewedItemId,
 	userId,
 	reviewId,
 	replies,
 	onReply,
+	collectionType,
 	isCollectionList = false,
 }) => {
-	const initialItemsLength = 2
-	const [maxReviewsLength, setMaxReviewsLength] =
-		useState<number>(initialItemsLength)
-	const [itemsToShow, setItemsToShow] = useState<IReviewCard[]>([])
-	const isMoreDataAvailable = maxReviewsLength < itemsToShow.length
-	const isShowMoreButton = itemsToShow.length > initialItemsLength
-	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
+	const collectionInfo = { collectionType, reviewedItemId, reviewId }
 
-	const handleItemsToShowLength = () => {
-		const newMaxReviewsLength = isMoreDataAvailable
-			? Math.min(
-					maxReviewsLength + initialItemsLength,
-					itemsToShow.length
-			  )
-			: initialItemsLength
-		setMaxReviewsLength(newMaxReviewsLength)
-	}
-
-	useEffect(() => {
-		setItemsToShow(replies)
-	}, [replies])
-
-	useEffect(() => {
-		if (userId) {
-			const unsubscribe = repliesListener(
-				movieId,
-				reviewId,
-				replies,
-				setItemsToShow
-			)
-
-			return () => {
-				unsubscribe()
-			}
-		}
-	}, [replies, userId, movieId, reviewId])
+	const {
+		itemsToShow,
+		maxReviewsLength,
+		isShowMoreButton,
+		buttonText,
+		handleItemsToShowLength,
+	} = useReplyList(replies, collectionInfo, userId)
 
 	if (!itemsToShow.length) return null
 
@@ -67,9 +43,10 @@ const ReplyList: FC<PropsType> = ({
 					key={item.id}
 					reply={item}
 					userId={userId}
-					movieId={movieId}
+					reviewedItemId={reviewedItemId}
 					onReply={onReply}
 					isCollectionItem={isCollectionList}
+					collectionType={collectionType}
 				/>
 			))}
 			{isShowMoreButton && (

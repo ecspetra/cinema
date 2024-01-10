@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faCalendarCheck,
@@ -7,44 +7,15 @@ import {
 	faAt,
 	faUser,
 } from '@fortawesome/free-solid-svg-icons'
-import moment from 'moment/moment'
+import { getDetailsItemText } from '@/components/Details/handlers/getDetailsItemText'
+import { IDetailsItem, IDetailsItemText } from '../../../../../interfaces'
 
 type PropsType = {
-	type: string
-	title: string
-	text: string | Array<any>
+	item: IDetailsItem
 }
 
-const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
-	const emptyText = 'No info yet'
-
-	const getItemText = (text, type: string) => {
-		let itemText
-		const isTextValid = text && text.length > 0
-
-		switch (type) {
-			case 'date':
-				return (itemText = isTextValid
-					? moment(text).format('Do MMM YYYY')
-					: emptyText)
-			case 'array':
-				return (itemText =
-					isTextValid &&
-					text.map((item, idx) => {
-						return (
-							<span className='mr-1' key={item.name}>
-								{idx === text.length - 1
-									? item.name
-									: item.name + ','}
-							</span>
-						)
-					}))
-			default:
-				itemText = isTextValid ? text : emptyText
-		}
-
-		return itemText
-	}
+const DetailsItem: FC<PropsType> = ({ item }) => {
+	const { type, title, text } = item
 
 	const getDetailsItem = () => {
 		switch (type) {
@@ -56,8 +27,10 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 							className='mr-1.5'
 							icon={faCalendarCheck}
 						/>
-						<span className='mr-1.5 font-semibold'>{title}</span>
-						{getItemText(text, 'date')}
+						<span className='mr-1.5 font-semibold'>
+							{title as string}
+						</span>
+						{getDetailsItemText(text as string)}
 					</>
 				)
 			case 'production_countries':
@@ -72,8 +45,10 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 									: faFlag
 							}
 						/>
-						<span className='mr-1.5 font-semibold'>{title}</span>
-						{getItemText(text, 'array')}
+						<span className='mr-1.5 font-semibold'>
+							{title as string}
+						</span>
+						{getDetailsItemText(text as string, 'array')}
 					</>
 				)
 			case 'place_of_birth':
@@ -81,45 +56,59 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 				return (
 					<>
 						<FontAwesomeIcon className='mr-1.5' icon={faFlag} />
-						<span className='mr-1.5 font-semibold'>{title}</span>
-						{getItemText(text)}
+						<span className='mr-1.5 font-semibold'>
+							{title as string}
+						</span>
+						{getDetailsItemText(text as string, 'text')}
 					</>
 				)
 			case 'birthday':
-				return (
-					<>
-						<FontAwesomeIcon
-							className='mr-1.5'
-							icon={faCalendarCheck}
-						/>
-						<span className='mr-1.5 font-semibold'>
-							{title.birthday}
-						</span>
-						<span>
-							<span>{getItemText(text.birthday, 'date')}</span>
-							{text.deathday && (
-								<span>
-									{`— ${title.deathday}`}
-									{getItemText(text.deathday, 'date')}
-								</span>
+				if (typeof title !== 'string' && typeof text !== 'string') {
+					const birthdayText = getDetailsItemText(
+						(text as IDetailsItemText).birthday
+					)
+					const deathdayText =
+						(text as IDetailsItemText).deathday &&
+						getDetailsItemText((text as IDetailsItemText).deathday!)
+					return (
+						<>
+							<FontAwesomeIcon
+								className='mr-1.5'
+								icon={faCalendarCheck}
+							/>
+							<span className='mr-1.5 font-semibold'>
+								{title.birthday}
+							</span>
+							<span>{birthdayText as ReactNode}</span>
+							{(text as IDetailsItemText).deathday && (
+								<>
+									<span className='mr-1.5 font-semibold'>
+										&nbsp;{`— ${title.deathday} `}
+									</span>
+									<span>{deathdayText as ReactNode}</span>
+								</>
 							)}
-						</span>
-					</>
-				)
+						</>
+					)
+				}
 			case 'user_email':
 				return (
 					<>
 						<FontAwesomeIcon className='mr-1.5' icon={faAt} />
-						<span className='mr-1.5 font-semibold'>{title}</span>
-						{getItemText(text)}
+						<span className='mr-1.5 font-semibold'>
+							{title as string}
+						</span>
+						{getDetailsItemText(text as string, 'text')}
 					</>
 				)
 			case 'gender':
 				return (
 					<>
 						<FontAwesomeIcon className='mr-1.5' icon={faUser} />
-						<span className='mr-1.5 font-semibold'>{title}</span>
-						{getItemText(text)}
+						<span className='mr-1.5 font-semibold'>
+							{title as string}
+						</span>
+						{getDetailsItemText(text as string, 'text')}
 					</>
 				)
 			case 'user_date_of_birth':
@@ -129,8 +118,10 @@ const DetailsItem: FC<PropsType> = ({ type, title, text }) => {
 							className='mr-1.5'
 							icon={faCalendarCheck}
 						/>
-						<span className='mr-1.5 font-semibold'>{title}</span>
-						{getItemText(text, 'date')}
+						<span className='mr-1.5 font-semibold'>
+							{title as string}
+						</span>
+						{getDetailsItemText(text as string)}
 					</>
 				)
 		}

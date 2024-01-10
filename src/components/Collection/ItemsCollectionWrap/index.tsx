@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { IItemCard } from '../../../../interfaces'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
 import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
 
 type PropsType = {
-	items: Array<IItemCard>
+	items: IItemCard[]
 	collectionType: string
 }
 
@@ -32,7 +32,7 @@ const ItemsCollectionWrap: FC<PropsType> = ({ items, collectionType }) => {
 			<Link
 				href={`/collection/[type]?uid=${userId}&type=${collectionType}`}
 				as={`/collection/${collectionType}?uid=${userId}&type=${collectionType}`}
-				className='w-72 border-2 border-rose-600 duration-300 font-semibold leading-none text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center mx-auto mt-8'
+				className='w-full md:w-72 border-2 border-rose-600 duration-300 font-semibold leading-none text-rose-600 rounded-3xl hover:border-transparent hover:w-full hover:text-rose-500 p-3 flex justify-center items-center mx-auto mt-8'
 			>
 				{`View ${collectionType} collection`}
 			</Link>

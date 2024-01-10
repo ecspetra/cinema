@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Portal from '../Portal/index'
 import { useModal } from '@/context/ModalProvider'
 import Alert from '@/app/components/UI/Alert'
@@ -6,11 +6,11 @@ import { CSSTransition } from 'react-transition-group'
 import ModalContent from '@/app/components/UI/Modal/ModalContent'
 
 const Modal = () => {
-	const modalRef = useRef(null)
-	const timeoutRef = useRef(null)
+	const modalRef = useRef<HTMLDivElement>(null)
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 	const { hideModal, isMounted, currentModal } = useModal()
 
-	const { id, modalText, alertInfo } = currentModal || {}
+	const { id, modalText = '', alertInfo } = currentModal || {}
 
 	const handleClose = () => {
 		hideModal(id)
@@ -20,8 +20,11 @@ const Modal = () => {
 	}
 
 	useEffect(() => {
-		const handleClickOutside = event => {
-			if (modalRef.current && !modalRef.current.contains(event.target)) {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				modalRef.current &&
+				!modalRef.current.contains(event.target as Node)
+			) {
 				hideModal(id)
 			}
 		}
@@ -47,7 +50,7 @@ const Modal = () => {
 	if (!currentModal) return null
 
 	return (
-		<Portal wrapperId='modal-root' isAlert={alertInfo?.isAlert}>
+		<Portal wrapperId='modal-root' isAlert={alertInfo?.isAlert ?? false}>
 			<CSSTransition
 				in={isMounted}
 				timeout={300}

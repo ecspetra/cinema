@@ -49,7 +49,9 @@ const GeneralMovieListPage = ({
 	return (
 		<>
 			<TopBanner imageSrc={MOVIE_LIST_TOP_BANNER_IMAGE} />
-			<Title className='text-7xl after:hidden pb-0'>Movies</Title>
+			<Title className='text-3xl md:text-7xl after:hidden pb-0'>
+				Movies
+			</Title>
 			<Search
 				collectionType={UserCollections.movie}
 				name='movieSearch'

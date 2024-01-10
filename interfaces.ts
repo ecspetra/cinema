@@ -1,4 +1,5 @@
 import { UserCollections } from '@/constants/enum'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 export interface IFetchedResult<T> {
 	isMoreDataAvailable: boolean
@@ -6,8 +7,9 @@ export interface IFetchedResult<T> {
 }
 
 export interface ITag {
-	id: number
-	name: string
+	id?: number
+	name?: string
+	field?: keyof FilterFormData
 }
 
 export interface IBackdrop {
@@ -24,31 +26,44 @@ export interface IPersonImage {
 	file_path: string
 }
 
+export interface IDetailsTextArrayItemType {
+	name: string
+}
+
+export interface IDetailsItemText {
+	birthday: string
+	deathday?: string | null
+}
+
+export interface IDetailsItem {
+	type: string
+	title: string | IDetailsItemText
+	text: string | IDetailsItemText | IDetailsTextArrayItemType[]
+}
+
 export interface IMarkFromDB {
 	key: string
-	data: {
-		itemMark: IMark
-		userId: string
-	}
+	data: IMark
 }
 
 export interface IMark {
-	mark: number
-	itemId: number
-	type: UserCollections.movie | UserCollections.tv
+	markedItemId: number
+	markValue: number
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
-export interface IReviewCard {
+export interface IReviewItemCard {
 	id: string
 	content: string
 	created_at: string
 	author?: string
 	avatar_path?: string
-	movieId?: number
+	reviewedItemId?: number
 	authorId?: string
-	isTVShow?: boolean
-	replyTo?: string
+	replyToUser?: string
 	reviewId?: string
+	reviewAuthorId?: string
+	reviewedItemCollectionType?: UserCollections.movie | UserCollections.tv
 }
 
 export interface IItemCard {
@@ -61,8 +76,8 @@ export interface IItemCard {
 	first_air_date?: string
 	title?: string
 	name?: string
-	genres?: Array<ITag>
-	genre_ids?: Array<number>
+	genres?: ITag[]
+	genre_ids?: number[]
 	known_for_department?: string
 	character?: string
 	job?: string
@@ -72,7 +87,7 @@ export interface IUpcomingMovieItem {
 	id: number
 	release_date?: string
 	title?: string
-	genres?: Array<ITag>
+	genres?: ITag[]
 }
 
 export interface ITVSeasonCard {
@@ -89,9 +104,9 @@ export interface IMovieOrTVShowBasicInfo {
 	id: number
 	poster_path: string
 	tagline: string
-	genres: Array<ITag>
-	production_countries: Array<object>
-	production_companies: Array<object>
+	genres: ITag[]
+	production_countries: object[]
+	production_companies: object[]
 	overview: string
 	vote_average: number
 	vote_count: number
@@ -99,11 +114,11 @@ export interface IMovieOrTVShowBasicInfo {
 	first_air_date?: string
 	title?: string
 	name?: string
-	seasons?: Array<ITVSeasonCard>
+	seasons?: ITVSeasonCard[]
 }
 
 export interface IPersonInfo {
-	id: string
+	id: number
 	profile_path: string
 	known_for_department: string
 	name: string
@@ -126,12 +141,6 @@ export interface IModalContent {
 	} | null
 }
 
-export interface ICountry {
-	iso_3166_1: string
-	english_name: string
-	native_name: string
-}
-
 export interface IDefaultImage {
 	src: string
 }
@@ -140,7 +149,7 @@ export interface IGeneralCollection {
 	collectionMovies: IItemCard[]
 	collectionTVShows: IItemCard[]
 	collectionPersons: IItemCard[]
-	allCollectionReviews: IReviewCard[]
+	allCollectionReviews: IReviewItemCard[]
 	collectionMarks: IMark[]
 }
 
@@ -156,7 +165,7 @@ export interface IUser {
 }
 
 export interface IFullUserInfo {
-	friends: IFullUserInfo[]
+	friends: IFullUserInfo[] | { userId: string }[]
 	info: IUser
 	collection: IGeneralCollection | null
 }
@@ -166,6 +175,28 @@ export interface IMovieOrTVShowData {
 	credits: { cast: IItemCard[]; crew: IItemCard[] }
 	images: IBackdrop[]
 	video: IVideoData[]
-	reviewsFromAPIAndStorage: IReviewCard[]
+	reviewsFromAPIAndStorage: IReviewItemCard[]
 	similarItemsList: IFetchedResult<IItemCard>
+}
+
+export interface IItemCountry {
+	iso_3166_1: string
+	english_name: string
+	native_name: string
+}
+
+export interface IReviewAuthorInfo {
+	userId: string
+	photoURL: string
+	displayName: string
+}
+
+export interface IReaction {
+	key: string
+	data: string
+}
+
+export interface IAllReactions {
+	likes: IReaction[]
+	dislikes: IReaction[]
 }

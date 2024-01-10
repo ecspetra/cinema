@@ -1,17 +1,23 @@
-import React, { FC, useRef } from 'react'
+import { FC, useRef, Dispatch, SetStateAction } from 'react'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import Loader from '@/components/Loader'
 import SearchItemBasic from '@/app/components/UI/Search/SearchList/SearchItemBasic'
 import SearchItemLink from '@/app/components/UI/Search/SearchList/SearchItemLink'
 import { IItemCard } from '../../../../../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { FilterFormData } from '@/hooks/useFilterReducer'
 
 type PropsType = {
-	itemsList: Array<IItemCard>
+	itemsList: IItemCard[]
 	isMoreDataAvailable: boolean
 	isSearchQueryUpdate: boolean
 	urlToFetch: string
-	onSelectItem: () => void
+	onSelectItem:
+		| Dispatch<SetStateAction<string>>
+		| ((
+				field: keyof FilterFormData,
+				value: { id: number; name: string }
+		  ) => void)
 	onClose: () => void
 	name: string
 	collectionType?:
@@ -29,7 +35,7 @@ const SearchList: FC<PropsType> = ({
 	onSelectItem,
 	onClose,
 	name,
-	collectionType = 'basic',
+	collectionType = UserCollections.basic,
 }) => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const { isLoading, items } = useInfiniteScroll(
@@ -39,8 +45,16 @@ const SearchList: FC<PropsType> = ({
 		urlToFetch
 	)
 
-	const handleSelectBasicListItem = (fieldName, { id, name }) => {
-		onSelectItem(fieldName, { id, name })
+	const handleSelectBasicListItem = (
+		fieldName: keyof FilterFormData,
+		{ id, name }: { id: number; name: string }
+	) => {
+		;(
+			onSelectItem as (
+				field: keyof FilterFormData,
+				value: { id: number; name: string }
+			) => void
+		)(fieldName, { id, name })
 		onClose()
 	}
 

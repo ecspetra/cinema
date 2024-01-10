@@ -1,63 +1,61 @@
-import { getCollectionItemsList } from '@/firebase/config'
+import {} from '@/firebase/config'
 import { getCollectionReviewsWithRepliesList } from '@/handlers/getCollectionReviewsWithRepliesList'
 import {
 	IFetchedResult,
 	IGeneralCollection,
 	IItemCard,
 	IMark,
-	IReviewCard,
+	IReviewItemCard,
 } from '../../interfaces'
 import { UserCollections } from '@/constants/enum'
+import { getCollectionItemsList } from '@/firebase/handlers/userCollectionHandlers/getCollectionItemsList'
+import { getReviewsOrRepliesFromUserCollection } from '@/firebase/handlers/userCollectionHandlers/getReviewsOrRepliesFromUserCollection'
 
 export const getUserCollection = async (
-	userId: string
+	collectionOwnerId: string
 ): Promise<IGeneralCollection | null> => {
 	try {
 		const collectionMovies = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.movie,
-			5,
-			null
+			5
 		)) as IFetchedResult<IItemCard>
 		const collectionTVShows = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.tv,
-			5,
-			null
+			5
 		)) as IFetchedResult<IItemCard>
 		const collectionPersons = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.person,
-			5,
-			null
+			5
 		)) as IFetchedResult<IItemCard>
-		const collectionReviews = (await getCollectionItemsList(
-			userId,
-			UserCollections.reviews,
-			null,
-			null
-		)) as IFetchedResult<IReviewCard>
-		const collectionReplies = (await getCollectionItemsList(
-			userId,
-			UserCollections.replies,
-			null,
-			null
-		)) as IFetchedResult<IReviewCard>
 		const collectionMarks = (await getCollectionItemsList(
-			userId,
+			collectionOwnerId,
 			UserCollections.marks,
-			null,
 			null
 		)) as IFetchedResult<IMark>
+		const collectionReviews = (await getReviewsOrRepliesFromUserCollection(
+			collectionOwnerId,
+			UserCollections.reviews
+		)) as IReviewItemCard[]
+		const collectionReplies = (await getReviewsOrRepliesFromUserCollection(
+			collectionOwnerId,
+			UserCollections.replies
+		)) as IReviewItemCard[]
 
 		const reviewsWithUserReplies =
-			await getCollectionReviewsWithRepliesList(collectionReplies)
+			await getCollectionReviewsWithRepliesList(
+				collectionOwnerId,
+				collectionReplies
+			)
 
 		const allCollectionReviews = [
-			...collectionReviews.items.filter(
-				item => item.movieId !== undefined && item.id !== undefined
+			...collectionReviews.filter(
+				item =>
+					item.reviewedItemId !== undefined && item.id !== undefined
 			),
-			...(reviewsWithUserReplies as IReviewCard[]),
+			...(reviewsWithUserReplies as IReviewItemCard[]),
 		]
 
 		return {

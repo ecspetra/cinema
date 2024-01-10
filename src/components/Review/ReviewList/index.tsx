@@ -1,114 +1,46 @@
-import React, { FC, useEffect, useState } from 'react'
-import { IReviewCard } from '../../../../interfaces'
+import { FC } from 'react'
+import { IReviewItemCard } from '../../../../interfaces'
 import Title from '@/app/components/UI/Title/Title'
 import Button from '@/app/components/UI/Button'
-import { collectionRepliesListener, reviewsListener } from '@/firebase/config'
-import { useAuth } from '@/context/AuthProvider'
 import ReviewCard from '@/components/Review/ReviewList/ReviewCard'
 import EmptyList from '@/components/List/EmptyList'
 import useScrollToTop from '@/hooks/useScrollToTop'
 import classNames from 'classnames'
+import { UserCollections } from '@/constants/enum'
+import useReviewList from '@/components/Review/hooks/useReviewList'
 
 type PropsType = {
-	reviews: IReviewCard[]
-	movieId?: number
+	reviews: IReviewItemCard[]
+	collectionType?: UserCollections.movie | UserCollections.tv
+	reviewedItemId?: number
 	isCollectionList?: boolean
+	collectionOwnerId?: string
 	className?: string
-	isShowTitle?: boolean
 }
 
 const ReviewList: FC<PropsType> = ({
 	reviews,
-	movieId,
+	collectionType,
+	reviewedItemId,
 	isCollectionList = false,
+	collectionOwnerId,
 	className,
-	isShowTitle = true,
 }) => {
-	const { userId } = useAuth()
 	const { listRef, scrollToTop } = useScrollToTop(100)
-	const initialItemsLength = 3
-	const [maxReviewsLength, setMaxReviewsLength] =
-		useState<number>(initialItemsLength)
-	const [itemsToShow, setItemsToShow] = useState(reviews)
-	const [itemsFromDB, setItemsFromDB] = useState([])
-	const [defaultItems, setDefaultItems] = useState([])
-	const isMoreDataAvailable =
-		maxReviewsLength <
-		itemsToShow.filter(item => item.id !== undefined).length
-	const isShowMoreButton = itemsToShow.length > initialItemsLength
-	const buttonText = isMoreDataAvailable ? 'Show more' : 'Show less'
 
-	const handleItemsToShowLength = () => {
-		if (!isMoreDataAvailable) scrollToTop()
-
-		const newMaxReviewsLength = isMoreDataAvailable
-			? Math.min(
-					maxReviewsLength + initialItemsLength,
-					itemsToShow.length
-			  )
-			: initialItemsLength
-
-		if (isMoreDataAvailable) {
-			setMaxReviewsLength(newMaxReviewsLength)
-		} else {
-			setTimeout(() => {
-				setMaxReviewsLength(newMaxReviewsLength)
-			}, 600)
-		}
+	const collectionInfo = {
+		collectionType,
+		isCollectionList,
+		reviewedItemId,
+		collectionOwnerId,
 	}
-
-	const defineReviewSrc = () => {
-		const itemsFromDB: IReviewCard[] = []
-		const defaultItems: IReviewCard[] = []
-
-		reviews.forEach(item => {
-			if (item.authorId) {
-				itemsFromDB.push(item)
-			} else {
-				defaultItems.push(item)
-			}
-		})
-
-		setItemsFromDB(itemsFromDB)
-		setDefaultItems(defaultItems)
-	}
-
-	useEffect(() => {
-		defineReviewSrc()
-	}, [reviews])
-
-	useEffect(() => {
-		const newItemsToShow = [...itemsFromDB, ...defaultItems]
-		setItemsToShow(newItemsToShow)
-	}, [itemsFromDB, defaultItems])
-
-	useEffect(() => {
-		if (userId) {
-			const unsubscribe = reviewsListener(
-				isCollectionList ? userId : movieId,
-				itemsFromDB,
-				setItemsFromDB,
-				isCollectionList ? 'users' : 'movie'
-			)
-
-			return () => {
-				unsubscribe()
-			}
-		}
-	}, [itemsFromDB, userId])
-
-	useEffect(() => {
-		if (isCollectionList) {
-			const unsubscribe = collectionRepliesListener(
-				userId,
-				setItemsToShow
-			)
-
-			return () => {
-				unsubscribe()
-			}
-		}
-	}, [userId])
+	const {
+		itemsToShow,
+		isShowMoreButton,
+		buttonText,
+		maxReviewsLength,
+		handleItemsToShowLength,
+	} = useReviewList(reviews, collectionInfo, scrollToTop)
 
 	if (!itemsToShow.length) {
 		return (
@@ -116,7 +48,12 @@ const ReviewList: FC<PropsType> = ({
 				title='Reviews'
 				text={
 					isCollectionList
-						? `This collection is empty. Please add some items in this collection before you can see it here`
+						? 'Please write a review before you can see it here'
+						: undefined
+				}
+				className={
+					isCollectionList
+						? 'border border-gray-500 !mb-4 -my-12 p-4 last:mb-0'
 						: undefined
 				}
 			/>
@@ -125,20 +62,20 @@ const ReviewList: FC<PropsType> = ({
 
 	return (
 		<div ref={listRef} className={classNames('mb-16', className)}>
-			{isShowTitle && <Title>Reviews</Title>}
+			<Title>Reviews</Title>
 			<div>
-				{itemsToShow
-					.filter(item => item.id !== undefined)
-					.slice(0, maxReviewsLength)
-					.map(item => (
-						<ReviewCard
-							key={item.id}
-							review={item}
-							defaultCardMovieId={movieId}
-							isLinkToMovie={isCollectionList}
-							isCollectionItem={isCollectionList}
-						/>
-					))}
+				{itemsToShow.slice(0, maxReviewsLength).map(item => (
+					<ReviewCard
+						key={item.id}
+						review={item}
+						collectionType={
+							collectionType! ?? item.reviewedItemCollectionType!
+						}
+						defaultCardReviewedId={reviewedItemId}
+						isLinkToMovie={isCollectionList}
+						isCollectionItem={isCollectionList}
+					/>
+				))}
 				{isShowMoreButton && (
 					<Button
 						className='mx-auto'
