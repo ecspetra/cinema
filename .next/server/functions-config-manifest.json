@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "functions": {
+    "/collection/[type]": {},
+    "/collection": {},
+    "/": {},
+    "/movie/[id]": {},
+    "/tv": {},
+    "/movie": {},
+    "/person": {},
+    "/person/[id]": {},
+    "/tv/[id]": {},
+    "/profile/[id]": {}
+  }
+}
