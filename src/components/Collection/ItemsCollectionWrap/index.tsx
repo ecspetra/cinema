@@ -3,10 +3,11 @@ import { IItemCard } from '../../../../interfaces'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
 import ItemCard from '../../List/ItemsListWrap/ItemsList/ItemCard'
+import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	items: IItemCard[]
-	collectionType: string
+	collectionType: UserCollections.movie | UserCollections.tv
 }
 
 const ItemsCollectionWrap: FC<PropsType> = ({ items, collectionType }) => {

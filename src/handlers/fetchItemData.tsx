@@ -1,7 +1,14 @@
 import { URL_TO_FETCH_ITEM_DATA } from '@/constants/linksToFetch'
+import { UserCollections } from '@/constants/enum'
 
 export const fetchItemData = async (
-	collectionType: string,
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
+		| UserCollections.reviews
+		| UserCollections.replies
+		| UserCollections.marks,
 	itemId: number | string,
 	queryParam: string
 ): Promise<any> => {
