@@ -5,16 +5,13 @@ export const updateUserInStorage = async (
 	updatedFields: object,
 	userId: string
 ) => {
-	const userToUpdatePath = `users/${userId}`
+	const userToUpdatePath = `users/${userId}/info`
 	const userToUpdateRef = ref(database, userToUpdatePath)
 
-	const userData = (await get(userToUpdateRef)).val()
-	const oldUserInfo = userData.info
+	const oldUserInfo = (await get(userToUpdateRef)).val()
 	const updatedUserData = {
-		info: {
-			...oldUserInfo,
-			...updatedFields,
-		},
+		...oldUserInfo,
+		...updatedFields,
 	}
 
 	await set(userToUpdateRef, updatedUserData)

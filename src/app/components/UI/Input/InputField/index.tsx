@@ -81,7 +81,7 @@ const InputField: FC<PropsType> = ({
 									className={inputClassName}
 								/>
 								<Button
-									className='w-auto h-auto hover:bg-transparent'
+									className='!w-auto !h-auto hover:bg-transparent'
 									context='icon'
 									onClick={() =>
 										setIsPasswordVisible(!isPasswordVisible)

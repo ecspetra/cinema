@@ -137,15 +137,15 @@ const UserProfilePage = ({
 	return (
 		<>
 			<TopBanner imageSrc={PROFILE_PAGE_TOP_BANNER_IMAGE} />
-			<div className='flex justify-start items-start gap-14'>
-				<div className='mb-16 relative'>
+			<div className='flex justify-start items-start gap-14 flex-wrap md:flex-nowrap'>
+				<div className='mb-0 mt-24 md:mb-16 md:mt-0 relative mx-auto'>
 					<ProfileIcon
 						photoURL={profile.photoURL}
 						isCurrentUserProfile={isCurrentUserProfile}
 					/>
 					{!isCurrentUserProfile && (
 						<CollectionButton
-							className='w-full'
+							className='md:w-full'
 							isLoadingCollection={isLoadingFriends}
 							isCollectionItem={isFriend}
 							onClick={

@@ -39,7 +39,10 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 
 	return (
 		<span
-			className={classNames('absolute top-4 right-4', className)}
+			className={classNames(
+				'absolute top-2 right-2 md:top-4 md:right-4',
+				className
+			)}
 			onMouseLeave={closeList}
 		>
 			<Button
@@ -58,7 +61,7 @@ const Dropdown: FC<PropsType> = ({ children, icon = 'dots', className }) => {
 				classNames='dropdown'
 				unmountOnExit
 			>
-				<span className='w-52 relative right-0 pt-14 block'>
+				<span className='w-52 relative right-0 pt-14 block z-50'>
 					<span className='w-full p-2 rounded-md bg-gray-600 block'>
 						{childrenWithProps}
 					</span>

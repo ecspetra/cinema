@@ -16,7 +16,7 @@ import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	item: IItemCard
-	collectionType: string
+	collectionType: UserCollections.movie | UserCollections.tv
 	isShowButton?: boolean
 	isCollectionListItem?: boolean
 	isShowRole?: boolean
@@ -114,7 +114,7 @@ const ItemCard: FC<PropsType> = ({
 			)}
 			{isShowButton && (
 				<CollectionButton
-					className='mt-auto w-full'
+					className='mt-auto w-full md:w-full'
 					isLoadingCollection={isLoadingCollection}
 					isCollectionItem={isCollectionItem}
 					onClick={

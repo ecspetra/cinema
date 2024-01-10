@@ -30,7 +30,7 @@ const SelectedFilters: FC<PropsType> = ({
 					Reset
 				</Button>
 			</div>
-			<div className='flex justify-start items-start'>
+			<div className='flex flex-wrap justify-start items-start'>
 				{Object.keys(formData).map((field, idx) => {
 					switch (field) {
 						case 'primary_release_year':

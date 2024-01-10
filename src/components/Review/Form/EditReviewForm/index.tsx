@@ -25,7 +25,6 @@ const EditReviewForm: FC<PropsType> = ({
 		editedItem.content
 	)
 	const [error, setError] = useState<string>('')
-	const buttonText = isReplyItem ? 'Update reply' : 'Update review'
 
 	const handleTextareaChange = (newValue: string) => {
 		setTextareaValue(newValue)
@@ -73,7 +72,7 @@ const EditReviewForm: FC<PropsType> = ({
 				error={error}
 			/>
 			<span className='mt-8 flex justify-start items-center'>
-				<Button onClick={handleSubmit}>{buttonText}</Button>
+				<Button onClick={handleSubmit}>Update</Button>
 				<Button
 					context='filledDark'
 					className='ml-2'

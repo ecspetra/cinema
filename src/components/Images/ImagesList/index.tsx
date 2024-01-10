@@ -56,7 +56,7 @@ const ImagesList: FC<PropsType> = ({
 	return (
 		<div ref={listRef} className={classNames('mb-16', className)}>
 			<Title>Images</Title>
-			<div className='grid grid-cols-[repeat(auto-fill,calc((100vw-48px)/3))] md:grid-cols-[repeat(auto-fill,calc((100vw-416px)/3))] xl:grid-cols-[repeat(auto-fill,calc(864px/3))] gap-1 justify-start'>
+			<div className='grid grid-cols-[repeat(auto-fill,calc((100vw-24px)/3))] md:grid-cols-[repeat(auto-fill,calc((100vw-416px)/3))] xl:grid-cols-[repeat(auto-fill,calc(864px/3))] gap-1 justify-start'>
 				{(itemsToShow as IBackdrop[]).map((item, idx) => (
 					<Button
 						key={idx}

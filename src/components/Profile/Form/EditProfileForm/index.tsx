@@ -62,12 +62,12 @@ const EditProfileForm: FC<PropsType> = ({ profileInfo, onFormClose }) => {
 					error={state.formData.formError.error}
 				/>
 			)}
-			<div className='mt-8 flex justify-start items-center'>
+			<div className='w-full mt-8 flex justify-start items-center'>
 				<Button type='submit'>
 					{state.isLoading ? (
 						<Loader isShowText type='static' />
 					) : (
-						'Update profile'
+						'Update'
 					)}
 				</Button>
 				<Button

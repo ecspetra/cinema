@@ -36,7 +36,7 @@ const Breadcrumbs = () => {
 				<span
 					key={idx}
 					className={classNames(
-						'text-sm',
+						'text-xs md:text-sm',
 						idx === breadcrumbs.length - 1
 							? 'text-rose-600'
 							: 'text-gray-400'

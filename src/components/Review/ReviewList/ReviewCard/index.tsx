@@ -80,7 +80,7 @@ const ReviewCard: FC<PropsType> = ({
 	} = useReviewCardContentLength(content)
 
 	const reviewContent = (
-		<span className='p-2 md:p-4 gap-4 bg-gray-900 relative duration-300 flex'>
+		<span className='p-2 md:p-4 gap-4 bg-gray-900 relative duration-300 flex flex-wrap md:flex-nowrap'>
 			{isCurrentUserItem && (
 				<Dropdown>
 					<DropdownItem
@@ -148,7 +148,7 @@ const ReviewCard: FC<PropsType> = ({
 											: '3rem',
 									}}
 									ref={contentRef}
-									className='overflow-hidden transition-[max-height] duration-500 block'
+									className='overflow-hidden transition-[max-height] duration-500 block text-base'
 								>
 									<span
 										dangerouslySetInnerHTML={{

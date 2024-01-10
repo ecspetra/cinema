@@ -22,6 +22,7 @@ interface IPersonPageProps {
 	info: IPersonInfo
 	images: IBackdrop[]
 	movies: IFetchedResult<IItemCard>
+	tvShows: IFetchedResult<IItemCard>
 }
 
 const PersonPage = ({
@@ -35,7 +36,15 @@ const PersonPage = ({
 	const router = useRouter()
 	const personId = router.query.id as string
 	const urlToFetchMoviesWithCurrentPerson =
-		URL_TO_FETCH_MOVIES_WITH_PERSONS.replace('{personId}', personId)
+		URL_TO_FETCH_MOVIES_WITH_PERSONS.replace(
+			'{type}',
+			UserCollections.movie
+		).replace('{personId}', personId)
+	const urlToFetchTVShowsWithCurrentPerson =
+		URL_TO_FETCH_MOVIES_WITH_PERSONS.replace(
+			'{type}',
+			UserCollections.tv
+		).replace('{personId}', personId)
 
 	useEffect(() => {
 		const fetchPersonPageData = async () => {
@@ -77,6 +86,13 @@ const PersonPage = ({
 				isMoreDataAvailable={person.movies.isMoreDataAvailable}
 				urlToFetchItems={urlToFetchMoviesWithCurrentPerson}
 				title={`Movies with ${person.info.name}`}
+			/>
+			<ItemsListWrap
+				itemsList={person.tvShows.items}
+				collectionType={UserCollections.tv}
+				isMoreDataAvailable={person.tvShows.isMoreDataAvailable}
+				urlToFetchItems={urlToFetchTVShowsWithCurrentPerson}
+				title={`TV Shows with ${person.info.name}`}
 			/>
 		</>
 	)

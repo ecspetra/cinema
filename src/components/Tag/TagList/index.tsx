@@ -60,7 +60,7 @@ const TagList: FC<PropsType> = ({
 				})}
 			</div>
 			{isEditTags && (
-				<div className='flex justify-start items-center gap-2 mt-5'>
+				<div className='w-full flex justify-start items-center gap-2 mt-5'>
 					<Button onClick={saveChanges}>Save</Button>
 					<Button context='filledDark' onClick={closeEditTagsForm}>
 						Cancel

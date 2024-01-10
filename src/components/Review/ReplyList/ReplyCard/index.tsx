@@ -74,7 +74,7 @@ const ReplyCard: FC<PropsType> = ({
 			classNames='fade'
 			unmountOnExit
 		>
-			<span className='mb-4 p-4 bg-gray-800 rounded-md border-gray-500 relative last:mb-0 block'>
+			<span className='mb-4 p-2 md:p-4 bg-gray-800 rounded-md border-gray-500 relative last:mb-0 block'>
 				{isCurrentUserItem && (
 					<Dropdown>
 						<DropdownItem
@@ -89,15 +89,15 @@ const ReplyCard: FC<PropsType> = ({
 						/>
 					</Dropdown>
 				)}
-				<span className='flex mb-2'>
-					<span className='flex items-center'>
+				<span className='flex mb-2 max-w-[calc(100%-54px)]'>
+					<span className='flex items-center w-full'>
 						<ProfileIconSmall
 							userId={authorInfo.userId}
 							photoURL={authorInfo.photoURL}
 							isLinkToProfile={!isCollectionItem}
 						/>
-						<span>
-							<span className='mb-1 min-h-[22.5px] text-lg font-semibold leading-tight block'>
+						<span className='w-full max-w-[calc(100%-54px)]'>
+							<span className='truncate mb-1 min-h-[22.5px] text-lg font-semibold leading-tight block'>
 								{authorInfo.displayName}
 							</span>
 							<span className='text-xs block'>

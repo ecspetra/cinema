@@ -21,10 +21,10 @@ export const removeReviewOrReplyReaction = (
 	} = itemConfig
 	const reactionId = userId
 	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${reviewId}/${
-		reactionType === 'like' ? 'likes' : 'dislikes'
+		reactionType === 'like' ? 'dislikes' : 'likes'
 	}/${reactionId}`
 	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/${
-		reactionType === 'like' ? 'likes' : 'dislikes'
+		reactionType === 'like' ? 'dislikes' : 'likes'
 	}/${reactionId}`
 
 	const collectionRefForUserReaction = ref(

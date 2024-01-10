@@ -11,7 +11,7 @@ const Title: FC<PropsType> = ({ variant = 'h1', children, className }) => {
 	return variant === 'h1' ? (
 		<h1
 			className={classNames(
-				'break-all relative text-2xl md:text-4xl font-bold leading-tight mb-4 after:w-16 after:absolute after:bottom-0 after:left-0 after:h-1 after:bg-rose-600 pb-4',
+				'break-words relative text-2xl md:text-4xl font-bold leading-tight mb-4 after:w-16 after:absolute after:bottom-0 after:left-0 after:h-1 after:bg-rose-600 pb-4',
 				className
 			)}
 		>
@@ -20,7 +20,7 @@ const Title: FC<PropsType> = ({ variant = 'h1', children, className }) => {
 	) : variant === 'h2' ? (
 		<h2
 			className={classNames(
-				'break-all relative text-xl md:text-4xl font-light leading-tight mb-2',
+				'break-words relative text-xl md:text-4xl font-light leading-tight mb-2',
 				className
 			)}
 		>
@@ -29,7 +29,7 @@ const Title: FC<PropsType> = ({ variant = 'h1', children, className }) => {
 	) : (
 		<h3
 			className={classNames(
-				'break-all relative text-lg font-semibold leading-tight mb-2',
+				'break-words relative text-lg font-semibold leading-tight mb-2',
 				className
 			)}
 		>

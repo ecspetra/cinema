@@ -28,7 +28,7 @@ const GeneralUserCollection: FC<PropsType> = ({
 	collectionOwnerId,
 }) => {
 	return (
-		<div>
+		<div className='mt-24 md:mt-0'>
 			<CollectionWrap
 				title='Movies'
 				collectionType={UserCollections.movie}

@@ -60,8 +60,8 @@ const PersonInfo: FC<PropsType> = ({ personInfo, personImages }) => {
 	]
 
 	return (
-		<div className='flex gap-7 py-7 mb-16'>
-			<div className='w-full max-w-[340px]'>
+		<div className='flex gap-7 py-7 mb-16 flex-wrap md:flex-nowrap'>
+			<div className='w-full max-w-[240px] md:max-w-[340px] mx-auto mt-24 md:mt-0'>
 				<div className='sticky top-8'>
 					<Image
 						src={imageFullSrc}

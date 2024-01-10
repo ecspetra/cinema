@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthProvider'
 import Button from '@/app/components/UI/Button'
-import Image from '@/components/Images/Image'
-import defaultUserImage from '../../../app/assets/images/default-user-image.svg'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
@@ -13,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { createRoutes } from '@/constants/routes'
 import Logo from '@/app/components/Logo'
 import { signOutUser } from '@/firebase/handlers/authHandlers/signOutUser'
+import ProfileIconSmall from '@/components/Profile/ProfileInfo/ProfileIcon/ProfileIconSmall'
 
 const Header = () => {
 	const { userId, photoURL, isLoggedIn } = useAuth()
@@ -39,10 +38,10 @@ const Header = () => {
 
 	return (
 		<header className='min-h-[68px] fixed top-0 left-0 w-full z-20 bg-gray-950 flex items-center justify-between'>
-			<div className='w-full max-w-screen-xl mx-auto py-3 px-5'>
+			<div className='w-full max-w-screen-xl mx-auto py-2 px-2 md:py-3 md:px-5'>
 				<div className='flex justify-between items-center gap-4'>
-					<Logo />
-					<div className='flex justify-center items-center gap-4'>
+					<Logo className='hidden md:flex' />
+					<div className='flex justify-center items-center gap-2 md:gap-4 text-xs md:text-base'>
 						{ROUTES.map(item => {
 							return (
 								<Link
@@ -58,22 +57,16 @@ const Header = () => {
 					</div>
 					{isShowUserMenu && (
 						<div className='flex justify-center items-center gap-4'>
-							<Link
-								href={`/profile/[id]`}
-								as={`/profile/${userId}`}
-							>
-								<Image
-									className='!w-11 h-11 rounded-full'
-									src={photoURL}
-									defaultImage={defaultUserImage}
-								/>
-							</Link>
-							<Button
-								context='text'
-								onClick={handleSignOutUser}
-								className='text-sm'
-							>
-								Sign Out
+							<ProfileIconSmall
+								isLinkToProfile
+								photoURL={photoURL}
+								userId={userId}
+								className='mr-0'
+							/>
+							<Button context='text' onClick={handleSignOutUser}>
+								<span className='hidden md:block text-sm'>
+									Sign Out
+								</span>
 								<FontAwesomeIcon
 									icon={faRightFromBracket}
 									className='ml-1'

@@ -14,12 +14,12 @@ const Footer = () => {
 	return (
 		<footer className='w-full z-20 bg-gray-950 py-4'>
 			<div className='max-w-screen-xl mx-auto py-3 px-5 flex flex-col justify-start items-center'>
-				<div className='flex justify-center items-center gap-4 pb-4'>
+				<div className='flex justify-center items-center gap-2 md:gap-4 pb-4'>
 					{ROUTES.map(item => {
 						return (
 							<Link
 								key={item.href}
-								className='text-gray-500 hover:text-rose-600 duration-300'
+								className='text-xs md:text-base text-gray-500 hover:text-rose-600 duration-300'
 								href={item.href}
 								as={item.href}
 							>
