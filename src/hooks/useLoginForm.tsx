@@ -81,7 +81,7 @@ export const useLoginForm = () => {
 				)
 				updateFormError('')
 				clearForm()
-				hideModal(id)
+				hideModal(id!)
 
 				let target: string | null = null
 

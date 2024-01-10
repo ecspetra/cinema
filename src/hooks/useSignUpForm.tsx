@@ -84,7 +84,7 @@ export const useSignUpForm = () => {
 				)
 				updateFormError('')
 				clearForm()
-				hideModal(id)
+				hideModal(id!)
 				if (isAuthPage) await router.push('/')
 			} catch (error: any) {
 				updateFormError(error.toString())
