@@ -36,7 +36,7 @@ const HomePageSliderItemsList: FC<PropsType> = ({
 	return (
 		<div
 			ref={containerRef}
-			className='overflow-auto flex flex-col flex-none max-w-sm w-full scrollbar-hide bg-gray-950'
+			className='overflow-auto flex flex-col flex-none max-w-sm w-full scrollbar-hide bg-gray-950 max-h-[200px] md:max-h-full'
 		>
 			{!items.length ? (
 				<span className='mt-4 mx-auto'>No results found</span>

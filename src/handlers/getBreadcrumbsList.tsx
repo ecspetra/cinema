@@ -24,14 +24,25 @@ export const getBreadcrumbsList = async (allSegments: string[]) => {
 			allSegments.includes('profile') && segment !== 'profile'
 
 		const getPageIdPageSegment = async () => {
-			const collectionType = allSegments[i - 1]
-			const itemInfo = await fetchItemData(collectionType, segment, '')
-			segmentName = getItemName(itemInfo)
-			const itemNameCapitalized = capitalizeFirstLetter(segmentName)
-			allBreadcrumbs.push({
-				label: itemNameCapitalized,
-				href,
-			})
+			try {
+				const collectionType = allSegments[i - 1]
+				const itemInfo = await fetchItemData(
+					collectionType,
+					segment,
+					''
+				)
+				if (itemInfo) {
+					segmentName = getItemName(itemInfo)
+					const itemNameCapitalized =
+						capitalizeFirstLetter(segmentName)
+					allBreadcrumbs.push({
+						label: itemNameCapitalized,
+						href,
+					})
+				}
+			} catch (error) {
+				throw error
+			}
 		}
 
 		const getUserCollectionSegment = () => {
@@ -41,9 +52,15 @@ export const getBreadcrumbsList = async (allSegments: string[]) => {
 		}
 
 		const getProfilePageSegment = async () => {
-			const item = await getUserProfileInfo(segment)
-			segmentName = item.info.displayName
-			allBreadcrumbs.push({ label: segmentName, href })
+			try {
+				const item = await getUserProfileInfo(segment)
+				if (item) {
+					segmentName = item.info.displayName
+					allBreadcrumbs.push({ label: segmentName, href })
+				}
+			} catch (error) {
+				throw error
+			}
 		}
 
 		const getTVShowPageSegment = () => {
