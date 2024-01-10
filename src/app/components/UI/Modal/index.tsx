@@ -13,7 +13,7 @@ const Modal = () => {
 	const { id, modalText = '', alertInfo } = currentModal || {}
 
 	const handleClose = () => {
-		hideModal(id)
+		hideModal(id!)
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current)
 		}
@@ -25,7 +25,7 @@ const Modal = () => {
 				modalRef.current &&
 				!modalRef.current.contains(event.target as Node)
 			) {
-				hideModal(id)
+				hideModal(id!)
 			}
 		}
 
@@ -33,7 +33,7 @@ const Modal = () => {
 			document.addEventListener('click', handleClickOutside)
 		} else {
 			timeoutRef.current = setTimeout(() => {
-				hideModal(id)
+				hideModal(id!)
 			}, 4500)
 		}
 
