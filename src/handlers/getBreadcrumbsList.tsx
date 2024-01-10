@@ -25,7 +25,13 @@ export const getBreadcrumbsList = async (allSegments: string[]) => {
 
 		const getPageIdPageSegment = async () => {
 			try {
-				const collectionType = allSegments[i - 1]
+				const collectionType = allSegments[i - 1] as
+					| UserCollections.movie
+					| UserCollections.tv
+					| UserCollections.person
+					| UserCollections.reviews
+					| UserCollections.replies
+					| UserCollections.marks
 				const itemInfo = await fetchItemData(
 					collectionType,
 					segment,

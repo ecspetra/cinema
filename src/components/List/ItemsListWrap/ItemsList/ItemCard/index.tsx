@@ -16,7 +16,10 @@ import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	item: IItemCard
-	collectionType: UserCollections.movie | UserCollections.tv
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 	isShowButton?: boolean
 	isCollectionListItem?: boolean
 	isShowRole?: boolean
@@ -78,7 +81,11 @@ const ItemCard: FC<PropsType> = ({
 				{isShowMark && (
 					<MarkSmall
 						markedItemId={id}
-						collectionType={collectionType}
+						collectionType={
+							collectionType as
+								| UserCollections.movie
+								| UserCollections.tv
+						}
 						className='absolute -right-3 -top-3'
 					/>
 				)}

@@ -7,7 +7,10 @@ import { UserCollections } from '@/constants/enum'
 
 type PropsType = {
 	items: IItemCard[]
-	collectionType: UserCollections.movie | UserCollections.tv
+	collectionType:
+		| UserCollections.movie
+		| UserCollections.tv
+		| UserCollections.person
 }
 
 const ItemsCollectionWrap: FC<PropsType> = ({ items, collectionType }) => {
