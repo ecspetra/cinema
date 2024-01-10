@@ -20,6 +20,7 @@ type PropsType = {
 		| UserCollections.movie
 		| UserCollections.tv
 		| UserCollections.person
+		| UserCollections.basic
 	isShowButton?: boolean
 	isCollectionListItem?: boolean
 	isShowRole?: boolean
