@@ -126,13 +126,17 @@ const Filter: FC<PropsType> = ({
 						onChange={handleSelectChange}
 						defaultValue={countrySelectValue}
 					>
-						{countryList.map((item, idx) => (
-							<SelectOption
-								key={idx}
-								value={item.iso_3166_1.toLowerCase()}
-								label={item.english_name}
-							/>
-						))}
+						{!countryList.length ? (
+							<Loader type='static' />
+						) : (
+							countryList.map((item, idx) => (
+								<SelectOption
+									key={idx}
+									value={item.iso_3166_1.toLowerCase()}
+									label={item.english_name}
+								/>
+							))
+						)}
 					</Select>
 				)
 			case 'with_people':

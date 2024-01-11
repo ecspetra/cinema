@@ -22,7 +22,7 @@ type SelectOptionProps = {
 }
 
 type PropsType = {
-	children: ReactNode[]
+	children: ReactNode | ReactNode[]
 	label: string
 	onChange: (
 		field: keyof FilterFormData,
