@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import defaultMovieBg from '@/app/assets/images/default-movie-bg.jpg'
 import Image from '@/components/Images/Image'
 import classNames from 'classnames'
