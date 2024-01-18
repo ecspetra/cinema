@@ -20,12 +20,10 @@ export const createNewReviewOrReplyReaction = async (
 		reactionType,
 		reviewedItemCollectionType,
 	} = itemConfig
-	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${reviewId}/${
-		reactionType === 'like' ? 'likes' : 'dislikes'
-	}/${userId}`
-	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/${
-		reactionType === 'like' ? 'likes' : 'dislikes'
-	}/${userId}`
+	const reactionTypeToCreate = reactionType === 'like' ? 'likes' : 'dislikes'
+	const reactionTypeToRemove = reactionType === 'like' ? 'dislike' : 'like'
+	const collectionPathForUserReaction = `users/${userId}/collection/${collectionType}/${reviewedItemCollectionType}/${reviewId}/${reactionTypeToCreate}/${userId}`
+	const generalCollectionPathForUserReaction = `reviewsReactions/${reviewedItemCollectionType}/${reviewedItemId}/${collectionType}/${reviewId}/${reactionTypeToCreate}/${userId}`
 
 	const collectionRefForUserReaction = ref(
 		database,
@@ -38,5 +36,8 @@ export const createNewReviewOrReplyReaction = async (
 
 	await set(collectionRefForUserReaction, reviewId)
 	await set(generalCollectionRefForUserReaction, reviewId)
-	await removeReviewOrReplyReaction(userId, itemConfig)
+	await removeReviewOrReplyReaction(userId, {
+		...itemConfig,
+		reactionType: reactionTypeToRemove,
+	})
 }
