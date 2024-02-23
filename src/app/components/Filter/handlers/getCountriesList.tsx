@@ -5,7 +5,7 @@ import {
 } from '@/constants/linksToFetch'
 import { IItemCountry } from '../../../../../interfaces'
 
-const limit = pLimit(5) // Установите лимит в 5 запросов
+const limit = pLimit(5)
 
 export const getCountriesList = async (
 	type: string
