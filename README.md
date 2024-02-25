@@ -12,3 +12,5 @@ Film library. Users have the opportunity to register on the platform, explore in
 
 ## Created with:
 Next.js, React, TypeScript, Tailwind, Firebase, TMDB API
+
+Designed and developed by Yuliia Tkachenko, 2024
