@@ -5,6 +5,8 @@
 ![project-screenshot-4](public/assets/images/screenshot-4.png)
 ![project-screenshot-5](public/assets/images/screenshot-5.png)
 ![project-screenshot-6](public/assets/images/screenshot-6.png)
+![project-screenshot-7](public/assets/images/screenshot-7.png)
+![project-screenshot-8](public/assets/images/screenshot-8.png)
 
 ## Description
 
