@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Urbanist
+- Font Author: Copyright 2021 The Urbanist Project Authors (https://github.com/coreyhu/Urbanist)
+- Font Source: http://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqDYhkfFpOrS8SlKw.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))
